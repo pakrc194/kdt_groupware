@@ -1,0 +1,17 @@
+# STS Workspace (절대 올리면 안 됨)
+.metadata/
+
+# Gradle build/cache
+backend/.gradle/
+backend/build/
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# React
+frontend/node_modules/
+frontend/build/
