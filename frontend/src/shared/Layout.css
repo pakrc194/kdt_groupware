@@ -1,0 +1,5 @@
+.nav-item, .side-item {
+  text-decoration: none;
+  display: block;
+  color: inherit;
+}
