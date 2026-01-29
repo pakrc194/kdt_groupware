@@ -1,4 +1,4 @@
-package io.github.vfive.gw;
+package vfive.gw;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
