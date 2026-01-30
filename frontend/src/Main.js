@@ -4,6 +4,11 @@ import ApprovalHome from './features/Approval/ApprovalHome'; // 예시 파일 �
 import './Main.css'
 import LoginHome from './features/Login/LoginHome';
 import MainHome from './features/Main/MainHome';
+import ScheduleHome from './features/Schedule/ScheduleHome';
+import AttendanceHome from './features/Attendance/AttendanceHome';
+import BoardHome from './features/Board/BoardHome';
+import OrgChartHome from './features/OrgChart/OrgChartHome';
+import DashboardHome from './features/Dashboard/DashboardHome';
 
 function Main() {
   return (
@@ -14,11 +19,11 @@ function Main() {
         <Route index element={<Navigate to="/main/:sideId" replace />} />
         <Route path="main/:sideId" element={<MainHome/>} />
         <Route path="approval/:sideId" element={<ApprovalHome />} />
-        <Route path="schedule/:sideId" element={<div>일정관리 페이지</div>} />
-        <Route path="attendance/:sideId" element={<div>근태관리 페이지</div>} />
-        <Route path="board/:sideId" element={<div>공지게시판</div>} />
-        <Route path="orgChart/:sideId" element={<div>조직도 페이지</div>} />
-        <Route path="dashboard/:sideId" element={<div>대시보드 페이지</div>} />
+        <Route path="schedule/:sideId" element={<ScheduleHome/>} />
+        <Route path="attendance/:sideId" element={<AttendanceHome/>} />
+        <Route path="board/:sideId" element={<BoardHome/>} />
+        <Route path="orgChart/:sideId" element={<OrgChartHome/>} />
+        <Route path="dashboard/:sideId" element={<DashboardHome/>} />
       </Route>
     </Routes>
   );
