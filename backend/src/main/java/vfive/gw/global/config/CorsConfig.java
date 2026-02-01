@@ -11,8 +11,8 @@ public class CorsConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		// TODO Auto-generated method stub
 		registry.addMapping("/**")
-		.allowedOrigins("http://192.168.0.117:3000")	//본인 리액트 url , 로 추가
-		.allowedMethods("GET","POST")
+		.allowedOrigins("http://192.168.0.117:3000", "http://192.168.219.106:3000")	//본인 리액트 url , 로 추가
+		.allowedMethods("*")
 		.allowedHeaders("*")
 		.exposedHeaders("*")
 		.allowCredentials(true);

@@ -1,70 +1,73 @@
-# Getting Started with Create React App
+# 그릅웨어 프로젝트
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### fecth 사용법
+#### GET
+```
+fetcher('/gw/home/1').then(setEmpData);
+```
+#### POST 
+```
+fetcher('/gw/home/test', {
+    method: 'POST',
+    body: { test: 'ok' },
+}).then(setEmpData)
+```
+#### Button / Modal 사용법
+#### HomeMain.js에 모든 예제 작성해둠
 
-## Available Scripts
+#### .env.local 파일             # 본인 url 설정  - 한번 설정후 .gitignore에 .env.local 추가
 
-In the project directory, you can run:
 
-### `npm start`
+#### api 확인 (spring 실행 必)
+#### swagger url  : http://localhost:8080/swagger-ui/index.html#/
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## project structure
+### react
+```text
+src/
+ ├─ app/
+ │   ├─ routes/              # 라우터 정의
+ │   └─ store/               # 전역 상태(zustand/redux 등)
+ │
+ ├─ shared/                  # 전역 공통 (⚠️ 여기 중요)
+ │   ├─ api/
+ │   │   └─ fetcher.js       # ✅ 공통 fetch 래퍼 (baseURL, 에러 처리)
+ │   │
+ │   ├─ components/          # 공통 UI 컴포넌트
+ │   │   ├─ Button.js
+ │   │   └─ Modal.js
+ │   ├─ layout/              # 공통 레이아웃
+ │   │   ├─ Layout.js        # 상단바, 사이드바
+ │   └─  └─ sideConfig.js    # 사이드바 메뉴 구성
+ ├─ features/                # 기능(도메인) 단위
+ │   ├─ Home/
+ │   │   ├─ pages/
+ │   │   │   └─ HomeMain.js  # 사이드바 및 기능에 필요한 페이지들
+ │   │   └─ components/      # 기능에 필요한 Modal 창 또는 각종 컴포넌트
+ │   ├─ approval/
+ │   │   ├─ pages/
+ │   │   │   └─ HomeMain.js  
+ │   │   └─ components/      
+ │   ├─ schedule/
+ │   │   ├─ pages/
+ │   │   │   └─ HomeMain.js  
+ │   │   └─ components/    
+ │   ├─ attendance/
+ │   │   ├─ pages/
+ │   │   │   └─ HomeMain.js  
+ │   │   └─ components/    
+ │   ├─ board/
+ │   │   ├─ pages/
+ │   │   │   └─ HomeMain.js  
+ │   │   └─ components/    
+ │   ├─ orgchart/
+ │   │   ├─ pages/
+ │   │   │   └─ HomeMain.js  
+ │   │   └─ components/    
+ ├─  └─ dashboard/
+ │       ├─ pages/
+ │       │   └─ HomeMain.js  
+ │       └─ components/    
+ ├─ assets/                 # 이미지 폴더
+ ├─ .env                    # 기본 포트번호 설정
+ └─ .env.local              # 본인 url 설정  - 한번 설정후 .gitignore에 .env.local 추가

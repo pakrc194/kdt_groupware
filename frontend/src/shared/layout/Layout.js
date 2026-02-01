@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { MENU_CONFIG } from './menuConfig';
+import { SIDE_CONFIG } from './sideConfig';
 import './Layout.css';
 
 const Layout = () => {
@@ -12,15 +12,15 @@ const Layout = () => {
   return (
     <div className="container">
       <header className="header">
-        <div className="logo"><Link to={'/main/dashboard'} className='nav-icon'>Groupware</Link></div>
+        <div className="logo"><Link to={'/home/dashboard'} className='nav-icon'>Groupware</Link></div>
         <nav className="nav">
-          {Object.keys(MENU_CONFIG).map((key) => (
+          {Object.keys(SIDE_CONFIG).map((key) => (
             <Link 
               key={key} 
-              to={`/${key}/${MENU_CONFIG[key].sideMenus[0].id}`} 
+              to={`/${key}/${SIDE_CONFIG[key].sideMenus[0].id}`} 
               className={`nav-item ${currentMain === key ? 'active' : ''}`}
             >
-              {MENU_CONFIG[key].title}
+              {SIDE_CONFIG[key].title}
             </Link>
           ))}
         </nav>
@@ -33,9 +33,9 @@ const Layout = () => {
 
       <div className="main-wrapper">
         <aside className="sidebar">
-          <h3 className="sidebar-title">{MENU_CONFIG[currentMain]?.title}</h3>
+          <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3>
           <ul className="sidebar-list">
-            {MENU_CONFIG[currentMain]?.sideMenus.map((menu) => (
+            {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => (
               <li key={menu.id}>
                 <Link 
                   to={`/${currentMain}/${menu.id}`} 

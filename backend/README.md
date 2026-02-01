@@ -1,6 +1,6 @@
 # 그릅웨어 프로젝트
 
-#### swagger url  : http://localhost/swagger-ui/index.html#/
+#### swagger url  : http://localhost:8080/swagger-ui/index.html#/
 
 ## project structure
 ### spring

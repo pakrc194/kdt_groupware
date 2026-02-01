@@ -1,4 +1,4 @@
-export const MENU_CONFIG = {
+export const SIDE_CONFIG = {
   approval: {
     title: '전자결재',
     sideMenus: [
