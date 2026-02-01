@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function LoginHome(props) {
+function LoginMain(props) {
     return (
         <div>
-            <Link to={'/main/dashboard'}>로그인</Link>
+            <Link to={'/home/dashboard'}>로그인</Link>
         </div>
     );
 }
 
-export default LoginHome;
+export default LoginMain;

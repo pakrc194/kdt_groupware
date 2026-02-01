@@ -1,6 +1,6 @@
 import React from 'react';
 
-function OrgChartHome(props) {
+function OrgChartMain(props) {
     return (
         <div>
             조직도
@@ -8,4 +8,4 @@ function OrgChartHome(props) {
     );
 }
 
-export default OrgChartHome;
+export default OrgChartMain;

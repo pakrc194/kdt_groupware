@@ -1,6 +1,6 @@
 import React from 'react';
 
-function BoardHome(props) {
+function BoardMain(props) {
     return (
         <div>
             게시판
@@ -8,4 +8,4 @@ function BoardHome(props) {
     );
 }
 
-export default BoardHome;
+export default BoardMain;

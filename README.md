@@ -20,3 +20,6 @@
 ### 스프링 : 백엔드 주소/gw/main 
 ### 리액트 : 프론트엔드 주소/gw/main/aaa
 ### 두 값이 일치하면 정상 연결됨
+
+#### api 확인
+#### swagger url  : http://localhost/swagger-ui/index.html#/

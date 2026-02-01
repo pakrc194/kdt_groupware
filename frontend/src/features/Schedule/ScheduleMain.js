@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ScheduleHome(props) {
+function ScheduleMain(props) {
     return (
         <div>
             일정관리
@@ -8,4 +8,4 @@ function ScheduleHome(props) {
     );
 }
 
-export default ScheduleHome;
+export default ScheduleMain;

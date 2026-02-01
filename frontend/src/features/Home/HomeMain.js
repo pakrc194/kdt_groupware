@@ -4,7 +4,7 @@ function MainHome(props) {
     const [empData, setEmpData]= useState("로딩중")
 
     useEffect(()=>{
-        fetch("http://192.168.0.117/gw/main")
+        fetch("http://192.168.0.117/gw/home")
         .then(res => res.text())
         .then(data => {
             setEmpData(data);

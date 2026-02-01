@@ -1,6 +1,6 @@
 import React from 'react';
 
-function AttendanceHome(props) {
+function AttendanceMain(props) {
     return (
         <div>
             근태관리
@@ -8,4 +8,4 @@ function AttendanceHome(props) {
     );
 }
 
-export default AttendanceHome;
+export default AttendanceMain;

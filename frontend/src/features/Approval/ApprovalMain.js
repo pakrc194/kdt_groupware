@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import DraftPage from './DraftPage';
 import PendingPage from './PendingPage';
 
-const ApprovalHome = () => {
+const ApprovalMain = () => {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
 
   // 2. 스위치 문에서 '컴포넌트'를 반환합니다.
@@ -31,4 +31,4 @@ const ApprovalHome = () => {
   );
 };
 
-export default ApprovalHome;
+export default ApprovalMain;

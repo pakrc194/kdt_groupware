@@ -9,7 +9,7 @@ import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.home.mapper.HomeMapper;
 
 @RestController
-@RequestMapping("/gw/main")
+@RequestMapping("/gw/home/{service}")
 public class HomeController {
 	@Resource
 	HomeMapper mapper;
