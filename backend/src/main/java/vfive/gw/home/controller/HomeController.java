@@ -1,19 +1,20 @@
-package vfive.gw.main.controller;
+package vfive.gw.home.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
-import vfive.gw.main.dto.EmpPrvc;
-import vfive.gw.main.mapper.MainMapper;
+import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.home.mapper.HomeMapper;
 
 @RestController
 @RequestMapping("/gw/main")
-public class MainController {
+public class HomeController {
 	@Resource
-	MainMapper mapper;
+	HomeMapper mapper;
 	
-	@RequestMapping
+	@GetMapping
 	EmpPrvc emp() {
 		EmpPrvc emp = new EmpPrvc();
 		emp.setEmpNo(1);

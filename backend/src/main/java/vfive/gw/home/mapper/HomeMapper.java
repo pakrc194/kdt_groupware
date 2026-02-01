@@ -1,12 +1,12 @@
-package vfive.gw.main.mapper;
+package vfive.gw.home.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import vfive.gw.main.dto.EmpPrvc;
+import vfive.gw.home.dto.EmpPrvc;
 
 @Mapper
-public interface MainMapper {
+public interface HomeMapper {
 	
 	@Select("select * from EMP_PRVC where emp_no = #{empNo}")
 	EmpPrvc empPrvc(EmpPrvc emp);

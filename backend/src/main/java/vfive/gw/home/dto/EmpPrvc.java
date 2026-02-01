@@ -1,4 +1,4 @@
-package vfive.gw.main.dto;
+package vfive.gw.home.dto;
 
 import lombok.Data;
 
