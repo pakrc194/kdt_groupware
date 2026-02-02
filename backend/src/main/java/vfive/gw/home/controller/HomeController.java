@@ -21,7 +21,7 @@ public class HomeController {
 	@GetMapping
 	EmpPrvc emp() {
 		EmpPrvc emp = new EmpPrvc();
-		emp.setEmpNo(1);
+		emp.setEmpId(1);
 		
 		return mapper.empPrvc(emp);
 	}

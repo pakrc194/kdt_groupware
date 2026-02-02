@@ -9,11 +9,16 @@ import AttendanceMain from "../features/Attendance/pages/AttendanceMain";
 import BoardMain from "../features/Board/pages/BoardMain";
 import OrgChartMain from "../features/OrgChart/pages/OrgChartMain";
 import DashboardMain from "../features/Dashboard/pages/DashboardMain";
+import Employee_details from "../features/Login/pages/Employee_details";
+import FindPassword from "../features/Login/pages/FindPassword";
+
 
 export default function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginMain />} />
+      <Route path="/EmpDetails" element={<Employee_details />} />
+      <Route path="/FindPassword" element={<FindPassword />} />
 
       <Route path="/" element={<Layout />}>
         <Route index element={<Navigate to="/home/dashboard" replace />} />
