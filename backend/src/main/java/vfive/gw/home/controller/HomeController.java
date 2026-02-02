@@ -1,5 +1,6 @@
 package vfive.gw.home.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +19,19 @@ public class HomeController {
 	@Resource
 	HomeMapper mapper;
 	
-	@GetMapping
-	EmpPrvc emp() {
+//	@GetMapping
+//	EmpPrvc emp() {
+//		EmpPrvc emp = new EmpPrvc();
+//		emp.setEmpId(1);
+//		
+//		return mapper.empPrvc(emp);
+//	}
+	@GetMapping("list")
+	List<EmpPrvc> emplist() {
 		EmpPrvc emp = new EmpPrvc();
-		emp.setEmpId(1);
+//		emp.setEmpId(1);
 		
-		return mapper.empPrvc(emp);
+		return mapper.empList();
 	}
 	
 	@PostMapping
