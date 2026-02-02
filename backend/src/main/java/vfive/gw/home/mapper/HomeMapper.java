@@ -8,6 +8,6 @@ import vfive.gw.home.dto.EmpPrvc;
 @Mapper
 public interface HomeMapper {
 	
-	@Select("select * from EMP_PRVC where emp_no = #{empNo}")
+	@Select("select * from EMP_PRVC where emp_id = #{empId}")
 	EmpPrvc empPrvc(EmpPrvc emp);
 }

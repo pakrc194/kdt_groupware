@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class EmpPrvc {
-	private int empNo, deptNo, jbttlNo;
+	private int empId, deptId, jbttlId;
 	private String empSn, empNm, empPswd, empEmlAddr, empPhoto, empAddr, empTelNo, empActNo, empJncmpYmd, empRsgntnYmd, empAcntStts; 
 	
 }
