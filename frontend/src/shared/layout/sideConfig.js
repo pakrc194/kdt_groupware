@@ -39,8 +39,8 @@ export const SIDE_CONFIG = {
   orgChart: {
     title: '조직도',
     sideMenus: [
-      { id: 'aaa', name: '전체 사원 보기' },
-      { id: 'bbb', name: '팀별 사원 보기',
+      { id: 'allorg', name: '전체 사원 보기' },
+      { id: 'teamorg', name: '팀별 사원 보기',
         subMenus: [
           { id: 'CP', name: "지점장" },
           { id: 'FO', name: "식품" },
@@ -52,7 +52,7 @@ export const SIDE_CONFIG = {
           { id: 'SO', name: "안전관리" },
         ]
        },
-      { id: 'ccc', name: '사원 추가' },
+      { id: 'register', name: '사원 추가' },
     ]
   },
   dashboard: {
