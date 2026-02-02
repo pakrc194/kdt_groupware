@@ -1,0 +1,11 @@
+.draftForm {
+    background-color: white;
+    border: 1px solid #333333;
+    box-sizing: border-box;
+    padding: 10px;
+    width: 80vw;
+}
+
+.draftForm>div {
+    padding: 10px;
+}

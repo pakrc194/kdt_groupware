@@ -2,13 +2,14 @@ export const SIDE_CONFIG = {
   approval: {
     title: '전자결재',
     sideMenus: [
-      { id: 'aaa', name: '결재현황' },
-      { id: 'draft', name: '기안함' },
-      { id: 'ccc', name: '결재함' },
-      { id: 'ddd', name: '참조함' },
-      { id: 'eee', name: '임시저장함' },
-      { id: 'fff', name: '반려함' },
-      { id: 'ggg', name: '양식보관함' },
+      { id: 'docStatus', name: '결재현황' },
+      { id: 'draft', name: '기안 작성' },
+      { id: 'draftBox', name: '기안함' },
+      { id: 'approvalBox', name: '결재함' },
+      { id: 'referBox', name: '참조함' },
+      { id: 'tempBox', name: '임시저장함' },
+      { id: 'rejectBox', name: '반려함' },
+      { id: 'docBox', name: '양식보관함' },
     ]
   },
   schedule: {

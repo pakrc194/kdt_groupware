@@ -1,0 +1,20 @@
+.formDiv {
+    display: flex;
+}
+
+
+.formLabel {
+    width: 30vw;
+    border: 1px solid #333;
+    box-sizing: border-box;
+    background-color: #aaa;
+    text-align: center;
+    padding: 10px;
+}
+
+.formValue {
+    width: 70vw;
+    border: 1px solid #333;
+    box-sizing: border-box;
+    padding: 10px;
+}

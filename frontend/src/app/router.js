@@ -9,6 +9,7 @@ import AttendanceMain from "../features/Attendance/pages/AttendanceMain";
 import BoardMain from "../features/Board/pages/BoardMain";
 import OrgChartMain from "../features/OrgChart/pages/OrgChartMain";
 import DashboardMain from "../features/Dashboard/pages/DashboardMain";
+import ApprovalDetail from "../features/Approval/pages/ApprovalDetail";
 
 export default function AppRouter() {
   return (
@@ -19,6 +20,7 @@ export default function AppRouter() {
         <Route index element={<Navigate to="/home/dashboard" replace />} />
         <Route path="home/:sideId" element={<HomeMain />} />
         <Route path="approval/:sideId" element={<ApprovalMain />} />
+        <Route path="approval/:sideId/detail/:docId" element={<ApprovalDetail />} />
         <Route path="schedule/:sideId" element={<ScheduleMain />} />
         <Route path="attendance/:sideId" element={<AttendanceMain />} />
         <Route path="board/:sideId" element={<BoardMain />} />

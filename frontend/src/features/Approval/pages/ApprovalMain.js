@@ -2,7 +2,9 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 // 1. 실제 작업한 파일들을 불러옵니다.
 import DraftPage from './DraftPage';
-import PendingPage from './PendingPage';
+import ApprovalBox from './ApprovalBox';
+import './DraftPage.css'
+
 
 const ApprovalMain = () => {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
@@ -12,8 +14,8 @@ const ApprovalMain = () => {
     switch (sideId) {
       case 'draft':
         return <DraftPage />; // 경로 문자열이 아니라 컴포넌트 호출!
-      case 'pending':
-        return <PendingPage />;
+      case 'approvalBox':
+        return <ApprovalBox />;
       case 'completed':
         return <div>✅ 결재 완료 목록 화면 (팀원이 작성 중...)</div>;
       default:
@@ -23,7 +25,6 @@ const ApprovalMain = () => {
 
   return (
     <div className="approval-container">
-      <h2>전자결재 시스템</h2>
       <div className="content-area">
         {renderContent()} {/* 여기서 선택된 화면이 렌더링됨 */}
       </div>
