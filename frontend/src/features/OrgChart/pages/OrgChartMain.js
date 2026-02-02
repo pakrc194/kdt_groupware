@@ -2,8 +2,8 @@ import React from 'react';
 
 import { useParams } from 'react-router-dom';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import AllOrg from './AllOrg';
-import NewOrg from './NewOrg';
+import AllEmp from './AllEmp';
+import NewEmp from './NewEmp';
 
 function OrgChartMain(props) {
     const { sideId } = useParams();
@@ -11,9 +11,9 @@ function OrgChartMain(props) {
     const renderContent = () => {
         switch(sideId) {
             case 'allorg':
-                return <AllOrg />
+                return <AllEmp />
             case 'register':
-                return <NewOrg />
+                return <NewEmp />
         }
     }
 

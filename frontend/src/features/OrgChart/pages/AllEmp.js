@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function AllOrg(props) {
+function AllEmp(props) {
     const [data, setData] = useState([]);
 
     useEffect(() => {
@@ -38,4 +38,4 @@ function AllOrg(props) {
     );
 }
 
-export default AllOrg;
+export default AllEmp;
