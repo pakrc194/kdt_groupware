@@ -28,8 +28,7 @@ public class HomeController {
 //		return mapper.empPrvc(emp);
 //	}
 	@GetMapping("list")
-	List<EmpPrvc> emplist() {
-		EmpPrvc emp = new EmpPrvc();		
+	List<EmpPrvc> emplist() {		
 		return mapper.empList();
 	}
 	
@@ -39,6 +38,15 @@ public class HomeController {
 		emp.setEmpId(id);
 		
 		return mapper.empPrvc(emp);
+	}
+	
+	@GetMapping("teamList/{code}")
+	List<EmpPrvc> empTeam(@PathVariable("code") String code) {
+		System.out.println(code);
+		EmpPrvc emp = new EmpPrvc();
+		emp.setDeptCode(code);
+		
+		return mapper.empTeamList(emp);
 	}
 	
 	@PostMapping

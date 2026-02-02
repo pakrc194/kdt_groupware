@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
 function DetailEmp(props) {

@@ -4,13 +4,12 @@ import { useParams } from 'react-router-dom';
 import AllEmp from './AllEmp';
 import NewEmp from './NewEmp';
 import DetailEmp from './DetailEmp';
-import Emp from './Emp';
+import TeamEmpList from './TeamEmpList';
 
 function OrgChartMain(props) {
     const { sideId } = useParams();
 
     const renderContent = () => {
-        console.log(sideId);
         switch(sideId.split("/")[0]) {
             case 'allorg':
                 return <AllEmp />
@@ -18,6 +17,8 @@ function OrgChartMain(props) {
                 return <NewEmp />
             case 'detail':
                 return <DetailEmp />
+            default:
+                return <TeamEmpList code={sideId} />
         }
     }
 

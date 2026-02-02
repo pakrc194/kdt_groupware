@@ -45,16 +45,27 @@ const Layout = () => {
 
               return (
                 <li key={menu.id} className="sidebar-item-container">
-                  <Link 
-                    to={`/${currentMain}/${menu.id}`} 
-                    className={`side-item ${isParentActive ? 'active' : ''}`}
-                  >
-                    {menu.name}
-                    {hasSubMenus && <span className="arrow">{isParentActive ? ' ▲' : ' ▼'}</span>}
-                  </Link>
+                  {hasSubMenus && (
+                    <Link
+                      to={`/${currentMain}/${menu.id}`} 
+                      onClick={(e) => e.preventDefault()}
+                      style={{ pointerEvents: 'none' }}
+                      className={`side-item ${isParentActive ? 'active' : ''}`}
+                    >
+                      {menu.name}
+                    </Link>
+                  )}
+                  {!hasSubMenus && (
+                    <Link 
+                      to={`/${currentMain}/${menu.id}`} 
+                      className={`side-item ${isParentActive ? 'active' : ''}`}
+                    >
+                      {menu.name}
+                    </Link>
+                  )}
 
-                  {/* 하위 메뉴 렌더링 조건: subMenus가 있고, 현재 활성화된 상태일 때 */}
-                  {hasSubMenus && isParentActive && (
+                  {/* subMenus가 있을 때 */}
+                  {hasSubMenus  && (
                     <ul className="sub-menu-list">
                       {menu.subMenus.map((sub) => (
                         <li key={sub.id}>

@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useParams, useSearchParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
 function AllEmp(props) {
     const [data, setData] = useState([]);
-
+    
     useEffect(() => {
-        fetcher('/gw/home/1/list')
+        fetcher(`/gw/home/1/teamList/${props.code}`)
         .then(dd => setData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-    }, []);
+    }, [props.code]);
 
 
     return (
         <div>
-            <h1>전체사원리스트</h1>
-            {data.deptId}
+            <h1>팀리스트 {props.code}</h1>
+            
             <table border="">
                 <tbody>
                 <tr>
