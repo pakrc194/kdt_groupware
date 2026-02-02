@@ -14,9 +14,9 @@ function LoginMain(props) {
               { empSn: empSn,empPswd: empPswd});
             
         if(response.data === "성공"){
-            navigate('/home/dashboard');
+            navigate('/EmpDetails');
         }else{
-            navigate('/EmpDetails')
+            alert("로그인 실팽")
         }
         
         }catch(error){
