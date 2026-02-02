@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,10 +29,16 @@ public class HomeController {
 //	}
 	@GetMapping("list")
 	List<EmpPrvc> emplist() {
-		EmpPrvc emp = new EmpPrvc();
-//		emp.setEmpId(1);
-		
+		EmpPrvc emp = new EmpPrvc();		
 		return mapper.empList();
+	}
+	
+	@GetMapping("detail/{id}")
+	EmpPrvc emp(@PathVariable("id") int id) {
+		EmpPrvc emp = new EmpPrvc();
+		emp.setEmpId(id);
+		
+		return mapper.empPrvc(emp);
 	}
 	
 	@PostMapping

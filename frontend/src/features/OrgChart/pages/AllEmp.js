@@ -27,13 +27,18 @@ function AllEmp(props) {
             {data.map((vv, kk) => (
                 <tbody key={kk}>
                 <tr>
-                    <td><Link to={`/orgChart/detail/${vv.empId}`}>{vv.empNm}</Link></td>
+                    <td>
+                        <nav className="nav">
+                        <Link to={`detail/${vv.empId}`}>{vv.empNm}</Link>
+                        </nav>
+                    </td>
                     <td>{vv.deptId}</td>
                     <td>{vv.jbttlId}</td>
                 </tr>
                 </tbody>
             ))}
             </table>
+            <Outlet />
         </div>
     );
 }

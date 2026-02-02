@@ -9,6 +9,7 @@ import AttendanceMain from "../features/Attendance/pages/AttendanceMain";
 import BoardMain from "../features/Board/pages/BoardMain";
 import OrgChartMain from "../features/OrgChart/pages/OrgChartMain";
 import DashboardMain from "../features/Dashboard/pages/DashboardMain";
+import DetailEmp from "../features/OrgChart/pages/DetailEmp";
 
 export default function AppRouter() {
   return (
@@ -23,6 +24,7 @@ export default function AppRouter() {
         <Route path="attendance/:sideId" element={<AttendanceMain />} />
         <Route path="board/:sideId" element={<BoardMain />} />
         <Route path="orgChart/:sideId" element={<OrgChartMain />} />
+        <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
         <Route path="dashboard/:sideId" element={<DashboardMain />} />
       </Route>
     </Routes>
