@@ -6,12 +6,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 
 @Configuration
-public class CorsConfig implements WebMvcConfigurer {
+public class CorsConfig implements WebMvfgscConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		// TODO Auto-generated method stub
 		registry.addMapping("/**")
-		.allowedOrigins("http://192.168.0.117:3000", "http://192.168.219.106:3000")	//본인 리액트 url , 로 추가
+		.allowedOrigins("http://192.168.0.117:3000", "http://192.168.219.106:3000", "http:192.168.0.124:3000")	//본인 리액트 url , 로 추가
 		.allowedMethods("*")
 		.allowedHeaders("*")
 		.exposedHeaders("*")
