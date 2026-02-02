@@ -3,3 +3,38 @@
   display: block;
   color: inherit;
 }
+
+/* 하위 메뉴 리스트 전체 */
+.sub-menu-list {
+  list-style: none;
+  padding-left: 20px; /* 들여쓰기 */
+  background-color: #f8f9fa; /* 배경을 살짝 다르게 */
+  margin: 4px 0;
+  border-radius: 4px;
+}
+
+/* 하위 메뉴 개별 아이템 */
+.side-sub-item {
+  display: block;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #666;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.side-sub-item:hover {
+  color: #007bff;
+}
+
+.side-sub-item.active {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* 화살표 아이콘 */
+.arrow {
+  font-size: 10px;
+  float: right;
+  margin-top: 4px;
+}

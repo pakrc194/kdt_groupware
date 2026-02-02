@@ -1,3 +1,5 @@
+import { Children } from "react";
+
 export const SIDE_CONFIG = {
   approval: {
     title: '전자결재',
@@ -38,7 +40,18 @@ export const SIDE_CONFIG = {
     title: '조직도',
     sideMenus: [
       { id: 'aaa', name: '전체 사원 보기' },
-      { id: 'bbb', name: '팀별 사원 보기' },
+      { id: 'bbb', name: '팀별 사원 보기',
+        subMenus: [
+          { id: 'CP', name: "지점장" },
+          { id: 'FO', name: "식품" },
+          { id: 'BU', name: "뷰티·패션잡화" },
+          { id: 'WF', name: "여성패션" },
+          { id: 'MF', name: "남성패션" },
+          { id: 'HR', name: "인사관리" },
+          { id: 'FM', name: "시설자재" },
+          { id: 'SO', name: "안전관리" },
+        ]
+       },
       { id: 'ccc', name: '사원 추가' },
     ]
   },
