@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BoardPrvc {
 	
-	private int BoardId, Views;
-	private String Title,Creator ;
-	private  Date CreatedAt ;
+	private int boardId, views;
+	private String title,vreator ;
+	private  Date createdAt ;
 }
