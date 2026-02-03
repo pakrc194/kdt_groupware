@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class AprvLineResponse {
 	int aprvLineId;
+	int aprvDocId;
 	int drftRefncEmp1Id, drftRefncEmp2Id, drftRefncEmp3Id;
 	int midAtrzEmpId;
 	int midRefncEmp1Id, midRefncEmp2Id, midRefncEmp3Id;

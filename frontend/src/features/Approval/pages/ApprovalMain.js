@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 // 1. 실제 작업한 파일들을 불러옵니다.
 import DraftPage from './DraftPage';
@@ -8,7 +8,15 @@ import './DraftPage.css'
 
 const ApprovalMain = () => {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
+  
+  useEffect(()=>{
+    localStorage.setItem("EMP_ID", "9")
+    localStorage.setItem("EMP_NM", "한소희")
 
+    
+  },[])
+
+  
   // 2. 스위치 문에서 '컴포넌트'를 반환합니다.
   const renderContent = () => {
     switch (sideId) {
