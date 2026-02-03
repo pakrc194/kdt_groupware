@@ -1,0 +1,62 @@
+.calendar-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7열 고정 */
+  border-left: 1px solid #e0e0e0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.calendar-header-cell {
+  background: #f5f5f5;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 2px solid #ddd;
+}
+
+.calendar-day-cell {
+  min-height: 100px;
+  padding: 8px;
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.calendar-day-cell.empty {
+  background: #fafafa;
+}
+
+.day-number {
+  font-size: 14px;
+  color: #333;
+}
+
+.atdc-entry {
+  margin-top: 5px;
+  padding: 4px;
+  background: #f0f7ff;
+  border-radius: 4px;
+}
+
+.atdc-status {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.atdc-status.PRESENT {
+  color: #2196f3;
+}
+.atdc-status.ABSENT {
+  color: #f44336;
+}
+
+.atdc-time {
+  font-size: 11px;
+  color: #666;
+}
