@@ -62,19 +62,19 @@ function MyAttendanceRecodePage() {
         <h3>연차 현황</h3>
         <div className="leave-stats">
           <div className="leave-item">
-            부여: <strong>{leaveInfo.total}</strong>
+            부여: <strong>{leaveInfo.totalDays}</strong>
           </div>
           <div className="leave-item">
-            사용: <strong>{leaveInfo.used}</strong>
+            사용: <strong>{leaveInfo.usedDays}</strong>
           </div>
           <div className="leave-item highlight">
-            잔여: <strong>{leaveInfo.remain}</strong>
+            잔여: <strong>{leaveInfo.leftDays}</strong>
           </div>
         </div>
         <div className="progress-container">
           <div
             className="progress-bar"
-            style={{ width: `${(leaveInfo.used / leaveInfo.total) * 100}%` }}
+            style={{ width: `${(leaveInfo.usedDays / leaveInfo.totalDays) * 100}%` }}
           ></div>
         </div>
       </div>
@@ -96,7 +96,7 @@ function MyAttendanceRecodePage() {
                 <tr key={idx}>
                   <td>{item.leaveDate}</td>
                   <td>
-                    <span className="badge-leave">연차</span>
+                    <span className="badge-leave">{item.leaveType}</span>
                   </td>
                   <td>{item.status}</td>
                 </tr>

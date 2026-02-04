@@ -16,14 +16,15 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vfive.gw.attendance.dto.MyAtdcStatDTO;
-import vfive.gw.attendance.mapper.MyAtdcStatMapper;
+import vfive.gw.attendance.dto.domain.LeaveDTO;
+import vfive.gw.attendance.dto.response.MyAtdcStatDTO;
+import vfive.gw.attendance.mapper.AtdcMapper;
 
 @Service
-public class MyAtdcStat {
+public class MyAtdcStatService {
 	
 	@Resource
-	MyAtdcStatMapper mapper;
+	AtdcMapper mapper;
 
 	public MyAtdcStatDTO execute(HttpServletRequest request, HttpServletResponse response) {
 		String year = request.getParameter("year");
@@ -33,8 +34,8 @@ public class MyAtdcStat {
 		int empId = 2;
 
 		// 1. 연차 정보 & 리스트 가져오기
-		MyAtdcStatDTO.LeaveInfo leaveInfo = mapper.selectLeaveInfo(empId, year);
-		List<MyAtdcStatDTO.LeaveHistory> leaveHistory = mapper.selectLeaveHistory(empId, year);
+		LeaveDTO.Info leaveInfo = mapper.selectLeaveInfo(empId, year);
+		List<LeaveDTO.History> leaveHistory = mapper.selectLeaveHistory(empId, year);
 
 		// 2. 근무 기록 가져오기
 		List<Map<String, Object>> logs = mapper.selectRawWorkLogs(empId, year);
@@ -97,7 +98,7 @@ public class MyAtdcStat {
 			String.valueOf(streakDays), 
 			Math.round(weeklyHours * 10) / 10.0
 		));
-		res.setLeaveInfo(leaveInfo != null ? leaveInfo : new MyAtdcStatDTO.LeaveInfo(0, 0, 0));
+		res.setLeaveInfo(leaveInfo != null ? leaveInfo : new LeaveDTO.Info(0, 0, 0));
 		res.setLeaveHistory(leaveHistory);
 
 		return res;

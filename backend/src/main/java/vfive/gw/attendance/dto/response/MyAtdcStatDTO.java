@@ -1,36 +1,28 @@
-package vfive.gw.attendance.dto;
+package vfive.gw.attendance.dto.response;
 
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import vfive.gw.attendance.dto.domain.LeaveDTO;
 
 @Data
 public class MyAtdcStatDTO {
+	// 근태통계
 	private Summary summary;
-  private LeaveInfo leaveInfo;
-  private List<LeaveHistory> leaveHistory;
+	// 연차관련
+  private LeaveDTO.Info leaveInfo;
+  private List<LeaveDTO.History> leaveHistory;
 	
 	@Data
   @AllArgsConstructor
+  @NoArgsConstructor
   public static class Summary {
       private int totalWorkDays;     // 총 근무일
       private String streakDays;     // 개근 기록
       private double avgWeeklyHours; // 주당 평균 근무시간
   }
 
-  @Data
-  @AllArgsConstructor
-  public static class LeaveInfo {
-      private double total;
-      private double used;
-      private double remain;
-  }
-
-  @Data
-  public static class LeaveHistory {
-      private String leaveDate;
-      private String status;
-  }
 	
 }

@@ -7,22 +7,22 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vfive.gw.attendance.dto.AtdcCalDTO;
+import vfive.gw.attendance.dto.domain.AtdcDTO;
 import vfive.gw.attendance.mapper.AtdcMapper;
 
 @Service
-public class AtdcCal {
+public class AtdcCalService {
 	
 	@Resource
 	AtdcMapper mapper;
 	
-	public List<AtdcCalDTO> execute(HttpServletRequest request, HttpServletResponse response) {
+	public List<AtdcDTO> execute(HttpServletRequest request, HttpServletResponse response) {
 		String yearMonth = request.getParameter("yearMonth");
 		if (yearMonth == null || yearMonth.isEmpty()) {
       yearMonth = java.time.LocalDate.now().toString().substring(0, 7);
 		}
 		
-		return mapper.myAtdcMon(2, yearMonth);
+		return mapper.selectAtdcHistory(2, yearMonth);
 	}
 	
 	

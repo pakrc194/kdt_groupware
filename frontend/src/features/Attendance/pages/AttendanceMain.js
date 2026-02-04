@@ -4,7 +4,8 @@ import AttendancePage from "./AttendancePage";
 import WorkSheetCheckPage from "./WorkSheetCheckPage";
 import WorkSheetListPage from "./WorkSheetListPage";
 import MyAttendanceRecodePage from "./MyAttendanceRecodePage";
-import EmployeeAttendanceRecodePage from "./EmployeeAttendanceRecodePage";
+import EmpAttendanceList from "./EmpAttendanceList";
+import EmpAtdcDetail from "./EmpAtdcDetail";
 
 function AttendanceMain(props) {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
@@ -21,7 +22,9 @@ function AttendanceMain(props) {
       case "myatdc":
         return <MyAttendanceRecodePage />;
       case "empatdc":
-        return <EmployeeAttendanceRecodePage />;
+        return <EmpAttendanceList />;
+      case "detail":
+        return <EmpAtdcDetail />;
       default:
         return <div>페이지를 찾을 수 없습니다.</div>;
     }
