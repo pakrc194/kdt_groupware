@@ -10,15 +10,16 @@ import vfive.gw.aprv.dto.request.AprvParams;
 import vfive.gw.aprv.mapper.AprvMapper;
 
 @Service
-public class AprvDocInpt implements AprvAction {
+public class AprvDtlVl implements AprvAction {
 	@Resource
 	AprvMapper mapper;
+	
 	
 	@Override
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
-		
-		return mapper.docInpt(pInfo.getPNo());
+		// TODO Auto-generated method stub
+		return mapper.docDtlVl(pInfo.getPNo());
 	}
 
 }

@@ -18,6 +18,6 @@ public class AprvLine implements AprvAction {
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		// TODO Auto-generated method stub
-		return mapper.aprvLine(pInfo.getPNo());
+		return mapper.docLine(pInfo.getPNo());
 	}
 }

@@ -3,10 +3,10 @@ package vfive.gw.aprv.dto.response;
 import lombok.Data;
 
 @Data
-public class AprvInptVlResponse {
-	int docInptVlId;
-	int aprvDocId;
+public class AprvDocInptResponse {
+	int docInptId;
+	int docFormId;
 	int docInptNo;
-	String docInptLbl, docInptType, docInptRmrk, docInptVl;
+	String docInptLbl, docInptType, docInptRmrk;
 	
 }

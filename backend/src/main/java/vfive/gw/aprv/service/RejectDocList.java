@@ -7,18 +7,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
+import vfive.gw.aprv.mapper.AprvListMapper;
 import vfive.gw.aprv.mapper.AprvMapper;
 
+
 @Service
-public class AprvDocInpt implements AprvAction {
+public class RejectDocList implements AprvAction {
 	@Resource
-	AprvMapper mapper;
+	AprvListMapper mapper;
 	
 	@Override
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.docInpt(pInfo.getPNo());
+		return mapper.rejectList(pInfo.getPNo());
 	}
 
 }

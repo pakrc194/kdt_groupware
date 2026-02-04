@@ -2,55 +2,91 @@ import React, { useEffect, useState } from 'react';
 import './ApprovalLine.css';
 import Modal from '../../../shared/components/Modal';
 import { fetcher } from '../../../shared/api/fetcher';
+import ReferModal from './modals/ReferModal';
+import AtrzModal from './modals/AtrzModal';
+import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 
 const ApprovalLineDetail = ({aprvLine, drafter}) => {
     const empId = Number(localStorage.getItem("EMP_ID"))
+    const [selectedEmp, setSelectedEmp] = useState(null);
+    const [openModal, setOpenModal] = useState(""); 
 
-    const [aptzDate, setAptzDate] = useState();
+    const [lineData, setLineData] = useState([]);
 
-    const [openModal, setOpenModal] = useState(null); 
-// "REF" | "MID" | "MID_REF" | "LAST" | null
 
-    const fn_name = (targetId, modalType) => {
-        setOpenModal(modalType);
-        // if (Number(empId) === Number(targetId)) {
-        //     setOpenModal(modalType);
-        // } else {
-        //     setOpenModal(null);
-        // }
-    };
+    useEffect(()=>{
+        setLineData(aprvLine);
+    },[aprvLine]) 
 
-    const fn_close = () => setOpenModal(null);
+    const fn_close = () => setOpenModal("");
 
-    const fn_ok = async (aprvEmpId, modalType) => {
-        setOpenModal(null)
-        console.log(aprvLine.aprvDocId, empId, modalType)
+    const fn_ok = async (aprvEmpId, roleCd, prcsRes="") => {
+        setOpenModal("")
+        console.log(aprvLine.aprvDocId, aprvEmpId, roleCd)
         
         let stts= "APPROVED"
-        if(modalType.includes("REF")) {
+        if(roleCd.includes("REF")) {
             stts = "READ"
-        } else if(modalType==="LAST") {
-            stts = "COMPLETED"
+        } else if(roleCd==="LAST_ATRZ") {
+            stts = "COMPLETE"
         }
 
-
-        let nextNm = "";
-        if(modalType==="MID") {
+        let nextNm = null;
+        if(roleCd==="MID_ATRZ") {
             nextNm = aprvLine.lastAtrzEmpNm;
         }
-        fetcher("/gw/aprv/AprvPrcs", {
-            method: "POST",
-            body: {
-                aprvDocId : aprvLine.aprvDocId,
-                aprvPrcsEmpId : aprvEmpId,
-                aprvPrcsStts : stts,
-                nextEmpNm: nextNm,
-            }
-        }).then(console.log)
 
-        const date = new Date().toISOString().slice(0, 10);
-        setAptzDate(date)
+        let rjctRsn = null
+        if(prcsRes.prcs == "rjct") {
+            stts = "REJECT"
+            nextNm = null
+            rjctRsn = prcsRes.rjctRsn
+        }
+
+
+        console.log("fn_ok --")
+        console.log(prcsRes.prcs+", "+prcsRes.rjctRsn)
+        console.log(`
+                aprvDocId : ${aprvLine.aprvDocId},
+                aprvPrcsEmpId : ${aprvEmpId},
+                aprvPrcsStts : ${stts},
+                nextEmpNm: ${nextNm},
+                rjctRsn: ${rjctRsn}
+            `)
+
+        // fetcher("/gw/aprv/AprvPrcs", {
+        //     method: "POST",
+        //     body: {
+        //         aprvDocId : aprvLine.aprvDocId,
+        //         aprvPrcsEmpId : aprvEmpId,
+        //         aprvPrcsStts : stts,
+        //         nextEmpNm: nextNm,
+        //         rjctRsn: rjctRsn
+        //     }
+        // }).then(console.log)
+        
+        const date = formatToYYMMDDHHMMSS(new Date());
+
+        setLineData(prev =>
+            prev.map(item =>
+            item.aprvPrcsEmpId === aprvEmpId && item.roleCd === roleCd
+                ? { ...item, aprvPrcsDt: date }
+                : item
+            )
+        );
     }
+
+    const formatToYYMMDDHHMMSS = (date) => {
+        const yy = String(date.getFullYear());
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const mi = String(date.getMinutes()).padStart(2, '0');
+        const ss = String(date.getSeconds()).padStart(2, '0');
+
+        return `${yy}${mm}${dd}${hh}${mi}${ss}`;
+    };
+
 
     if (!aprvLine) {
         return <div>결재선 정보를 불러오는 중...</div>;
@@ -59,39 +95,33 @@ const ApprovalLineDetail = ({aprvLine, drafter}) => {
     return (
         <>
             <div className='approvalLine'>
-                <div className='empInfo'>
-                    <div>기안자</div>
-                    <div>{drafter.empNm}</div>
-                </div>
-                {aprvLine.drftRefncEmp1Nm && <div className='empInfo'>
-                    <div>참조자</div>
-                    <div onClick={()=>fn_name(aprvLine.drftRefncEmp1Id, "REF")}>{aprvLine.drftRefncEmp1Nm}</div>
-                    <div></div>
-                    {openModal === "REF" && 
-                    <Modal title="참조" onClose={fn_close} onOk={()=>fn_ok(aprvLine.lastAtrzEmpId, "REF")}/>}
-                </div>}
-                {aprvLine.midAtrzEmpNm && <div className='empInfo'>
-                    <div>중간 결재자</div>
-                    <div onClick={()=>fn_name(aprvLine.midAtrzEmpId, "MID")}>{aprvLine.midAtrzEmpNm}</div>
-                    {openModal === "MID" && 
-                        <Modal title="중간 결재" onClose={fn_close} onOk={()=>fn_ok(aprvLine.lastAtrzEmpId, "MID")}/>}
-                </div>}
-                {aprvLine.midRefncEmp1Nm && <div className='empInfo'>
-                    <div>중간 참조자</div>
-                    <div onClick={()=>fn_name(aprvLine.midRefncEmp1Id, "MID_REF")}>{aprvLine.midRefncEmp1Nm}</div>
-                    {openModal === "MID_REF" && 
-                        <Modal title="참조" onClose={fn_close} onOk={()=>fn_ok(aprvLine.midRefncEmp1Id, "MID_REF")} okMsg="확인"/>}
-                </div>}
-                <div className='empInfo'>
-                    <div>최종 결재자</div>
-                    <div onClick={()=>fn_name(aprvLine.lastAtrzEmpId, "LAST")}>{aprvLine.lastAtrzEmpNm}</div>
-                    <div>{aptzDate}</div>
-                    {openModal === "LAST" && 
-                        <Modal title="최종 결재" onClose={fn_close} onOk={()=>fn_ok(aprvLine.lastAtrzEmpId, "LAST")} okMsg="확인"/>}
-                </div>
+                {lineData.map((v, k)=> {
+                    return (
+                        <div className='empInfo' key={k}>
+                            <div>{v.roleCd}</div>
+                            <div onClick={()=>{
+                                setSelectedEmp(v)
+                                setOpenModal(v.roleCd)
+                            }}>
+                                    {v.empNm}
+                            </div>
+                            {v.aprvPrcsDt && <div>{formatToYYMMDD(v.aprvPrcsDt)}</div>}
+                            
+                        </div>
+                    )
+                })}
+                {openModal.includes("REF") &&
+                    <ReferModal onClose={fn_close} onOk={()=>fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, "")}/> }
+                {openModal.includes("ATRZ") &&
+                    <AtrzModal onClose={fn_close} onOk={(prcsRes)=>fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, prcsRes)}/> }
+
             </div>
         </>
     );
+
+
+
+   
 };
 
 export default ApprovalLineDetail;

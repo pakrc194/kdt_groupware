@@ -4,14 +4,17 @@ import { useParams } from 'react-router-dom';
 import DraftPage from './DraftPage';
 import ApprovalBox from './ApprovalBox';
 import './DraftPage.css'
+import DraftBox from './DraftBox';
+import ReferBox from './ReferBox';
+import RejectBox from './RejectBox';
 
 
 const ApprovalMain = () => {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
   
   useEffect(()=>{
-    localStorage.setItem("EMP_ID", "9")
-    localStorage.setItem("EMP_NM", "한소희")
+    localStorage.setItem("EMP_ID", "1")
+    localStorage.setItem("EMP_NM", "강백호")
 
     
   },[])
@@ -22,8 +25,14 @@ const ApprovalMain = () => {
     switch (sideId) {
       case 'draft':
         return <DraftPage />; // 경로 문자열이 아니라 컴포넌트 호출!
+      case 'draftBox':
+        return <DraftBox />;
       case 'approvalBox':
         return <ApprovalBox />;
+      case 'referBox':
+        return <ReferBox />;
+      case 'rejectBox':
+        return <RejectBox />;
       case 'completed':
         return <div>✅ 결재 완료 목록 화면 (팀원이 작성 중...)</div>;
       default:

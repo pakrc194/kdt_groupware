@@ -7,10 +7,10 @@ import InputForm from '../components/InputForm';
 import DetailForm from '../components/DetailForm';
 
 const ApprovalDetail = () => {
-    const {docId} = useParams();
+    const {sideId, docId} = useParams();
     const [aprvDocDetail, setAprvDocDetail] = useState({});
     const [inputList, setInputList] = useState([]);
-    const [aprvLine, setAprvLine] = useState({});
+    const [aprvLine, setAprvLine] = useState([]);
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -18,11 +18,11 @@ const ApprovalDetail = () => {
 
         fetcher(`/gw/aprv/AprvLine/${docId}`).then(setAprvLine)
 
-        fetcher(`/gw/aprv/DetailInptVl/${docId}`).then(setInputList)
+        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList)
     },[])
 
     const fn_list = () => {
-        navigate("/approval/approvalBox")
+        navigate(`/approval/${sideId}`)
     }
 
     return (
@@ -33,7 +33,7 @@ const ApprovalDetail = () => {
                 <div>문서번호 {aprvDocDetail.aprvDocNo}</div>
                 <div>기안자 {aprvDocDetail.drftEmpNm}</div>
                 <div>기안일시 {aprvDocDetail.aprvDocDrftDt}</div>
-                <div>결재선 <ApprovalLineDetail aprvLine={aprvLine} drafter={{empId:aprvDocDetail.drftEmpId, empNm:aprvDocDetail.drftEmpNm}}/></div>
+                <div>결재선 <ApprovalLineDetail aprvLine={aprvLine} /></div>
                 <div>
                     {inputList.map((v, k)=>
                         <div key={k}>
