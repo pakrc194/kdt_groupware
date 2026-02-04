@@ -16,8 +16,8 @@ export const SIDE_CONFIG = {
   schedule: {
     title: '일정관리',
     sideMenus: [
-      { id: 'aaa', name: '업무조회' },
-      { id: 'bbb', name: '업무지시' },
+      { id: 'check', name: '업무조회' },
+      { id: 'instruction', name: '업무지시' },
     ]
   },
   attendance: {

@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.home.dto.Sched;
 
 @Mapper
 public interface HomeMapper {
@@ -18,4 +19,13 @@ public interface HomeMapper {
 	
 	@Select("select EMP_PRVC.*, DEPT_INFO.DEPT_NAME from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id where EMP_PRVC.dept_id = (select dept_id from DEPT_INFO where dept_code = #{deptCode})")
 	List<EmpPrvc> empTeamList(EmpPrvc emp);
+	
+	@Select("select * from SCHED")
+	List<Sched> shedList();
+	
+	@Select("select * from SCHED where sched_id = #{schedId}")
+	Sched schedDetail(Sched sc);
+	
+	@Select("select * from SCHED where sched_start_date = #{schedStartDate}")
+	List<Sched> schedDailyList(Sched sc);
 }

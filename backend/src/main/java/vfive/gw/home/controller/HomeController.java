@@ -1,17 +1,22 @@
 package vfive.gw.home.controller;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
 import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.home.dto.Sched;
 import vfive.gw.home.mapper.HomeMapper;
 
 @RestController
@@ -47,6 +52,28 @@ public class HomeController {
 		emp.setDeptCode(code);
 		
 		return mapper.empTeamList(emp);
+	}
+	
+	@GetMapping("schedule")
+	List<Sched> schedList() {
+		Sched sc = new Sched();
+		System.out.println();
+		return mapper.shedList();
+	}
+	
+	@GetMapping("sched_detail/{id}")
+	Sched schedDetail(@PathVariable("id") int id) {
+		Sched sc = new Sched();
+		sc.setSchedId(id);
+		return mapper.schedDetail(sc);
+	}
+	
+	@GetMapping("sched_search/{date}")
+	List<Sched> schedMonthList(@PathVariable("date") Date date) {
+		System.out.println("일정리스트");
+		Sched sc = new Sched();
+		sc.setSchedStartDate(date);
+		return mapper.schedDailyList(sc);
 	}
 	
 	@PostMapping
