@@ -1,42 +1,44 @@
 package vfive.gw.attendance.controller;
 
 import java.util.List;
-import java.util.Map;
+
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import vfive.gw.attendance.dto.AtdcCal;
-import vfive.gw.attendance.dto.AtdcPageInfo;
-import vfive.gw.attendance.mapper.AtdcMapper;
-import vfive.gw.attendance.provider.AtdcProvider;
-import vfive.gw.attendance.service.AtdcAction;
+import vfive.gw.attendance.dto.AtdcCalDTO;
+import vfive.gw.attendance.dto.MyAtdcStatDTO;
+import vfive.gw.attendance.service.AtdcCal;
+import vfive.gw.attendance.service.MyAtdcStat;
 
 @RestController
-@RequestMapping("/gw/atdc/{service}")
+@RequestMapping("/gw/atdc")
 public class AttendacneController {
-	@Resource
-	AtdcProvider provider;
 	
-	@GetMapping("")
-	Object list(AtdcPageInfo pageInfo,
-			HttpServletRequest request, HttpServletResponse response) {
-		Object res = provider.getContext().getBean(pageInfo.getService(), AtdcAction.class).execute(request, response);
+	@Resource
+	private AtdcCal atdcCal;
+	
+	@Resource
+	private MyAtdcStat myAtdcStat;
+	
+	// 근태 관리 캘린더 (메인)
+	@GetMapping("atdcCal")
+	List<AtdcCalDTO> atdcCal(HttpServletRequest request, HttpServletResponse response) {
+		List<AtdcCalDTO> res = atdcCal.execute(request, response);
+		return res;
+	}
+	
+	// 개인 근태 통계
+	@GetMapping("myAtSt")
+	MyAtdcStatDTO myAtdcStat(HttpServletRequest request, HttpServletResponse response) {
+		MyAtdcStatDTO res = myAtdcStat.execute(request, response);
 		
 		return res;
 	}
 	
 	
-	@PostMapping
-	public Map<String, Object> test(@RequestBody Map<String, Object> body) {
-		body.put("result", "ok");
-	    return body;
-	}
 }

@@ -223,7 +223,108 @@ function WorkSheetCheckPage(props) {
 
       {/* 조 편성 모달은 그대로 유지 (다른 교대제에서 사용해야 하므로) */}
       {isModalOpen && (
-        <div className="modal-overlay">{/* ... 기존 모달 코드 동일 ... */}</div>
+        <div className="modal-overlay">
+          <div className="setup-modal">
+            <div className="modal-header">
+              <h2>조 편성 관리</h2>
+              <button className="close-x" onClick={() => setIsModalOpen(false)}>
+                ×
+              </button>
+            </div>
+
+            <div className="modal-grid-content">
+              {/* 왼쪽: 전체 사원 리스트 (Pool) */}
+              <div className="employee-pool">
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="사원명 검색..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <div className="pool-list">
+                  {tempEmps
+                    .filter((emp) => emp.name.includes(searchTerm))
+                    .map((emp) => (
+                      <div key={emp.id} className="pool-item">
+                        <span>
+                          {emp.name} ({emp.position})
+                        </span>
+                        <div className="add-buttons">
+                          {["A", "B", "C", "D"].map((g) => (
+                            <button
+                              key={g}
+                              onClick={() => {
+                                setTempEmps((prev) =>
+                                  prev.map((te) =>
+                                    te.id === emp.id ? { ...te, group: g } : te,
+                                  ),
+                                );
+                              }}
+                            >
+                              {g}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* 오른쪽: 조별 배치 현황 */}
+              <div className="group-grid">
+                {["A", "B", "C", "D"].map((groupName) => (
+                  <div key={groupName} className="group-box">
+                    <div className="group-box-header">{groupName}조</div>
+                    <div className="group-box-body">
+                      {tempEmps
+                        .filter((emp) => emp.group === groupName)
+                        .map((emp) => (
+                          <div key={emp.id} className="member-tag">
+                            <span>
+                              {emp.name} {emp.position}
+                            </span>
+                            <button
+                              className="remove-btn"
+                              onClick={() => {
+                                setTempEmps((prev) =>
+                                  prev.map((te) =>
+                                    te.id === emp.id
+                                      ? { ...te, group: "" }
+                                      : te,
+                                  ),
+                                );
+                              }}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-footer-btns">
+              <button
+                className="btn-cancel"
+                onClick={() => setIsModalOpen(false)}
+              >
+                취소
+              </button>
+              <button
+                className="btn-save"
+                onClick={() => {
+                  setEmployees(tempEmps);
+                  setIsModalOpen(false);
+                }}
+              >
+                저장하기
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

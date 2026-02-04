@@ -69,25 +69,50 @@ function AttendancePage() {
         {/* 달력 본문 */}
         {calendarCells.map((day, idx) => {
           const atdc = findAtdcData(day);
+          const dateObj = day ? dayjs(currentMonth).date(day) : null;
+          const isWeekend = dateObj
+            ? dateObj.day() === 0 || dateObj.day() === 6
+            : false;
+
           return (
             <div
               key={idx}
-              className={`calendar-day-cell ${!day ? "empty" : ""}`}
+              className={`calendar-day-cell ${!day ? "empty" : ""} ${isWeekend ? "weekend-bg" : ""}`}
             >
-              {day && <span className="day-number">{day}</span>}
+              {day && (
+                <>
+                  <span className="day-number">{day}</span>
 
-              {atdc && (
-                <div className="atdc-entry">
-                  <div className={`atdc-status ${atdc.atdcSttsCd}`}>
-                    {atdc.atdcSttsCd === "PRESENT" ? "● 출근" : "○ 결근"}
-                  </div>
-                  <div className="atdc-time">
-                    In: {dayjs(atdc.clkInDtm).format("HH:mm")}
-                  </div>
-                  <div className="atdc-time">
-                    Out: {dayjs(atdc.clkOutDtm).format("HH:mm")}
-                  </div>
-                </div>
+                  {/* 1. DB에 근태 기록이 있는 경우 (출근, 연차, 출장, 결근 등) */}
+                  {atdc ? (
+                    <div className="atdc-entry">
+                      <div className={`atdc-status ${atdc.atdcSttsCd}`}>
+                        {atdc.atdcSttsCd === "PRESENT" && "● 출근"}
+                        {atdc.atdcSttsCd === "LEAVE" && "⛱ 연차"}
+                        {atdc.atdcSttsCd === "BUSINESS_TRIP" && "✈ 출장"}
+                        {atdc.atdcSttsCd === "ABSENT" && "❗ 결근"}
+                        {atdc.atdcSttsCd === "OFF" && "🏠 휴무"}
+                      </div>
+                      {atdc.clkInDtm && (
+                        <div className="atdc-time">
+                          {dayjs(atdc.clkInDtm).format("HH:mm")} ~{" "}
+                          {atdc.clkOutDtm
+                            ? dayjs(atdc.clkOutDtm).format("HH:mm")
+                            : ""}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    /* 2. DB에 기록은 없지만 주말인 경우 자동으로 '휴무' 표시 */
+                    day &&
+                    isWeekend && (
+                      <div className="atdc-entry off-day">
+                        <div className="atdc-status OFF">🏠 휴무</div>
+                        <div className="atdc-time">주말 정기 휴무</div>
+                      </div>
+                    )
+                  )}
+                </>
               )}
             </div>
           );

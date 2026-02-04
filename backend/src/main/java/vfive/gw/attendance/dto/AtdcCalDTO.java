@@ -5,7 +5,7 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class AtdcCal {
+public class AtdcCalDTO {
 	private int atdcId, empId;
 	private String atdcSttsCd;
 	private Date wrkYmd, clkInDtm, clkOutDtm;
