@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import vfive.gw.board.dto.BoardPrvc;
 import vfive.gw.board.mapper.BoardMapper;
 
-@Service("list")
+@Service()
 public class BoardList implements BoardAction{
 	
 	@Resource
@@ -24,6 +24,7 @@ public class BoardList implements BoardAction{
 			HttpServletResponse response) {
 		
 		pInfo.setTotal(mapper.total());
+		
 		return mapper.list(pInfo);
 	}
 	

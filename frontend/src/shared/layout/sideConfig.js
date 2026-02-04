@@ -27,7 +27,7 @@ export const SIDE_CONFIG = {
   },
   board: {
     title: '공지게시판',
-    sideMenus: 
+    sideMenus: [
       { id: 'NoticeBo', name: '중요 게시판' },
       { id: 'PublicBo', name: '공용 게시판' },
       { id: 'HrBo', name: '인사관리 게시판' },
