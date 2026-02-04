@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class Sched {
-	private int schedId, schedLoc;
-	private String schedTitle, schedType, schedDetail, schedTeam;
-	Date schedStartDate, schedEndDate;
+	private int schedId, schedLoc, schedPersId, schedTeamId;
+	private String schedTitle, schedType, schedDetail, schedTeam, schedState;
+	private Date schedStartDate, schedEndDate;
 }

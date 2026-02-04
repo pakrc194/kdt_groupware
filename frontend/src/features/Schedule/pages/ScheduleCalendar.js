@@ -17,17 +17,19 @@ function ScheduleCalendar(props) {
     const defaultDate = new Date();
 
     const yyyy = defaultDate.getFullYear();
-    const mm = String(defaultDate.getMonth() + 1).padStart(2, '0');
-    const mm2 = String(defaultDate.getMonth() + 2).padStart(2, '0');
 
-    const formattedStart = `${yyyy}-${mm}-01`;
-    const formattedEnd = `${yyyy}-${mm2}-01`;
+    // 한 달 시작일과 마지막일
+    const monthStart = new Date(yyyy, defaultDate.getMonth(), 1);
+    const monthEnd = new Date(yyyy, defaultDate.getMonth() + 1, 0);
+    const formattedStart = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(monthStart.getDate()).padStart(2, '0')}`;
+    const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
+
 
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule`)
+        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-    }, [date]);
+    }, [date, props.todo[0]]);
 
     const eventStyleGetter = (event) => {
         let backgroundColor = '#3174ad'; // 기본

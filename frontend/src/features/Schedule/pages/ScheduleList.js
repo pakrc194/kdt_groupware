@@ -22,17 +22,21 @@ function ScheduleList(props) {
     const mm2 = String(date.getMonth() + 2).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
 
+
+    // 한 달 시작일과 마지막일
+    const monthStart = new Date(yyyy, date.getMonth(), 1);
+    const monthEnd = new Date(yyyy, date.getMonth() + 1, 0);
+    const formattedStart = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(monthStart.getDate()).padStart(2, '0')}`;
+    const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
+
+
     const [sched, setSched] = useState([]);
 
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule`)
+        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}`)
         .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-    }, [currentDate]);
-
-    // 한 달 시작일과 마지막일
-    const monthStart = new Date(yyyy, currentDate.getMonth(), 1);
-    const monthEnd = new Date(yyyy, currentDate.getMonth() + 1, 0);
+    }, [currentDate, props.todo[0]]);
 
     // 한 달의 날짜 배열 생성
     const daysInMonth = [];
