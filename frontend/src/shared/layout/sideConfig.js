@@ -29,13 +29,13 @@ export const SIDE_CONFIG = {
   board: {
     title: '공지게시판',
     sideMenus: [
-      { id: 'NoticeBo', name: '중요 게시판' },
-      { id: 'PublicBo', name: '공용 게시판' },
-      { id: 'HrBo', name: '인사관리 게시판' },
-      { id: 'FaBo', name: '시설자재 게시판' },
-      { id: 'SaBo', name: '안전관리 게시판' },
-      { id: 'FloorBo', name: '층 게시판' },
-      { id: 'MyPostsBo', name: '내가 쓴 게시판' },
+      { id: 'important', name: '중요 게시판' },
+      { id: 'public', name: '공용 게시판' },
+      { id: 'HR', name: '인사관리 게시판' },
+      { id: 'FA', name: '시설자재 게시판' },
+      { id: 'SA', name: '안전관리 게시판' },
+      { id: 'Floor', name: '층 게시판' },
+      { id: 'MyPosts', name: '내가 쓴 게시판' },
     ]
   },
   orgChart: {
