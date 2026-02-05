@@ -5,8 +5,10 @@ import { fetcher } from '../../../shared/api/fetcher';
 import ReferModal from './modals/ReferModal';
 import AtrzModal from './modals/AtrzModal';
 import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
+import { useParams } from 'react-router-dom';
 
-const ApprovalLineDetail = ({aprvLine, drafter}) => {
+const ApprovalLineDetail = ({aprvLine}) => {
+    const {docId} = useParams();
     const empId = Number(localStorage.getItem("EMP_ID"))
     const [selectedEmp, setSelectedEmp] = useState(null);
     const [openModal, setOpenModal] = useState(""); 
@@ -15,14 +17,15 @@ const ApprovalLineDetail = ({aprvLine, drafter}) => {
 
 
     useEffect(()=>{
+        console.log(aprvLine);
         setLineData(aprvLine);
     },[aprvLine]) 
 
     const fn_close = () => setOpenModal("");
 
-    const fn_ok = async (aprvEmpId, roleCd, prcsRes="") => {
+    const fn_ok = (aprvEmpId, roleCd, prcsRes="") => {
         setOpenModal("")
-        console.log(aprvLine.aprvDocId, aprvEmpId, roleCd)
+        console.log(docId, aprvEmpId, roleCd)
         
         let stts= "APPROVED"
         if(roleCd.includes("REF")) {
@@ -32,14 +35,17 @@ const ApprovalLineDetail = ({aprvLine, drafter}) => {
         }
 
         let nextNm = null;
+        let nextId = 0;
         if(roleCd==="MID_ATRZ") {
-            nextNm = aprvLine.lastAtrzEmpNm;
+            nextNm = aprvLine.filter(v=>v.roleCd==="LAST_ATRZ")[0].empNm;
+            nextId = aprvLine.filter(v=>v.roleCd==="LAST_ATRZ")[0].aprvPrcsEmpId;
         }
 
         let rjctRsn = null
         if(prcsRes.prcs == "rjct") {
             stts = "REJECT"
             nextNm = null
+            nextId = 0;
             rjctRsn = prcsRes.rjctRsn
         }
 
@@ -47,23 +53,25 @@ const ApprovalLineDetail = ({aprvLine, drafter}) => {
         console.log("fn_ok --")
         console.log(prcsRes.prcs+", "+prcsRes.rjctRsn)
         console.log(`
-                aprvDocId : ${aprvLine.aprvDocId},
+                aprvDocId : ${docId},
                 aprvPrcsEmpId : ${aprvEmpId},
                 aprvPrcsStts : ${stts},
+                nextEmpId: ${nextId},
                 nextEmpNm: ${nextNm},
                 rjctRsn: ${rjctRsn}
             `)
 
-        // fetcher("/gw/aprv/AprvPrcs", {
-        //     method: "POST",
-        //     body: {
-        //         aprvDocId : aprvLine.aprvDocId,
-        //         aprvPrcsEmpId : aprvEmpId,
-        //         aprvPrcsStts : stts,
-        //         nextEmpNm: nextNm,
-        //         rjctRsn: rjctRsn
-        //     }
-        // }).then(console.log)
+        fetcher("/gw/aprv/AprvPrcs", {
+            method: "POST",
+            body: {
+                aprvDocId : docId,
+                aprvPrcsEmpId : aprvEmpId,
+                aprvPrcsStts : stts,
+                nextEmpId: nextId,
+                nextEmpNm: nextNm,
+                rjctRsn: rjctRsn
+            }
+        }).then(console.log)
         
         const date = formatToYYMMDDHHMMSS(new Date());
 

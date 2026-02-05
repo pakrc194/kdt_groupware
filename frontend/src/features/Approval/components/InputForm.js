@@ -1,39 +1,55 @@
 import React, { useEffect, useState } from 'react';
 
-const InputForm = ({inputForm}) => {
-    const [inputData, setInputData] = useState("");
-
-    useEffect(()=>{
-        let dbDate = inputForm.value.toString();
-        if(inputForm.type==="DATE") {
-            dbDate = `${dbDate.substring(0,4)}-${dbDate.substring(4,6)}-${dbDate.substring(6,8)}`;
-        }
-        setInputData(dbDate)
-    },[])
-
+const InputForm = ({drftDate, setDrftDate, inputForm, setInputList}) => {
+    
     const fn_change = (e)=>{
-        setInputData(e.target.value)
+        setInputList(prev=> 
+            prev.map(v=>{
+                if(v.docInptLbl == e.target.name) {
+                    return {...v, docInptVl: e.target.value} ;
+                }
+                return v;
+            })
+        )
+        
+        //console.log(inputForm)
+        
+        //inputForm["value"]=e.target.value;
+
+        
+        if(e.target.type=="date") {
+            console.log("changeDate",e.target.name,":",e.target.value);
+            let targetName = "drftStart"
+            if(e.target.name.includes("종료")) {
+                targetName = "drftEnd"
+            }
+
+             setDrftDate(prev => ({
+                ...prev,
+                [targetName]: e.target.value
+            }));
+        }
     }
 
-    switch(inputForm.type) {
+    switch(inputForm.docInptType) {
         case 'SELECT' :
             return (
                 <>
-                    {inputForm.label}<select value={inputData} onChange={fn_change}>
-                        {inputForm.option.split(',').map((v, k)=><option key={k} value={v}>{v}</option>)}
+                    {inputForm.docInptLbl}<select name={inputForm.docInptLbl} value={inputForm.docInptVl ||""} onChange={fn_change}>
+                        {inputForm.docInptRmrk.split(',').map((v, k)=><option key={k} value={v}>{v}</option>)}
                     </select>
                 </>
             )
         case 'DATE' :
             return (
                 <>
-                    {inputForm.label}<input type={inputForm.type} value={inputData} onChange={fn_change}/>
+                    {inputForm.docInptLbl}<input name={inputForm.docInptLbl} type={inputForm.docInptType} value={inputForm.docInptVl||""} onChange={fn_change}/>
                 </>
             )
         default : 
             return (
                 <>
-                    {inputForm.label}<input type={inputForm.type} value={inputData} onChange={fn_change}/>
+                    {inputForm.docInptLbl}<input name={inputForm.docInptLbl} type={inputForm.docInptType} value={inputForm.docInptVl||""} onChange={fn_change}/>
                 </>
             )
     }

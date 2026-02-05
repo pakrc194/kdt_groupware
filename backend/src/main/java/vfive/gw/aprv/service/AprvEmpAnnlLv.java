@@ -5,21 +5,21 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
-import vfive.gw.aprv.mapper.AprvLineMapper;
+import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
+import vfive.gw.aprv.mapper.AprvMapper;
 
 @Service
-public class AprvLine implements AprvAction {
+public class AprvEmpAnnlLv {
 	@Resource
-	AprvLineMapper mapper;
+	AprvMapper mapper;
 	
-	@Override
-	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
-			HttpServletResponse response) {
-		// TODO Auto-generated method stub
+
+	public AprvEmpAnnlLvResponse load(AprvEmpAnnlLvRequest req) {
 		
-		
-		return mapper.docLine(pInfo.getPNo());
+		return mapper.empAnnlLv(req);
 	}
+
 }
