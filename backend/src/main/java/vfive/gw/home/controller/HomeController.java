@@ -73,11 +73,11 @@ public class HomeController {
 		return mapper.empTeamList(emp);
 	}
 	
-	@GetMapping("schedule/{sdate}/{edate}/{team_id}/{emp_sn}/{emp_id}")
+	@GetMapping("schedule/{sdate}/{edate}/{dept_id}/{emp_sn}/{emp_id}")
 	List<Sched> schedList(
 			@PathVariable("sdate") Date sdate,
 			@PathVariable("edate") Date edate,
-			@PathVariable("team_id") String team_id,
+			@PathVariable("dept_id") String dept_id,
 			@PathVariable("emp_sn") String emp_sn,
 			@PathVariable("emp_id") int emp_id
 			) {
@@ -85,7 +85,7 @@ public class HomeController {
 		sc.setSchedStartDate(sdate);
 		sc.setSchedEndDate(edate);
 		sc.setSchedState("0");		// 고정
-		sc.setSchedTeamId(team_id);
+		sc.setSchedDeptId(dept_id);
 		sc.setSchedEmpSn(emp_sn);	// 사번
 		sc.setSchedAuthorId(emp_id);
 		return mapper.schedList(sc);
@@ -159,7 +159,10 @@ public class HomeController {
 	// 업무지시 등록
 	@PostMapping("/instruction/upload")
 	int instructionUpload(@RequestBody Sched sc) {
+//		sc.getId();
 		return mapper.instructionUpload(sc);
+		
+//		return sc.getId();
 	}
 	
 	
@@ -174,7 +177,7 @@ public class HomeController {
 	List<Sched> schedMonthList(@PathVariable("date") Date date) {
 		Sched sc = new Sched();
 		sc.setSchedStartDate(date);
-		System.out.println("일정리스트 "+ sc.getSchedTeamId()+", "+sc.getSchedAuthorId());
+		System.out.println("일정리스트 "+ sc.getSchedDeptId()+", "+sc.getSchedAuthorId());
 		return mapper.schedDailyList(sc);
 	}
 	

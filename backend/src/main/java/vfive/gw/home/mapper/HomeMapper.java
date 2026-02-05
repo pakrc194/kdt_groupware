@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.home.dto.DeptInfo;
@@ -34,7 +35,7 @@ public interface HomeMapper {
 			+ "where "
 			+ "sched_end_date >= #{schedStartDate} and sched_start_date <= #{schedEndDate} "
 			+ "and (sched_type = 'ACOMPANY' "	// 회사일정
-			+ "or (sched_type = 'BTEAM' and FIND_IN_SET(#{schedTeamId}, sched_team_id) > 0) "
+			+ "or (sched_type = 'BTEAM' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
 			+ "or (sched_type = 'CPERSONAL' and sched_emp_sn = #{schedEmpSn})"
 			+ "or (sched_type = 'DTODO' and sched_author_id = #{schedAuthorId} and sched_state = #{schedState}) "
 			+ "or (sched_emp_sn = #{schedEmpSn}))"
@@ -74,8 +75,14 @@ public interface HomeMapper {
 	List<LocationInfo> locationList();
 	
 	// 업무지시 등록
-	@Insert("insert into SCHED (sched_title, sched_detail, sched_type, sched_start_date, sched_end_date, sched_author_id, sched_team, sched_team_id, sched_emp_sn) "
-			+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedTeam}, #{schedTeamId}, #{schedEmpSn})")
+	@SelectKey(
+			keyProperty = "id",
+			resultType = Integer.class,
+			before = false,
+			statement = "select max(sched_id) from SCHED"
+			)
+	@Insert("insert into SCHED (sched_title, sched_detail, sched_type, sched_start_date, sched_end_date, sched_author_id, sched_dept, sched_dept_id, sched_emp_sn) "
+			+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDept}, #{schedDeptId}, #{schedEmpSn})")
 	int instructionUpload(Sched sc);
 	
 	@Select("select * from SCHED where sched_start_date <= #{schedStartDate} and sched_type = #{schedType} and sched_author_id = #{schedAuthorId} order by sched_start_date desc")

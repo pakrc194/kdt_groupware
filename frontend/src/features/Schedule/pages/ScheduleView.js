@@ -166,7 +166,7 @@ function ScheduleView(props) {
                             <td>{vv.schedId}</td> */}
                         </tr><tr>
                             <td>담당팀</td>
-                            <td>{vv.schedTeam}</td>
+                            <td>{vv.schedDept}</td>
                         </tr><tr>
                             <td>위치</td>
                             <td>{vv.schedLoc}</td>
@@ -198,7 +198,7 @@ function ScheduleView(props) {
                             <td>{vv.schedId}</td> */}
                         </tr><tr>
                             <td>담당팀</td>
-                            <td>{vv.schedTeamId} {vv.schedTeam}</td>
+                            <td>{vv.schedDeptId} {vv.schedDept}</td>
                         </tr><tr>
                             <td>위치</td>
                             <td>{vv.schedLoc}</td>
@@ -230,7 +230,7 @@ function ScheduleView(props) {
                             <td>{vv.schedId}</td> */}
                         </tr><tr>
                             <td>담당팀</td>
-                            <td>{vv.schedTeam}</td>
+                            <td>{vv.schedDept}</td>
                         </tr><tr>
                             <td>위치</td>
                             <td>{vv.schedLoc}</td>

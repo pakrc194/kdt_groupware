@@ -27,11 +27,11 @@ function ScheduleCalendar(props) {
 
 
     // fetch로 보낼 데이터
-    const team_id = localStorage.getItem("DEPT_ID")
+    const dept_id = localStorage.getItem("DEPT_ID")
     const emp_sn = localStorage.getItem("EMP_SN")
     const emp_id = localStorage.getItem("EMP_ID")
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${team_id}/${emp_sn}/${emp_id}`)
+        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [date, props.todo[0]]);

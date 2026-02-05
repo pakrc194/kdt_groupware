@@ -119,7 +119,7 @@ function Instruction(props) {
         alert('업무가 등록되었습니다');
         // 페이지 이동
         
-        navigate('/detail-page');
+        // navigate(`/schedule/check/calendar/detail/${event.id}`);
 
         // 초기화
         setWorkType('ACOMPANY');
