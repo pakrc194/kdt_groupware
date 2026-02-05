@@ -32,8 +32,13 @@ function ScheduleList(props) {
 
     const [sched, setSched] = useState([]);
 
+    // fetch로 보낼 데이터
+    const team_id = localStorage.getItem("DEPT_ID")
+    const emp_sn = localStorage.getItem("EMP_SN")
+    const emp_id = localStorage.getItem("EMP_ID")
+
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}`)
+        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${team_id}/${emp_sn}/${emp_id}`)
         .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [currentDate, props.todo[0]]);
@@ -107,6 +112,7 @@ function ScheduleList(props) {
                                             <td>종료일</td>
                                             <td>{vv.schedEndDate.split('T')[0]}</td>
                                         </tr>
+                                        <hr/>
                                     </React.Fragment>
                                 ))}
                             </tbody>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
 function ScheduleDetail(props) {
     const { id } = useParams();
     const [sched, setSched] = useState([]);
+    const navigate = useNavigate();
     useEffect(() => {
         fetcher(`/gw/home/1/sched_detail/${id}`)
         .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])})
@@ -43,6 +44,7 @@ function ScheduleDetail(props) {
                 </tbody>
             ))}
             <button>일정 삭제</button>
+            <button onClick={() => navigate(-1)}>뒤로</button>
         </div>
     );
 }

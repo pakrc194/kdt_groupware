@@ -15,6 +15,7 @@ function ScheduleCalendar(props) {
     // const [day, setDay] = useState();
     const navigate = useNavigate();
     const defaultDate = new Date();
+    
 
     const yyyy = defaultDate.getFullYear();
 
@@ -25,8 +26,12 @@ function ScheduleCalendar(props) {
     const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
 
 
+    // fetch로 보낼 데이터
+    const team_id = localStorage.getItem("DEPT_ID")
+    const emp_sn = localStorage.getItem("EMP_SN")
+    const emp_id = localStorage.getItem("EMP_ID")
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}`)
+        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${team_id}/${emp_sn}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [date, props.todo[0]]);
@@ -35,13 +40,13 @@ function ScheduleCalendar(props) {
         let backgroundColor = '#3174ad'; // 기본
 
         switch (event.type) {
-            case 'COMPANY':
+            case 'ACOMPANY':
             backgroundColor = '#e74c3c'; // 빨강
             break;
-            case 'TEAM':
+            case 'BTEAM':
             backgroundColor = '#3498db'; // 파랑
             break;
-            case 'PERSONAL':
+            case 'CPERSONAL':
             backgroundColor = '#2ecc71'; // 초록
             break;
             default:
@@ -121,13 +126,8 @@ function ScheduleCalendar(props) {
                 selectable               // 👈 꼭 필요
                 onSelectSlot={(slotInfo) => {
                     console.log('선택한 날짜/시간 범위:', slotInfo.start);
-                    // alert(`선택한 날짜: ${slotInfo.start.toLocaleString()}`);
                     props.sDate(slotInfo.start);
-                    // props.sDate(new Date(`${slotInfo.start.getFullYear()}-${slotInfo.start.getMonth()+1}-${slotInfo.start.getDate()}`));
                     setDate(slotInfo.start);
-                    // setYear(slotInfo.start.getFullYear());
-                    // setMonth(slotInfo.start.getMonth()+1);
-                    // setDay(slotInfo.start.getDate());
                 }}
             />
         </div>

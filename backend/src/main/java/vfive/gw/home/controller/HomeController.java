@@ -14,18 +14,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import vfive.gw.BackendApplication;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import vfive.gw.home.dto.DeptInfo;
 import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.home.dto.LocationInfo;
 import vfive.gw.home.dto.Sched;
 import vfive.gw.home.mapper.HomeMapper;
 
 @RestController
 @RequestMapping("/gw/home/{service}")
 public class HomeController {
+
+    private final BackendApplication backendApplication;
 	@Resource
 	HomeMapper mapper;
+
+    HomeController(BackendApplication backendApplication) {
+        this.backendApplication = backendApplication;
+    }
 	
 //	@GetMapping
 //	EmpPrvc emp() {
@@ -34,6 +42,15 @@ public class HomeController {
 //		
 //		return mapper.empPrvc(emp);
 //	}
+	
+	@GetMapping
+	void home(
+	    @PathVariable("service") String service
+	) {
+		System.out.println("서비스 접근");
+//	    return "service = " + service;
+	}
+	
 	@GetMapping("list")
 	List<EmpPrvc> emplist() {		
 		return mapper.empList();
@@ -56,31 +73,52 @@ public class HomeController {
 		return mapper.empTeamList(emp);
 	}
 	
-	@GetMapping("schedule/{sdate}/{edate}")
+	@GetMapping("schedule/{sdate}/{edate}/{team_id}/{emp_sn}/{emp_id}")
 	List<Sched> schedList(
 			@PathVariable("sdate") Date sdate,
-			@PathVariable("edate") Date edate) {
+			@PathVariable("edate") Date edate,
+			@PathVariable("team_id") String team_id,
+			@PathVariable("emp_sn") String emp_sn,
+			@PathVariable("emp_id") int emp_id
+			) {
 		Sched sc = new Sched();
 		sc.setSchedStartDate(sdate);
 		sc.setSchedEndDate(edate);
-		sc.setSchedState("0");
-		return mapper.shedList(sc);
+		sc.setSchedState("0");		// 고정
+		sc.setSchedTeamId(team_id);
+		sc.setSchedEmpSn(emp_sn);	// 사번
+		sc.setSchedAuthorId(emp_id);
+		return mapper.schedList(sc);
 	}
 	
-	@GetMapping("todo/{date}")
+	@GetMapping("todo/view/{date}/{id}")
 	List<Sched> schedTodoList(
-			@PathVariable("date") Date date) {
+			@PathVariable("date") Date date,
+			@PathVariable("id") int id) {
 		Sched sc = new Sched();
 		sc.setSchedStartDate(date);
-		sc.setSchedType("TODO");
+		sc.setSchedType("DTODO");
+		sc.setSchedAuthorId(id);
 		return mapper.shedTodoList(sc);
 	}
-//	
+	
 	@PostMapping("/todo/add")
 	int schedAddTodo(@RequestBody Sched sc, HttpServletRequest request) {
 		System.out.println("todo 생성 "+sc);
-		sc.setSchedType("TODO");
+		sc.setSchedType("DTODO");
 		return mapper.addTodo(sc);
+	}
+	
+//	@PostMapping("/instruction/upload")
+//	int instructionUpload(@RequestBody Sched sc) {
+//		mapper.instructionUpload(sc);
+//		return 1;
+//	}
+	
+	@PostMapping("/todo/modify")
+	int schedModifyTodo(@RequestBody Sched sc) {
+		System.out.println("TODO 수정: "+sc);
+		return mapper.schedModifyTodo(sc);
 	}
 	
 	@RequestMapping("todo/delete/{id}")
@@ -91,14 +129,39 @@ public class HomeController {
 		return mapper.schedDeleteTodo(sc);
 	}
 	
-	@PostMapping("/todo/state/{id}")
-	void schedModifyTodo(
-			@PathVariable("id") int id) {
-		System.out.println("todo 수정");
-		Sched sc = new Sched();
-		sc.setSchedId(id);
-		mapper.modifyTodo(sc);
+	@PostMapping("/todo/toggle")
+	int schedToggleTodo(@RequestBody Sched sc) {
+		System.out.println("todo 토글: "+sc);
+		return mapper.toggleModifyTodo(sc);
 	}
+	
+	@GetMapping("schedule/empinfo/{id}")
+	EmpPrvc loginInfo(@PathVariable("id") int id) {
+		EmpPrvc emp = new EmpPrvc();
+		emp.setEmpId(id);
+		
+		return mapper.loginInfo(emp);
+	}
+	
+	// 업무지시 팀 리스트
+	@GetMapping("instruction/teams")
+	List<DeptInfo> teamList() {
+		System.out.println("팀 리스트");
+		return mapper.teamList();
+	}
+	
+	// 업무지시 장소 리스트
+	@GetMapping("instruction/locations")
+	List<LocationInfo> locationList() {
+		return mapper.locationList();
+	}
+	
+	// 업무지시 등록
+	@PostMapping("/instruction/upload")
+	int instructionUpload(@RequestBody Sched sc) {
+		return mapper.instructionUpload(sc);
+	}
+	
 	
 	@GetMapping("sched_detail/{id}")
 	Sched schedDetail(@PathVariable("id") int id) {
@@ -109,9 +172,9 @@ public class HomeController {
 	
 	@GetMapping("sched_search/{date}")
 	List<Sched> schedMonthList(@PathVariable("date") Date date) {
-		System.out.println("일정리스트");
 		Sched sc = new Sched();
 		sc.setSchedStartDate(date);
+		System.out.println("일정리스트 "+ sc.getSchedTeamId()+", "+sc.getSchedAuthorId());
 		return mapper.schedDailyList(sc);
 	}
 	
