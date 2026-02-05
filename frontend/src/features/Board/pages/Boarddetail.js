@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import './BoardDetail.css';
 
-function BoardDetail() {
-    const { sideId, boardId } = useParams();
+function BoardDetail(props) {
+    const {sideId} = useParams();
     const navigate = useNavigate();
     
     const [board, setBoard] = useState(null);
@@ -13,12 +12,14 @@ function BoardDetail() {
     const currentUser = 'testUser'; // 임시
 
     useEffect(() => {
+
+        console.log('props.boardId', props.boardId)
         fetchBoardDetail();
-    }, [boardId]);
+    }, []);
 
     const fetchBoardDetail = () => {
         setIsLoading(true);
-        fetch(`http://192.168.0.36:8080/board/detail/${boardId}`)
+        fetch(`http://192.168.0.36:8080/board/detail/${props.boardId}`)
             .then(res => res.json())
             .then(data => {
                 setBoard(data);
@@ -32,7 +33,7 @@ function BoardDetail() {
 
     const handleDelete = () => {
         if (window.confirm('삭제하시겠습니까?')) {
-            fetch(`http://192.168.0.36:8080/board/detail/${boardId}`, {
+            fetch(`http://192.168.0.36:8080/board/detail/${props.boardId}`, {
                 method: 'DELETE'
             })
             .then(res => res.json())
@@ -52,10 +53,14 @@ function BoardDetail() {
     };
 
     const handleEdit = () => {
-        navigate(`/board/${sideId}/edit/${boardId}`);
+        navigate(`/board/${sideId}/edit/${props.boardId}`);
     };
 
+    // 선택 하면 BoardMain에서 list로 상태 값을 변화 시킨다
     const handleList = () => {
+        if(props.goService){
+            props.goService('list');
+        }
         navigate(`/board/${sideId}`);
     };
 
@@ -66,11 +71,6 @@ function BoardDetail() {
     if (!board) {
         return <div className="error">게시물을 찾을 수 없습니다.</div>;
     }
-
-    // 작성자와 현재 사용자가 같은지 확인 (수정/삭제 버튼 표시용)
-    const isOwner = board.creator === currentUser;
-    // 중요 게시판은 지점장만 삭제 가능
-    const canDelete = sideId === 'important' ? currentUser === '지점장' : isOwner;
 
     return (
         <div className="board-detail-container">
@@ -92,31 +92,10 @@ function BoardDetail() {
                 <div dangerouslySetInnerHTML={{ __html: board.content }} />
             </div>
 
-            {/* 첨부파일 영역 (향후 구현) */}
-            {/* <div className="attachments">
-                <h3>첨부파일</h3>
-                <ul>
-                    <li><a href="#">파일명.pdf</a></li>
-                </ul>
-            </div> */}
 
             <div className="detail-actions">
-                <button className="btn-list" onClick={handleList}>
-                    목록
-                </button>
-                
-                <div className="action-buttons">
-                    {(isOwner && sideId !== 'important') && (
-                        <button className="btn-edit" onClick={handleEdit}>
-                            수정
-                        </button>
-                    )}
-                    {canDelete && (
-                        <button className="btn-delete" onClick={handleDelete}>
-                            삭제
-                        </button>
-                    )}
-                </div>
+                <button onClick={handleList} >목록</button>
+            
             </div>
         </div>
     );

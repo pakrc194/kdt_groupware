@@ -45,13 +45,6 @@ public class BoardController {
         // 게시물 목록 조회
         List<BoardPrvc> boards = boardMapper.listByType( pInfo);
         
-        // 응답 데이터 구성
-        //Map<String, Object> response = new HashMap<>();
-        //response.put("boards", boards);
-        //response.put("pInfo", pInfo);
-        
-        //return ResponseEntity.ok(response);
-        
         return ResponseEntity.ok(boards);
     }
     
@@ -74,12 +67,10 @@ public class BoardController {
     /**
      * 게시물 등록
      */
-    @PostMapping("/{sideId}")
+    @PostMapping("/Insert") //리액트 fetch 주소와 일치 시켜야함
     public ResponseEntity<Map<String, Object>> createBoard(
-            @PathVariable("sideId") String sideId,
             @RequestBody BoardPrvc board) {
         
-        board.setBoardType(sideId);
         int result = boardMapper.insertKey(board);
         
         Map<String, Object> response = new HashMap<>();
@@ -137,4 +128,23 @@ public class BoardController {
         List<BoardPrvc> boards = boardMapper.listByCreator(userId, pInfo);
         return ResponseEntity.ok(boards);
     }
+    
+    
+    @GetMapping()
+    public ResponseEntity<Map<String,Object>>getBoard(PageInfo pInfo){
+    	
+    	int total = boardMapper.totalByType(pInfo);
+    	pInfo.setTotal(total);
+    	
+    	List<BoardPrvc> boards = boardMapper.listByType(pInfo);
+    	
+    	Map<String,Object> response = new HashMap<>();
+    	response.put("boards", boards);
+    	response.put("pageInfo", pInfo);
+    	
+    	return ResponseEntity.ok(response);
+    }
+    
+   
+    
 }

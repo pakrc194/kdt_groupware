@@ -1,0 +1,75 @@
+import React, { useState } from 'react';
+import { useParams } from "react-router-dom";
+
+function BoardInsert(props) {
+    const { sideId } = useParams(); // URL에서 게시판 종류 가져오기
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [creator, setCreator] = useState('testUser'); // 실제론 로그인 정보 사용
+
+    const handleSubmit = (e) => {
+        e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+
+        const boardData = {
+            title: title,
+            content: content,
+            creator: creator,
+            boardType: sideId // 중요: 현재 게시판 유형 전달
+        };
+
+
+
+        fetch(`http://192.168.0.36:8080/board/Insert`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(boardData),
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('글이 등록되었습니다.');
+                props.goService('list'); // 등록 후 목록으로 이동
+            } else {
+                alert('등록에 실패했습니다.');
+            }
+        })
+        .catch(err => {
+            console.error("등록 에러:", err);
+            alert('오류가 발생했습니다.');
+        });
+    };
+
+    return (
+        <div className="board-write-container">
+            <h2>게시글 작성</h2>
+            <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label>제목</label>
+                    <input 
+                        type="text" 
+                        value={title} 
+                        onChange={(e) => setTitle(e.target.value)} 
+                        required 
+                    />
+                </div>
+                <div className="form-group">
+                    <label>내용</label>
+                    <textarea 
+                        value={content} 
+                        onChange={(e) => setContent(e.target.value)} 
+                        rows="10"
+                        required 
+                    />
+                </div>
+                <div className="Insert-actions">
+                    <button type="submit">등록</button>
+                    <button type="button" onClick={() => props.goService('list')}>취소</button>
+                </div>
+            </form>
+        </div>
+    );
+}
+
+export default BoardInsert;
