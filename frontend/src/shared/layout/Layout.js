@@ -86,16 +86,6 @@ const Layout = () => {
                 </li>
               );
             })}
-            {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => (
-              <li key={menu.id}>
-                <Link
-                  to={`/${currentMain}/${menu.id}`}
-                  className={`side-item ${currentSide === menu.id ? "active" : ""}`}
-                >
-                  {menu.name}
-                </Link>
-              </li>
-            ))}
           </ul>
         </aside>
 

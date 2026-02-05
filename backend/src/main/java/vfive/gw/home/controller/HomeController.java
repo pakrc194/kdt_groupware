@@ -68,9 +68,10 @@ public class HomeController {
 	List<EmpPrvc> empTeam(@PathVariable("code") String code) {
 		System.out.println(code);
 		EmpPrvc emp = new EmpPrvc();
-		emp.setDeptCode(code);
+		DeptInfo dInfo = new DeptInfo();
+		dInfo.setDeptCode(code);
 		
-		return mapper.empTeamList(emp);
+		return mapper.empTeamList(dInfo);
 	}
 	
 	@GetMapping("schedule/{sdate}/{edate}/{dept_id}/{emp_sn}/{emp_id}")

@@ -24,7 +24,7 @@ public interface HomeMapper {
 	EmpPrvc empPrvc(EmpPrvc emp);
 	
 	@Select("select EMP_PRVC.*, DEPT_INFO.DEPT_NAME from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id where EMP_PRVC.dept_id = (select dept_id from DEPT_INFO where dept_code = #{deptCode})")
-	List<EmpPrvc> empTeamList(EmpPrvc emp);
+	List<EmpPrvc> empTeamList(DeptInfo dInfo);
 	
 //	@Select("select * from SCHED")
 //	List<Sched> shedList();
