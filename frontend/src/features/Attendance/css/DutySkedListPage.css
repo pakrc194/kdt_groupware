@@ -1,0 +1,69 @@
+/* 기존 stats-container, stats-header 등과 연동됨 */
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* 작성 버튼 (Primary) */
+.btn-primary {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* 삭제 버튼 (Danger) */
+.btn-delete {
+  background-color: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-delete:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.title-link {
+  color: #4a90e2 !important;
+  cursor: pointer;
+  text-align: left !important;
+  font-weight: 500;
+}
+
+.title-link:hover {
+  text-decoration: underline;
+}
+
+/* 상태 배지 - 기존 badge-leave 스타일 참고 */
+.badge-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.badge-status.CONFIRMED {
+  background-color: #e6fffa;
+  color: #38a169;
+}
+.badge-status.DRAFT {
+  background-color: #f7fafc;
+  color: #718096;
+}
+.badge-status.PENDING {
+  background-color: #fffaf0;
+  color: #dd6b20;
+}
+
+.selected-row {
+  background-color: #f0f7ff;
+}

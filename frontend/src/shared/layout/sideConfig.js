@@ -22,8 +22,8 @@ export const SIDE_CONFIG = {
     title: "근태관리",
     sideMenus: [
       { id: "atdc", name: "출퇴근 기록" },
-      { id: "wksc", name: "근무표 조회" },
-      { id: "wksl", name: "근무표 리스트" },
+      { id: "dtskdchk", name: "근무표 조회" },
+      { id: "dtskdlst", name: "근무표 리스트" },
       { id: "myatdc", name: "개인 근태 기록" },
       { id: "empatdc", name: "사원 근태 기록" },
     ],

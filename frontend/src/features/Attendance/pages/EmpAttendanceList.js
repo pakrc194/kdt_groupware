@@ -111,7 +111,7 @@ function EmpAttendanceList() {
                     <td>{emp.empSn}</td>
                     <td className="emp-name">
                       <Link
-                        to={`/attendance/detail?empId=${emp.empId}&startDate=${filter.startDate}&endDate=${filter.endDate}`}
+                        to={`/attendance/empDetail?empId=${emp.empId}&startDate=${filter.startDate}&endDate=${filter.endDate}`}
                         style={{
                           textDecoration: "none",
                           color: "#1890ff",

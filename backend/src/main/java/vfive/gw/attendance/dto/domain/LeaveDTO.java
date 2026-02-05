@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 public class LeaveDTO {
 	
+	// 연차 현황
 	@Data
   @AllArgsConstructor
   @NoArgsConstructor
@@ -15,6 +16,7 @@ public class LeaveDTO {
       private int leftDays;   // 잔여 연차
   }
 
+	// 연차 사용 기록
   @Data
   @AllArgsConstructor
   @NoArgsConstructor

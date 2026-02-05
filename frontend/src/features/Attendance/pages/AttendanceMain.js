@@ -1,11 +1,13 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import AttendancePage from "./AttendancePage";
-import WorkSheetCheckPage from "./WorkSheetCheckPage";
-import WorkSheetListPage from "./WorkSheetListPage";
 import MyAttendanceRecodePage from "./MyAttendanceRecodePage";
 import EmpAttendanceList from "./EmpAttendanceList";
 import EmpAtdcDetail from "./EmpAtdcDetail";
+import DutySkedListPage from "./DutySkedListPage";
+import DutySkedCheckPage from "./DutySkedCheckPage";
+import DutySkedInsertForm from "./DutySkedInsertForm";
+import DutySkedDetail from "./DutySkedDetail";
 
 function AttendanceMain(props) {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
@@ -15,15 +17,19 @@ function AttendanceMain(props) {
     switch (sideId) {
       case "atdc":
         return <AttendancePage />; // 경로 문자열이 아니라 컴포넌트 호출!
-      case "wksc":
-        return <WorkSheetCheckPage />;
-      case "wksl":
-        return <WorkSheetListPage />;
+      case "dtskdchk":
+        return <DutySkedCheckPage />;
+      case "dtskdlst":
+        return <DutySkedListPage />;
+      case "dtSkdIst":
+        return <DutySkedInsertForm />;
+      case "dtskdDet":
+        return <DutySkedDetail />;
       case "myatdc":
         return <MyAttendanceRecodePage />;
       case "empatdc":
         return <EmpAttendanceList />;
-      case "detail":
+      case "empDetail":
         return <EmpAtdcDetail />;
       default:
         return <div>페이지를 찾을 수 없습니다.</div>;
