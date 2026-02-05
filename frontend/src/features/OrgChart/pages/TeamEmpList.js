@@ -4,17 +4,22 @@ import { fetcher } from '../../../shared/api/fetcher';
 
 function AllEmp(props) {
     const [data, setData] = useState([]);
+    const [teamData, setTeamData] = useState([]);
     
     useEffect(() => {
         fetcher(`/gw/orgChart/teamList/${props.code}`)
         .then(dd => setData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
+
+        // fetcher(`/gw/orgChart/teamName/${props.code}`)
+        // .then(dd => setTeamData(Array.isArray(dd) ? dd : [dd]))
+        // .catch(e => console.log(e))
     }, [props.code]);
 
 
     return (
         <div>
-            <h1>팀리스트 {props.code}</h1>
+            <h1>팀리스트 {props.code} {teamData}</h1>
             
             <table border="">
                 <tbody>

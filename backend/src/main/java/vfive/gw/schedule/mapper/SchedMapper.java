@@ -1,16 +1,17 @@
 package vfive.gw.schedule.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 
-import vfive.gw.home.dto.DeptInfo;
 import vfive.gw.home.dto.EmpPrvc;
-import vfive.gw.home.dto.LocationInfo;
-import vfive.gw.home.dto.Sched;
+import vfive.gw.orgchart.dto.DeptInfo;
+import vfive.gw.schedule.dto.LocationInfo;
+import vfive.gw.schedule.dto.Sched;
 
 @Mapper
 public interface SchedMapper {
@@ -24,13 +25,13 @@ public interface SchedMapper {
 				+ "or (sched_type = 'BTEAM' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
 				+ "or (sched_type = 'CPERSONAL' and sched_emp_sn = #{schedEmpSn})"
 				+ "or (sched_type = 'DTODO' and sched_author_id = #{schedAuthorId} and sched_state = #{schedState}) "
-				+ "or (sched_emp_sn = #{schedEmpSn}))"
+				+ "or (sched_author_id = #{schedAuthorId}))"
 				+ "order by sched_type")
 		List<Sched> schedList(Sched sc);
 		
 		// 로그인 유저 정보
-		@Select("select EMP_PRVC.*, DEPT_INFO.dept_code from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id where EMP_ID = #{empId}")
-		EmpPrvc loginInfo(EmpPrvc emp);
+		@Select("select EMP_PRVC.*, DEPT_INFO.* from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id where EMP_ID = #{empId}")
+		Map<EmpPrvc, DeptInfo> loginInfo(EmpPrvc emp);
 		
 		// 업무지시 팀 리스트
 		@Select("select * from DEPT_INFO")

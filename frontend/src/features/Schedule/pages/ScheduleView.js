@@ -5,9 +5,7 @@ import ScheduleCalendar from './ScheduleCalendar';
 import ScheduleList from './ScheduleList';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function ScheduleView(props) {
-    const userId = 0;
-    
+function ScheduleView(props) {   
 
     const { view } = useParams();
     const [defaultDate, setDefaultDate] = useState(new Date());

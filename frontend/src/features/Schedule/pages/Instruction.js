@@ -25,11 +25,27 @@ function Instruction(props) {
     // 유저 정보
     const deptId = parseInt(localStorage.getItem('DEPT_ID'));
 
+
     useEffect(() => {
-        console.log(localStorage.getItem("USER_ROLE"))
+        console.log("user emp id : "+localStorage.getItem("EMP_ID"))
+        // localStorage.setItem("EMP_ID", "1")
+                
+                // 사용자 정보 가져오기
+                // fetcher(`/gw/schedule/empinfo/${localStorage.getItem("EMP_ID")}`)
+                // .then(data => {
+                //     console.log(data)
+                //     localStorage.setItem("EMP_NM", data.empNm)
+                //     localStorage.setItem("DEPT_ID", data.deptId)        // 소속 팀 ID
+                //     localStorage.setItem("DEPT_NAME", data.deptName)
+                //     localStorage.setItem("JBTTL_ID", data.jbttlId)       // 직책 ID
+                //     localStorage.setItem("USER_ROLE", data.deptCode)  // TEAM_USER - 팀만 선택 가능, CP - 팀, 회사 선택 가능
+                //     localStorage.setItem("EMP_SN", data.empSn)
+                // })
+                // .catch(err => console.error('유저 정보 로딩 실패', err));
         // 예시: role을 로컬스토리지에서 가져오기
         const storedRole = localStorage.getItem('USER_ROLE') || 'TEAM_USER';
         setRole(localStorage.getItem('USER_ROLE'));
+        console.log(localStorage.getItem('USER_ROLE'))
 
         // 권한에 따라 기본 workType 설정
         if (storedRole != 'CP') setWorkType('BTEAM');
@@ -53,6 +69,10 @@ function Instruction(props) {
         .catch(err => console.error('장소 리스트 로딩 실패', err))
 
     }, []);
+
+    useEffect(() => {
+
+    }, [])
 
     if (props.JBTTL_ID > 1) {
         return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;

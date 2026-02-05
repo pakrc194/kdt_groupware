@@ -8,7 +8,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 function ScheduleMain(props) {
 
     const { sideId } = useParams();
-    const [empInfo, setEmpInfo] = useState([]);
+    const [empInfo, setEmpInfo] = useState('');
 
     // 권한 상태 관리
 
@@ -18,25 +18,27 @@ function ScheduleMain(props) {
             // 사용자 정보 가져오기
             fetcher(`/gw/schedule/empinfo/${localStorage.getItem("EMP_ID")}`)
             .then(data => {
-                setEmpInfo(data);
-                
+                setEmpInfo(data)
                 console.log(data)
-                localStorage.setItem("EMP_NM", data.empNm)
-                localStorage.setItem("DEPT_ID", data.deptId)        // 소속 팀 ID
-                localStorage.setItem("DEPT_NAME", data.deptName)
-                localStorage.setItem("JBTTL_ID", data.jbttlId)       // 직책 ID
-                localStorage.setItem("USER_ROLE", data.deptCode)  // TEAM_USER - 팀만 선택 가능, CP - 팀, 회사 선택 가능
-                localStorage.setItem("EMP_SN", data.empSn)
+                
+                localStorage.setItem("EMP_NM", data.EMP_NM)
+                localStorage.setItem("DEPT_ID", data.DEPT_ID)        // 소속 팀 ID
+                localStorage.setItem("JBTTL_ID", data.JBTTL_ID)       // 직책 ID
+                localStorage.setItem("EMP_SN", data.EMP_SN)
+                localStorage.setItem("DEPT_NAME", data.DEPT_NAME)
+                localStorage.setItem("USER_ROLE", data.DEPT_CODE)  // TEAM_USER - 팀만 선택 가능, CP - 팀, 회사 선택 가능
+                
             })
             .catch(err => console.error('유저 정보 로딩 실패', err));
         },[])
-
+        
+        // console.log("정보 "+localStorage.getItem("USER_ROLE"))
     const renderContent = () => {
         switch(sideId) {
             case 'check':
                 return <ScheduleView />
             case 'instruction':
-                return <Instruction EmpInfo={empInfo} />
+                return <Instruction />
         }
     }
 

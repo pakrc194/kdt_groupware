@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import vfive.gw.home.dto.Sched;
+import vfive.gw.schedule.dto.Sched;
 
 @Mapper
 public interface TodoMapper {

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
-import vfive.gw.home.dto.DeptInfo;
 import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.mapper.OrgchartMapper;
 
 @RestController
@@ -35,11 +35,18 @@ public class OrgChartController {
 	
 	@GetMapping("teamList/{code}")
 	List<EmpPrvc> empTeam(@PathVariable("code") String code) {
-		System.out.println(code);
-		EmpPrvc emp = new EmpPrvc();
 		DeptInfo dInfo = new DeptInfo();
 		dInfo.setDeptCode(code);
 		
 		return orgchartMapper.empTeamList(dInfo);
+	}
+	
+	// 팀 코드로 팀 명 fetch
+	@GetMapping("teamName/{code}")
+	DeptInfo empTeamName(@PathVariable("code") String code) {
+		DeptInfo dInfo = new DeptInfo();
+		dInfo.setDeptCode(code);
+		
+		return orgchartMapper.deptDetail(dInfo);
 	}
 }

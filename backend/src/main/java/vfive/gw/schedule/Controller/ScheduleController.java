@@ -1,7 +1,8 @@
-package vfive.gw.schedule.Controller;
+package vfive.gw.schedule.controller;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import vfive.gw.home.dto.DeptInfo;
 import vfive.gw.home.dto.EmpPrvc;
-import vfive.gw.home.dto.LocationInfo;
-import vfive.gw.home.dto.Sched;
+import vfive.gw.orgchart.dto.DeptInfo;
+import vfive.gw.schedule.dto.LocationInfo;
+import vfive.gw.schedule.dto.Sched;
 import vfive.gw.schedule.mapper.SchedMapper;
 import vfive.gw.schedule.mapper.TodoMapper;
 
@@ -30,7 +31,7 @@ public class ScheduleController {
 	SchedMapper schedMapper;
 	
 	@GetMapping("empinfo/{id}")
-	EmpPrvc loginInfo(@PathVariable("id") int id) {
+	Map<EmpPrvc, DeptInfo> loginInfo(@PathVariable("id") int id) {
 		EmpPrvc emp = new EmpPrvc();
 		emp.setEmpId(id);
 		

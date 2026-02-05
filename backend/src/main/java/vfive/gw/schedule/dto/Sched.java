@@ -1,4 +1,4 @@
-package vfive.gw.home.dto;
+package vfive.gw.schedule.dto;
 
 import java.util.Date;
 
