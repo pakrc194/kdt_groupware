@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 public class EmpPrvc {
 	private int empId, deptId, jbttlId;
 	private String empSn, empNm, empPswd, empEmlAddr, empPhoto, empAddr, empTelNo, empActNo, empJncmpYmd, empRsgntnYmd, empAcntStts;
+	private int empId, deptId, jbttlId;
+	private String empSn, empNm, empPswd, empEmlAddr, empPhoto, empAddr, empTelNo, empActNo, empJncmpYmd, empRsgntnYmd, empAcntStts;
 	
 	
 	public EmpPrvc(String empSn,String empNm, String empPswd

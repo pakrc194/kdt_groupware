@@ -1,9 +1,42 @@
 import React from 'react';
 
+import { useParams } from 'react-router-dom';
+import AllEmp from './AllEmp';
+import NewEmp from './NewEmp';
+import DetailEmp from './DetailEmp';
+import TeamEmpList from './TeamEmpList';
+
 function OrgChartMain(props) {
+    const { sideId } = useParams();
+
+    const renderContent = () => {
+        switch(sideId.split("/")[0]) {
+            case 'allorg':
+                return <AllEmp />
+            case 'register':
+                return <NewEmp />
+            case 'detail':
+                return <DetailEmp />
+            default:
+                return <TeamEmpList code={sideId} />
+        }
+    }
+
     return (
-        <div>
-            조직도
+        <div className='orgchart-container'>
+            <div className='search-box' align="right">
+            <form action="empSch">
+                <select name="schFilter">
+                    <option>이름</option>
+                    <option>직책</option>
+                </select>
+                <input type="text" name="schValue" />
+                <input type="submit" value="검색" />
+            </form>
+            </div>
+            <div className='org-content-area'>
+                {renderContent()}
+            </div>
         </div>
     );
 }

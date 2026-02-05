@@ -9,6 +9,11 @@ import AttendanceMain from "../features/Attendance/pages/AttendanceMain";
 import BoardMain from "../features/Board/pages/BoardMain";
 import OrgChartMain from "../features/OrgChart/pages/OrgChartMain";
 import DashboardMain from "../features/Dashboard/pages/DashboardMain";
+import DetailEmp from "../features/OrgChart/pages/DetailEmp";
+import ScheduleCalendar from "../features/Schedule/pages/ScheduleCalendar";
+import ScheduleList from "../features/Schedule/pages/ScheduleList";
+import ScheduleDetail from "../features/Schedule/pages/ScheduleDetail";
+import ScheduleView from "../features/Schedule/pages/ScheduleView";
 import Employee_details from "../features/Login/pages/Employee_details";
 import FindPassword from "../features/Login/pages/FindPassword";
 
@@ -27,9 +32,15 @@ export default function AppRouter() {
         <Route path="approval/:sideId" element={<ApprovalMain />} />
         <Route path="approval/:sideId/detail/:docId" element={<ApprovalDetail />} />
         <Route path="schedule/:sideId" element={<ScheduleMain />} />
+        <Route path="schedule/:sideId/:view" element={<ScheduleView />} >
+          <Route path="schedule/check/calendar" element={<ScheduleCalendar />} />
+          <Route path="schedule/check/list" element={<ScheduleList />} />
+        </Route>
+        <Route path="schedule/:sideId/calendar/detail/:id" element={<ScheduleDetail />} />
         <Route path="attendance/:sideId" element={<AttendanceMain />} />
         <Route path="board/:sideId" element={<BoardMain />} />
         <Route path="orgChart/:sideId" element={<OrgChartMain />} />
+        <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
         <Route path="dashboard/:sideId" element={<DashboardMain />} />
       </Route>
     </Routes>

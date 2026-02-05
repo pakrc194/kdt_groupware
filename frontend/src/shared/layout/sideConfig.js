@@ -1,3 +1,5 @@
+import { Children } from "react";
+
 export const SIDE_CONFIG = {
   approval: {
     title: "전자결재",
@@ -15,9 +17,9 @@ export const SIDE_CONFIG = {
   schedule: {
     title: "일정관리",
     sideMenus: [
-      { id: "aaa", name: "업무조회" },
-      { id: "bbb", name: "업무지시" },
-    ],
+      { id: 'check', name: '업무조회' },
+      { id: 'instruction', name: '업무지시' },
+    ]
   },
   attendance: {
     title: "근태관리",
@@ -44,10 +46,21 @@ export const SIDE_CONFIG = {
   orgChart: {
     title: "조직도",
     sideMenus: [
-      { id: "aaa", name: "전체 사원 보기" },
-      { id: "bbb", name: "팀별 사원 보기" },
-      { id: "ccc", name: "사원 추가" },
-    ],
+      { id: 'allorg', name: '전체 사원 보기' },
+      { id: 'teamorg', name: '팀별 사원 보기',
+        subMenus: [
+          { id: 'CP', name: "지점장" },
+          { id: 'FO', name: "식품" },
+          { id: 'BU', name: "뷰티·패션잡화" },
+          { id: 'WF', name: "여성패션" },
+          { id: 'MF', name: "남성패션" },
+          { id: 'HR', name: "인사관리" },
+          { id: 'FM', name: "시설자재" },
+          { id: 'SO', name: "안전관리" },
+        ]
+       },
+      { id: 'register', name: '사원 추가' },
+    ]
   },
   dashboard: {
     title: "회사 대시보드",
