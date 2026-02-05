@@ -31,7 +31,7 @@ function ScheduleCalendar(props) {
     const emp_sn = localStorage.getItem("EMP_SN")
     const emp_id = localStorage.getItem("EMP_ID")
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
+        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [date, props.todo[0]]);

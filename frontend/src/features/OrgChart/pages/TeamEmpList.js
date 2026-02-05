@@ -6,7 +6,7 @@ function AllEmp(props) {
     const [data, setData] = useState([]);
     
     useEffect(() => {
-        fetcher(`/gw/home/1/teamList/${props.code}`)
+        fetcher(`/gw/orgChart/teamList/${props.code}`)
         .then(dd => setData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [props.code]);

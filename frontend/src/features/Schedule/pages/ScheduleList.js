@@ -19,8 +19,6 @@ function ScheduleList(props) {
     const date = currentDate;
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const mm2 = String(date.getMonth() + 2).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
 
 
     // 한 달 시작일과 마지막일
@@ -38,7 +36,7 @@ function ScheduleList(props) {
     const emp_id = localStorage.getItem("EMP_ID")
 
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
+        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
         .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [currentDate, props.todo[0]]);

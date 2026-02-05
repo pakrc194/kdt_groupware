@@ -7,7 +7,7 @@ function DetailEmp(props) {
     const { id } = useParams();
     
     useEffect(() => {
-        fetcher(`/gw/home/1/detail/${id}`)
+        fetcher(`/gw/orgChart/detail/${id}`)
         .then(dd => setData(dd))
         .catch(e => console.log(e))
     }, []);

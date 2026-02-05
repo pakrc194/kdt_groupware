@@ -36,7 +36,7 @@ function Instruction(props) {
         else setWorkType('ACOMPANY'); // ADMIN 등은 기본값
 
         // 팀 리스트 가져오기
-        fetcher('/gw/home/1/instruction/teams')
+        fetcher('/gw/schedule/instruction/teams')
         .then(data => {
             setTeamList(data); // [{id, name}, ...] 형태
 
@@ -48,7 +48,7 @@ function Instruction(props) {
         .catch(err => console.error('팀 리스트 로딩 실패', err));
 
         // 장소 리스트 가져오기
-        fetcher('/gw/home/1/instruction/locations')
+        fetcher('/gw/schedule/instruction/locations')
         .then(data => { setLocationList(data) })
         .catch(err => console.error('장소 리스트 로딩 실패', err))
 
@@ -96,7 +96,7 @@ function Instruction(props) {
         };
 
         try {
-            await fetcher(`/gw/home/1/instruction/upload`, {
+            await fetcher(`/gw/schedule/instruction/upload`, {
                 method: 'POST',
                 body: { 
                     schedType: workType,

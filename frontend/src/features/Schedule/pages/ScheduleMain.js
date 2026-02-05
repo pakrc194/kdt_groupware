@@ -16,7 +16,7 @@ function ScheduleMain(props) {
             localStorage.setItem("EMP_ID", "1")
             
             // 사용자 정보 가져오기
-            fetcher(`/gw/home/1/schedule/empinfo/${localStorage.getItem("EMP_ID")}`)
+            fetcher(`/gw/schedule/empinfo/${localStorage.getItem("EMP_ID")}`)
             .then(data => {
                 setEmpInfo(data);
                 

@@ -7,7 +7,7 @@ function ScheduleDetail(props) {
     const [sched, setSched] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
-        fetcher(`/gw/home/1/sched_detail/${id}`)
+        fetcher(`/gw/schedule/sched_detail/${id}`)
         .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])})
         .catch(e => console.log(e))
     }, []);

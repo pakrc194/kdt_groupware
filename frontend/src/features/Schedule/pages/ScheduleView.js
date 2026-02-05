@@ -45,7 +45,7 @@ function ScheduleView(props) {
 
     // 특정 날짜로 일정 받아와서 화면에 출력
     useEffect(() => {
-        fetcher(`/gw/home/1/sched_search/${formatted}`)
+        fetcher(`/gw/schedule/sched_search/${formatted}`)
         .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
         // console.log(localStorage.getItem("EMP_SN"))
@@ -53,7 +53,7 @@ function ScheduleView(props) {
 
     // TODO 가져오기
     useEffect(() => {
-        fetcher(`/gw/home/1/todo/view/${formatted}/${localStorage.getItem("EMP_ID")}`) // 날짜별 TODO API
+        fetcher(`/gw/schedule/todo/view/${formatted}/${localStorage.getItem("EMP_ID")}`) // 날짜별 TODO API
             .then(dd => setTodos(Array.isArray(dd) ? dd : [dd]))
             .catch(e => console.log(e));
     }, [defaultDate, todos[0]]);
@@ -61,7 +61,7 @@ function ScheduleView(props) {
     // TODO 추가
     const addTodo = async () => {
         try {
-            const created = await fetcher('/gw/home/1/todo/add', {
+            const created = await fetcher('/gw/schedule/todo/add', {
             method: 'POST',
             body: { 
                 schedStartDate: newTodo.schedStartDate,
@@ -83,7 +83,7 @@ function ScheduleView(props) {
     // TODO 수정
     const modifyTodo = async (todo) => {
         try {
-            const created = await fetcher(`/gw/home/1/todo/modify`, {
+            const created = await fetcher(`/gw/schedule/todo/modify`, {
             method: 'POST',
             body: { 
                 schedStartDate: editTodo.schedStartDate,
@@ -114,7 +114,7 @@ function ScheduleView(props) {
         try {
             var flag = 0;
             if (cktodo.schedState == false) {flag = 1}
-            const created = await fetcher(`/gw/home/1/todo/toggle`, {
+            const created = await fetcher(`/gw/schedule/todo/toggle`, {
             method: 'POST',
             body: { 
                 schedStartDate: cktodo.schedStartDate,
@@ -136,7 +136,7 @@ function ScheduleView(props) {
     // TODO 삭제
     const deleteTodo = async (todoId) => {
         try {
-            await fetcher(`/gw/home/1/todo/delete/${todoId}`, {
+            await fetcher(`/gw/schedule/todo/delete/${todoId}`, {
             method: 'DELETE'
             });
             setTodos(todos.filter(todo => todo.schedId !== todoId)); // 프론트에서 제거
