@@ -5,10 +5,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.response.AprvDocDetailResponse;
 import vfive.gw.aprv.dto.response.AprvDocDtlVlResponse;
+import vfive.gw.aprv.dto.response.AprvDocFormLineResponse;
 import vfive.gw.aprv.dto.response.AprvDocInptResponse;
+import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 
 @Mapper
 public interface AprvMapper {
@@ -22,5 +25,17 @@ public interface AprvMapper {
 	@Select("select * from APRV_INPT_VL V join DOC_INPT I on V.doc_inpt_id = I.doc_inpt_id where aprv_doc_id = #{docId}")
 	List<AprvDocDtlVlResponse> docDtlVl(int docId);
 	
+	@Select("select * from ANNL_LV_STTS where emp_id=#{empId} and base_yy=#{year}")
+	AprvEmpAnnlLvResponse empAnnlLv(AprvEmpAnnlLvRequest req);
 	
+	
+	@Select("""
+			<script>
+			select L.*, MA.EMP_NM as MID_ATRZ_EMP_NM, LA.EMP_NM as LAST_ATRZ_EMP_NM from DOC_FORM_LINE L 
+			left join EMP_PRVC MA on L.MID_ATRZ_EMP_ID = MA.EMP_ID 
+			left join EMP_PRVC LA on L.LAST_ATRZ_EMP_ID = LA.EMP_ID 
+			where DOC_FORM_ID = #{docId};
+			</script>
+			""")
+	AprvDocFormLineResponse docFormLine(int docId);
 }

@@ -4,8 +4,15 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 
+import vfive.gw.aprv.dto.request.AprvDrftDocRequest;
+import vfive.gw.aprv.dto.request.AprvDrftInptRequest;
+import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
+import vfive.gw.aprv.dto.request.AprvInptVlRequest;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
 
 @Mapper
@@ -17,7 +24,7 @@ public interface AprvPostMapper {
 			SET APRV_DOC_STTS =
 			<choose>
 			  <when test="nextEmpNm != null and nextEmpNm != ''">
-			    CONCAT(#{aprvPrcsStts}, '(', #{nextEmpNm}, ')')
+			    CONCAT('PENDING(', #{nextEmpNm}, ')')
 			  </when>
 			  <otherwise>
 			    #{aprvPrcsStts}
@@ -38,4 +45,40 @@ public interface AprvPostMapper {
 			+ "set APRV_PRCS_DT = #{aprvPrcsDt}, APRV_PRCS_STTS=#{aprvPrcsStts}, RJCT_RSN=#{rjctRsn} "
 			+ "where APRV_PRCS_EMP_ID = #{aprvPrcsEmpId} and APRV_DOC_ID = #{aprvDocId} ")//and APRV_PRCS_STTS='PENDING'
 	int uAprvPrcs(AprvPrcsRequest req);
+	
+	@Update("update APRV_PRCS "
+			+ "set APRV_PRCS_STTS='PENDING' "
+			+ "where APRV_DOC_ID = #{aprvDocId} "
+			+ "and (ROLE_CD = 'MID_REF' or ROLE_CD = 'LAST_ATRZ')")//and APRV_PRCS_STTS='WAIT'
+	int nextAprvPrcs(AprvPrcsRequest req);
+	
+
+	@Insert("insert into APRV_DOC "
+			+ "(DRFT_EMP_ID, DOC_FORM_ID, APRV_DOC_NO, APRV_DOC_TTL, APRV_DOC_STTS, APRV_DOC_DRFT_DT, APRV_DOC_VER) "
+			+ "values "
+			+ "(#{drftEmpId}, #{docFormId}, #{aprvDocNo}, #{aprvDocTtl}, 'DRFT', #{aprvDocDrftDt}, '1.0')")
+	@Options(useGeneratedKeys = true, keyProperty = "aprvDocId")
+	int insertAprvDoc(AprvDrftDocRequest req);
+	
+	
+	@Insert("<script>"
+			+ "insert into APRV_PRCS "
+			+ "(APRV_PRCS_EMP_ID, APRV_DOC_ID, ROLE_CD, ROLE_SEQ, APRV_PRCS_STTS, DRFT_DT)"
+			+ "values "
+			+ "<foreach collection='list' item='v' separator=',' index='i'>"
+			+ " (#{v.aprvPrcsEmpId}, #{v.aprvDocId}, #{v.roleCd}, #{v.roleSeq}, #{v.aprvPrcsStts}, #{v.drftDt}) "
+			+ "</foreach>"
+			+ "</script>")
+	int drftLineList(@Param("list")List<AprvPrcsRequest> drftLineList);
+	
+	
+	@Insert("<script>"
+			+ "insert into APRV_INPT_VL "
+			+ "(DOC_INPT_ID, APRV_DOC_ID, DOC_INPT_VL)"
+			+ "values "
+			+ "<foreach collection='list' item='v' separator=',' index='i'>"
+			+ " (#{v.docInptId}, #{v.aprvDocId}, #{v.docInptVl}) "
+			+ "</foreach>"
+			+ "</script>")
+	int drftInpt(@Param("list")List<AprvInptVlRequest> di);
 }

@@ -5,4 +5,6 @@ import lombok.Data;
 @Data
 public class AprvParams {
 	String service;
+	int year;
+	int empId;
 }

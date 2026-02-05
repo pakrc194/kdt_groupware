@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
+import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
+import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
+import vfive.gw.aprv.service.AprvDrftUpload;
+import vfive.gw.aprv.service.AprvEmpAnnlLv;
 import vfive.gw.aprv.service.AprvPrcs;
 
 @RestController
@@ -47,6 +53,17 @@ public class AprvController {
 		Object oo = provider.getContext().getBean(AprvPrcs.class).load(ap);
 		
 		return oo;
+	}
+	
+	@PostMapping("/AprvEmpAnnlLv")
+	AprvEmpAnnlLvResponse empAnnlLv(@RequestBody AprvEmpAnnlLvRequest req) {
+		
+		return provider.getContext().getBean(AprvEmpAnnlLv.class).load(req);
+	}
+	
+	@PostMapping("/AprvDrftUpload")
+	Object aprvDrftUpload(@RequestBody AprvDrftUploadRequest req) {
+		return provider.getContext().getBean(AprvDrftUpload.class).load(req);
 	}
 	
 

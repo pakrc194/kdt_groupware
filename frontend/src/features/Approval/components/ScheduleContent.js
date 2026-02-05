@@ -2,7 +2,7 @@ import React from 'react';
 import ApprovalLine from './ApprovalLine';
 import Button from '../../../shared/components/Button';
 
-const ScheduleContent = () => {
+const ScheduleContent = ({docLine, setDocLine}) => {
     return (
         <>
             <div>
@@ -12,8 +12,8 @@ const ScheduleContent = () => {
                 <input type="date" name="docEnd"/>
             </div>
             <div> 
-                결재선 <Button>결재선 편집</Button>
-                <ApprovalLine/>
+                결재선 <Button>결재선 추가</Button>
+                <ApprovalLine docLine={docLine}/>
             </div>
             <div>
                 장소 선택<input type="text" /><Button variant='primary'>장소 선택</Button>

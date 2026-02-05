@@ -7,5 +7,6 @@ public class AprvPrcsRequest {
 	int aprvLineId, aprvDocId, aprvPrcsEmpId;
 	String roleCd, roleSeq, aprvPrcsDt, aprvPrcsStts, rjctRsn, drftDt;
 	
+	int nextEmpId;
 	String nextEmpNm;
 }
