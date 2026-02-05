@@ -1,6 +1,6 @@
 export const SIDE_CONFIG = {
   approval: {
-    title: '전자결재',
+    title: "전자결재",
     sideMenus: [
       { id: 'docStatus', name: '결재현황' },
       { id: 'draft', name: '기안 작성' },
@@ -13,21 +13,24 @@ export const SIDE_CONFIG = {
     ]
   },
   schedule: {
-    title: '일정관리',
+    title: "일정관리",
     sideMenus: [
-      { id: 'aaa', name: '업무조회' },
-      { id: 'bbb', name: '업무지시' },
-    ]
+      { id: "aaa", name: "업무조회" },
+      { id: "bbb", name: "업무지시" },
+    ],
   },
   attendance: {
-    title: '근태관리',
+    title: "근태관리",
     sideMenus: [
-      { id: 'aaa', name: '출퇴근 기록' },
-      { id: 'bbb', name: '월간 통계' },
-    ]
+      { id: "atdc", name: "출퇴근 기록" },
+      { id: "dtskdchk", name: "근무표 조회" },
+      { id: "dtskdlst", name: "근무표 리스트" },
+      { id: "myatdc", name: "개인 근태 기록" },
+      { id: "empatdc", name: "사원 근태 기록" },
+    ],
   },
   board: {
-    title: '공지게시판',
+    title: "공지게시판",
     sideMenus: [
       { id: 'important', name: '중요 게시판' },
       { id: 'public', name: '공용 게시판' },
@@ -39,21 +42,21 @@ export const SIDE_CONFIG = {
     ]
   },
   orgChart: {
-    title: '조직도',
+    title: "조직도",
     sideMenus: [
-      { id: 'aaa', name: '전체 사원 보기' },
-      { id: 'bbb', name: '팀별 사원 보기' },
-      { id: 'ccc', name: '사원 추가' },
-    ]
+      { id: "aaa", name: "전체 사원 보기" },
+      { id: "bbb", name: "팀별 사원 보기" },
+      { id: "ccc", name: "사원 추가" },
+    ],
   },
   dashboard: {
-    title: '회사 대시보드',
+    title: "회사 대시보드",
     sideMenus: [
-      { id: 'aaa', name: '회사 대시보드' },
-      { id: 'bbb', name: '인사팀 대시보드' },
-      { id: 'ccc', name: '시설자재팀 대시보드' },
-      { id: 'ddd', name: '권한 목록' },
-    ]
+      { id: "aaa", name: "회사 대시보드" },
+      { id: "bbb", name: "인사팀 대시보드" },
+      { id: "ccc", name: "시설자재팀 대시보드" },
+      { id: "ddd", name: "권한 목록" },
+    ],
   },
   // 나머지 메뉴들도 같은 방식으로 팀원들이 추가...
 };

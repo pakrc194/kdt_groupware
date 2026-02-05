@@ -1,0 +1,316 @@
+/* 1. 전체 페이지 레이아웃 및 초기화 */
+.duty-detail-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 40px);
+  background: #f1f3f5; /* 페이지 전체 배경색 */
+  padding: 20px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+  box-sizing: border-box;
+}
+
+/* 2. 상단 헤더 영역 (목록 버튼 & 제목) */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px 12px 0 0;
+  border: 1px solid #dee2e6;
+  border-bottom: none;
+}
+
+.header-left,
+.header-right {
+  flex: 1;
+}
+
+.header-center {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.title-input {
+  font-size: 24px;
+  font-weight: 800;
+  border: none;
+  border-bottom: 3px solid #1976d2;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  outline: none;
+  color: #333;
+  padding: 5px 0;
+}
+
+/* 3. 컨트롤 바 (월 선택, 일괄작성 등) */
+.page-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-top: 1px solid #eee;
+}
+
+.controls-left,
+.controls-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* 4. 타임라인 컨테이너 (데이터 그리드 영역) */
+.timeline-container {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  /* overflow: hidden; -> 내부 스크롤을 막기 위해 제거하거나 visible로 변경 */
+  overflow: visible;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.timeline-scroll-viewport {
+  /* 가로 스크롤은 날짜가 많으니 유지해야 하지만, 세로 스크롤은 제거합니다 */
+  overflow-x: auto;
+  overflow-y: visible;
+  max-height: none !important; /* 높이 제한 해제 */
+}
+
+.timeline-wrapper {
+  display: inline-block;
+  min-width: 100%;
+}
+
+/* 3. 헤더 고정 (브라우저 스크롤 시에도 헤더를 상단에 고정하고 싶다면) */
+.timeline-header {
+  display: flex;
+  position: sticky;
+  top: 0; /* 브라우저 최상단에 붙음 */
+  z-index: 100;
+  background: #f1f3f5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 스크롤 시 구분되도록 그림자 추가 */
+}
+
+.employee-info-cell {
+  width: 220px;
+  min-width: 220px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-right: 2px solid #ced4da;
+  background: #fff;
+  position: sticky;
+  left: 0; /* 가로 스크롤 시 왼쪽 고정 */
+  z-index: 40;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.header-cell {
+  background: #f1f3f5;
+  z-index: 60;
+  font-weight: bold;
+  color: #495057;
+}
+
+.employee-row {
+  display: flex;
+}
+
+.day-cell,
+.duty-cell {
+  width: 65px;
+  min-width: 65px;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.day-cell {
+  font-weight: bold;
+  font-size: 13px;
+  color: #495057;
+}
+
+.duty-select {
+  width: 85%;
+  height: 75%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  font-weight: bold;
+  text-align-last: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.duty-select:focus {
+  outline: 2px solid #1976d2;
+  transform: scale(1.05);
+}
+
+/* 6. 페이지 푸터 영역 (저장하기 버튼 전용) */
+.page-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px 0 50px 0; /* 하단 여백 충분히 확보 */
+}
+
+.btn-save-final {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 16px 60px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-save-final:hover {
+  background: #1565c0;
+  box-shadow: 0 6px 15px rgba(25, 118, 210, 0.4);
+  transform: translateY(-2px);
+}
+
+.btn-save-final:active {
+  transform: translateY(0);
+}
+
+/* 7. 공통 버튼 및 태그 스타일 */
+.btn-list {
+  background: #fff;
+  color: #495057;
+  border: 1px solid #ced4da;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-list:hover {
+  background: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.btn-bulk {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-setup {
+  background: #455a64;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-reset {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.emp-group-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 800;
+}
+.emp-group-tag.A {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+.emp-group-tag.B {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+.emp-group-tag.C {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.emp-group-tag.D {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+.emp-group-tag.none {
+  background: #f5f5f5;
+  color: #999;
+}
+
+/* 8. 모달 관련 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.setup-modal {
+  background: #fff;
+  width: 1000px;
+  max-height: 90vh;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  padding: 20px 30px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-footer-btns {
+  padding: 20px 30px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* 로딩 애니메이션 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1976d2;
+}
