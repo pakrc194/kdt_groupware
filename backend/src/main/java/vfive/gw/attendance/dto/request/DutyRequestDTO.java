@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class DutyRequestDTO {
 
-	private int scheId;
+	private int scheId, deptId;
+	String trgtYmd;
 	
 }

@@ -59,7 +59,7 @@ public class HomeController {
 	@GetMapping("detail/{id}")
 	EmpPrvc emp(@PathVariable("id") int id) {
 		EmpPrvc emp = new EmpPrvc();
-		emp.setEmpId(id);
+		emp.setEmpId(3);
 		
 		return mapper.empPrvc(emp);
 	}

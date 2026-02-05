@@ -14,6 +14,7 @@ import vfive.gw.attendance.dto.request.EmpAtdcRequestDTO;
 import vfive.gw.attendance.dto.response.DutySkedListDTO;
 import vfive.gw.attendance.service.DutySkedDetailService;
 import vfive.gw.attendance.service.DutySkedListService;
+import vfive.gw.attendance.service.DutySkedViewService;
 import vfive.gw.home.controller.HomeController;
 
 @RestController
@@ -25,7 +26,11 @@ public class DutyController {
 	
 	@Resource
 	DutySkedDetailService dutySkedDetailService;
+	
+	@Resource
+	DutySkedViewService dutySkedViewService;
 
+	// 근무표 리스트
 	@GetMapping("list")
 	List<DutySkedListDTO> list(EmpAtdcRequestDTO req) {
 		
@@ -34,6 +39,7 @@ public class DutyController {
 		return res;
 	}
 	
+	// 근무표 상세(수정포함)
 	@GetMapping("detail")
 	Map<String, Object> detail(DutyRequestDTO req) {
 		Map<String, Object> res = dutySkedDetailService.execute(req);
@@ -48,6 +54,15 @@ public class DutyController {
 //		List<EmpDTO> res = 
 		
 		return null;
+	}
+	
+	// 근무표 조회(팀원)
+	@GetMapping("view")
+	Map<String, Object> view(DutyRequestDTO req) {
+		
+		Map<String, Object> res = dutySkedViewService.execute(req);
+		
+		return res;
 	}
 	
 }

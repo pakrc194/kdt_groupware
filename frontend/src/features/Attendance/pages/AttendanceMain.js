@@ -5,9 +5,10 @@ import MyAttendanceRecodePage from "./MyAttendanceRecodePage";
 import EmpAttendanceList from "./EmpAttendanceList";
 import EmpAtdcDetail from "./EmpAtdcDetail";
 import DutySkedListPage from "./DutySkedListPage";
-import DutySkedCheckPage from "./DutySkedCheckPage";
+import DutySkedCheckPage from "./DutySkedView";
 import DutySkedInsertForm from "./DutySkedInsertForm";
 import DutySkedDetail from "./DutySkedDetail";
+import DutySkedView from "./DutySkedView";
 
 function AttendanceMain(props) {
   const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
@@ -17,8 +18,8 @@ function AttendanceMain(props) {
     switch (sideId) {
       case "atdc":
         return <AttendancePage />; // 경로 문자열이 아니라 컴포넌트 호출!
-      case "dtskdchk":
-        return <DutySkedCheckPage />;
+      case "dtskdview":
+        return <DutySkedView />;
       case "dtskdlst":
         return <DutySkedListPage />;
       case "dtSkdIst":

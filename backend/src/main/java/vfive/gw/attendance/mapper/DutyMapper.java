@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.attendance.dto.domain.EmpDTO;
 import vfive.gw.attendance.dto.request.DutyRequestDTO;
 import vfive.gw.attendance.dto.request.EmpAtdcRequestDTO;
 import vfive.gw.attendance.dto.response.DutySkedDetailDTO;
@@ -48,5 +49,21 @@ public interface DutyMapper {
   @Select("SELECT SCHE_ID, SCHE_TTL, TRGT_YMD, PRGR_STTS " +
           "FROM DUTY_SCHE_MST WHERE SCHE_ID = #{scheId}")
   DutySkedListDTO selectDutySkedMaster(DutyRequestDTO req);
+  
+  // 조회용 - 결재된 근무표 조회
+  @Select("SELECT SCHE_ID, SCHE_TTL, TRGT_YMD, PRGR_STTS " +
+          "FROM DUTY_SCHE_MST " +
+          "WHERE DEPT_ID = #{deptId} " + 
+          "  AND TRGT_YMD = #{trgtYmd} " +
+          "  AND PRGR_STTS = 'CONFIRMED' " + 
+          "LIMIT 1")
+  DutySkedListDTO selectConfirmedMasterByDept(DutyRequestDTO req);
+  
+//  @Select("SELECT EMP_ID, EMP_NM, GRP_NM, ROT_PTN_CD " +
+//      "FROM EMP_PRVC " +
+//      "WHERE DEPT_ID = #{deptId} " +
+//      "  AND EMP_ACNT_STTS = 'ACTIVE' " + // 재직 중인 사원만
+//      "ORDER BY GRP_NM ASC, EMP_NM ASC")
+//  List<EmpDTO> selectDeptEmpList(Emp);
 	
 }
