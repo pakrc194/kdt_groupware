@@ -14,6 +14,10 @@ public class PageInfo {
     private int start;            // 시작 인덱스
     private int cnt;              // 조회할 개수
     private int blockSize = 5;    // 페이지 블록 크기 (1~5까지 표시)
+    private int startPage;   
+    private int endPage;   
+    private boolean prevBut;   
+    private boolean nextBut;   
     
     
     
@@ -22,6 +26,13 @@ public class PageInfo {
         this.totalPage = (int) Math.ceil((double) total / pageSize);
         this.start = (curPage - 1) * pageSize;
         this.cnt = pageSize;
+        
+        this.startPage = ((curPage-1)/blockSize)*blockSize+1;
+        this.endPage = Math.min(startPage+blockSize-1,totalPage);
+        this.prevBut = startPage > 1;
+        this.nextBut = endPage < totalPage;
+        
+        
     }
     
     public void setCurPage(int curPage) {

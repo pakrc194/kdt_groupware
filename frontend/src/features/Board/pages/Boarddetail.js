@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
+import {fetcher} from '../../../shared/api/fetcher';
+import BoardModify from  './BoardModify';
 
 function BoardDetail(props) {
     const {sideId} = useParams();
@@ -19,11 +21,11 @@ function BoardDetail(props) {
 
     const fetchBoardDetail = () => {
         setIsLoading(true);
-        fetch(`http://192.168.0.36:8080/board/detail/${props.boardId}`)
-            .then(res => res.json())
+        fetcher(`/board/detail/${props.boardId}`)
             .then(data => {
                 setBoard(data);
                 setIsLoading(false);
+                console.log("패치 data 받아옴")
             })
             .catch(err => {
                 console.error("데이터 호출 에러:", err);
@@ -31,16 +33,18 @@ function BoardDetail(props) {
             });
     };
 
+
+
+    //게시물 삭제하는 함수
     const handleDelete = () => {
         if (window.confirm('삭제하시겠습니까?')) {
-            fetch(`http://192.168.0.36:8080/board/detail/${props.boardId}`, {
+            fetcher(`/board/detail/${props.boardId}`, {
                 method: 'DELETE'
             })
-            .then(res => res.json())
             .then(data => {
                 if (data.success) {
                     alert('삭제되었습니다.');
-                    navigate(`/board/${sideId}`);
+                    handleList();
                 } else {
                     alert('삭제 실패했습니다.');
                 }
@@ -52,9 +56,6 @@ function BoardDetail(props) {
         }
     };
 
-    const handleEdit = () => {
-        navigate(`/board/${sideId}/edit/${props.boardId}`);
-    };
 
     // 선택 하면 BoardMain에서 list로 상태 값을 변화 시킨다
     const handleList = () => {
@@ -93,10 +94,19 @@ function BoardDetail(props) {
             </div>
 
 
+
             <div className="detail-actions">
                 <button onClick={handleList} >목록</button>
+                <button onClick= {handleDelete}>삭제</button>
+                 <button onClick={() => props.goService('Modify')}>수정</button> 
             
             </div>
+
+
+           
+
+
+
         </div>
     );
 }
