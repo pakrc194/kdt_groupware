@@ -7,6 +7,8 @@ import './DraftPage.css'
 import DraftBox from './DraftBox';
 import ReferBox from './ReferBox';
 import RejectBox from './RejectBox';
+import DocStatus from './DocStatus';
+import DocBox from './DocBox';
 
 
 const ApprovalMain = () => {
@@ -15,14 +17,14 @@ const ApprovalMain = () => {
   useEffect(()=>{
     localStorage.setItem("EMP_ID", "1")
     localStorage.setItem("EMP_NM", "강백호")
-
-    
   },[])
 
   
   // 2. 스위치 문에서 '컴포넌트'를 반환합니다.
   const renderContent = () => {
     switch (sideId) {
+      case 'docStatus':
+        return <DocStatus/>;
       case 'draft':
         return <DraftPage />; // 경로 문자열이 아니라 컴포넌트 호출!
       case 'draftBox':
@@ -33,8 +35,8 @@ const ApprovalMain = () => {
         return <ReferBox />;
       case 'rejectBox':
         return <RejectBox />;
-      case 'completed':
-        return <div>✅ 결재 완료 목록 화면 (팀원이 작성 중...)</div>;
+      case 'docBox':
+        return <DocBox/>;
       default:
         return <div>페이지를 찾을 수 없습니다.</div>;
     }

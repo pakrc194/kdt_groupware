@@ -7,6 +7,6 @@ public class AprvDocInptResponse {
 	int docInptId;
 	int docFormId;
 	int docInptNo;
-	String docInptLbl, docInptType, docInptRmrk;
+	String docInptLbl, docInptNm, docInptType, docInptRmrk;
 	
 }

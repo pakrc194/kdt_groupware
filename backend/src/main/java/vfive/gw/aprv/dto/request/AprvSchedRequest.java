@@ -3,7 +3,8 @@ package vfive.gw.aprv.dto.request;
 import lombok.Data;
 
 @Data
-public class AprvEmpAnnlLvRequest {
+public class AprvSchedRequest {
 	int empId; 
-	int year;
+	String deptId;
+	String docStart, docEnd;
 }

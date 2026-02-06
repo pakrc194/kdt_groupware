@@ -5,13 +5,19 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
+import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
+import vfive.gw.aprv.dto.request.AprvSchedRequest;
 import vfive.gw.aprv.dto.response.AprvDocDetailResponse;
 import vfive.gw.aprv.dto.response.AprvDocDtlVlResponse;
 import vfive.gw.aprv.dto.response.AprvDocFormLineResponse;
 import vfive.gw.aprv.dto.response.AprvDocInptResponse;
+import vfive.gw.aprv.dto.response.AprvDutyScheDtlResponse;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
+import vfive.gw.aprv.dto.response.AprvLocListResponse;
+import vfive.gw.aprv.dto.response.AprvSchedResponse;
 
 @Mapper
 public interface AprvMapper {
@@ -38,4 +44,13 @@ public interface AprvMapper {
 			</script>
 			""")
 	AprvDocFormLineResponse docFormLine(int docId);
+	
+	@Select("select * from DUTY_SCHE_DTL where EMP_ID = #{empId} and DUTY_YMD between #{docStart} and #{docEnd}")
+	List<AprvDutyScheDtlResponse> dutyScheDtl(AprvDutyScheDtlRequest req);
+	
+	@Select("SELECT * FROM SCHED WHERE SCHED_START_DATE <= #{docEnd} AND SCHED_END_DATE >= #{docStart}")//sched_emp_id = #{empId}
+	List<AprvSchedResponse> schedList(AprvSchedRequest req);
+	
+	@Select("SELECT * FROM LOC_INFO left join SCHED on LOC_ID = SCHED_LOC")//WHERE SCHED_START_DATE <= #{docEnd} AND SCHED_END_DATE >= #{docStart}"
+	List<AprvLocListResponse> locList(AprvLocListRequest req);
 }

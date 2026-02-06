@@ -41,7 +41,7 @@ public class AprvDrftUpload {
 			line.setAprvPrcsStts("WAIT");
 			if(line.getRoleCd().equals("DRFT")) {
 				line.setAprvPrcsStts("APPROVED");
-				line.setDrftDt(drftDoc.getAprvDocDrftDt());
+				line.setAprvPrcsDt(drftDoc.getAprvDocDrftDt());
 			}
 			System.out.println(line);
 		}

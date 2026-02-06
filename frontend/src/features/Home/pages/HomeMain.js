@@ -32,12 +32,11 @@ function HomeMain(props) {
 
 
     useEffect(()=>{
-        const loadFetch = () => {
-            fetcher('/gw/home/1').then(setEmpData);
-            
-        }
+        // const loadFetch = () => {
+        //     fetcher('/gw/home/1').then(setEmpData);    
+        // }
 
-        loadFetch();
+        // loadFetch();
         
     },[])
 

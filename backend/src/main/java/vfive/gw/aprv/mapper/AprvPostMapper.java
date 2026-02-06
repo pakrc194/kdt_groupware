@@ -14,6 +14,7 @@ import vfive.gw.aprv.dto.request.AprvDrftInptRequest;
 import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvInptVlRequest;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
+import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
 
 @Mapper
 public interface AprvPostMapper {
@@ -36,9 +37,9 @@ public interface AprvPostMapper {
 	int docSttsUpdate(AprvPrcsRequest req);
 	
 	@Insert("insert into APRV_PRCS "
-			+ "(APRV_LINE_ID, APRV_DOC_ID, APRV_PRCS_EMP_ID, ROLE_CD, ROLE_SEQ, APRV_PRCS_DT, APRV_PRCS_STTS, RJCT_RSN, DRFT_DT)"
+			+ "(APRV_LINE_ID, APRV_DOC_ID, APRV_PRCS_EMP_ID, ROLE_CD, ROLE_SEQ, APRV_PRCS_DT, APRV_PRCS_STTS, RJCT_RSN)"
 			+ "values "
-			+ "(#{aprvLineId}, #{aprvDocId}, #{aprvPrcsEmpId}, #{roleCd}, #{roleSeq}, #{aprvPrcsDt}, #{aprvPrcsStts}, #{rjctRsn}, #{drftDt})")
+			+ "(#{aprvLineId}, #{aprvDocId}, #{aprvPrcsEmpId}, #{roleCd}, #{roleSeq}, #{aprvPrcsDt}, #{aprvPrcsStts}, #{rjctRsn})")
 	int iAprvPrcs(AprvPrcsRequest req);
 	
 	@Update("update APRV_PRCS "
@@ -63,10 +64,10 @@ public interface AprvPostMapper {
 	
 	@Insert("<script>"
 			+ "insert into APRV_PRCS "
-			+ "(APRV_PRCS_EMP_ID, APRV_DOC_ID, ROLE_CD, ROLE_SEQ, APRV_PRCS_STTS, DRFT_DT)"
+			+ "(APRV_PRCS_EMP_ID, APRV_DOC_ID, ROLE_CD, ROLE_SEQ, APRV_PRCS_DT, APRV_PRCS_STTS)"
 			+ "values "
 			+ "<foreach collection='list' item='v' separator=',' index='i'>"
-			+ " (#{v.aprvPrcsEmpId}, #{v.aprvDocId}, #{v.roleCd}, #{v.roleSeq}, #{v.aprvPrcsStts}, #{v.drftDt}) "
+			+ " (#{v.aprvPrcsEmpId}, #{v.aprvDocId}, #{v.roleCd}, #{v.roleSeq}, #{v.aprvPrcsDt}, #{v.aprvPrcsStts}) "
 			+ "</foreach>"
 			+ "</script>")
 	int drftLineList(@Param("list")List<AprvPrcsRequest> drftLineList);
@@ -81,4 +82,10 @@ public interface AprvPostMapper {
 			+ "</foreach>"
 			+ "</script>")
 	int drftInpt(@Param("list")List<AprvInptVlRequest> di);
+	
+	@Insert("insert into SCHED "
+			+ "(SCHED_TITLE, SCHED_START_DATE, SCHED_END_DATE, SCHED_TYPE, SCHED_DETAIL, SCHED_LOC, SCHED_EMP_ID, SCHED_AUTHOR_ID, SCHED_DEPT_ID) "
+			+ "values "
+			+ "(#{schedTitle},#{schedStartDate},#{schedEndDate},#{schedType},#{schedDetail},#{schedLoc},#{schedEmpId},#{schedAuthorId},#{schedDeptId})")
+	int aprvSchedUpload(AprvSchedUploadRequest req);
 }

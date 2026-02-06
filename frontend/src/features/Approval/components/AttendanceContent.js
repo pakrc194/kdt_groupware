@@ -6,7 +6,7 @@ import EditAprvLine from './modals/EditAprvLine';
 import { fetcher } from '../../../shared/api/fetcher';
 import InputForm from './InputForm';
 
-const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputList}) => {
+const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc}) => {
     const [isAttendCheckOpen, setIsAttendCheckOpen] = useState(false);
     const [drftDate, setDrftDate] = useState({})
 
@@ -52,17 +52,19 @@ const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputL
                 {isEditLineOpen && <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk}/>}
             </div>
             <div>
+                <Button type="primary" onClick={fn_attendCheck}>기간 확인</Button>
+            </div>
+            <div>
                 {inputList.map((v, k)=>
                     <div key={k}>
                         <InputForm drftDate={drftDate} setDrftDate={setDrftDate} setInputList={setInputList}
-                            inputForm={v} />
+                            inputForm={v} docLoc={docLoc} setDocLoc={setDocLoc}/>
                     </div>
                 )}
             </div>
 
 
             <div>
-                <Button type="primary" onClick={fn_attendCheck}>기간 확인</Button>
                 {isAttendCheckOpen && <AttendCheckModal drftDate={drftDate}  
                         onClose={fn_attendCheckClose} onOk={fn_attendCheckOk} />}
             </div>

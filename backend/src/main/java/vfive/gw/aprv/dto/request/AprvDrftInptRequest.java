@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AprvDrftInptRequest {
 	int docFormId, docInptId, docInptNo;
-	String docInptLbl, docInptRmrk, docInptType, docInptVl;
+	String docInptLbl, docInptRmrk, docInptNm, docInptType, docInptVl;
 }

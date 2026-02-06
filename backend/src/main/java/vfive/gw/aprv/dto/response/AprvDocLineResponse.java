@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AprvDocLineResponse {
 	int aprvLineId, aprvDocId, aprvPrcsEmpId;
-	String roleCd, roleSeq, aprvPrcsDt, aprvPrcsStts, rjctRsn;
+	String roleCd, roleSeq, aprvPrcsDt, aprvPrcsStts, rjctRsn, drftDt;
 	String empNm;
 	String nextEmpNm;
 	
