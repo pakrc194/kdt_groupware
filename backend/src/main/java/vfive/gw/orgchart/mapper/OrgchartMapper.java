@@ -3,13 +3,16 @@ package vfive.gw.orgchart.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectKey;
 
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
 import vfive.gw.orgchart.dto.JbttlInfo;
+import vfive.gw.schedule.dto.Sched;
 
 @Mapper
 public interface OrgchartMapper {
@@ -18,6 +21,7 @@ public interface OrgchartMapper {
 			+ "from EMP_PRVC "
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
+			+ "where EMP_PRVC.EMP_ACT_STTS = 'ACTIVE' "
 			+ "order by EMP_NM")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empList();
 	
@@ -51,7 +55,26 @@ public interface OrgchartMapper {
 			+ "</where>"
 			+ "order by EMP_NM"
 			+ "</script>")
-//	List<Map<EmpPrvc, DeptInfo>> searchEmp(EmpSearchReq req);
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> searchEmp(EmpSearchReq req);
 	
+	// 직책 정보
+	@Select("select * from JBTTL_INFO")
+	List<JbttlInfo> jbttlList();
+	
+	// 사원 추가
+	@SelectKey(
+			keyProperty = "empId",
+			resultType = Integer.class,
+			before = true,
+			statement = "select count(*)+1 from EMP_PRVC where dept_id = #{deptId}"
+			)
+	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_SN, EMP_PSWD) "
+			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, "
+			+ "concat("
+			+ "(select dept_code from DEPT_INFO where dept_id = #{deptId}), "
+			+ "(LPAD(#{empId}, 4, '0'))"
+			+ "),"
+			+ "concat((select dept_code from DEPT_INFO where dept_id = #{deptId}), '0000')"
+			+ ")")
+	int registerEmp(EmpPrvc emp);
 }

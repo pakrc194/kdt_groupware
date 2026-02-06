@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class JbttlInfo {
 	Integer jbttlId;
-	String JbttlNm;
+	String jbttlNm;
 }

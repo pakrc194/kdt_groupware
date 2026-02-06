@@ -5,16 +5,20 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
 import vfive.gw.orgchart.dto.JbttlInfo;
 import vfive.gw.orgchart.mapper.OrgchartMapper;
+import vfive.gw.schedule.dto.Sched;
 
 @RestController
 @RequestMapping("/gw/orgChart")
@@ -59,10 +63,24 @@ public class OrgChartController {
 	// 검색
 	@GetMapping("empSch")
 //	List<Map<EmpPrvc, DeptInfo>> searchEmp(EmpSearchReq req) {
-	List searchEmp(EmpSearchReq req) {
+	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> searchEmp(EmpSearchReq req) {
 		System.out.println("검색 진입");
 		System.out.println(req.getSchFilter());
 	    System.out.println(req.getSchValue());
 		return orgchartMapper.searchEmp(req);
+	}
+	
+	// 직책
+	@GetMapping("register/jbttl")
+	List<JbttlInfo> jbttlList() {
+		return orgchartMapper.jbttlList();
+	}
+	
+	// 사원 추가
+	@PostMapping("/register")
+	int registerEmp(@RequestBody EmpPrvc emp) {
+		System.out.println("계정 생성 시도");
+		return orgchartMapper.registerEmp(emp);
+//		return 0;
 	}
 }
