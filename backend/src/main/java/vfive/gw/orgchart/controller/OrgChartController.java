@@ -35,7 +35,8 @@ public class OrgChartController {
 	}
 	
 	@GetMapping("detail/{id}")
-	Map<EmpPrvc, DeptInfo> emp(@PathVariable("id") int id) {
+	Map<EmpPrvc, DeptInfo> emp(@PathVariable("id") Integer id) {
+		System.out.println("사원 상세 정보");
 		EmpPrvc emp = new EmpPrvc();
 		emp.setEmpId(id);
 		

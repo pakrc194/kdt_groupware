@@ -1,11 +1,12 @@
 import React from 'react';
 
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import AllEmp from './AllEmp';
 import NewEmp from './NewEmp';
 import DetailEmp from './DetailEmp';
 import TeamEmpList from './TeamEmpList';
 import SearchEmp from './SearchEmp';
+import ModifyEmp from './ModifyEmp';
 
 function OrgChartMain(props) {
     const { sideId } = useParams();
@@ -22,6 +23,8 @@ function OrgChartMain(props) {
                 return <DetailEmp />
             case 'empSch':
                 return <SearchEmp />
+            case 'modify':
+                return <ModifyEmp />
             default:
                 return <TeamEmpList code={sideId} />
         }

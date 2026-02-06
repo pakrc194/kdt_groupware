@@ -18,6 +18,14 @@ function DetailEmp(props) {
         .catch(e => console.log(e))
     }, []);
 
+    const modifyInfo = () => {
+        window.location.href=`../../modify?id=${id}`;
+    }
+
+    const retired = () => {
+        alert('계정 RETIRED')
+    }
+
     
     return (
         <div>
@@ -46,6 +54,10 @@ function DetailEmp(props) {
                     <td>{data.EMP_ADDR}</td>
                 </tr>
                 <tr>
+                    <td>생년월일</td>
+                    <td>{data.EMP_BIRTH}</td>
+                </tr>
+                <tr>
                     <td>전화번호</td>
                     <td>{data.EMP_TELNO}</td>
                 </tr>
@@ -56,6 +68,14 @@ function DetailEmp(props) {
                 </tbody>
             </table>
             <button onClick={() => navigate(-1)}>뒤로</button>
+            {/* 인사팀일 때만 버튼 활성화 */}
+            {(localStorage.getItem("DEPT_ID")) && (
+                <>
+                    <button onClick={modifyInfo}>정보수정</button>
+                    {/* 이름, 팀, 직책, 생년월일만 수정 */}
+                    <button onClick={retired}>비활성화</button>
+                </>
+            )}
         </div>
     );
 }

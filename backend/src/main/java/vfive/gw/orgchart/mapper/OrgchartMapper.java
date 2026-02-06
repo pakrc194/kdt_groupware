@@ -21,11 +21,12 @@ public interface OrgchartMapper {
 			+ "from EMP_PRVC "
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
-			+ "where EMP_PRVC.EMP_ACT_STTS = 'ACTIVE' "
+			+ "where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
 			+ "order by EMP_NM")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empList();
 	
-	@Select("select EMP_PRVC.*, DEPT_INFO.* from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id where emp_id = #{empId}")
+	@Select("select EMP_PRVC.*, DEPT_INFO.* from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
+			+ "where emp_id = #{empId}")
 	Map<EmpPrvc, DeptInfo> empPrvc(EmpPrvc emp);
 	
 	@Select("select EMP_PRVC.*, DEPT_INFO.DEPT_NAME, JBTTL_INFO.JBTTL_NM "
@@ -33,7 +34,10 @@ public interface OrgchartMapper {
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
 			+ "where EMP_PRVC.dept_id = (select dept_id from DEPT_INFO "
-			+ "where dept_code = #{deptCode}) order by EMP_NM")
+			+ "where dept_code = #{deptCode}) "
+			+ "and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
+			+ "order by EMP_NM "
+			+ "")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empTeamList(DeptInfo dInfo);
 	
 	@Select("select * from DEPT_INFO where dept_code = #{deptCode}")
@@ -51,7 +55,8 @@ public interface OrgchartMapper {
 			+ "<where>"
 			+ "<if test = 'schValue != null'>"
 			+ "${schFilter} like concat('%', #{schValue}, '%')"
-			+ "</if>"
+			+ "</if> "
+			+ "and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
 			+ "</where>"
 			+ "order by EMP_NM"
 			+ "</script>")
