@@ -1,45 +1,51 @@
 import React from "react";
 
-function Pagination({currentPage, totalPages, onPageChange}) {
-    const pageNum = [];
-    for (let i =1; i <= totalPages; i++) {
-        pageNum.push(i);
+function Pagination({pInfo, onPageChange}) {
+
+    if(!pInfo){
+        return null;
     }
 
+
+    const {
+        curPage, 
+        totalPage, 
+        startPage, 
+        endPage, 
+        prevBut, 
+        nextBut
+    }  = pInfo; 
+
+
+    const pageNums =[];
+        for(let i = startPage; i<= endPage; i++){
+            pageNums.push(i);
+        }
+
     return(
-    <tr key="pagination-row">
-            <td colSpan="8" align="center">
-                {/* 이전 버튼 */}
-                {currentPage > 1 && (
-                    <span onClick={() => onPageChange(currentPage - 1)} >
-                        [이전]
-                    </span>
-                )}
+    <>
+        {prevBut && (<span  onClick ={()=>onPageChange(startPage-1)} >이전</span>)}
 
-                {/* 페이지 번호들 */}
-                {pageNum.map((i) => (
-                    <span key={i}>
-                        {currentPage === i ? (
-                            <b>[{i}]</b>
-                        ) : (
-                            <span 
-                                onClick={() => onPageChange(i)} 
-                            >
-                                {i}
-                            </span>
-                        )}
-                    </span>
-                ))}
+        {pageNums.map((num)=>(
+            <span
+                key={num}
+                onClick={() => onPageChange(num)}
+            >
 
-                {/* 다음 버튼 */}
-                {currentPage < totalPages && (
-                    <span onClick={() => onPageChange(currentPage + 1)} >
-                        [다음]
-                    </span>
-                )}
-            </td>
-        </tr>
-    );
+                {curPage === num ? (
+                    <b>[{num}]</b>
+                ) : (
+                    num
+            )}
+            </span>
+        ))}
+
+        {nextBut && (<span  onClick = {()=>onPageChange(endPage+1)} >다음</span>)}
+    </>    
+    );    
+        
+
+
 }
 
 export default Pagination;

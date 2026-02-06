@@ -22,7 +22,7 @@ public class NoticeBo implements BoardAction {
 			HttpServletResponse response) {
 	
 		if (pInfo.getPNo() == 0) {
-		    pInfo.setPNo(1);
+//		    pInfo.setPNo(1);
 		}
 		
 		pInfo.setTotal(mapper.total());

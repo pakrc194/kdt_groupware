@@ -42,7 +42,7 @@ function BoardInsert(props) {
     };
 
     return (
-        <div className="board-write-container">
+        <>
             <h2>게시글 작성</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -53,6 +53,7 @@ function BoardInsert(props) {
                         onChange={(e) => setTitle(e.target.value)} 
                         required 
                     />
+                     {sideId ==='important' && (<input type='checkbox'/>)} 
                 </div>
                 <div className="form-group">
                     <label>내용</label>
@@ -68,7 +69,7 @@ function BoardInsert(props) {
                     <button type="button" onClick={() => props.goService('list')}>취소</button>
                 </div>
             </form>
-        </div>
+        </>
     );
 }
 

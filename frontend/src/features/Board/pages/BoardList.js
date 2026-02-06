@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import BoardWrite from './BoardInsert';
 import Pagination from './Pagination';
+import {fetcher} from '../../../shared/api/fetcher';
 
 function BoardList(props) {
 
@@ -15,11 +16,13 @@ function BoardList(props) {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [pInfo, setPInfo] = useState(null);
+   
     
     // 검색 및 설정
     const [keyword, setKeyword] = useState('');
     const [searchInput, setSearchInput] = useState('');
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(3);
 
     // 게시판 타이틀 매핑
     const boardTitles = {
@@ -34,32 +37,23 @@ function BoardList(props) {
         fetchBoards();
     }, [sideId, currentPage, pageSize, keyword]);
 
-
-    function goDetail(i){
-        props.goBoardId(i)
-        props.goService('detail')
-    }
-
     const fetchBoards = () => {
+        
         setIsLoading(true);
 
-        let urlStr = `http://192.168.0.36:8080/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}`
-        console.log('urlStr:',urlStr)
-        
-        fetch (urlStr ,
-            {
-             headers:{
-            'content-Type':'application/json'
-        
-             }
-        })
+        function goDetail(i){
+            props.goBoardId(i)
+            props.goService('detail')
+        }
 
 
-        .then(response =>response.json())
+        
+        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}`)
         .then(
             dd =>{
-
-                 console.log(dd)
+                setBoards(data.boards);
+                setPInfo(dd.pInfo);
+                console.log(dd)
 
                  
                  let vv = (<table border="">
@@ -73,7 +67,7 @@ function BoardList(props) {
                     <td>조회수</td>
                     <td>작성자</td>
                 </tr>
-                {dd.map((st,i)=>{
+                {dd.boards.map((st,i)=>{
                     let detailUrl = `/board/boarddtail/${currentPage}`
 
                     return <tr>
@@ -86,22 +80,22 @@ function BoardList(props) {
                     </tr>
             })}
 
-
-
-
             <button onClick={()=>props.goService('Insert')}>글쓰기</button>
-                <Pagination
-                    currentPage = {currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                 />
+              
+
+
+                 <Pagination pInfo={dd.pInfo} onPageChange={setCurrentPage}/>
             </table>
 
         )
-
          setData(vv)
-        })
+        }
+        )
+
+       
     };
+
+
 
     return (
         <div>

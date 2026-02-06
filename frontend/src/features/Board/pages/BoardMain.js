@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import BoardList from './BoardList';
 import Boarddetail from './Boarddetail';
 import BoardWrite from './BoardInsert';
+import BoardModify from './BoardModify';
 // import './BoardMain.css';
 
 function BoardMain(props) {
@@ -15,6 +16,7 @@ function BoardMain(props) {
             {service==='list' && <BoardList goBoardId={setBoardId} goService={setService}/>}
             {service==='detail' && <Boarddetail goBoardId={setBoardId}  boardId={boardId} goService={setService}/>}
             {service==='Insert' && <BoardWrite goService={setService}/>}
+            {service==='Modify' && <BoardModify boardId={boardId} goService={setService}/>}
         </>
     )
 }

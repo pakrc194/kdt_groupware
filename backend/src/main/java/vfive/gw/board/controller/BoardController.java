@@ -33,7 +33,7 @@ public class BoardController {
      * 게시판 목록 조회 (페이징, 검색 포함)
      */
     @GetMapping("{sideId}")
-    public ResponseEntity<List> getBoards(
+    public ResponseEntity<Map<String,Object>> getBoards(
     		PageInfo pInfo) {
         
     	System.out.println("요청받은 게시판 아이디: " + pInfo);
@@ -45,7 +45,12 @@ public class BoardController {
         // 게시물 목록 조회
         List<BoardPrvc> boards = boardMapper.listByType( pInfo);
         
-        return ResponseEntity.ok(boards);
+        Map<String,Object> res = Map.of(
+        		"boards", boards,
+        		"pInfo", pInfo
+        		);
+        
+        return ResponseEntity.ok(res);
     }
     
     /**
@@ -130,21 +135,7 @@ public class BoardController {
     }
     
     
-    @GetMapping()
-    public ResponseEntity<Map<String,Object>>getBoard(PageInfo pInfo){
-    	
-    	int total = boardMapper.totalByType(pInfo);
-    	pInfo.setTotal(total);
-    	
-    	List<BoardPrvc> boards = boardMapper.listByType(pInfo);
-    	
-    	Map<String,Object> response = new HashMap<>();
-    	response.put("boards", boards);
-    	response.put("pageInfo", pInfo);
-    	
-    	return ResponseEntity.ok(response);
-    }
-    
+
    
     
 }
