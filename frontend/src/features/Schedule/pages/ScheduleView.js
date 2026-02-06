@@ -40,13 +40,14 @@ function ScheduleView(props) {
                 return <ScheduleList sDate={setDate} todo={todos} />
         }
     }
+    
 
     // 특정 날짜로 일정 받아와서 화면에 출력
     useEffect(() => {
         fetcher(`/gw/schedule/sched_search/${formatted}`)
+        // fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
         .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-        // console.log(localStorage.getItem("EMP_SN"))
     }, [defaultDate]);
 
     // TODO 가져오기
@@ -157,7 +158,7 @@ function ScheduleView(props) {
             <div className='dailyboard-schedulelist'>
                 <div className='sche-comp'>
                     <h2>회사</h2>
-                    {sched.filter(dd => dd.schedType == "ACOMPANY").map((vv, kk) => (
+                    {sched.filter(dd => dd.schedType == "COMPANY").map((vv, kk) => (
                     <tbody key={kk}>
                         <tr>
                             {/* <td>아이디</td>
@@ -189,7 +190,7 @@ function ScheduleView(props) {
                 </div>
                 <div className='sche-team'>
                     <h2>팀</h2>
-                    {sched.filter(dd => dd.schedType == "BTEAM" && dd.schedEmpSn == localStorage.getItem("EMP_SN")).map((vv, kk) => (
+                    {sched.filter(dd => dd.schedType == "DEPT").map((vv, kk) => (
                     <tbody key={kk}>
                         <tr>
                             {/* <td>아이디</td>
@@ -221,7 +222,7 @@ function ScheduleView(props) {
                 </div>
                 <div className='sche-indiv'>
                     <h2>개인</h2>
-                    {sched.filter(dd => dd.schedType == "CPERSONAL").map((vv, kk) => (
+                    {sched.filter(dd => dd.schedType == "PERSONAL").map((vv, kk) => (
                     <tbody key={kk}>
                         <tr>
                             {/* <td>아이디</td>

@@ -2,31 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useParams, useSearchParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function AllEmp(props) {
+function TeamEmpList(props) {
     const [data, setData] = useState([]);
-    const [teamData, setTeamData] = useState([]);
+    const [deptData, setDeptData] = useState('');
+    const [deptmname, setDeptName] = useState('');
     
     useEffect(() => {
         fetcher(`/gw/orgChart/teamList/${props.code}`)
         .then(dd => setData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
 
-        // fetcher(`/gw/orgChart/teamName/${props.code}`)
-        // .then(dd => setTeamData(Array.isArray(dd) ? dd : [dd]))
-        // .catch(e => console.log(e))
+        fetcher(`/gw/orgChart/teamName/${props.code}`)
+        .then(dd => {setDeptData(dd)
+            // console.log(dd)
+        })
+        .catch(e => console.log(e))
     }, [props.code]);
 
-
+    useEffect(() => {
+        setDeptName(deptData.deptName);
+    }, [deptData])
+    console.log('팀 정보 '+deptmname)
+    
     return (
         <div>
-            <h1>팀리스트 {props.code} {teamData}</h1>
+            <h1>{deptData.deptName}팀</h1>
             
             <table border="">
                 <tbody>
                 <tr>
                     <td>이름</td>
-                    <td>부서번호</td>
-                    <td>직책번호</td>
+                    <td>부서</td>
+                    <td>직책</td>
                 </tr>
                 </tbody>
             {data.map((vv, kk) => (
@@ -34,11 +41,11 @@ function AllEmp(props) {
                 <tr>
                     <td>
                         <nav className="nav">
-                        <Link to={`detail/${vv.empId}`}>{vv.empNm}</Link>
+                        <Link to={`detail/${vv.EMP_ID}`}>{vv.EMP_NM}</Link>
                         </nav>
                     </td>
-                    <td>{vv.deptId}</td>
-                    <td>{vv.jbttlId}</td>
+                    <td>{vv.DEPT_NAME}</td>
+                    <td>{vv.JBTTL_NM}</td>
                 </tr>
                 </tbody>
             ))}
@@ -48,4 +55,4 @@ function AllEmp(props) {
     );
 }
 
-export default AllEmp;
+export default TeamEmpList;

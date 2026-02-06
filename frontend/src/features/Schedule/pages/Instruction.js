@@ -8,7 +8,7 @@ function Instruction(props) {
     const navigate = useNavigate();
 
     // 상태 정의
-    const [workType, setWorkType] = useState('ACOMPANY'); // 업무 구분: 회사 / 팀 (enum 값)
+    const [workType, setWorkType] = useState('COMPANY'); // 업무 구분: 회사 / 팀 (enum 값)
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [title, setTitle] = useState('');
@@ -48,8 +48,8 @@ function Instruction(props) {
         console.log(localStorage.getItem('USER_ROLE'))
 
         // 권한에 따라 기본 workType 설정
-        if (storedRole != 'CP') setWorkType('BTEAM');
-        else setWorkType('ACOMPANY'); // ADMIN 등은 기본값
+        if (storedRole != 'CP') setWorkType('DEPT');
+        else setWorkType('COMPANY'); // ADMIN 등은 기본값
 
         // 팀 리스트 가져오기
         fetcher('/gw/schedule/instruction/teams')
@@ -81,10 +81,10 @@ function Instruction(props) {
     // 업무 구분 선택 옵션 필터링
     const workTypeOptions = () => {
         if (role === 'CP') return [
-            { value: 'ACOMPANY', label: '회사' },
-            { value: 'BTEAM', label: '팀' }
+            { value: 'COMPANY', label: '회사' },
+            { value: 'DEPT', label: '팀' }
         ];
-        if (role != 'CP') return [{ value: 'BTEAM', label: '팀' }];
+        if (role != 'CP') return [{ value: 'DEPT', label: '팀' }];
         return [];
     };
 
@@ -142,7 +142,7 @@ function Instruction(props) {
         // navigate(`/schedule/check/calendar/detail/${event.id}`);
 
         // 초기화
-        setWorkType('ACOMPANY');
+        setWorkType('COMPANY');
         setStartDate('');
         setEndDate('');
         setTitle('');
@@ -215,7 +215,7 @@ function Instruction(props) {
             {/* 담당 팀 지정 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
                 <label>담당 팀 지정</label>
-                {deptId == 1 && (workType != "ACOMPANY") &&
+                {deptId == 1 && (workType != "COMPANY") &&
                 <button
                     type="button"
                     onClick={() => setTeamPopupOpen(true)}
@@ -226,7 +226,7 @@ function Instruction(props) {
                 }
             </div>
             <div style={{ marginBottom: 15, minHeight: 24, fontSize: 14 }}>
-                {(workType === "ACOMPANY") ? '회사' : selectedTeams.length === 0 ? '선택된 팀 없음' : selectedTeams.map(t => t.deptName).join(', ')}
+                {(workType === "COMPANY") ? '회사' : selectedTeams.length === 0 ? '선택된 팀 없음' : selectedTeams.map(t => t.deptName).join(', ')}
             </div>
 
             {/* 장소 선택 */}
@@ -239,7 +239,7 @@ function Instruction(props) {
                 >
                     <option value="0">없음</option>
                     {locationList.map(loc => (
-                        <option key={loc.locationId} value={loc.locationId}>{loc.locationName}</option>
+                        <option key={loc.locId} value={loc.locId}>{loc.locNm}</option>
                     ))}
                 </select>
             </div>
@@ -255,7 +255,7 @@ function Instruction(props) {
                         cursor: 'pointer',
                     }}
                     onClick={() => {
-                        setWorkType('ACOMPANY');
+                        setWorkType('COMPANY');
                         setStartDate('');
                         setEndDate('');
                         setTitle('');

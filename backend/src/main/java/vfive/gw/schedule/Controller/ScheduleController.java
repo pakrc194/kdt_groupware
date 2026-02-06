@@ -15,7 +15,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
-import vfive.gw.schedule.dto.LocationInfo;
+import vfive.gw.schedule.dto.LocInfo;
 import vfive.gw.schedule.dto.Sched;
 import vfive.gw.schedule.mapper.SchedMapper;
 import vfive.gw.schedule.mapper.TodoMapper;
@@ -38,12 +38,11 @@ public class ScheduleController {
 		return schedMapper.loginInfo(emp);
 	}
 	
-	@GetMapping("view/{sdate}/{edate}/{dept_id}/{emp_sn}/{emp_id}")
+	@GetMapping("view/{sdate}/{edate}/{dept_id}/{emp_id}")
 	List<Sched> schedList(
 			@PathVariable("sdate") Date sdate,
 			@PathVariable("edate") Date edate,
 			@PathVariable("dept_id") String dept_id,
-			@PathVariable("emp_sn") String emp_sn,
 			@PathVariable("emp_id") int emp_id
 			) {
 		Sched sc = new Sched();
@@ -51,7 +50,7 @@ public class ScheduleController {
 		sc.setSchedEndDate(edate);
 		sc.setSchedState("0");		// 고정
 		sc.setSchedDeptId(dept_id);
-		sc.setSchedEmpSn(emp_sn);	// 사번
+		sc.setSchedEmpId(emp_id);	// 사번
 		sc.setSchedAuthorId(emp_id);
 		return schedMapper.schedList(sc);
 	}
@@ -104,7 +103,7 @@ public class ScheduleController {
 			@PathVariable("id") int id) {
 		Sched sc = new Sched();
 		sc.setSchedStartDate(date);
-		sc.setSchedType("DTODO");
+		sc.setSchedType("TODO");
 		sc.setSchedAuthorId(id);
 		return todoMapper.shedTodoList(sc);
 	}
@@ -118,7 +117,7 @@ public class ScheduleController {
 	
 	// 업무지시 장소 리스트
 	@GetMapping("instruction/locations")
-	List<LocationInfo> locationList() {
+	List<LocInfo> locationList() {
 		return schedMapper.locationList();
 	}
 	

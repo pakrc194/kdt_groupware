@@ -36,7 +36,7 @@ function ScheduleList(props) {
     const emp_id = localStorage.getItem("EMP_ID")
 
     useEffect(() => {
-        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
+        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
         .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [currentDate, props.todo[0]]);

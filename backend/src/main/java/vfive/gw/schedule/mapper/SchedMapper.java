@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.SelectKey;
 
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
-import vfive.gw.schedule.dto.LocationInfo;
+import vfive.gw.schedule.dto.LocInfo;
 import vfive.gw.schedule.dto.Sched;
 
 @Mapper
@@ -21,10 +21,10 @@ public interface SchedMapper {
 		@Select("select * from SCHED "
 				+ "where "
 				+ "sched_end_date >= #{schedStartDate} and sched_start_date <= #{schedEndDate} "
-				+ "and (sched_type = 'ACOMPANY' "	// 회사일정
-				+ "or (sched_type = 'BTEAM' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
-				+ "or (sched_type = 'CPERSONAL' and sched_emp_sn = #{schedEmpSn})"
-				+ "or (sched_type = 'DTODO' and sched_author_id = #{schedAuthorId} and sched_state = #{schedState}) "
+				+ "and (sched_type = 'COMPANY' "	// 회사일정
+				+ "or (sched_type = 'DEPT' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
+				+ "or (sched_type = 'PERSONAL' and sched_emp_Id = #{schedEmpId})"
+				+ "or (sched_type = 'TODO' and sched_author_id = #{schedAuthorId} and sched_state = #{schedState}) "
 				+ "or (sched_author_id = #{schedAuthorId}))"
 				+ "order by sched_type")
 		List<Sched> schedList(Sched sc);
@@ -38,8 +38,8 @@ public interface SchedMapper {
 		List<DeptInfo> teamList();
 		
 		// 업무지시 장소 리스트
-		@Select("select * from LOCATION_INFO")
-		List<LocationInfo> locationList();
+		@Select("select * from LOC_INFO")
+		List<LocInfo> locationList();
 		
 		// 업무지시 등록
 		@SelectKey(

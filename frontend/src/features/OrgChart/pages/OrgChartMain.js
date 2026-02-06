@@ -1,22 +1,27 @@
 import React from 'react';
 
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import AllEmp from './AllEmp';
 import NewEmp from './NewEmp';
 import DetailEmp from './DetailEmp';
 import TeamEmpList from './TeamEmpList';
+import SearchEmp from './SearchEmp';
 
 function OrgChartMain(props) {
     const { sideId } = useParams();
+    
 
     const renderContent = () => {
-        switch(sideId.split("/")[0]) {
+        console.log(sideId)
+        switch(sideId) {
             case 'allorg':
                 return <AllEmp />
             case 'register':
                 return <NewEmp />
             case 'detail':
                 return <DetailEmp />
+            case 'empSch':
+                return <SearchEmp />
             default:
                 return <TeamEmpList code={sideId} />
         }
@@ -27,8 +32,8 @@ function OrgChartMain(props) {
             <div className='search-box' align="right">
             <form action="empSch">
                 <select name="schFilter">
-                    <option>이름</option>
-                    <option>직책</option>
+                    <option value="EMP_NM">이름</option>
+                    <option value="JBTTL_NM">직책</option>
                 </select>
                 <input type="text" name="schValue" />
                 <input type="submit" value="검색" />

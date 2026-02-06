@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
 function DetailEmp(props) {
     const [data, setData] = useState([]);
     const { id } = useParams();
+    const navigate = useNavigate();
     
     useEffect(() => {
         fetcher(`/gw/orgChart/detail/${id}`)
@@ -15,41 +16,41 @@ function DetailEmp(props) {
     
     return (
         <div>
-            사원 상세 정보
-            {id}
+            <h1>{data.EMP_NM}</h1>
             <br/>
             <table border="">
                 <tbody>
                 <tr>
                     <td>이름</td>
-                    <td>{data.empNm}</td>
+                    <td>{data.EMP_NM}</td>
                 </tr>
                 <tr>
-                    <td>부서번호</td>
-                    <td>{data.deptId}</td>
+                    <td>부서</td>
+                    <td>{data.DEPT_NAME}</td>
                 </tr>
                 <tr>
                     <td>이메일</td>
-                    <td>{data.empEmlAddr}</td>
+                    <td>{data.EMP_EML_ADDR}</td>
                 </tr>
                 <tr>
                     <td>사진</td>
-                    <td>{data.empPhoto}</td>
+                    <td>{data.EMP_PHOTO}</td>
                 </tr>
                 <tr>
                     <td>주소</td>
-                    <td>{data.empAddr}</td>
+                    <td>{data.EMP_ADDR}</td>
                 </tr>
                 <tr>
                     <td>전화번호</td>
-                    <td>{data.empTelNo}</td>
+                    <td>{data.EMP_TELNO}</td>
                 </tr>
                 <tr>
                     <td>내선번호</td>
-                    <td>{data.empActNo}</td>
+                    <td>{data.EMP_ACTNO}</td>
                 </tr>
                 </tbody>
             </table>
+            <button onClick={() => navigate(-1)}>뒤로</button>
         </div>
     );
 }
