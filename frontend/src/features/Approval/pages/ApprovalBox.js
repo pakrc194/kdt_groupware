@@ -7,7 +7,7 @@ const ApprovalBox = () => {
     const [aprvDocList, setAprvDocList] = useState([]);
     const empId = localStorage.getItem("EMP_ID")
     useEffect(() => {
-        console.log("aprvBox useEffect");
+        console.log("aprvBox useEffect : "+empId);
         fetcher(`/gw/aprv/AprvDocList/${empId}`).then(setAprvDocList)
     }, [])
 

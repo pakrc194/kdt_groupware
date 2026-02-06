@@ -20,8 +20,9 @@ public class AprvPrcs {
 	@Transactional
 	public Object load(AprvPrcsRequest ap) {
 		ap.setAprvPrcsDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-		
-		postMapper.docSttsUpdate(ap);
+		if(!ap.getRoleCd().contains("REF")) {
+			postMapper.docSttsUpdate(ap);
+		}
 		postMapper.uAprvPrcs(ap);
 		
 		System.out.println(ap);
