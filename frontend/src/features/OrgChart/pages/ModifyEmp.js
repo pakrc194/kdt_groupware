@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
-const MemberRegistrationForm = () => {
+const ModifyEmp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     EMP_NM: '',
     EMP_BIRTH: '',
     DEPT_ID: '',
     JBTTL_ID: ''
   });
-
+  const [data, setData] = useState([]);
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id')
+  // const { id } = useParams();
+  console.log("수정 "+id)
 
   useEffect(() => {
     fetcher(`/gw/schedule/instruction/teams`)
@@ -24,6 +30,13 @@ const MemberRegistrationForm = () => {
     .then(dd => {
         setJbttlList(Array.isArray(dd) ? dd : [dd])
         console.log(dd)
+    })
+    .catch(e => console.log(e))
+
+    fetcher(`/gw/orgChart/detail/${id}`)
+    .then(dd => {
+      setData(Array.isArray(dd) ? dd : [dd])
+      console.log("modify "+dd.EMP_NM)
     })
     .catch(e => console.log(e))
   }, [])
@@ -68,7 +81,7 @@ const MemberRegistrationForm = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>사원 정보 입력</h2>
+      <h2 style={styles.title}>사원 정보 수정</h2>
       
       <div style={styles.formGroup}>
         <label style={styles.label}>이름</label>
@@ -108,7 +121,7 @@ const MemberRegistrationForm = () => {
       </div>
 
       <div style={styles.buttonGroup}>
-        <button style={styles.cancelBtn} onClick={() => window.location.reload()}>취소</button>
+        <button style={styles.cancelBtn} onClick={() => navigate(-1)}>취소</button>
         <button style={styles.submitBtn} onClick={handleSubmit}>완료</button>
       </div>
     </div>
@@ -127,4 +140,4 @@ const styles = {
   submitBtn: { flex: 1, padding: '12px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }
 };
 
-export default MemberRegistrationForm;
+export default ModifyEmp;

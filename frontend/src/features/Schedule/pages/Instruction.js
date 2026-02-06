@@ -8,7 +8,7 @@ function Instruction(props) {
     const navigate = useNavigate();
 
     // 상태 정의
-    const [workType, setWorkType] = useState('ACOMPANY'); // 업무 구분: 회사 / 팀 (enum 값)
+    const [workType, setWorkType] = useState('COMPANY'); // 업무 구분: 회사 / 팀 (enum 값)
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [title, setTitle] = useState('');
@@ -25,18 +25,19 @@ function Instruction(props) {
     // 유저 정보
     const deptId = parseInt(localStorage.getItem('DEPT_ID'));
 
+
     useEffect(() => {
-        console.log(localStorage.getItem("USER_ROLE"))
+        console.log("user emp id : "+localStorage.getItem("EMP_ID"))
         // 예시: role을 로컬스토리지에서 가져오기
         const storedRole = localStorage.getItem('USER_ROLE') || 'TEAM_USER';
         setRole(localStorage.getItem('USER_ROLE'));
 
         // 권한에 따라 기본 workType 설정
-        if (storedRole != 'CP') setWorkType('BTEAM');
-        else setWorkType('ACOMPANY'); // ADMIN 등은 기본값
+        if (storedRole != 'CP') setWorkType('DEPT');
+        else setWorkType('COMPANY'); // ADMIN 등은 기본값
 
         // 팀 리스트 가져오기
-        fetcher('/gw/home/1/instruction/teams')
+        fetcher('/gw/schedule/instruction/teams')
         .then(data => {
             setTeamList(data); // [{id, name}, ...] 형태
 
@@ -48,23 +49,26 @@ function Instruction(props) {
         .catch(err => console.error('팀 리스트 로딩 실패', err));
 
         // 장소 리스트 가져오기
-        fetcher('/gw/home/1/instruction/locations')
+        fetcher('/gw/schedule/instruction/locations')
         .then(data => { setLocationList(data) })
         .catch(err => console.error('장소 리스트 로딩 실패', err))
 
     }, []);
 
-    if (props.JBTTL_ID > 1) {
+    
+
+    // 직책 id로 권한 설정 -> 추후에 권한 id로 등록 필요
+    if (localStorage.getItem("JBTTL_ID") == 3) {
         return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
     }
 
     // 업무 구분 선택 옵션 필터링
     const workTypeOptions = () => {
         if (role === 'CP') return [
-            { value: 'ACOMPANY', label: '회사' },
-            { value: 'BTEAM', label: '팀' }
+            { value: 'COMPANY', label: '회사' },
+            { value: 'DEPT', label: '팀' }
         ];
-        if (role != 'CP') return [{ value: 'BTEAM', label: '팀' }];
+        if (role != 'CP') return [{ value: 'DEPT', label: '팀' }];
         return [];
     };
 
@@ -96,7 +100,7 @@ function Instruction(props) {
         };
 
         try {
-            await fetcher(`/gw/home/1/instruction/upload`, {
+            await fetcher(`/gw/schedule/instruction/upload`, {
                 method: 'POST',
                 body: { 
                     schedType: workType,
@@ -122,7 +126,7 @@ function Instruction(props) {
         // navigate(`/schedule/check/calendar/detail/${event.id}`);
 
         // 초기화
-        setWorkType('ACOMPANY');
+        setWorkType('COMPANY');
         setStartDate('');
         setEndDate('');
         setTitle('');
@@ -195,7 +199,7 @@ function Instruction(props) {
             {/* 담당 팀 지정 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
                 <label>담당 팀 지정</label>
-                {deptId == 1 && (workType != "ACOMPANY") &&
+                {deptId == 1 && (workType != "COMPANY") &&
                 <button
                     type="button"
                     onClick={() => setTeamPopupOpen(true)}
@@ -206,7 +210,7 @@ function Instruction(props) {
                 }
             </div>
             <div style={{ marginBottom: 15, minHeight: 24, fontSize: 14 }}>
-                {(workType === "ACOMPANY") ? '회사' : selectedTeams.length === 0 ? '선택된 팀 없음' : selectedTeams.map(t => t.deptName).join(', ')}
+                {(workType === "COMPANY") ? '회사' : selectedTeams.length === 0 ? '선택된 팀 없음' : selectedTeams.map(t => t.deptName).join(', ')}
             </div>
 
             {/* 장소 선택 */}
@@ -219,7 +223,7 @@ function Instruction(props) {
                 >
                     <option value="0">없음</option>
                     {locationList.map(loc => (
-                        <option key={loc.locationId} value={loc.locationId}>{loc.locationName}</option>
+                        <option key={loc.locId} value={loc.locId}>{loc.locNm}</option>
                     ))}
                 </select>
             </div>
@@ -235,7 +239,7 @@ function Instruction(props) {
                         cursor: 'pointer',
                     }}
                     onClick={() => {
-                        setWorkType('ACOMPANY');
+                        setWorkType('COMPANY');
                         setStartDate('');
                         setEndDate('');
                         setTitle('');

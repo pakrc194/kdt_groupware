@@ -31,7 +31,7 @@ function ScheduleCalendar(props) {
     const emp_sn = localStorage.getItem("EMP_SN")
     const emp_id = localStorage.getItem("EMP_ID")
     useEffect(() => {
-        fetcher(`/gw/home/1/schedule/${formattedStart}/${formattedEnd}/${dept_id}/${emp_sn}/${emp_id}`)
+        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [date, props.todo[0]]);
@@ -40,13 +40,13 @@ function ScheduleCalendar(props) {
         let backgroundColor = '#3174ad'; // 기본
 
         switch (event.type) {
-            case 'ACOMPANY':
+            case 'COMPANY':
             backgroundColor = '#e74c3c'; // 빨강
             break;
-            case 'BTEAM':
+            case 'DEPT':
             backgroundColor = '#3498db'; // 파랑
             break;
-            case 'CPERSONAL':
+            case 'PERSONAL':
             backgroundColor = '#2ecc71'; // 초록
             break;
             default:
