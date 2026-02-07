@@ -5,12 +5,37 @@ import { fetcher } from '../../../shared/api/fetcher';
 function ScheduleDetail(props) {
     const { id } = useParams();
     const [sched, setSched] = useState([]);
+    const [schedA, setSchedA] = useState(0);
+    const [schedType, setSchedType] = useState('');
     const navigate = useNavigate();
     useEffect(() => {
         fetcher(`/gw/schedule/sched_detail/${id}`)
-        .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])})
+        .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
+            setSchedA(dd.schedAuthorId)
+            setSchedType(dd.schedType)
+            console.log(dd)
+        })
         .catch(e => console.log(e))
     }, []);
+
+    const schedDelete = () => {
+        const result = window.confirm("삭제하시겠습니까?")
+        if (result) {
+
+            fetcher(`/gw/schedule/sched_delete/${id}`)
+            .then(dd => {
+                console.log(dd)
+            })
+            .catch(e => console.log(e))
+
+            console.log('일정 삭제')
+            alert('일정이 삭제됐습니다.')
+            navigate(-1)
+        }
+        else {
+            console.log('삭제 취소')
+        }
+    }
     
     return (
         <div>
@@ -21,7 +46,7 @@ function ScheduleDetail(props) {
                     <td>{vv.schedId}</td>
                 </tr><tr>
                     <td>담당팀</td>
-                    <td>{vv.schedTeam}</td>
+                    <td>{vv.schedDeptId}</td>
                 </tr><tr>
                     <td>위치</td>
                     <td>{vv.schedLoc}</td>
@@ -43,7 +68,10 @@ function ScheduleDetail(props) {
                 </tr>
                 </tbody>
             ))}
-            <button>일정 삭제</button>
+            {sched.schedType}
+            {localStorage.getItem("EMP_ID") == schedA && schedType != 'TODO' &&
+                <button onClick={schedDelete}>일정 삭제</button>
+            }
             <button onClick={() => navigate(-1)}>뒤로</button>
         </div>
     );

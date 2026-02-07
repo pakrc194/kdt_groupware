@@ -32,6 +32,7 @@ public interface TodoMapper {
 				+ "WHERE sched_id = #{schedId}")
 		int toggleModifyTodo(Sched sc);
 		
-		@Select("select * from SCHED where sched_start_date <= #{schedStartDate} and sched_type = #{schedType} and sched_author_id = #{schedAuthorId} order by sched_start_date desc")
+		@Select("select * from SCHED where sched_start_date <= #{schedStartDate} and sched_type = #{schedType} and sched_author_id = #{schedAuthorId} "
+				+ "order by sched_start_date desc")
 		List<Sched> shedTodoList(Sched sc);
 }

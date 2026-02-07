@@ -4,6 +4,7 @@ import { Link, Outlet, useParams, Navigate } from 'react-router-dom';
 import ScheduleCalendar from './ScheduleCalendar';
 import ScheduleList from './ScheduleList';
 import { fetcher } from '../../../shared/api/fetcher';
+import ScheduleDetail from './ScheduleDetail';
 
 function ScheduleView(props) {   
 
@@ -16,11 +17,12 @@ function ScheduleView(props) {
     const [editTodoId, setEditTodoId] = useState(null);
     const [editTodo, setEditTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: Boolean });
 
+
     const setDate = (date) => {
-        // console.log('날짜 선택됨'+date)
         setDefaultDate(date);
        
     }
+
     const date = defaultDate;
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -30,6 +32,7 @@ function ScheduleView(props) {
     const formatted = `${yyyy}-${mm}-${dd}`;
 
     const renderContent = () => {
+        console.log(view)
         if (!view) {
             return <Navigate to="/schedule/check/calendar" replace />;
         }
@@ -45,17 +48,18 @@ function ScheduleView(props) {
     // 특정 날짜로 일정 받아와서 화면에 출력
     useEffect(() => {
         fetcher(`/gw/schedule/sched_search/${formatted}`)
-        // fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
-        .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
+        .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
+        })
         .catch(e => console.log(e))
-    }, [defaultDate]);
+    }, [defaultDate, showTodoForm]);
 
     // TODO 가져오기
     useEffect(() => {
         fetcher(`/gw/schedule/todo/view/${formatted}/${localStorage.getItem("EMP_ID")}`) // 날짜별 TODO API
-            .then(dd => setTodos(Array.isArray(dd) ? dd : [dd]))
+            .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
+            })
             .catch(e => console.log(e));
-    }, [defaultDate, todos[0]]);
+    }, [defaultDate, showTodoForm, editTodo]);
 
     // TODO 추가
     const addTodo = async () => {
@@ -106,6 +110,7 @@ function ScheduleView(props) {
     // 완료 표시
     const toggleTodoComplete = async (cktodo) => {
         const todo = todos.find(t => t.schedId === cktodo.schedId);
+        console.log(todo)
         // cktodo.schedState = cktodo.schedState ? true : false
         // 클릭하면 상태를 바꿔서 db에 저장해버리기?
 
@@ -116,7 +121,7 @@ function ScheduleView(props) {
             const created = await fetcher(`/gw/schedule/todo/toggle`, {
             method: 'POST',
             body: { 
-                schedStartDate: cktodo.schedStartDate,
+                schedStartDate: cktodo.schedStartDate.split(' ')[0],
                 schedTitle: cktodo.schedTitle,
                 schedDetail: cktodo.schedDetail,
                 schedId: cktodo.schedId,
@@ -144,6 +149,11 @@ function ScheduleView(props) {
         }
     };
 
+    // TODO 정렬
+    const sortedTodos = [...todos].sort((a, b) => {
+        return a.schedState - b.schedState;
+    });
+
 
     return (
         <div>
@@ -159,19 +169,20 @@ function ScheduleView(props) {
                 <div className='sche-comp'>
                     <h2>회사</h2>
                     {sched.filter(dd => dd.schedType == "COMPANY").map((vv, kk) => (
+                    <button>
                     <tbody key={kk}>
                         <tr>
                             {/* <td>아이디</td>
                             <td>{vv.schedId}</td> */}
                         </tr><tr>
-                            <td>담당팀</td>
-                            <td>{vv.schedDept}</td>
+                            <td>제목 {vv.schedId}</td>
+                            <td>{vv.schedTitle}</td>
                         </tr><tr>
                             <td>위치</td>
                             <td>{vv.schedLoc}</td>
                         </tr><tr>
-                            <td>제목</td>
-                            <td>{vv.schedTitle}</td>
+                            <td>담당팀</td>
+                            <td>{vv.schedDept}</td>
                         </tr><tr>    
                             {/* <td>회사, 팀, 개인, TODO : </td>
                             <td>{vv.schedType}</td> */}
@@ -180,12 +191,13 @@ function ScheduleView(props) {
                             <td>{vv.schedDetail}</td>
                         </tr><tr>    
                             <td>시작일</td>
-                            <td>{vv.schedStartDate.split('T')[0]}</td>
+                            <td>{vv.schedStartDate}</td>
                         </tr><tr>    
                             <td>종료일</td>
-                            <td>{vv.schedEndDate.split('T')[0]}</td>
+                            <td>{vv.schedEndDate}</td>
                         </tr>
                     </tbody>
+                    </button>
                 ))}
                 </div>
                 <div className='sche-team'>
@@ -196,14 +208,14 @@ function ScheduleView(props) {
                             {/* <td>아이디</td>
                             <td>{vv.schedId}</td> */}
                         </tr><tr>
-                            <td>담당팀</td>
-                            <td>{vv.schedDeptId} {vv.schedDept}</td>
+                            <td>제목</td>
+                            <td>{vv.schedTitle}</td>
                         </tr><tr>
                             <td>위치</td>
                             <td>{vv.schedLoc}</td>
                         </tr><tr>
-                            <td>제목</td>
-                            <td>{vv.schedTitle}</td>
+                            <td>담당팀</td>
+                            <td>{vv.schedDeptId} {vv.schedDept}</td>
                         </tr><tr>    
                             {/* <td>회사, 팀, 개인, TODO : </td>
                             <td>{vv.schedType}</td> */}
@@ -212,10 +224,10 @@ function ScheduleView(props) {
                             <td>{vv.schedDetail}</td>
                         </tr><tr>    
                             <td>시작일</td>
-                            <td>{vv.schedStartDate.split('T')[0]}</td>
+                            <td>{vv.schedStartDate}</td>
                         </tr><tr>    
                             <td>종료일</td>
-                            <td>{vv.schedEndDate.split('T')[0]}</td>
+                            <td>{vv.schedEndDate}</td>
                         </tr>
                     </tbody>
                 ))}
@@ -228,14 +240,14 @@ function ScheduleView(props) {
                             {/* <td>아이디</td>
                             <td>{vv.schedId}</td> */}
                         </tr><tr>
-                            <td>담당팀</td>
-                            <td>{vv.schedDept}</td>
+                            <td>제목</td>
+                            <td>{vv.schedTitle}</td>
                         </tr><tr>
                             <td>위치</td>
                             <td>{vv.schedLoc}</td>
                         </tr><tr>
-                            <td>제목</td>
-                            <td>{vv.schedTitle}</td>
+                            <td>담당팀</td>
+                            <td>{vv.schedDept}</td>
                         </tr><tr>    
                             {/* <td>회사, 팀, 개인, TODO : </td>
                             <td>{vv.schedType}</td> */}
@@ -244,10 +256,10 @@ function ScheduleView(props) {
                             <td>{vv.schedDetail}</td>
                         </tr><tr>    
                             <td>시작일</td>
-                            <td>{vv.schedStartDate.split('T')[0]}</td>
+                            <td>{vv.schedStartDate}</td>
                         </tr><tr>    
                             <td>종료일</td>
-                            <td>{vv.schedEndDate.split('T')[0]}</td>
+                            <td>{vv.schedEndDate}</td>
                         </tr>
                     </tbody>
                 ))}
@@ -255,7 +267,7 @@ function ScheduleView(props) {
                 <div className='sche-todo'>
                     <h2>TODO</h2>
                     <ul>
-                        {todos.filter(dd => dd.schedStartDate < formatted).map(todo => (
+                        {sortedTodos.map(todo => (
                             <li key={todo.schedId} style={{ 
                                 display: 'flex', 
                                 flexDirection: editTodoId === todo.schedId ? 'column' : 'row',
@@ -265,8 +277,9 @@ function ScheduleView(props) {
                                     <input
                                         type="checkbox"
                                         checked={todo.schedState == 0 ? false : true}
-                                        onChange={() => {
+                                        onChange={e => {
                                             toggleTodoComplete(todo);
+                                            setEditTodo({ ...editTodo, schedState: e.target.value })
                                         }}
                                     />
 
@@ -274,7 +287,7 @@ function ScheduleView(props) {
                                         <>
                                             <input
                                                 type="date"
-                                                value={editTodo.schedStartDate?.split('T')[0] || ''}
+                                                value={editTodo.schedStartDate.split(' ')[0]}
                                                 onChange={e =>
                                                     setEditTodo({ ...editTodo, schedStartDate: e.target.value })
                                                     
@@ -311,9 +324,9 @@ function ScheduleView(props) {
                                             <span style={{
                                                 flex: 1,
                                                 // marginLeft: '8px',
-                                                textDecoration: todo.completed ? 'line-through' : 'none'
+                                                textDecoration: todo.schedState == 1 ? 'line-through' : 'none'
                                             }}>
-                                                {todo.schedStartDate.split("T")[0]} {todo.schedTitle}
+                                                {todo.schedStartDate.split(' ')[0]} {todo.schedTitle}
                                             </span>
 
                                             <button onClick={() => {

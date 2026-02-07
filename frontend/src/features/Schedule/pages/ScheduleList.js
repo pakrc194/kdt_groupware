@@ -4,55 +4,70 @@ function ScheduleList(props) {
 
     // 현재 화면 날짜 상태
     const [currentDate, setCurrentDate] = useState(new Date());
+     // 한 달 시작일과 마지막일
+     const [date, setDate] = useState(currentDate);
+    let yyyy = date.getFullYear();
+    let mm = String(date.getMonth() + 1).padStart(2, '0');
+    const monthStart = new Date(yyyy, currentDate.getMonth(), 1);
+    const monthEnd = new Date(yyyy, currentDate.getMonth() + 1, 0);
+    const formattedStart = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(monthStart.getDate()).padStart(2, '0')}`;
+    const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
+
     
     // 버튼 핸들러
     const goToday = () => {setCurrentDate(new Date()); props.sDate(new Date())};
     const goPrev = () => {
         const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
         setCurrentDate(prevMonth);
+        console.log('이전달 '+currentDate)
     };
     const goNext = () => {
         const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
         setCurrentDate(nextMonth);
+        console.log('다음달 '+currentDate)
+        
     };
+    
+    useEffect(() => {
+        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
+        // fetcher(`/gw/schedule/view/${dept_id}/${emp_id}`)
+        .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
+        })
+        .catch(e => console.log(e))
 
-    const date = currentDate;
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
+        setDate(currentDate)
+    }, [date, currentDate, props.todo]);
+
+    
+    
 
 
     // 한 달 시작일과 마지막일
-    const monthStart = new Date(yyyy, date.getMonth(), 1);
-    const monthEnd = new Date(yyyy, date.getMonth() + 1, 0);
-    const formattedStart = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(monthStart.getDate()).padStart(2, '0')}`;
-    const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
+    // let monthEnd = new Date(yyyy, date.getMonth() + 1, 0);
 
 
     const [sched, setSched] = useState([]);
 
     // fetch로 보낼 데이터
     const dept_id = localStorage.getItem("DEPT_ID")
-    const emp_sn = localStorage.getItem("EMP_SN")
     const emp_id = localStorage.getItem("EMP_ID")
 
-    useEffect(() => {
-        fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
-        .then(dd => setSched(Array.isArray(dd) ? dd : [dd]))
-        .catch(e => console.log(e))
-    }, [currentDate, props.todo[0]]);
+    
 
     // 한 달의 날짜 배열 생성
-    const daysInMonth = [];
+    let daysInMonth = [];
     for (let d = 1; d <= monthEnd.getDate(); d++) {
         const dayStr = `${yyyy}-${mm}-${String(d).padStart(2,'0')}`;
         daysInMonth.push(dayStr);
+        console.log(mm)
     }
 
     // 일정 있는 날짜만 필터링
-    const scheduleDates = daysInMonth.filter(day => 
+    const scheduleDates = daysInMonth
+    .filter(day => 
         sched.some(s => {
-            const start = s.schedStartDate.split('T')[0];
-            const end = s.schedEndDate.split('T')[0];
+            const start = s.schedStartDate.split(' ')[0];
+            const end = s.schedEndDate.split(' ')[0];
             return day >= start && day <= end;
         })
     );
@@ -76,8 +91,8 @@ function ScheduleList(props) {
                             <tbody>
                             {sched
                                 .filter(item => {
-                                    const start = item.schedStartDate.split('T')[0];
-                                    const end = item.schedEndDate.split('T')[0];
+                                    let start = item.schedStartDate.split(' ')[0];
+                                    let end = item.schedEndDate.split(' ')[0];
                                     return day >= start && day <= end; // 해당 날짜 일정만
                                 })
                                 .map((vv, kk) => (

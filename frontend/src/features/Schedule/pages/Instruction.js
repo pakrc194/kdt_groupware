@@ -57,7 +57,7 @@ function Instruction(props) {
 
     
 
-    // 직책 id로 권한 설정 -> 추후에 권한 id로 등록 필요
+    // 직책 id로 권한 설정
     if (localStorage.getItem("JBTTL_ID") == 3) {
         return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
     }
@@ -94,13 +94,13 @@ function Instruction(props) {
             schedEndDate: endDate,
             schedTitle: title,
             schedDetail: detail,
-            schedTeam: selectedTeams.map(t => t.deptName).join(','),
-            schedTeamId: selectedTeams.map(t => t.deptId).join(','),
+            schedDept: selectedTeams.map(t => t.deptName).join(','),
+            schedDeptId: selectedTeams.map(t => t.deptId).join(','),
             schedLoc: location === '0' ? null : parseInt(location),
         };
-
+        let id = 0;
         try {
-            await fetcher(`/gw/schedule/instruction/upload`, {
+            id = await fetcher(`/gw/schedule/instruction/upload`, {
                 method: 'POST',
                 body: { 
                     schedType: workType,
@@ -122,8 +122,7 @@ function Instruction(props) {
         console.log('등록할 업무:', payload);
         alert('업무가 등록되었습니다');
         // 페이지 이동
-        
-        // navigate(`/schedule/check/calendar/detail/${event.id}`);
+        navigate(`/schedule/instruction/detail/${id}`);
 
         // 초기화
         setWorkType('COMPANY');

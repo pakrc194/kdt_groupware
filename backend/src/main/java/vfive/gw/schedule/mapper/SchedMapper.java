@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
+import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
@@ -21,11 +22,13 @@ public interface SchedMapper {
 		@Select("select * from SCHED "
 				+ "where "
 				+ "sched_end_date >= #{schedStartDate} and sched_start_date <= #{schedEndDate} "
-				+ "and (sched_type = 'COMPANY' "	// 회사일정
+				+ "and "
+				+ "(sched_type = 'COMPANY' "	// 회사일정
 				+ "or (sched_type = 'DEPT' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
-				+ "or (sched_type = 'PERSONAL' and sched_emp_Id = #{schedEmpId})"
-				+ "or (sched_type = 'TODO' and sched_author_id = #{schedAuthorId} and sched_state = #{schedState}) "
-				+ "or (sched_author_id = #{schedAuthorId}))"
+				+ "or (sched_type = 'PERSONAL' and sched_emp_Id = #{schedEmpId}) "
+				+ "or (sched_type = 'PERSONAL' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
+				+ "or (sched_type = 'TODO' and sched_author_id = #{schedAuthorId} and sched_state = 0) "
+				+ "or (sched_author_id = #{schedAuthorId}) and sched_state = 0) "
 				+ "order by sched_type")
 		List<Sched> schedList(Sched sc);
 		
@@ -43,19 +46,28 @@ public interface SchedMapper {
 		
 		// 업무지시 등록
 		@SelectKey(
-				keyProperty = "id",
+				keyProperty = "schedId",
 				resultType = Integer.class,
 				before = false,
-				statement = "select max(sched_id) from SCHED"
+				statement = "select max(sched_Id) from SCHED"
 				)
-		@Insert("insert into SCHED (sched_title, sched_detail, sched_type, sched_start_date, sched_end_date, sched_author_id, sched_dept, sched_dept_id, sched_emp_sn) "
-				+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDept}, #{schedDeptId}, #{schedEmpSn})")
+		@Insert("insert into SCHED (sched_title, sched_detail, sched_type, sched_start_date, sched_end_date, sched_author_id, sched_dept, sched_dept_id) "
+				+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDept}, #{schedDeptId})")
 		int instructionUpload(Sched sc);
 		
 		@Select("select * from SCHED where sched_id = #{schedId}")
 		Sched schedDetail(Sched sc);
 		
-		@Select("select * from SCHED where (sched_start_date <= #{schedStartDate} and sched_end_date >= #{schedStartDate})")
+		@Select("select * from SCHED "
+				+ "where ("
+				+ "(sched_start_date <= #{schedStartDate} and sched_end_date >= #{schedStartDate}) "
+				+ "and (sched_type != 'TODO' and sched_state = 0)"
+				+ ")")
 		List<Sched> schedDailyList(Sched sc);
+		
+		@Update("update SCHED "
+				+ "set sched_state = '1', sched_delete_date = now() "
+				+ "where sched_id = #{schedId}")
+		int sched_delete(Sched sc);
 	
 }

@@ -9,6 +9,7 @@ function TeamSelectPopup({ teamList, onClose, onSelect, selectType }) {
         } else {
             setSelected([...selected, team]);
         }
+        console.log('팀 선택: '+team.deptId)
     };
 
     return (

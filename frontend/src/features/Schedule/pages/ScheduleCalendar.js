@@ -15,26 +15,47 @@ function ScheduleCalendar(props) {
     // const [day, setDay] = useState();
     const navigate = useNavigate();
     const defaultDate = new Date();
+
+    // 현재 화면 날짜 상태
+    const [currentDate, setCurrentDate] = useState(new Date());
     
 
-    const yyyy = defaultDate.getFullYear();
+    const yyyy = currentDate.getFullYear();
 
     // 한 달 시작일과 마지막일
-    const monthStart = new Date(yyyy, defaultDate.getMonth(), 1);
-    const monthEnd = new Date(yyyy, defaultDate.getMonth() + 1, 0);
+    const monthStart = new Date(yyyy, currentDate.getMonth(), 1);
+    const monthEnd = new Date(yyyy, currentDate.getMonth() + 1, 0);
     const formattedStart = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(monthStart.getDate()).padStart(2, '0')}`;
     const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
 
 
     // fetch로 보낼 데이터
     const dept_id = localStorage.getItem("DEPT_ID")
-    const emp_sn = localStorage.getItem("EMP_SN")
     const emp_id = localStorage.getItem("EMP_ID")
+
+    
+
+    // 버튼 핸들러
+    const goToday = () => {setCurrentDate(new Date()); props.sDate(new Date());};
+    const goPrev = () => {
+        const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+        setCurrentDate(prevMonth);
+        console.log('이전달 '+currentDate)
+    };
+    const goNext = () => {
+        const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+        setCurrentDate(nextMonth);
+        console.log('다음달 '+currentDate)
+    };
+
     useEffect(() => {
         fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
+        // fetcher(`/gw/schedule/view/${dept_id}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-    }, [date, props.todo[0]]);
+
+        console.log('fetch')
+    }, [date, props.todo[0], currentDate]);
 
     const eventStyleGetter = (event) => {
         let backgroundColor = '#3174ad'; // 기본
@@ -79,23 +100,10 @@ function ScheduleCalendar(props) {
     }));
 
     const handleSelectEvent = (event) => {
-        // event === 클릭한 일정 객체
         navigate(`/schedule/check/calendar/detail/${event.id}`);
     };
 
-    // 현재 화면 날짜 상태
-    const [currentDate, setCurrentDate] = useState(new Date());
-
-    // 버튼 핸들러
-    const goToday = () => {setCurrentDate(new Date()); props.sDate(new Date())};
-    const goPrev = () => {
-        const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-        setCurrentDate(prevMonth);
-    };
-    const goNext = () => {
-        const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-        setCurrentDate(nextMonth);
-    };
+    
 
     return (
         <div>
@@ -115,7 +123,7 @@ function ScheduleCalendar(props) {
                 startAccessor='start'
                 endAccessor='end'
                 step={15}
-                style={{ height: '100%', width: '1000px' }}
+                style={{ height: '100%', width: '60vw' }}
                 timeslots={4}
                 views={'month'}
                 eventPropGetter={eventStyleGetter}

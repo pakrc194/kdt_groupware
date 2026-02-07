@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
 const ModifyEmp = () => {
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get('id');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     EMP_NM: '',
@@ -10,13 +12,9 @@ const ModifyEmp = () => {
     DEPT_ID: '',
     JBTTL_ID: ''
   });
-  const [data, setData] = useState([]);
+
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
-  const [searchParams] = useSearchParams();
-  const id = searchParams.get('id')
-  // const { id } = useParams();
-  console.log("수정 "+id)
 
   useEffect(() => {
     fetcher(`/gw/schedule/instruction/teams`)
@@ -29,50 +27,48 @@ const ModifyEmp = () => {
     fetcher(`/gw/orgChart/register/jbttl`)
     .then(dd => {
         setJbttlList(Array.isArray(dd) ? dd : [dd])
+        
         console.log(dd)
     })
     .catch(e => console.log(e))
 
     fetcher(`/gw/orgChart/detail/${id}`)
     .then(dd => {
-      setData(Array.isArray(dd) ? dd : [dd])
-      console.log("modify "+dd.EMP_NM)
+      console.log(dd)
+      setFormData({
+          EMP_NM: dd.EMP_NM,
+          EMP_BIRTH: dd.EMP_BIRTH.split("T")[0],
+          DEPT_ID: dd.DEPT_ID,
+          JBTTL_ID: dd.JBTTL_ID
+      });
     })
     .catch(e => console.log(e))
   }, [])
 
-  // 입력 값 변경 핸들러
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
     console.log("저장될 데이터:", formData);
-    alert(`${formData.EMP_NM} 계정 생성 완료`);
+    alert(`${formData.EMP_NM} 정보 수정 완료`);
 
     try {
-        await fetcher('/gw/orgChart/register', {
+      await fetcher('/gw/orgChart/modifyInfo', {
         method: 'POST',
         body: { 
+          empId: id,
           empNm: formData.EMP_NM,
           empBirth: formData.EMP_BIRTH,
           deptId: formData.DEPT_ID,
           jbttlId: formData.JBTTL_ID
         }
-        });
+      });
 
     } catch (err) {
         console.error('계정 생성 실패:', err.message);
     }
-
+    navigate(-1)
   };
 
-
+  
 
   // 부서번호 6(인사팀)만 접근 가능
   // if (localStorage.getItem("DEPT_ID") != 6) {
@@ -90,7 +86,8 @@ const ModifyEmp = () => {
           name="EMP_NM"
           placeholder="이름을 입력하세요"
           style={styles.input}
-          onChange={handleChange}
+          value={formData.EMP_NM}
+          onChange={e => setFormData({...formData, EMP_NM: e.target.value})}
         />
       </div>
 
@@ -98,15 +95,17 @@ const ModifyEmp = () => {
         <label style={styles.label}>생년월일</label>
         <input 
           type="date" 
-          name="birthDate"
+          name="EMP_BIRTH"
           style={styles.input}
-          onChange={handleChange}
+          value={formData.EMP_BIRTH}
+          // onChange={handleChange}
+          onChange={e => setFormData({...formData, EMP_BIRTH: e.target.value})}
         />
       </div>
 
       <div style={styles.formGroup}>
         <label style={styles.label}>팀</label>
-        <select name="DEPT_ID" style={styles.input} onChange={handleChange}>
+        <select name="DEPT_ID" style={styles.input}  value={formData.DEPT_ID} onChange={e => setFormData({...formData, DEPT_ID: e.target.value})}>
           <option value="">팀을 선택하세요</option>
           {deptList.map(team => <option key={team.deptId} value={team.deptId}>{team.deptName}</option>)}
         </select>
@@ -114,7 +113,7 @@ const ModifyEmp = () => {
 
       <div style={styles.formGroup}>
         <label style={styles.label}>직책</label>
-        <select name="JBTTL_ID" style={styles.input} onChange={handleChange}>
+        <select name="JBTTL_ID" style={styles.input} value={formData.JBTTL_ID} onChange={e => setFormData({...formData, JBTTL_ID: e.target.value})}>
           <option value="">직책을 선택하세요</option>
           {jbttlList.map(pos => <option key={pos.jbttlId} value={pos.jbttlId}>{pos.jbttlNm}</option>)}
         </select>
