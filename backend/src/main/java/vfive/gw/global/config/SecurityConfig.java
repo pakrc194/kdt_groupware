@@ -1,5 +1,7 @@
 package vfive.gw.global.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +29,6 @@ public class SecurityConfig {
 	@Bean
 	public CorsFilter corsFilter() {
 		
-		
 		//CORS 정책
 		CorsConfiguration config = new CorsConfiguration();
 		
@@ -35,7 +36,13 @@ public class SecurityConfig {
 		config.setAllowCredentials(true);
 		
 		// 허용할 프론트앤드
-		config.addAllowedOrigin("http://192.168.0.117:3000");
+		config.setAllowedOrigins(List.of(
+				"http://192.168.0.117:3000",
+				"http://192.168.219.106:3000",
+				"http://192.168.0.36:3000",
+				"http://192.168.0.49:3000", 
+				"http://192.168.0.67:3000"
+				));
 		
 		//모든 헤더 허용 - "Content-Type"  등등
 		config.addAllowedHeader("*");
@@ -72,7 +79,7 @@ public class SecurityConfig {
 			
 			.authorizeHttpRequests(auth->
 					//  /login 은 API 인증없이 사용
-				auth.requestMatchers("/gw/login").permitAll()
+				auth.requestMatchers("/**").permitAll()
 					// 나머지는 JWT 인증 필요
 					.anyRequest().authenticated())
 			

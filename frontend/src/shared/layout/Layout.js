@@ -11,38 +11,34 @@ const Layout = () => {
   const currentMain = pathParts[1] || "main"; // 현재 메인 메뉴 (예: approval)
   const currentSide = pathParts[2]; // 현재 사이드 메뉴 (예: draft)
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const fn_logout = () => {
-      const myInfoStr = localStorage.getItem("MyInfo")
-      const myInfo = JSON.parse(myInfoStr)
-      const token = myInfo.token
+    const myInfoStr = localStorage.getItem("MyInfo");
+    const myInfo = JSON.parse(myInfoStr);
+    const token = myInfo.token;
 
-      if(token){  //토큰이 있을 경우에만 진입
-          fetcher(
-              `/gw/login/hello`,
-              {
-                  method:"GET",
-                  headers:{
-                  "Authorization" : `Bearer ${token}`
-                  }
-              }
-          )
-          .then(response=>{
-              console.log(`logChk 결과 : `, response)
-              localStorage.removeItem("MyInfo")
-              alert("로그아웃")
-              navigate("/login")
-          })
-          .catch(error=>{
-              console.log(`logChk 에러 : `, error)
-          })
-          
-      }else{
-          console.log("토큰없음")
-      }
-
-  }
+    if (token) {
+      //토큰이 있을 경우에만 진입
+      fetcher(`/gw/login/hello`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log(`logChk 결과 : `, response);
+          localStorage.removeItem("MyInfo");
+          alert("로그아웃");
+          navigate("/login");
+        })
+        .catch((error) => {
+          console.log(`logChk 에러 : `, error);
+        });
+    } else {
+      console.log("토큰없음");
+    }
+  };
 
   return (
     <div className="container">
