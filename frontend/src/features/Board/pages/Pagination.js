@@ -5,8 +5,7 @@ function Pagination({pInfo, onPageChange}) {
     if(!pInfo){
         return null;
     }
-
-
+    
     const {
         curPage, 
         totalPage, 

@@ -23,4 +23,10 @@ public class BoardPrvc {
 	
 	
 	private String temId;
+	
+	// 파일 업,다운 로드
+	private int fileId;
+    private String originName;
+    private String savedPath;
+    private long fileSize;
 }

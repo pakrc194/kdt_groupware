@@ -9,6 +9,7 @@ function BoardDetail(props) {
     
     const [board, setBoard] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [files , setFiles] = useState([]);
     
     // 현재 사용자 정보 (실제로는 인증 컨텍스트에서 가져와야 함)
     const currentUser = 'testUser'; // 임시
@@ -17,6 +18,8 @@ function BoardDetail(props) {
 
         console.log('props.boardId', props.boardId)
         fetchBoardDetail();
+        fetcher(`/board/selectFile/${props.boardId}`)
+        .then(data => setFiles(data));
     }, []);
 
     const fetchBoardDetail = () => {
@@ -86,6 +89,14 @@ function BoardDetail(props) {
                         등록일: {new Date(board.createdAt).toLocaleString()}
                     </span>
                     <span className="views">조회수: {board.views}</span>
+                    <span>첨부파일
+                        {files.map(file=>(
+                            <div key={file.fileId}>
+                                <a href={`http://192.168.0.36:8080/board/download/${file.fileId}`}>{file.originName}</a>
+                            </div>
+                        ))}
+                    </span>
+
                 </div>
             </div>
 
