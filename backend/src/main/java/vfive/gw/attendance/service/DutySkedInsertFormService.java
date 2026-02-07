@@ -17,7 +17,7 @@ public class DutySkedInsertFormService {
 	
 	public List<EmpDTO> execute(EmpAtdcRequestDTO req){
 		
-		return null;
+		return mapper.selectDeptEmpList(req);
 	}
 	
 	

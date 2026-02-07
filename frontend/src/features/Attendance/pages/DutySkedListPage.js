@@ -58,8 +58,8 @@ function DutySkedListPage() {
       try {
         // 백엔드에 삭제 요청 (Delete API는 구현되어 있다고 가정)
         await fetcher(`/gw/duty/delete`, {
-          method: "POST",
-          body: JSON.stringify({ scheIds: selectedIds }),
+          method: "DELETE",
+          body: { scheIds: selectedIds },
         });
         alert("삭제되었습니다.");
         setSelectedIds([]);

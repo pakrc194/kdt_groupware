@@ -1,0 +1,174 @@
+/* 전체 레이아웃 */
+.duty-detail-page {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* 헤더 & 제목 입력 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: white;
+  padding: 15px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.title-input {
+  width: 400px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-bottom: 2px solid #dee2e6;
+  text-align: center;
+  padding: 5px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.title-input:focus {
+  border-bottom-color: #1976d2;
+}
+
+/* 컨트롤 바 */
+.page-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.month-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-month-nav {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 1px solid #dee2e6;
+  background: white;
+  cursor: pointer;
+}
+
+.btn-month-nav:hover { background: #e9ecef; }
+
+.control-select {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  font-weight: bold;
+}
+
+/* 버튼 스타일 */
+.btn-bulk {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-right: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-reset {
+  background-color: #fff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-save-final {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 타임라인 테이블 */
+.timeline-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.timeline-scroll-viewport {
+  overflow-x: auto;
+}
+
+.timeline-header {
+  display: flex;
+  background-color: #f1f3f5;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.employee-info-cell {
+  min-width: 250px;
+  padding: 10px 15px;
+  background: #fff;
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  border-right: 2px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.edit-mode .emp-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.emp-name { font-weight: bold; font-size: 16px; }
+
+.group-select, .pattern-select {
+  padding: 4px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  font-size: 12px;
+}
+
+.day-cell {
+  min-width: 50px;
+  text-align: center;
+  padding: 12px 0;
+  font-weight: bold;
+  border-right: 1px solid #eee;
+}
+
+.employee-row {
+  display: flex;
+  border-bottom: 1px solid #eee;
+}
+
+.duty-cell {
+  min-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #eee;
+}
+
+.duty-select {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  border: none;
+  text-align: center;
+  font-weight: 800;
+  cursor: pointer;
+  appearance: none; /* 화살표 제거 */
+}
