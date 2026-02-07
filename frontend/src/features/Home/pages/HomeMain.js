@@ -9,6 +9,9 @@ function HomeMain(props) {
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
     //20240101
     useEffect(()=>{
+
+
+
         console.log("useEffect", myInfo) 
     },[myInfo])
 

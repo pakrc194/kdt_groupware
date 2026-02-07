@@ -1,5 +1,8 @@
 package vfive.gw.global.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +39,11 @@ public class SecurityConfig {
 		
 		// 허용할 프론트앤드
 		config.addAllowedOrigin("http://192.168.0.117:3000");
+		config.addAllowedOrigin("http://192.168.219.106:3000");
+		config.addAllowedOrigin("http://192.168.0.36:3000");
+		config.addAllowedOrigin("http://192.168.0.36:3000");
+		
+		
 		
 		//모든 헤더 허용 - "Content-Type"  등등
 		config.addAllowedHeader("*");

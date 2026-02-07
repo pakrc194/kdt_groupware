@@ -19,36 +19,43 @@ import FindPassword from "../features/Login/pages/FindPassword";
 
 import ApprovalDetail from "../features/Approval/pages/ApprovalDetail";
 import RedraftPage from "../features/Approval/pages/RedraftPage";
+import { useState } from "react";
+import RequireAuth from "./RequireAuth";
 
 export default function AppRouter() {
+
+
   return (
     <Routes>
       <Route path="/login" element={<LoginMain />} />
-      <Route path="/EmpDetails" element={<Employee_details />} />
-      <Route path="/FindPassword" element={<FindPassword />} />
+      
+      <Route element={<RequireAuth />}>
+        <Route path="/EmpDetails" element={<Employee_details />} />
+        <Route path="/FindPassword" element={<FindPassword />} />
 
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Navigate to="/login" replace />} />
-        <Route path="home/:sideId" element={<HomeMain />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/login" replace />} />
+          <Route path="home/:sideId" element={<HomeMain />} />
 
-        <Route path="approval/:sideId" element={<ApprovalMain />} />
-        <Route path="approval/:sideId/:service" element={<ApprovalMain />} />
-        <Route path="approval/:sideId/detail/:docId" element={<ApprovalDetail />} />
-        <Route path="approval/:sideId/:draft/:docId" element={<RedraftPage />} />
+          <Route path="approval/:sideId" element={<ApprovalMain />} />
+          <Route path="approval/:sideId/:service" element={<ApprovalMain />} />
+          <Route path="approval/:sideId/detail/:docId" element={<ApprovalDetail />} />
+          <Route path="approval/:sideId/:draft/:docId" element={<RedraftPage />} />
 
 
-        <Route path="schedule/:sideId" element={<ScheduleMain />} />
-        <Route path="schedule/:sideId/:view" element={<ScheduleView />} >
-          <Route path="schedule/check/calendar" element={<ScheduleCalendar />} />
-          <Route path="schedule/check/list" element={<ScheduleList />} />
+          <Route path="schedule/:sideId" element={<ScheduleMain />} />
+          <Route path="schedule/:sideId/:view" element={<ScheduleView />} >
+            <Route path="schedule/check/calendar" element={<ScheduleCalendar />} />
+            <Route path="schedule/check/list" element={<ScheduleList />} />
+          </Route>
+          <Route path="schedule/:sideId/calendar/detail/:id" element={<ScheduleDetail />} />
+          <Route path="schedule/:sideId/detail/:id" element={<ScheduleDetail />} />
+          <Route path="attendance/:sideId" element={<AttendanceMain />} />
+          <Route path="board/:sideId" element={<BoardMain />} />
+          <Route path="orgChart/:sideId" element={<OrgChartMain />} />
+          <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
+          <Route path="dashboard/:sideId" element={<DashboardMain />} />
         </Route>
-        <Route path="schedule/:sideId/calendar/detail/:id" element={<ScheduleDetail />} />
-        <Route path="schedule/:sideId/detail/:id" element={<ScheduleDetail />} />
-        <Route path="attendance/:sideId" element={<AttendanceMain />} />
-        <Route path="board/:sideId" element={<BoardMain />} />
-        <Route path="orgChart/:sideId" element={<OrgChartMain />} />
-        <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
-        <Route path="dashboard/:sideId" element={<DashboardMain />} />
       </Route>
     </Routes>
   );
