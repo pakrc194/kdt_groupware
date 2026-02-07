@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
+import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
@@ -25,9 +26,12 @@ public interface OrgchartMapper {
 			+ "order by EMP_NM")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empList();
 	
-	@Select("select EMP_PRVC.*, DEPT_INFO.* from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
+	@Select("select EMP_PRVC.*, DEPT_INFO.*, JBTTL_INFO.* "
+			+ "from EMP_PRVC "
+			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
+			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
 			+ "where emp_id = #{empId}")
-	Map<EmpPrvc, DeptInfo> empPrvc(EmpPrvc emp);
+	Map<Map<EmpPrvc, DeptInfo>, JbttlInfo> empPrvc(EmpPrvc emp);
 	
 	@Select("select EMP_PRVC.*, DEPT_INFO.DEPT_NAME, JBTTL_INFO.JBTTL_NM "
 			+ "from EMP_PRVC "
@@ -82,4 +86,14 @@ public interface OrgchartMapper {
 			+ "concat((select dept_code from DEPT_INFO where dept_id = #{deptId}), '0000')"
 			+ ")")
 	int registerEmp(EmpPrvc emp);
+	
+	@Update("UPDATE EMP_PRVC "
+			+ "SET emp_nm = #{empNm}, emp_birth = #{empBirth}, dept_id = #{deptId}, jbttl_id = #{jbttlId} "
+			+ "WHERE emp_id = #{empId}")
+	int modifyEmp(EmpPrvc emp);
+	
+	@Update("UPDATE EMP_PRVC "
+			+ "SET EMP_ACNT_STTS = 'RETIRED', EMP_RSGNTN_YMD = now() "
+			+ "WHERE emp_id = #{empId}")
+	int deactivateEmp(EmpPrvc emp);
 }

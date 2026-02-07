@@ -16,34 +16,22 @@ const MemberRegistrationForm = () => {
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
-        console.log(dd)
     })
     .catch(e => console.log(e))
 
     fetcher(`/gw/orgChart/register/jbttl`)
     .then(dd => {
         setJbttlList(Array.isArray(dd) ? dd : [dd])
-        console.log(dd)
     })
     .catch(e => console.log(e))
   }, [])
 
-  // 입력 값 변경 핸들러
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
-    console.log("저장될 데이터:", formData);
     alert(`${formData.EMP_NM} 계정 생성 완료`);
 
     try {
-        await fetcher('/gw/orgChart/register', {
+      await fetcher('/gw/orgChart/register', {
         method: 'POST',
         body: { 
           empNm: formData.EMP_NM,
@@ -51,20 +39,51 @@ const MemberRegistrationForm = () => {
           deptId: formData.DEPT_ID,
           jbttlId: formData.JBTTL_ID
         }
-        });
+      });
 
     } catch (err) {
         console.error('계정 생성 실패:', err.message);
     }
 
+    setFormData ({
+      EMP_NM: '',
+      EMP_BIRTH: '',
+      DEPT_ID: '',
+      JBTTL_ID: ''
+    })
+
   };
 
-
+  const handleCancle = () => {
+    setFormData ({
+      EMP_NM: '',
+      EMP_BIRTH: '',
+      DEPT_ID: '',
+      JBTTL_ID: ''
+    })
+  }
 
   // 부서번호 6(인사팀)만 접근 가능
-  // if (localStorage.getItem("DEPT_ID") != 6) {
-  //     return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
-  // }
+  if (localStorage.getItem("DEPT_ID") != 6) {
+    return (
+        <div style={{
+            maxWidth: '400px',
+            margin: '100px auto',
+            padding: '30px',
+            border: '2px solid #dc3545',
+            borderRadius: '8px',
+            backgroundColor: '#fff0f0',
+            textAlign: 'center',
+            fontFamily: 'Arial, sans-serif',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+            <h1 style={{ color: '#dc3545', marginBottom: '10px' }}>권한이 없습니다</h1>
+            <p style={{ color: '#555', fontSize: '14px' }}>
+                이 페이지에 접근할 수 있는 권한이 없습니다.<br/>
+            </p>
+        </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
@@ -77,7 +96,8 @@ const MemberRegistrationForm = () => {
           name="EMP_NM"
           placeholder="이름을 입력하세요"
           style={styles.input}
-          onChange={handleChange}
+          value={formData.EMP_NM}
+          onChange={e => setFormData({...formData, EMP_NM: e.target.value})}
         />
       </div>
 
@@ -85,15 +105,17 @@ const MemberRegistrationForm = () => {
         <label style={styles.label}>생년월일</label>
         <input 
           type="date" 
-          name="birthDate"
+          name="EMP_BIRTH"
           style={styles.input}
-          onChange={handleChange}
+          value={formData.EMP_BIRTH}
+          // onChange={handleChange}
+          onChange={e => setFormData({...formData, EMP_BIRTH: e.target.value})}
         />
       </div>
 
       <div style={styles.formGroup}>
         <label style={styles.label}>팀</label>
-        <select name="DEPT_ID" style={styles.input} onChange={handleChange}>
+        <select name="DEPT_ID" style={styles.input}  value={formData.DEPT_ID} onChange={e => setFormData({...formData, DEPT_ID: e.target.value})}>
           <option value="">팀을 선택하세요</option>
           {deptList.map(team => <option key={team.deptId} value={team.deptId}>{team.deptName}</option>)}
         </select>
@@ -101,14 +123,14 @@ const MemberRegistrationForm = () => {
 
       <div style={styles.formGroup}>
         <label style={styles.label}>직책</label>
-        <select name="JBTTL_ID" style={styles.input} onChange={handleChange}>
+        <select name="JBTTL_ID" style={styles.input} value={formData.JBTTL_ID} onChange={e => setFormData({...formData, JBTTL_ID: e.target.value})}>
           <option value="">직책을 선택하세요</option>
           {jbttlList.map(pos => <option key={pos.jbttlId} value={pos.jbttlId}>{pos.jbttlNm}</option>)}
         </select>
       </div>
 
       <div style={styles.buttonGroup}>
-        <button style={styles.cancelBtn} onClick={() => window.location.reload()}>취소</button>
+        <button style={styles.cancelBtn} onClick={handleCancle}>취소</button>
         <button style={styles.submitBtn} onClick={handleSubmit}>완료</button>
       </div>
     </div>
