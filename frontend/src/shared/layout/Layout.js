@@ -1,13 +1,47 @@
 import React from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { SIDE_CONFIG } from "./sideConfig";
 import "./Layout.css";
+import { fetcher } from "../api/fetcher";
 
 const Layout = () => {
   const location = useLocation();
   const pathParts = location.pathname.split("/");
   const currentMain = pathParts[1] || "main"; // 현재 메인 메뉴 (예: approval)
   const currentSide = pathParts[2]; // 현재 사이드 메뉴 (예: draft)
+
+  const navigate = useNavigate()
+
+  const fn_logout = () => {
+      const myInfoStr = localStorage.getItem("MyInfo")
+      const myInfo = JSON.parse(myInfoStr)
+      const token = myInfo.token
+
+      if(token){  //토큰이 있을 경우에만 진입
+          fetcher(
+              `/gw/login/hello`,
+              {
+                  method:"GET",
+                  headers:{
+                  "Authorization" : `Bearer ${token}`
+                  }
+              }
+          )
+          .then(response=>{
+              console.log(`logChk 결과 : `, response)
+              localStorage.removeItem("MyInfo")
+              alert("로그아웃")
+              navigate("/login")
+          })
+          .catch(error=>{
+              console.log(`logChk 에러 : `, error)
+          })
+          
+      }else{
+          console.log("토큰없음")
+      }
+
+  }
 
   return (
     <div className="container">
@@ -29,9 +63,9 @@ const Layout = () => {
           ))}
         </nav>
         <nav className="nav-right">
-          <Link to={"/login"} className={"nav-icon"}>
+          <button className={"nav-icon"} onClick={fn_logout}>
             로그아웃
-          </Link>
+          </button>
         </nav>
       </header>
 

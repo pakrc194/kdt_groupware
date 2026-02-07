@@ -5,6 +5,13 @@ import { fetcher } from '../../../shared/api/fetcher';
 
 
 function HomeMain(props) {
+    //로그인 정보 가져다 쓰기
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+    //20240101
+    useEffect(()=>{
+        console.log("useEffect", myInfo) 
+    },[myInfo])
+
     const [empData, setEmpData]= useState({})
     const [isOpen, setIsOpen] = useState(false);
     const [testData, setTestData]= useState("테스트 클릭")
@@ -29,21 +36,9 @@ function HomeMain(props) {
     };
 
 
-
-
-    useEffect(()=>{
-        // const loadFetch = () => {
-        //     fetcher('/gw/home/1').then(setEmpData);    
-        // }
-
-        // loadFetch();
-        
-    },[])
-
-
     return (
         <div>
-            {JSON.stringify(empData)}<hr/>
+            {myInfo.empNm}<hr/>
             
             {testData}<br/><br/>
             <Button variant="primary" onClick={fn_test}>테스트</Button>
