@@ -13,19 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vfive.gw.BackendApplication;
 import jakarta.annotation.Resource;
+import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.home.mapper.HomeMapper;
+import vfive.gw.home.service.GetUserProfileService;
 
 @RestController
 @RequestMapping("/gw/home/{service}")
 public class HomeController {
 
-    private final BackendApplication backendApplication;
 	@Resource
-	HomeMapper mapper;
-
-    HomeController(BackendApplication backendApplication) {
-        this.backendApplication = backendApplication;
-    }
+	GetUserProfileService getUserProfileService;
 	
 //	@GetMapping
 //	EmpPrvc emp() {
@@ -36,11 +33,10 @@ public class HomeController {
 //	}
 	
 	@GetMapping
-	String home(
+	EmpPrvc home(
 	    @PathVariable("service") String service
 	) {
-		System.out.println("서비스 접근");
-	    return "service = " + service;
+	    return getUserProfileService.execute(10);
 	}
 	
 	@PostMapping

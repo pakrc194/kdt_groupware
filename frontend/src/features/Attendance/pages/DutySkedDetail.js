@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
+import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌트 임포트
+import DutySkedAprvReqModal from "../component/DutySkedAprvReqModal";
 import "../css/DutySkedDetail.css";
 
 function DutySkedDetail() {
@@ -14,13 +16,10 @@ function DutySkedDetail() {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [tempEmps, setTempEmps] = useState([]);
-
-  // 1. 상태값 저장을 위한 state 추가
+  const [isAprvModalOpen, setIsAprvModalOpen] = useState(false);
   const [status, setStatus] = useState("DRAFT");
 
-  // 2. 읽기 전용 여부 판단 (DRAFT가 아니면 true)
+  // 읽기 전용 여부 판단
   const isReadOnly = status !== "DRAFT" && status !== "REJECTED";
 
   const dutyOptions = {
@@ -53,10 +52,7 @@ function DutySkedDetail() {
       try {
         setIsLoading(true);
         const data = await fetcher(`/gw/duty/detail?scheId=${scheId}`);
-
-        // 서버에서 받아온 마스터 상태값 설정 (DRAFT, PENDING, CONFIRMED 등)
         setStatus(data.master.prgrStts || "DRAFT");
-
         setTitle(data.master.scheTtl);
         const ymd = data.master.trgtYmd;
         setSelectedMonth(`${ymd.substring(0, 4)}-${ymd.substring(4, 6)}`);
@@ -67,7 +63,7 @@ function DutySkedDetail() {
             empMap[item.empId] = {
               id: item.empId,
               name: item.empNm,
-              group: item.grpNm || "A",
+              group: item.grpNm || "미배정",
               rotPtnCd: item.rotPtnCd || "사무",
               duties: {},
             };
@@ -89,7 +85,7 @@ function DutySkedDetail() {
   }, [scheId]);
 
   const handleBulkGenerate = () => {
-    if (isReadOnly) return; // 방어 로직
+    if (isReadOnly) return;
     if (
       !window.confirm("사원별 패턴과 조 편성을 기준으로 자동 생성하시겠습니까?")
     )
@@ -128,6 +124,11 @@ function DutySkedDetail() {
     );
   };
 
+  const handleGroupApply = (updatedEmps) => {
+    setEmployees(updatedEmps);
+    setIsModalOpen(false);
+  };
+
   const handleSave = async () => {
     if (isReadOnly) return;
     if (!window.confirm("변경 내용을 저장하시겠습니까?")) return;
@@ -147,10 +148,7 @@ function DutySkedDetail() {
           })),
         ),
       };
-      await fetcher(`/gw/duty/updateDuty`, {
-        method: "PUT",
-        body: payload,
-      });
+      await fetcher(`/gw/duty/updateDuty`, { method: "PUT", body: payload });
       alert("저장되었습니다.");
       navigate("/attendance/dtskdlst");
     } catch (error) {
@@ -158,11 +156,34 @@ function DutySkedDetail() {
     }
   };
 
+  // 결재 기안 실행
+  const handleApprovalSubmit = async (approvData) => {
+    try {
+      const payload = {
+        scheId: scheId,
+        title: approvData.title,
+        content: approvData.content,
+        // 필요시 기안자 ID 등 추가
+      };
+
+      // fetcher를 통한 결재 API 호출 (엔드포인트는 환경에 맞게 수정)
+      await fetcher("/gw/duty/requestApproval", {
+        method: "POST",
+        body: payload,
+      });
+
+      alert("결재 기안이 완료되었습니다.");
+      setIsAprvModalOpen(false);
+      navigate("/attendance/dtskdlst"); // 목록으로 이동
+    } catch (error) {
+      alert("결재 기안 중 오류가 발생했습니다.");
+    }
+  };
+
   if (isLoading) return <div className="loading">데이터 로드 중...</div>;
 
   return (
     <div className={`duty-detail-page ${isReadOnly ? "mode-readonly" : ""}`}>
-      {/* 1. 상단 바 */}
       <div className="page-header">
         <div className="header-left">
           <button className="btn-list" onClick={() => navigate(-1)}>
@@ -175,7 +196,7 @@ function DutySkedDetail() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="제목 입력"
-            readOnly={isReadOnly} // 초안 아닐 때 읽기 전용
+            readOnly={isReadOnly}
           />
           {isReadOnly && (
             <span className={`status-badge ${status}`}>
@@ -183,10 +204,9 @@ function DutySkedDetail() {
             </span>
           )}
         </div>
-        <div className="header-right"></div>
+        <div className="header-right" />
       </div>
 
-      {/* 2. 컨트롤 영역 */}
       <div className="page-controls">
         <div className="controls-left">
           <input
@@ -209,7 +229,6 @@ function DutySkedDetail() {
           </div>
         </div>
         <div className="controls-right">
-          {/* 초안 상태일 때만 수정 도구 버튼 노출 */}
           {!isReadOnly && (
             <>
               <button className="btn-bulk" onClick={handleBulkGenerate}>
@@ -217,21 +236,17 @@ function DutySkedDetail() {
               </button>
               <button
                 className="btn-setup"
-                onClick={() => {
-                  setTempEmps(JSON.parse(JSON.stringify(employees)));
-                  setIsModalOpen(true);
-                }}
+                onClick={() => setIsModalOpen(true)}
               >
                 조 편성 관리
               </button>
               <button
                 className="btn-reset"
                 onClick={() => {
-                  if (window.confirm("초기화하시겠습니까?")) {
+                  if (window.confirm("초기화하시겠습니까?"))
                     setEmployees((prev) =>
                       prev.map((e) => ({ ...e, duties: {} })),
                     );
-                  }
                 }}
               >
                 초기화
@@ -241,7 +256,6 @@ function DutySkedDetail() {
         </div>
       </div>
 
-      {/* 3. 타임라인 컨테이너 */}
       <div className="timeline-container">
         <div className="timeline-scroll-viewport">
           <div className="timeline-wrapper">
@@ -279,7 +293,7 @@ function DutySkedDetail() {
                           color: style.textColor,
                         }}
                         value={type}
-                        disabled={isReadOnly} // 초안 아닐 때 셀렉트 박스 비활성화
+                        disabled={isReadOnly}
                         onChange={(e) => {
                           const val = e.target.value;
                           setEmployees((prev) =>
@@ -309,114 +323,37 @@ function DutySkedDetail() {
         </div>
       </div>
 
-      {/* 4. 하단 저장 버튼 - 초안 상태일 때만 노출 */}
       {!isReadOnly && (
         <div className="page-footer">
-          <button className="btn-save-final" onClick={handleSave}>
-            저장하기
-          </button>
-        </div>
-      )}
-
-      {/* 조 편성 모달 - isReadOnly일 때는 열리지 않도록 설정됨 */}
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="setup-modal">
-            <div className="modal-header">
-              <h2>조 편성 관리</h2>
-              <button className="close-x" onClick={() => setIsModalOpen(false)}>
-                ×
-              </button>
-            </div>
-            <div className="modal-grid-content">
-              <div className="employee-pool">
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="사원 검색..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <div className="pool-list">
-                  {tempEmps
-                    .filter(
-                      (e) =>
-                        e.name.includes(searchTerm) &&
-                        (!e.group || e.group === "미배정" || e.group === ""),
-                    )
-                    .map((e) => (
-                      <div key={e.id} className="pool-item">
-                        <span>
-                          {e.name} ({e.rotPtnCd})
-                        </span>
-                        <div className="add-buttons">
-                          {["A", "B", "C", "D"].map((g) => (
-                            <button
-                              key={g}
-                              onClick={() =>
-                                setTempEmps((prev) =>
-                                  prev.map((te) =>
-                                    te.id === e.id ? { ...te, group: g } : te,
-                                  ),
-                                )
-                              }
-                            >
-                              {g}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-              <div className="group-grid">
-                {["A", "B", "C", "D"].map((gn) => (
-                  <div key={gn} className="group-box">
-                    <div className="group-box-header">{gn}조</div>
-                    <div className="group-box-body">
-                      {tempEmps
-                        .filter((e) => e.group === gn)
-                        .map((e) => (
-                          <div key={e.id} className="member-tag">
-                            <span>{e.name}</span>
-                            <button
-                              onClick={() =>
-                                setTempEmps((prev) =>
-                                  prev.map((te) =>
-                                    te.id === e.id ? { ...te, group: "" } : te,
-                                  ),
-                                )
-                              }
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="modal-footer-btns">
-              <button
-                className="btn-cancel"
-                onClick={() => setIsModalOpen(false)}
-              >
-                취소
-              </button>
-              <button
-                className="btn-save"
-                onClick={() => {
-                  setEmployees(tempEmps);
-                  setIsModalOpen(false);
-                }}
-              >
-                적용하기
-              </button>
-            </div>
+          <div className="footer-left">
+            <button
+              className="btn-approval-request"
+              onClick={() => setIsAprvModalOpen(true)}
+            >
+              결재 요청
+            </button>
+          </div>
+          <div className="footer-right">
+            <button className="btn-save-final" onClick={handleSave}>
+              저장하기
+            </button>
           </div>
         </div>
       )}
+
+      <DutyGroupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialEmployees={employees}
+        onApply={handleGroupApply}
+      />
+      {/* 새 결재 요청 모달 */}
+      <DutySkedAprvReqModal
+        isOpen={isAprvModalOpen}
+        onClose={() => setIsAprvModalOpen(false)}
+        onSubmit={handleApprovalSubmit}
+        scheTtl={title}
+      />
     </div>
   );
 }
