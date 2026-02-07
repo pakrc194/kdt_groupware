@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
+import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌트 임포트
 import "../css/DutySkedDetail.css";
 
 function DutySkedInsertForm() {
@@ -10,13 +11,10 @@ function DutySkedInsertForm() {
   const today = new Date();
   const initialMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   const [selectedMonth, setSelectedMonth] = useState(initialMonth);
-  // 근무유형을 상단에서 공통으로 관리
   const [workType, setWorkType] = useState("4조3교대");
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [tempEmps, setTempEmps] = useState([]);
 
   const dutyOptions = {
     사무: ["WO", "OD", "O"],
@@ -51,7 +49,6 @@ function DutySkedInsertForm() {
           id: emp.empId,
           name: emp.empNm,
           group: emp.grpNm || "미배정",
-          // 개별 사원 정보에도 workType 동기화용 필드 유지
           rotPtnCd: workType,
           duties: {},
         }));
@@ -65,7 +62,6 @@ function DutySkedInsertForm() {
     loadInitialData();
   }, []);
 
-  // 근무유형 변경 시 모든 팀원의 rotPtnCd 일괄 변경 및 근무 기록 초기화
   const handleWorkTypeChange = (newType) => {
     setWorkType(newType);
     setEmployees((prev) =>
@@ -97,8 +93,6 @@ function DutySkedInsertForm() {
         D: ["O", "O", "D", "D", "E", "E", "N", "N"],
       },
       "4조2교대": {
-        // D(주간), E(야간/저녁) 2교대 구성 (2일 주간 - 2일 휴무 - 2일 야간 - 2일 휴무 방식 예시)
-        // 4개 조가 맞물려 하루에 반드시 D와 E 근무자가 있도록 배치
         A: ["D", "D", "O", "O", "E", "E", "O", "O"],
         B: ["O", "O", "D", "D", "O", "O", "E", "E"],
         C: ["E", "E", "O", "O", "D", "D", "O", "O"],
@@ -107,26 +101,18 @@ function DutySkedInsertForm() {
     };
 
     setEmployees((prev) => {
-      // 사무직 인원만 추출 (당직 순번 계산용)
       const officeWorkers = prev.filter((emp) => emp.rotPtnCd === "사무");
-
       return prev.map((emp) => {
         const newDuties = { ...emp.duties };
-
         if (emp.rotPtnCd === "사무") {
-          // --- 사무직: 주말 포함 하루 1명 OD, 나머지 WO ---
           const workerIdx = officeWorkers.findIndex((w) => w.id === emp.id);
-
           days.forEach((d, idx) => {
-            // 전체 사무직 인원 중 오늘 순번인 사람만 OD, 나머지는 WO
-            if (workerIdx !== -1 && idx % officeWorkers.length === workerIdx) {
-              newDuties[d] = "OD";
-            } else {
-              newDuties[d] = "WO";
-            }
+            newDuties[d] =
+              workerIdx !== -1 && idx % officeWorkers.length === workerIdx
+                ? "OD"
+                : "WO";
           });
         } else {
-          // --- 교대조: 선택된 workType(4조2교대 등) 패턴 적용 ---
           const ptn = patterns[workType]?.[emp.group] || ["O"];
           days.forEach((d, idx) => {
             newDuties[d] = ptn[idx % ptn.length];
@@ -135,6 +121,27 @@ function DutySkedInsertForm() {
         return { ...emp, duties: newDuties };
       });
     });
+  };
+
+  // 모달 적용 핸들러
+  const handleGroupApply = async (updatedEmps) => {
+    try {
+      const groupUpdates = updatedEmps.map((emp) => ({
+        empId: emp.id,
+        grpNm: emp.group === "미배정" || !emp.group ? null : emp.group,
+      }));
+
+      await fetcher("/gw/duty/updateGroups", {
+        method: "PUT",
+        body: groupUpdates,
+      });
+
+      setEmployees(updatedEmps);
+      setIsModalOpen(false);
+      alert("조 편성이 사원 정보에 반영되었습니다.");
+    } catch (error) {
+      alert("사원 정보 업데이트 중 오류가 발생했습니다.");
+    }
   };
 
   const handleSave = async () => {
@@ -156,10 +163,7 @@ function DutySkedInsertForm() {
           })),
         ),
       };
-      await fetcher("/gw/duty/insert", {
-        method: "POST",
-        body: payload,
-      });
+      await fetcher("/gw/duty/insert", { method: "POST", body: payload });
       alert("등록되었습니다.");
       navigate("/attendance/dtskdlst");
     } catch (error) {
@@ -185,7 +189,7 @@ function DutySkedInsertForm() {
             placeholder="제목을 입력하세요"
           />
         </div>
-        <div className="header-right"></div>
+        <div className="header-right" />
       </div>
 
       <div className="page-controls">
@@ -207,8 +211,6 @@ function DutySkedInsertForm() {
               &gt;
             </button>
           </div>
-
-          {/* [수정] 근무유형 선택을 월 선택 우측에 배치 */}
           <div className="work-type-group" style={{ marginLeft: "15px" }}>
             <span className="label-text">근무 유형:</span>
             <select
@@ -227,21 +229,14 @@ function DutySkedInsertForm() {
           <button className="btn-bulk" onClick={handleBulkGenerate}>
             일괄 작성
           </button>
-          <button
-            className="btn-setup"
-            onClick={() => {
-              setTempEmps(JSON.parse(JSON.stringify(employees)));
-              setIsModalOpen(true);
-            }}
-          >
+          <button className="btn-setup" onClick={() => setIsModalOpen(true)}>
             조 편성 관리
           </button>
           <button
             className="btn-reset"
             onClick={() => {
-              if (window.confirm("초기화하시겠습니까?")) {
+              if (window.confirm("초기화하시겠습니까?"))
                 setEmployees((prev) => prev.map((e) => ({ ...e, duties: {} })));
-              }
             }}
           >
             초기화
@@ -321,123 +316,12 @@ function DutySkedInsertForm() {
         </button>
       </div>
 
-      {/* 조 편성 모달 - 기존 로직 유지 */}
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="setup-modal">
-            <div className="modal-header">
-              <h2>조 편성 관리</h2>
-              <button className="close-x" onClick={() => setIsModalOpen(false)}>
-                ×
-              </button>
-            </div>
-            <div className="modal-grid-content">
-              <div className="employee-pool">
-                <input
-                  type="text"
-                  className="search-input"
-                  placeholder="사원 검색..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <div className="pool-list">
-                  {tempEmps
-                    .filter(
-                      (e) =>
-                        e.name.includes(searchTerm) &&
-                        (!e.group || e.group === "미배정" || e.group === ""),
-                    )
-                    .map((e) => (
-                      <div key={e.id} className="pool-item">
-                        <span>{e.name}</span>
-                        <div className="add-buttons">
-                          {["A", "B", "C", "D"].map((g) => (
-                            <button
-                              key={g}
-                              onClick={() =>
-                                setTempEmps((prev) =>
-                                  prev.map((te) =>
-                                    te.id === e.id ? { ...te, group: g } : te,
-                                  ),
-                                )
-                              }
-                            >
-                              {g}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              </div>
-              <div className="group-grid">
-                {["A", "B", "C", "D"].map((gn) => (
-                  <div key={gn} className="group-box">
-                    <div className="group-box-header">{gn}조</div>
-                    <div className="group-box-body">
-                      {tempEmps
-                        .filter((e) => e.group === gn)
-                        .map((e) => (
-                          <div key={e.id} className="member-tag">
-                            <span>{e.name}</span>
-                            <button
-                              onClick={() =>
-                                setTempEmps((prev) =>
-                                  prev.map((te) =>
-                                    te.id === e.id ? { ...te, group: "" } : te,
-                                  ),
-                                )
-                              }
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="modal-footer-btns">
-              <button
-                className="btn-cancel"
-                onClick={() => setIsModalOpen(false)}
-              >
-                취소
-              </button>
-              <button
-                className="btn-save"
-                onClick={async () => {
-                  try {
-                    // 1. 서버에 전송할 데이터 가공 (ID와 그룹 정보만 추출)
-                    const groupUpdates = tempEmps.map((emp) => ({
-                      empId: emp.id,
-                      grpNm: emp.group === "미배정" ? null : emp.group,
-                    }));
-
-                    // 2. 사원 정보 테이블 업데이트 API 호출
-                    // (주소는 실제 백엔드 엔드포인트에 맞게 수정하세요)
-                    await fetcher("/gw/duty/updateGroups", {
-                      method: "PUT",
-                      body: groupUpdates,
-                    });
-
-                    // 3. API 성공 시 화면 상태 반영
-                    setEmployees(tempEmps);
-                    setIsModalOpen(false);
-                    alert("조 편성이 사원 정보에 반영되었습니다.");
-                  } catch (error) {
-                    console.error("조 편성 저장 실패:", error);
-                    alert("사원 정보 업데이트 중 오류가 발생했습니다.");
-                  }
-                }}
-              >
-                적용하기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DutyGroupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        initialEmployees={employees}
+        onApply={handleGroupApply}
+      />
     </div>
   );
 }

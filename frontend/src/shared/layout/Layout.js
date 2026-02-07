@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { SIDE_CONFIG } from "./sideConfig";
 import "./Layout.css";
+import UserProfile from "../components/UserProfile";
 
 const Layout = () => {
   const location = useLocation();
@@ -37,45 +38,47 @@ const Layout = () => {
 
       <div className="main-wrapper">
         <aside className="sidebar">
+          <UserProfile />
           <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3>
           <ul className="sidebar-list">
             {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => {
               // 하위 메뉴 존재 여부 확인
               const hasSubMenus = menu.subMenus && menu.subMenus.length > 0;
-              
+
               // 현재 사이드 메뉴가 이 메뉴 본인이거나, 하위 메뉴 중 하나인 경우 '활성화' 상태로 간주
-              const isParentActive = currentSide === menu.id || 
-                                     menu.subMenus?.some(sub => sub.id === currentSide);
+              const isParentActive =
+                currentSide === menu.id ||
+                menu.subMenus?.some((sub) => sub.id === currentSide);
 
               return (
                 <li key={menu.id} className="sidebar-item-container">
                   {hasSubMenus && (
                     <Link
-                      to={`/${currentMain}/${menu.id}`} 
+                      to={`/${currentMain}/${menu.id}`}
                       onClick={(e) => e.preventDefault()}
-                      style={{ pointerEvents: 'none' }}
-                      className={`side-item ${isParentActive ? 'active' : ''}`}
+                      style={{ pointerEvents: "none" }}
+                      className={`side-item ${isParentActive ? "active" : ""}`}
                     >
                       {menu.name}
                     </Link>
                   )}
                   {!hasSubMenus && (
-                    <Link 
-                      to={`/${currentMain}/${menu.id}`} 
-                      className={`side-item ${isParentActive ? 'active' : ''}`}
+                    <Link
+                      to={`/${currentMain}/${menu.id}`}
+                      className={`side-item ${isParentActive ? "active" : ""}`}
                     >
                       {menu.name}
                     </Link>
                   )}
 
                   {/* subMenus가 있을 때 */}
-                  {hasSubMenus  && (
+                  {hasSubMenus && (
                     <ul className="sub-menu-list">
                       {menu.subMenus.map((sub) => (
                         <li key={sub.id}>
-                          <Link 
-                            to={`/${currentMain}/${sub.id}`} 
-                            className={`side-sub-item ${currentSide === sub.id ? 'active' : ''}`}
+                          <Link
+                            to={`/${currentMain}/${sub.id}`}
+                            className={`side-sub-item ${currentSide === sub.id ? "active" : ""}`}
                           >
                             {sub.name}
                           </Link>

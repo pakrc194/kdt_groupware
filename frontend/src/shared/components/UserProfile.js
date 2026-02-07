@@ -1,0 +1,51 @@
+import React, { useEffect, useState } from "react";
+import "./UserProfile.css";
+import { fetcher } from "../api/fetcher";
+
+const UserProfile = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadProfile = async () => {
+    try {
+      setLoading(true);
+      const data = await fetcher(`/gw/home/profile?empId=10`);
+      setUser(data);
+    } catch (error) {
+      console.error("프로필 가져오기 실패:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  // 로딩 중 처리
+  if (loading) return <div className="profile-section">로딩 중...</div>;
+  // 데이터 없을 때 처리
+  if (!user) return <div className="profile-section">정보 없음</div>;
+
+  return (
+    <div className="profile-section">
+      <div className="profile-img-box">
+        <img
+          src="https://img.seoul.co.kr/img/upload/2026/01/06/SSC_20260106161051_O2.jpg"
+          alt="프로필"
+        />
+      </div>
+      <div className="profile-info">
+        <div className="profile-main">
+          <span className="user-name">{user.name}</span>
+          <span className="user-rank">{user.rank}</span>
+        </div>
+        <p className="user-team">{user.team}</p>
+        <p className="user-detail">{user.email}</p>
+        <p className="user-detail">사번: {user.empNo}</p>
+      </div>
+    </div>
+  );
+};
+
+export default UserProfile;
