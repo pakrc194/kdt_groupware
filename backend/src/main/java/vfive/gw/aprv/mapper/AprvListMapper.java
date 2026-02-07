@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.aprv.dto.request.AprvParams;
 import vfive.gw.aprv.dto.response.AprvDeptListResponse;
 import vfive.gw.aprv.dto.response.AprvDocFormListResponse;
 import vfive.gw.aprv.dto.response.AprvDocListResponse;
@@ -35,8 +36,29 @@ public interface AprvListMapper {
 	@Select("select * from DOC_FORM")
 	List<AprvDocFormListResponse> docFormList();
 	
-	@Select("select * from EMP_PRVC")
-	List<AprvEmpListResponse> empListFilter();
+	@Select("""
+			<script>
+			select * from EMP_PRVC 
+			<where>
+				  <choose>
+				    <when test="filterNm == 'EMP_ID'">
+				      EMP_ID = #{filterVl}
+				    </when>
+				    <when test="filterNm == 'EMP_NM'">
+				      EMP_NM = #{filterVl}
+				    </when>
+				    <when test="filterNm == 'DEPT_ID'">
+				      DEPT_ID = #{filterVl}
+				    </when>
+				    <otherwise>
+				      1 = 1
+				    </otherwise>
+				  </choose>
+			</where>
+			</script>
+			""")
+	List<AprvEmpListResponse> empListFilter(AprvParams param);
+	
 	
 	@Select("select * from DEPT_INFO")
 	List<AprvDeptListResponse> aprvDeptList();

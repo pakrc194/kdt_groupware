@@ -6,15 +6,18 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 
+import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
 import vfive.gw.aprv.dto.request.AprvDrftDocRequest;
 import vfive.gw.aprv.dto.request.AprvDrftInptRequest;
 import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvInptVlRequest;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
 import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
+import vfive.gw.aprv.dto.response.AprvDocVerListResponse;
 
 @Mapper
 public interface AprvPostMapper {
@@ -57,7 +60,7 @@ public interface AprvPostMapper {
 	@Insert("insert into APRV_DOC "
 			+ "(DRFT_EMP_ID, DOC_FORM_ID, APRV_DOC_NO, APRV_DOC_TTL, APRV_DOC_STTS, APRV_DOC_DRFT_DT, APRV_DOC_VER) "
 			+ "values "
-			+ "(#{drftEmpId}, #{docFormId}, #{aprvDocNo}, #{aprvDocTtl}, 'DRFT', #{aprvDocDrftDt}, '1.0')")
+			+ "(#{drftEmpId}, #{docFormId}, #{aprvDocNo}, #{aprvDocTtl}, 'DRFT', #{aprvDocDrftDt}, #{aprvDocVer})")
 	@Options(useGeneratedKeys = true, keyProperty = "aprvDocId")
 	int insertAprvDoc(AprvDrftDocRequest req);
 	
@@ -88,4 +91,7 @@ public interface AprvPostMapper {
 			+ "values "
 			+ "(#{schedTitle},#{schedStartDate},#{schedEndDate},#{schedType},#{schedDetail},#{schedLoc},#{schedEmpId},#{schedAuthorId},#{schedDeptId})")
 	int aprvSchedUpload(AprvSchedUploadRequest req);
+	
+	@Select("select * from APRV_DOC where APRV_DOC_NO = #{docNo} ORDER BY APRV_DOC_VER DESC")
+	List<AprvDocVerListResponse> aprvDocVerList(AprvDocVerListRequest req);
 }

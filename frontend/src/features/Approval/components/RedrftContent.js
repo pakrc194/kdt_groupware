@@ -6,9 +6,10 @@ import EditAprvLine from './modals/EditAprvLine';
 import { fetcher } from '../../../shared/api/fetcher';
 import InputForm from './InputForm';
 
-const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc}) => {
+const RedrftContent = ({docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc, docEmp, setDocEmp}) => {
     const [isAttendCheckOpen, setIsAttendCheckOpen] = useState(false);
     const [drftDate, setDrftDate] = useState({})
+    const [docRole, setDocRole] = useState();
 
     const fn_attendCheck = () => {
         setIsAttendCheckOpen(true)
@@ -32,16 +33,24 @@ const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputL
         setIsEditLineOpen(false)
         console.log("editOk : ",addLine)
         setDocLine(prev => {
-            return [...prev, {roleCd:addLine.roleCd, aprvPrcsEmpId:addLine.empId}]
-        })
 
+            // REF 개수 계산
+            const refCount = prev.filter(v => v.roleCd?.includes("REF")).length;
+
+            // roleSeq 결정
+            const roleSeq =
+            addLine.roleCd?.includes("REF") ? refCount + 1 : 0;
+
+            return [...prev,
+                {
+                    roleCd: addLine.roleCd,
+                    aprvPrcsEmpId: addLine.empId,
+                    roleSeq: roleSeq
+                }
+            ];
+        })
         //docLine
     }
-
-
-    useEffect(()=> {
-        fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
-    },[docFormId])
 
 
     return (
@@ -57,8 +66,11 @@ const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputL
             <div>
                 {inputList.map((v, k)=>
                     <div key={k}>
-                        <InputForm drftDate={drftDate} setDrftDate={setDrftDate} setInputList={setInputList}
-                            inputForm={v} docLoc={docLoc} setDocLoc={setDocLoc}/>
+                        <InputForm drftDate={drftDate} setDrftDate={setDrftDate} 
+                            inputList={inputList} setInputList={setInputList} inputForm={v} 
+                            docLoc={docLoc} setDocLoc={setDocLoc}
+                            docEmp={docEmp} setDocEmp={setDocEmp}
+                            docRole={docRole} setDocRole={setDocRole}/>
                     </div>
                 )}
             </div>
@@ -72,4 +84,4 @@ const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputL
     );
 };
 
-export default AttendanceContent;
+export default RedrftContent;

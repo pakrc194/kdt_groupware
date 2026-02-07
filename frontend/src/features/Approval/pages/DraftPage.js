@@ -1,8 +1,7 @@
 import { useState } from "react";
 import Button from "../../../shared/components/Button";
-import ScheduleContent from "../components/ScheduleContent";
 import FormListModal from "../components/modals/FormListModal";
-import AttendanceContent from "../components/AttendanceContent";
+import DrftContent from "../components/DrftContent";
 import { useNavigate } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
 import CompListModal from "../components/modals/CompListModal";
@@ -25,7 +24,10 @@ const DraftPage = () => {
     const [docLoc, setDocLoc] = useState({
         locNm: '장소 선택'
     });
-    
+    const [docEmp, setDocEmp] = useState({
+        locNm: '담당자 지정'
+    });
+
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const [inputList, setInputList] = useState([]);
@@ -118,9 +120,10 @@ const DraftPage = () => {
         </div>
         <br/>
         {docForm.docFormType && <div className="draftForm">
-            <AttendanceContent docFormType={docForm.docFormType} docLine={docLine} docFormId={docForm.docFormId} setDocLine={setDocLine} 
+            <DrftContent docFormType={docForm.docFormType} docLine={docLine} docFormId={docForm.docFormId} setDocLine={setDocLine} 
                 inputList={inputList} setInputList={setInputList}
-                docLoc={docLoc} setDocLoc={setDocLoc}/>
+                docLoc={docLoc} setDocLoc={setDocLoc}
+                docEmp={docEmp} setDocEmp={setDocEmp}/>
         </div>}
         <div>
             <Button variant='secondary' onClick={fn_drftCancel}>취소</Button>

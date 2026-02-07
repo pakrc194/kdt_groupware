@@ -11,6 +11,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
     const {docId} = useParams();
     const navigate = useNavigate();
     const empId = Number(localStorage.getItem("EMP_ID"))
+    const empDeptId = Number(localStorage.getItem("DEPT_ID"))
+
     const [selectedEmp, setSelectedEmp] = useState(null);
     const [openModal, setOpenModal] = useState(""); 
 
@@ -89,22 +91,45 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         navigate(0);
     }
 
-    const fn_check = () => {
+    const fn_schedCheck = () => {
         console.log(inptList)
         //{inptList}
-        let deptVl = inptList.filter(v=>v.docInptNm=="docSchedType")[0].docInptVl
+        let docSched = inptList.filter(v=>v.docInptNm=="docSchedType")[0].docInptVl
+        let docRole = inptList.filter(v=>v.docInptNm=="docRole")[0].docInptVl
+        let schedEmpId = empId;
+        let deptId = empDeptId;
+        switch(docRole) {
+            case "COMPANY" :
+                schedEmpId = empId;
+                deptId = empDeptId;
+                break;
+            case "DEPT" :
+                schedEmpId = empId;
+                deptId = docSched;
+                break;
+            case "PERSONAL" :
+                schedEmpId = docSched;
+                deptId = empDeptId;
+                break;
+            default : 
+                break;
+        }
+        console.log(inptList)
 
+        //empId = 1;
+        deptId = 2;
         console.log(`body--
             schedTitle : ${docDetail.aprvDocTtl},
             schedStartDate : ${inptList.filter(v=>v.docInptNm=="docStart")[0].docInptVl},
             schedEndDate : ${inptList.filter(v=>v.docInptNm=="docEnd")[0].docInptVl},
-            schedType : ${deptVl=="company"? deptVl : "DEPT"},
+            schedType : ${docRole},
             schedDetail : ${inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl},
             schedLoc : ${inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl},
-            schedEmpId : ${docDetail.drftEmpId},
+            schedEmpId : ${schedEmpId},
             schedAuthorId : ${empId},
-            schedDeptId : ${deptVl=="company"? 0 : deptVl}
+            schedDeptId : ${deptId}
         `)
+
 
         fetcher("/gw/aprv/AprvSchedUpload", {
             method:"POST",
@@ -112,16 +137,18 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 schedTitle : docDetail.aprvDocTtl,
                 schedStartDate : inptList.filter(v=>v.docInptNm=="docStart")[0].docInptVl,
                 schedEndDate : inptList.filter(v=>v.docInptNm=="docEnd")[0].docInptVl,
-                schedType : deptVl=="company"? "COMPANY" : "DEPT",
+                schedType : docRole,
                 schedDetail : inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl,
                 schedLoc : inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl,
-                schedEmpId : docDetail.drftEmpId,
+                schedEmpId : schedEmpId,
                 schedAuthorId : empId,
-                schedDeptId : deptVl=="company"? 0 : deptVl
+                schedDeptId : deptId
             }
         })
     }
+    const fn_attendCheck = () => {
 
+    }
 
 
     const formatToYYMMDDHHMMSS = (date) => {
@@ -142,7 +169,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
     return (
         <>  
-            <button onClick={fn_check}>check</button>
+            <button onClick={fn_schedCheck}>일정 등록</button>
+            <button onClick={fn_attendCheck}>근태 등록</button>
             <div className='approvalLine'>
                 {lineData.map((v, k)=> {
                     return (

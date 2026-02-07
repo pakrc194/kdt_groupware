@@ -8,12 +8,13 @@ import DraftBox from './DraftBox';
 import ReferBox from './ReferBox';
 import RejectBox from './RejectBox';
 import DocStatus from './DocStatus';
-import DocBox from './DocBox';
+import DocFormList from './DocFormList';
+import DocFormInsert from './DocFormInsert';
 
 
 const ApprovalMain = () => {
-  const { sideId } = useParams(); // URL의 :sideId 값을 가져옴
-  
+  const { sideId, service } = useParams(); // URL의 :sideId 값을 가져옴
+
   useEffect(()=>{
     localStorage.setItem("EMP_ID", "1")
     localStorage.setItem("EMP_NM", "강백호")
@@ -35,8 +36,14 @@ const ApprovalMain = () => {
         return <ReferBox />;
       case 'rejectBox':
         return <RejectBox />;
-      case 'docBox':
-        return <DocBox/>;
+      case 'docFormBox':
+        switch(service) {
+          case 'insert' :
+            return <DocFormInsert/>
+          default : 
+            return <DocFormList/>
+        }
+        
       default:
         return <div>페이지를 찾을 수 없습니다.</div>;
     }

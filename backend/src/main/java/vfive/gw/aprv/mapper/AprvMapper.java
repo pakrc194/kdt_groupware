@@ -3,8 +3,10 @@ package vfive.gw.aprv.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
@@ -14,6 +16,7 @@ import vfive.gw.aprv.dto.response.AprvDocDetailResponse;
 import vfive.gw.aprv.dto.response.AprvDocDtlVlResponse;
 import vfive.gw.aprv.dto.response.AprvDocFormLineResponse;
 import vfive.gw.aprv.dto.response.AprvDocInptResponse;
+import vfive.gw.aprv.dto.response.AprvDocVerListResponse;
 import vfive.gw.aprv.dto.response.AprvDutyScheDtlResponse;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.dto.response.AprvLocListResponse;
@@ -28,7 +31,7 @@ public interface AprvMapper {
 	List<AprvDocInptResponse> docInpt(int formId);
 	
 	
-	@Select("select * from APRV_INPT_VL V join DOC_INPT I on V.doc_inpt_id = I.doc_inpt_id where aprv_doc_id = #{docId}")
+	@Select("select * from APRV_INPT_VL V join DOC_INPT I on V.doc_inpt_id = I.doc_inpt_id where aprv_doc_id = #{docId} order by I.doc_inpt_id asc")
 	List<AprvDocDtlVlResponse> docDtlVl(int docId);
 	
 	@Select("select * from ANNL_LV_STTS where emp_id=#{empId} and base_yy=#{year}")
@@ -53,4 +56,6 @@ public interface AprvMapper {
 	
 	@Select("SELECT * FROM LOC_INFO left join SCHED on LOC_ID = SCHED_LOC")//WHERE SCHED_START_DATE <= #{docEnd} AND SCHED_END_DATE >= #{docStart}"
 	List<AprvLocListResponse> locList(AprvLocListRequest req);
+	
+
 }

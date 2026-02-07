@@ -8,4 +8,5 @@ public class AprvDrftDocRequest {
 	String aprvDocNo, aprvDocTtl;
 	int docFormId, drftEmpId;
 	String aprvDocDrftDt;
+	String aprvDocVer;
 }
