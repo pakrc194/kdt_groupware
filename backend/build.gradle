@@ -26,6 +26,10 @@ repositories {
 }
 
 dependencies {
+
+	//이메일 인증을 위한 의존성 설치
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1"
 	
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:11.0.15'
