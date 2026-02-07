@@ -2,109 +2,176 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function DetailEmp(props) {
-    const [data, setData] = useState([]);
+function DetailEmp() {
+    const [data, setData] = useState({});
     const { id } = useParams();
     const navigate = useNavigate();
     
     useEffect(() => {
         fetcher(`/gw/orgChart/detail/${id}`)
-        .then(dd => setData(dd))
-        .catch(e => console.log(e))
-    }, []);
+            .then(dd => setData(dd))
+            .catch(e => console.log(e))
+    }, [id]);
 
     const modifyInfo = () => {
-        window.location.href=`../../modify?id=${id}`;
+        navigate(`../../modify?id=${id}`);
     }
 
     const retired = async () => {
-        alert('계정이 바활성화됩니다.')
+        alert('계정이 비활성화됩니다.');
 
         try {
             await fetcher(`/gw/orgChart/deactivate`, {
-            method: 'POST',
-            body: { 
-                empId: id
-            }
+                method: 'POST',
+                body: { empId: id }
             });
-
         } catch (err) {
             console.error('계정 비활성화 실패:', err.message);
         }
-        navigate(-1)
+        navigate(-1);
     }
 
-    
-    
     return (
-        <div>
-            <h1>{data.EMP_NM} {localStorage.getItem("JBTTL_ID")} {localStorage.getItem("DEPT_ID")}</h1>
-            <br/>
-            <table border="">
+        <div style={styles.container}>
+            <h2 style={styles.title}>{data.EMP_NM}</h2>
+
+            <table style={styles.table}>
                 <tbody>
-                <tr>
-                    <td>사진</td>
-                    <td>{data.EMP_PHOTO}</td>
-                </tr>
-                <tr>
-                    <td>이름</td>
-                    <td>{data.EMP_NM}</td>
-                </tr>
-                <tr>
-                    <td>팀</td>
-                    <td>{data.DEPT_NAME} {data.DEPT_ID}</td>
-                </tr>
-                <tr>
-                    <td>직책</td>
-                    <td>{data.JBTTL_NM}</td>
-                </tr>
-                <tr>
-                    <td>내선번호</td>
-                    <td>{data.EMP_ACTNO}</td>
-                </tr>
-                <tr>
-                    <td>생년월일</td>
-                    <td>{data.EMP_BIRTH}</td>
-                </tr>
-                {/* 같은 팀 팀장 -  주소 보임*/}
-                {(localStorage.getItem("JBTTL_ID") < 3) &&
-                <>
                     <tr>
-                        <td>이메일</td>
-                        <td>{data.EMP_EML_ADDR}</td>
+                        <td style={styles.th}>사진</td>
+                        <td style={styles.td}>{data.EMP_PHOTO || '-'}</td>
                     </tr>
                     <tr>
-                        <td>전화번호</td>
-                        <td>{data.EMP_TELNO}</td>
+                        <td style={styles.th}>이름</td>
+                        <td style={styles.td}>{data.EMP_NM || '-'}</td>
                     </tr>
-                {((localStorage.getItem("JBTTL_ID") < 3 && localStorage.getItem("DEPT_ID") == data.DEPT_ID)
-                || (localStorage.getItem("JBTTL_ID") == 1)) &&
-                <>
                     <tr>
-                        <td>주소</td>
-                        <td>{data.EMP_ADDR}</td>
+                        <td style={styles.th}>팀</td>
+                        <td style={styles.td}>{data.DEPT_NAME || '-'} ({data.DEPT_ID || '-'})</td>
                     </tr>
-                {(localStorage.getItem("JBTTL_ID") == 1) &&
-                <>
                     <tr>
-                        <td>계좌번호</td>
-                        <td>{data.EMP_ACTNO}</td>
+                        <td style={styles.th}>직책</td>
+                        <td style={styles.td}>{data.JBTTL_NM || '-'}</td>
                     </tr>
-                </>}
-                </>}
-                </>}
+                    <tr>
+                        <td style={styles.th}>내선번호</td>
+                        <td style={styles.td}>{data.EMP_ACTNO || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style={styles.th}>생년월일</td>
+                        <td style={styles.td}>{data.EMP_BIRTH || '-'}</td>
+                    </tr>
+
+                    {/* 같은 팀 팀장 권한 */}
+                    {localStorage.getItem("JBTTL_ID") < 3 && (
+                        <>
+                            <tr>
+                                <td style={styles.th}>이메일</td>
+                                <td style={styles.td}>{data.EMP_EML_ADDR || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td style={styles.th}>전화번호</td>
+                                <td style={styles.td}>{data.EMP_TELNO || '-'}</td>
+                            </tr>
+                            {((localStorage.getItem("JBTTL_ID") < 3 && localStorage.getItem("DEPT_ID") == data.DEPT_ID)
+                              || (localStorage.getItem("JBTTL_ID") == 1)) && (
+                                <>
+                                    <tr>
+                                        <td style={styles.th}>주소</td>
+                                        <td style={styles.td}>{data.EMP_ADDR || '-'}</td>
+                                    </tr>
+                                    {localStorage.getItem("JBTTL_ID") == 1 && (
+                                        <tr>
+                                            <td style={styles.th}>계좌번호</td>
+                                            <td style={styles.td}>{data.EMP_ACTNO || '-'}</td>
+                                        </tr>
+                                    )}
+                                </>
+                            )}
+                        </>
+                    )}
                 </tbody>
             </table>
-            <button onClick={() => navigate(-1)}>뒤로</button>
-            {/* 인사팀일 때만 버튼 활성화 */}
-            {(localStorage.getItem("DEPT_ID") == 6) && (
-                <>
-                    <button onClick={modifyInfo}>정보수정</button>
-                    <button onClick={retired}>비활성화</button>
-                </>
-            )}
+
+            <div style={styles.buttonGroup}>
+                <button style={styles.backBtn} onClick={() => navigate(-1)}>뒤로</button>
+
+                {/* 인사팀 권한 */}
+                {localStorage.getItem("DEPT_ID") == 6 && (
+                    <>
+                        <button style={styles.modifyBtn} onClick={modifyInfo}>정보수정</button>
+                        <button style={styles.deactivateBtn} onClick={retired}>비활성화</button>
+                    </>
+                )}
+            </div>
         </div>
     );
 }
+
+// 스타일
+const styles = {
+    container: {
+        maxWidth: '600px',
+        margin: '40px auto',
+        padding: '20px',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#fff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+    },
+    title: {
+        fontSize: '22px',
+        fontWeight: 'bold',
+        marginBottom: '20px',
+        color: '#333',
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginBottom: '20px',
+    },
+    th: {
+        width: '120px',
+        textAlign: 'left',
+        padding: '10px',
+        backgroundColor: '#f5f5f5',
+        fontWeight: 'bold',
+        borderBottom: '1px solid #ddd',
+    },
+    td: {
+        padding: '10px',
+        borderBottom: '1px solid #eee',
+        color: '#333',
+    },
+    buttonGroup: {
+        display: 'flex',
+        gap: '10px',
+        justifyContent: 'flex-end',
+    },
+    backBtn: {
+        padding: '10px 15px',
+        backgroundColor: '#f5f5f5',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        cursor: 'pointer',
+    },
+    modifyBtn: {
+        padding: '10px 15px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+    },
+    deactivateBtn: {
+        padding: '10px 15px',
+        backgroundColor: '#dc3545',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+    }
+};
 
 export default DetailEmp;

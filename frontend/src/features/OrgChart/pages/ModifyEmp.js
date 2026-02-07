@@ -20,21 +20,17 @@ const ModifyEmp = () => {
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
-        console.log(dd)
     })
     .catch(e => console.log(e))
 
     fetcher(`/gw/orgChart/register/jbttl`)
     .then(dd => {
         setJbttlList(Array.isArray(dd) ? dd : [dd])
-        
-        console.log(dd)
     })
     .catch(e => console.log(e))
 
     fetcher(`/gw/orgChart/detail/${id}`)
     .then(dd => {
-      console.log(dd)
       setFormData({
           EMP_NM: dd.EMP_NM,
           EMP_BIRTH: dd.EMP_BIRTH.split("T")[0],
@@ -47,7 +43,6 @@ const ModifyEmp = () => {
 
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
-    console.log("저장될 데이터:", formData);
     alert(`${formData.EMP_NM} 정보 수정 완료`);
 
     try {

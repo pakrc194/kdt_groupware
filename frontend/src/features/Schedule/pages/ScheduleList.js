@@ -19,12 +19,10 @@ function ScheduleList(props) {
     const goPrev = () => {
         const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
         setCurrentDate(prevMonth);
-        console.log('이전달 '+currentDate)
     };
     const goNext = () => {
         const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
         setCurrentDate(nextMonth);
-        console.log('다음달 '+currentDate)
         
     };
     
@@ -59,7 +57,6 @@ function ScheduleList(props) {
     for (let d = 1; d <= monthEnd.getDate(); d++) {
         const dayStr = `${yyyy}-${mm}-${String(d).padStart(2,'0')}`;
         daysInMonth.push(dayStr);
-        console.log(mm)
     }
 
     // 일정 있는 날짜만 필터링
@@ -74,98 +71,97 @@ function ScheduleList(props) {
 
 
     return (
-        <>
-        <div style={{ marginBottom: '10px' }}>
-            <button onClick={goPrev}>이전달</button>
-            <span>{currentDate.getFullYear()}년 {currentDate.getMonth()+1}월</span>
-            <button onClick={goToday}>오늘</button>
-            <button onClick={goNext}>다음달</button>
+        <div style={styles.wrapper}>
+        <div style={styles.header}>
+            <button style={styles.navBtn} onClick={goPrev}>◀</button>
+            <span style={styles.title}>{currentDate.getFullYear()}년 {currentDate.getMonth()+1}월</span>
+            <button style={styles.navBtn} onClick={goToday}>오늘</button>
+            <button style={styles.navBtn} onClick={goNext}>▶</button>
         </div>
-        <div>
-            <div>
-                {scheduleDates.map((day, idx) => (
-                    <div key={idx} style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '10px', marginLeft: "350px", width: "1000px" }}>
-                        <h4><div onClick={() => props.sDate(new Date(day))}>{day}</div></h4>
-                        
-                        <table>
-                            <tbody>
-                            {sched
-                                .filter(item => {
-                                    let start = item.schedStartDate.split(' ')[0];
-                                    let end = item.schedEndDate.split(' ')[0];
-                                    return day >= start && day <= end; // 해당 날짜 일정만
-                                })
-                                .map((vv, kk) => (
-                                    <React.Fragment key={kk}>
-                                        <tr>
-                                            <td>담당팀</td>
-                                            <td>{vv.schedTeam}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>위치</td>
-                                            <td>{vv.schedLoc}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>제목</td>
-                                            <td>{vv.schedTitle}</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>구분</td>
-                                            <td>{vv.schedType}</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>상세내용</td>
-                                            <td>{vv.schedDetail}</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>시작일</td>
-                                            <td>{vv.schedStartDate.split('T')[0]}</td>
-                                        </tr>
-                                        <tr>    
-                                            <td>종료일</td>
-                                            <td>{vv.schedEndDate.split('T')[0]}</td>
-                                        </tr>
-                                        <hr/>
-                                    </React.Fragment>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                ))}
-            </div>
-            
-            {/* {sched.filter(item => item.schedStartDate >= formattedStart && item.schedEndDate < formattedEnd).map((vv, kk) => (
-                <tbody key={kk}>
-                <tr>
-                    <td>아이디</td>
-                    <td>{vv.schedId}</td>
-                </tr><tr>
-                    <td>담당팀</td>
-                    <td>{vv.schedTeam}</td>
-                </tr><tr>
-                    <td>위치</td>
-                    <td>{vv.schedLoc}</td>
-                </tr><tr>
-                    <td>제목</td>
-                    <td>{vv.schedTitle}</td>
-                </tr><tr>    
-                    <td>구분(회사, 팀, 개인, TODO)</td>
-                    <td>{vv.schedType}</td>
-                </tr><tr>    
-                    <td>상세내용</td>
-                    <td>{vv.schedDetail}</td>
-                </tr><tr>    
-                    <td>시작일</td>
-                    <td>{vv.schedStartDate.split('T')[0]}</td>
-                </tr><tr>    
-                    <td>종료일</td>
-                    <td>{vv.schedEndDate.split('T')[0]}</td>
-                </tr>
-                </tbody>
-            ))} */}
+
+        {/* 날짜별 일정 */}
+            {scheduleDates.map((day, idx) => (
+                <div key={idx} style={styles.dayCard}>
+                    <h4
+                        style={styles.dayTitle}
+                        onClick={() => props.sDate(new Date(day))}
+                    >
+                        {day}
+                    </h4>
+
+                    {sched
+                        .filter(item => {
+                            const start = item.schedStartDate.split(' ')[0];
+                            const end = item.schedEndDate.split(' ')[0];
+                            return day >= start && day <= end;
+                        })
+                        .map((vv, kk) => (
+                            <div key={kk} style={styles.itemBox}>
+                                <div><b>제목</b> {vv.schedTitle}</div>
+                                <div><b>구분</b> {vv.schedType}</div>
+                                <div><b>위치</b> {vv.schedLoc || '-'}</div>
+                                <div><b>상세</b> {vv.schedDetail || '-'}</div>
+                                <div style={styles.dateRange}>
+                                    {vv.schedStartDate.split('T')[0]} ~ {vv.schedEndDate.split('T')[0]}
+                                </div>
+                            </div>
+                        ))}
+                </div>
+            ))}
+
+        
         </div>
-        </>
     );
 }
+
+const styles = {
+    wrapper: {
+        marginLeft: '350px',
+        padding: '0 20px',
+        // width: '800px',
+        fontFamily: 'Arial, sans-serif'
+    },
+    header: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        marginBottom: '10px'
+    },
+    title: {
+        fontSize: '18px',
+        fontWeight: 'bold'
+    },
+    navBtn: {
+        padding: '6px 10px',
+        border: '1px solid #ccc',
+        backgroundColor: '#f5f5f5',
+        borderRadius: '4px',
+        cursor: 'pointer'
+    },
+    dayCard: {
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        padding: '12px',
+        marginBottom: '16px',
+        backgroundColor: '#fff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+    },
+    dayTitle: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        marginBottom: '10px',
+        cursor: 'pointer'
+    },
+    itemBox: {
+        padding: '10px',
+        borderBottom: '1px solid #eee',
+        fontSize: '14px'
+    },
+    dateRange: {
+        marginTop: '4px',
+        color: '#666',
+        fontSize: '13px'
+    }
+};
 
 export default ScheduleList;

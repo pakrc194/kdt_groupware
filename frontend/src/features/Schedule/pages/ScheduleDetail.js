@@ -13,7 +13,6 @@ function ScheduleDetail(props) {
         .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
             setSchedA(dd.schedAuthorId)
             setSchedType(dd.schedType)
-            console.log(dd)
         })
         .catch(e => console.log(e))
     }, []);
@@ -23,9 +22,7 @@ function ScheduleDetail(props) {
         if (result) {
 
             fetcher(`/gw/schedule/sched_delete/${id}`)
-            .then(dd => {
-                console.log(dd)
-            })
+            .then(dd => {})
             .catch(e => console.log(e))
 
             console.log('일정 삭제')

@@ -16,21 +16,18 @@ const MemberRegistrationForm = () => {
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
-        console.log(dd)
     })
     .catch(e => console.log(e))
 
     fetcher(`/gw/orgChart/register/jbttl`)
     .then(dd => {
         setJbttlList(Array.isArray(dd) ? dd : [dd])
-        console.log(dd)
     })
     .catch(e => console.log(e))
   }, [])
 
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
-    console.log("저장될 데이터:", formData);
     alert(`${formData.EMP_NM} 계정 생성 완료`);
 
     try {
@@ -68,7 +65,24 @@ const MemberRegistrationForm = () => {
 
   // 부서번호 6(인사팀)만 접근 가능
   if (localStorage.getItem("DEPT_ID") != 6) {
-      return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
+    return (
+        <div style={{
+            maxWidth: '400px',
+            margin: '100px auto',
+            padding: '30px',
+            border: '2px solid #dc3545',
+            borderRadius: '8px',
+            backgroundColor: '#fff0f0',
+            textAlign: 'center',
+            fontFamily: 'Arial, sans-serif',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+            <h1 style={{ color: '#dc3545', marginBottom: '10px' }}>권한이 없습니다</h1>
+            <p style={{ color: '#555', fontSize: '14px' }}>
+                이 페이지에 접근할 수 있는 권한이 없습니다.<br/>
+            </p>
+        </div>
+    );
   }
 
   return (

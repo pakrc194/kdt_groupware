@@ -52,7 +52,6 @@ public class ScheduleController {
 		sc.setSchedStartDate(sdate);
 		sc.setSchedEndDate(edate);
 		sc.setSchedState("0");		// 고정
-		sc.setSchedSs(false);
 		sc.setSchedDeptId(dept_id);
 		sc.setSchedEmpId(emp_id+"");	// 사번
 		sc.setSchedAuthorId(emp_id);
@@ -134,6 +133,17 @@ public class ScheduleController {
 		Sched sc = new Sched();
 		sc.setSchedId(id);
 		return schedMapper.sched_delete(sc);
+	}
+	
+	// 업무 지시 중 일정이 있는 팀 조회
+	@GetMapping("instruction/schedTeams/{sdate}/{edate}")
+	List<String> schedTeamList(
+			@PathVariable("sdate") String sdate,
+			@PathVariable("edate") String edate) {
+		Sched sc = new Sched();
+		sc.setSchedStartDate(sdate);
+		sc.setSchedEndDate(edate);
+		return schedMapper.schedTeamList(sc);
 	}
 
 }

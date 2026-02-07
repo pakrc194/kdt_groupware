@@ -18,6 +18,9 @@ function Instruction(props) {
     const [role, setRole] = useState(''); // 권한 상태
     const [teamPopupOpen, setTeamPopupOpen] = useState(false);
     const [locationList, setLocationList] = useState([]);
+    const [teamSchedList, setTeamSchedList] = useState([]);
+
+    const hasCommon = selectedTeams.some(num => teamSchedList.includes(num.deptId.toString()))
 
     // 팀 리스트
     const [teamList, setTeamList] = useState([]);
@@ -25,10 +28,8 @@ function Instruction(props) {
     // 유저 정보
     const deptId = parseInt(localStorage.getItem('DEPT_ID'));
 
-
     useEffect(() => {
-        console.log("user emp id : "+localStorage.getItem("EMP_ID"))
-        // 예시: role을 로컬스토리지에서 가져오기
+        // 직책 가져오기
         const storedRole = localStorage.getItem('USER_ROLE') || 'TEAM_USER';
         setRole(localStorage.getItem('USER_ROLE'));
 
@@ -39,11 +40,12 @@ function Instruction(props) {
         // 팀 리스트 가져오기
         fetcher('/gw/schedule/instruction/teams')
         .then(data => {
-            setTeamList(data); // [{id, name}, ...] 형태
-
+            setTeamList(data);
             // DEPT_ID가 1이 아니면 선택 불가, 자동으로 본인 부서 팀 선택
             if (deptId != 1) {
-                if (data.find(t => t.deptId == deptId)) setSelectedTeams([data.find(t => t.deptId == deptId)]);
+                if (data.find(t => t.deptId == deptId)) {
+                    setSelectedTeams([data.find(t => t.deptId == deptId)])
+                };
             }
         })
         .catch(err => console.error('팀 리스트 로딩 실패', err));
@@ -55,11 +57,44 @@ function Instruction(props) {
 
     }, []);
 
+    // 팀 일정 확인
+    useEffect(() => {
+        // startDate, endDate가 모두 있을 때만 fetch
+        if (!startDate || !endDate) return;
+        
+        fetcher(`/gw/schedule/instruction/schedTeams/${startDate}/${endDate}`)
+        .then(data => {
+            // ['4,5', '2', '5,7,8'] => ['4', '5', '2', '7', '8']로 변환하여 등록
+            setTeamSchedList([...new Set(
+                data.flatMap(item => item.split(','))
+            )])
+        })
+        .catch(err => console.error('팀 일정 리스트 로딩 실패', err))
+    }, [startDate, endDate])    // 선택 날짜 바뀔 때마다 일정 정보 가져와야함
+
+    
     
 
     // 직책 id로 권한 설정
     if (localStorage.getItem("JBTTL_ID") == 3) {
-        return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
+        return (
+        <div style={{
+            maxWidth: '400px',
+            margin: '100px auto',
+            padding: '30px',
+            border: '2px solid #dc3545',
+            borderRadius: '8px',
+            backgroundColor: '#fff0f0',
+            textAlign: 'center',
+            fontFamily: 'Arial, sans-serif',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+        }}>
+            <h1 style={{ color: '#dc3545', marginBottom: '10px' }}>권한이 없습니다</h1>
+            <p style={{ color: '#555', fontSize: '14px' }}>
+                이 페이지에 접근할 수 있는 권한이 없습니다.<br/>
+            </p>
+        </div>
+    );
     }
 
     // 업무 구분 선택 옵션 필터링
@@ -73,7 +108,7 @@ function Instruction(props) {
     };
 
     
-    // 업무 등록 함수 (실제 저장은 여기에 API 호출 등 넣기)
+    // 업무 등록
     const handleSubmit = async () => {
         if (!startDate || !endDate || !title) {
             alert('시작일, 종료일, 제목을 모두 입력하세요');
@@ -108,8 +143,8 @@ function Instruction(props) {
                     schedEndDate: endDate,
                     schedTitle: title,
                     schedDetail: detail,
-                    schedTeam: selectedTeams.map(t => t.deptName).join(','),
-                    schedTeamId: selectedTeams.map(t => t.deptId).join(','),
+                    schedDept: selectedTeams.map(t => t.deptName).join(','),
+                    schedDeptId: selectedTeams.map(t => t.deptId).join(','),
                     schedLoc: location === '0' ? null : parseInt(location),
                     schedAuthorId: localStorage.getItem("EMP_ID"),
                     schedEmpSn: localStorage.getItem("EMP_SN")
@@ -119,7 +154,8 @@ function Instruction(props) {
             console.error('업무지시 등록 실패:', err.message);
         };
 
-        console.log('등록할 업무:', payload);
+        // console.log('등록할 업무:', payload);
+        hasCommon && alert('업무가 중복 등록됩니다.')
         alert('업무가 등록되었습니다');
         // 페이지 이동
         navigate(`/schedule/instruction/detail/${id}`);
@@ -210,6 +246,7 @@ function Instruction(props) {
             </div>
             <div style={{ marginBottom: 15, minHeight: 24, fontSize: 14 }}>
                 {(workType === "COMPANY") ? '회사' : selectedTeams.length === 0 ? '선택된 팀 없음' : selectedTeams.map(t => t.deptName).join(', ')}
+                {selectedTeams.length != 0 && hasCommon && <h3>업무가 중복 등록 됩니다.</h3>}
             </div>
 
             {/* 장소 선택 */}
