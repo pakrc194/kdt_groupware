@@ -18,6 +18,7 @@ import Employee_details from "../features/Login/pages/Employee_details";
 import FindPassword from "../features/Login/pages/FindPassword";
 
 import ApprovalDetail from "../features/Approval/pages/ApprovalDetail";
+import RedraftPage from "../features/Approval/pages/RedraftPage";
 
 export default function AppRouter() {
   return (
@@ -29,8 +30,13 @@ export default function AppRouter() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Navigate to="/home/dashboard" replace />} />
         <Route path="home/:sideId" element={<HomeMain />} />
+
         <Route path="approval/:sideId" element={<ApprovalMain />} />
+        <Route path="approval/:sideId/:service" element={<ApprovalMain />} />
         <Route path="approval/:sideId/detail/:docId" element={<ApprovalDetail />} />
+        <Route path="approval/:sideId/:draft/:docId" element={<RedraftPage />} />
+
+
         <Route path="schedule/:sideId" element={<ScheduleMain />} />
         <Route path="schedule/:sideId/:view" element={<ScheduleView />} >
           <Route path="schedule/check/calendar" element={<ScheduleCalendar />} />

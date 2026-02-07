@@ -11,7 +11,7 @@ export const SIDE_CONFIG = {
       { id: 'referBox', name: '참조함' },
       { id: 'tempBox', name: '임시저장함' },
       { id: 'rejectBox', name: '반려함' },
-      { id: 'docBox', name: '양식보관함' },
+      { id: 'docFormBox', name: '양식보관함' },
     ]
   },
   schedule: {

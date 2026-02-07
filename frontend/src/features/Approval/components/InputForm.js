@@ -4,15 +4,16 @@ import CompListModal from './modals/CompListModal';
 import { fetcher } from '../../../shared/api/fetcher';
 import SelectDeptModal from './modals/SelectDeptModal';
 
-const InputForm = ({drftDate, setDrftDate, inputForm, setInputList, docLoc, setDocLoc}) => {
+const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, docLoc, setDocLoc, docRole, setDocRole}) => {
     const [isLocOpen, setIsLocOpen] = useState(false);
     const [locList, setLocList] = useState([]);
     
+    const [schedType, setSchedType] = useState();
+
     const [isSelectDeptOpen, setIsSelectDeptOpen] = useState(false);
     
 
     useEffect(()=>{
-        //console.log("InputForm type : ",inputForm.docInptType)
 
     },[])
 
@@ -57,6 +58,10 @@ const InputForm = ({drftDate, setDrftDate, inputForm, setInputList, docLoc, setD
         const {type, name, value, checked} = e.currentTarget;
         console.log(type, name, value, checked)
         
+        if(name == "docRole") {
+            setDocRole(value);
+        }
+
         setInputList(prev=> 
             prev.map(v=>{
                 if(v.docInptNm == name) {
@@ -80,20 +85,16 @@ const InputForm = ({drftDate, setDrftDate, inputForm, setInputList, docLoc, setD
     const fn_selectDeptClose = () => {
         setIsSelectDeptOpen(false);
     }
-    const fn_selectDeptOk = (isCompany, selectDept) => {
+    const fn_selectDeptOk = (selectDept) => {
         console.log("fn_selectDeptOk", selectDept)
         setInputList(prev=> 
             prev.map(v=>{
                 if(v.docInptNm == "docSchedType") {
-                    if(isCompany) {
-                        return {...v, docInptVl: "company"};
-                    } else {
-                        let deptVal = ""
-                        for(let i=0; i<selectDept.length; i++) {
-                            deptVal=="" ? deptVal=selectDept[i].deptId : deptVal+=","+selectDept[i].deptId
-                        }
-                        return {...v, docInptVl: deptVal};
+                    let deptVal = ""
+                    for(let i=0; i<selectDept.length; i++) {
+                        deptVal=="" ? deptVal=selectDept[i].deptId : deptVal+=","+selectDept[i].deptId
                     }
+                    return {...v, docInptVl: deptVal};
                 }
                 return v;
             })
@@ -101,6 +102,12 @@ const InputForm = ({drftDate, setDrftDate, inputForm, setInputList, docLoc, setD
         setIsSelectDeptOpen(false);
     }
 
+    const fn_empClick = () => {
+        fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=2`)
+        .then(res=>{
+
+        })
+    }
 
     switch(inputForm.docInptType) {
         case 'SELECT' :
@@ -112,14 +119,14 @@ const InputForm = ({drftDate, setDrftDate, inputForm, setInputList, docLoc, setD
                     </select>
                 </>
             )
-        case 'RADIO' :
+        case 'CHECKBOX' :
             return (
                 <>
-                    <div>일정 공유
-                        <input type="text" name="docSchedType" value={inputForm.docInptVl || ""} readOnly/>
+                    <div>담당 지정
+                        <input type="text" name={inputForm.docInptNm} value={inputForm.docInptVl || ""} readOnly/>
                         <Button variant="primary" onClick={fn_selectDeptClick}>범위 선택</Button>
                         {isSelectDeptOpen && 
-                            <SelectDeptModal onClose={fn_selectDeptClose} onOk={fn_selectDeptOk}
+                            <SelectDeptModal onClose={fn_selectDeptClose} onOk={fn_selectDeptOk} schedType={docRole}
                                 title={"선택"} okMsg={"불러오기"}/>}
                     </div>
                 </>

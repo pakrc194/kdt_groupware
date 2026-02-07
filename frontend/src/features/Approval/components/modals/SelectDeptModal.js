@@ -2,32 +2,33 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../../../../shared/components/Modal';
 import { fetcher } from '../../../../shared/api/fetcher';
 
-const SelectDeptModal = ({onClose, onOk}) => {
+const SelectDeptModal = ({onClose, onOk, schedType}) => {
     const [deptList, setDeptList] = useState([]);
     const [checkedDepts, setCheckedDepts] = useState([]);
-    const [isCompany, setIsCompany] = useState(false);
 
-    useEffect(()=>{      
-        fetcher("/gw/aprv/AprvDeptList").then(res=>{
-            
-            console.log("fetch AprvDeptList", res)
-            setDeptList(res)
-        })      
-    },[])
+    useEffect(()=>{    
+        if(schedType=='DEPT') {
+            fetcher("/gw/aprv/AprvDeptList").then(res=>{
+                
+                console.log("fetch AprvDeptList", res)
+                setDeptList(res)
+            }) 
+        } else if(schedType=='PERSONAL') {
+            fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=2`)
+            .then(res=>{
+                console.log("fetch AprvEmpListFilter", res)
+                setDeptList(res)
+            })
+        } else {
+            console.log("schedType",schedType)
+        }
+       
+        
+    },[schedType])
 
     const fn_ok = () => {
-        console.log("fn_ok", isCompany, checkedDepts)
-        onOk(isCompany, checkedDepts);
-    }
-
-    const fn_change = (e) => {
-        const {name, value} = e.target
-        console.log(name, value)
-        if(value=="dept") {
-            setIsCompany(false)
-        } else {
-            setIsCompany(true)
-        }
+        console.log("fn_ok", checkedDepts)
+        onOk(checkedDepts);
     }
 
     const fn_checkDept = (e) => {
@@ -46,13 +47,11 @@ const SelectDeptModal = ({onClose, onOk}) => {
         <Modal
             title="범위 지정"
             message={<div>
-                <select name="docSelect" value={""} onChange={fn_change}>
-                    <option value="" disabled>선택</option>
-                    <option value="dept">팀</option>
-                    <option value="company">회사</option>
-                </select>
-                {deptList.map((v, k)=>(
+                {schedType=='DEPT' && deptList.map((v, k)=>(
                     <div key={k}><input type="checkbox" name={v.deptName} value={v.deptId} onChange={fn_checkDept} />{v.deptName}</div>
+                ))}
+                {schedType=='PERSONAL' && deptList.map((v, k)=>(
+                    <div key={k}><input type="checkbox" name={v.empNm} value={v.empId} onChange={fn_checkDept} />{v.empNm}</div>
                 ))}
             </div>}
             onClose={onClose}

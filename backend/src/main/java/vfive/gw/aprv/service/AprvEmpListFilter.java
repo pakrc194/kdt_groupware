@@ -19,7 +19,7 @@ public class AprvEmpListFilter implements AprvAction {
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.empListFilter();
+		return mapper.empListFilter(service);
 	}
 
 }

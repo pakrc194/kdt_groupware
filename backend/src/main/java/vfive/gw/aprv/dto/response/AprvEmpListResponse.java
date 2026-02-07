@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class AprvEmpListResponse {
-	int empId;
+	int empId, deptId;
 	String empNm;
 }
