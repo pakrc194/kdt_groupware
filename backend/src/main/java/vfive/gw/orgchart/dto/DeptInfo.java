@@ -1,4 +1,4 @@
-package vfive.gw.home.dto;
+package vfive.gw.orgchart.dto;
 
 import lombok.Data;
 

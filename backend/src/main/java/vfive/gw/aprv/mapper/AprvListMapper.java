@@ -5,8 +5,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.aprv.dto.response.AprvDeptListResponse;
 import vfive.gw.aprv.dto.response.AprvDocFormListResponse;
 import vfive.gw.aprv.dto.response.AprvDocListResponse;
+import vfive.gw.aprv.dto.response.AprvEmpListResponse;
 
 @Mapper
 public interface AprvListMapper {
@@ -32,4 +34,10 @@ public interface AprvListMapper {
 	
 	@Select("select * from DOC_FORM")
 	List<AprvDocFormListResponse> docFormList();
+	
+	@Select("select * from EMP_PRVC")
+	List<AprvEmpListResponse> empListFilter();
+	
+	@Select("select * from DEPT_INFO")
+	List<AprvDeptListResponse> aprvDeptList();
 }

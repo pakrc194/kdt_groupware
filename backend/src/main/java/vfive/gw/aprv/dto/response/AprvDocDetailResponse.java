@@ -7,5 +7,5 @@ public class AprvDocDetailResponse {
 	int aprvDocId;
 	int drftEmpId;
 	String drftEmpNm;
-	String aprvDocNo, aprvDocTtl, aprvDocStts, aprvDocAtrzDt, aprvDocDrftDt, aprvDocVer;
+	String aprvDocNo, aprvDocTtl, aprvDocStts, aprvDocAtrzDt, drftDt, aprvDocVer;
 }

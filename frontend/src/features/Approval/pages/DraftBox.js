@@ -8,7 +8,7 @@ const DraftBox = () => {
     const [aprvDocList, setAprvDocList] = useState([]);
     useEffect(() => {
         const empId = localStorage.getItem("EMP_ID")
-        console.log("drftBox useEffect");
+        console.log("drftBox useEffect : "+empId);
         fetcher(`/gw/aprv/DrftDocList/${empId}`).then(setAprvDocList)
     }, [])
 

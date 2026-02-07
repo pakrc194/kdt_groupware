@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +15,25 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
+import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
+import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
+import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
+import vfive.gw.aprv.dto.request.AprvSchedRequest;
+import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
+import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
+import vfive.gw.aprv.service.AprvDrftUpload;
+import vfive.gw.aprv.service.AprvDutyScheDtl;
+import vfive.gw.aprv.service.AprvEmpAnnlLv;
+import vfive.gw.aprv.service.AprvLocList;
 import vfive.gw.aprv.service.AprvPrcs;
+import vfive.gw.aprv.service.AprvSchedList;
+import vfive.gw.aprv.service.AprvSchedUpload;
 
 @RestController
 @RequestMapping("/gw/aprv")
@@ -49,7 +63,42 @@ public class AprvController {
 		return oo;
 	}
 	
-
+	@PostMapping("/AprvEmpAnnlLv")
+	AprvEmpAnnlLvResponse empAnnlLv(@RequestBody AprvEmpAnnlLvRequest req) {
+		
+		return provider.getContext().getBean(AprvEmpAnnlLv.class).load(req);
+	}
+	
+	@PostMapping("/AprvDrftUpload")
+	Object aprvDrftUpload(@RequestBody AprvDrftUploadRequest req) {
+		return provider.getContext().getBean(AprvDrftUpload.class).load(req);
+	}
+	
+	@PostMapping("/AprvDutyScheDtl")
+	Object aprvDutyScheDtl(@RequestBody AprvDutyScheDtlRequest req) {
+		System.out.println(req);
+		return provider.getContext().getBean(AprvDutyScheDtl.class).load(req);
+	}
+	
+	@PostMapping("/AprvSchedList")
+	Object aprvSchedList(@RequestBody AprvSchedRequest req) {
+		System.out.println(req);
+		return provider.getContext().getBean(AprvSchedList.class).load(req);
+	}
+	
+	@PostMapping("/AprvLocList")
+	Object aprvSchedList(@RequestBody AprvLocListRequest req) {
+		System.out.println(req);
+		return provider.getContext().getBean(AprvLocList.class).load(req);
+	}
+	
+	@PostMapping("/AprvSchedUpload")
+	Object aprvSchedList(@RequestBody AprvSchedUploadRequest req) {
+		System.out.println(req);
+		return provider.getContext().getBean(AprvSchedUpload.class).load(req);
+	}
+	
+	
 	
 	String getServiceName(String service) {
 		String tt = "";

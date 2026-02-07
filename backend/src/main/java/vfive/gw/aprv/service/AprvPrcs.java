@@ -20,9 +20,19 @@ public class AprvPrcs {
 	@Transactional
 	public Object load(AprvPrcsRequest ap) {
 		ap.setAprvPrcsDt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-		
-		postMapper.docSttsUpdate(ap);
+		if(!ap.getRoleCd().contains("REF")) {
+			postMapper.docSttsUpdate(ap);
+		}
 		postMapper.uAprvPrcs(ap);
+		
+		System.out.println(ap);
+		
+		if(ap.getNextEmpId()!=0) {
+			AprvPrcsRequest nextAp = new AprvPrcsRequest();
+			nextAp.setAprvDocId(ap.getAprvDocId());
+			nextAp.setAprvPrcsEmpId(ap.getNextEmpId());
+			postMapper.nextAprvPrcs(nextAp);
+		}
 		
 		return Map.of("res","success");
 	}

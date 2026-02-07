@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetcher } from '../../../shared/api/fetcher';
 
 const MemberRegistrationForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    birthDate: '',
-    team: '',
-    position: ''
+    EMP_NM: '',
+    EMP_BIRTH: '',
+    DEPT_ID: '',
+    JBTTL_ID: ''
   });
 
-  // 드롭다운 메뉴 옵션 데이터
-  const teamList = ["식품", "뷰티·패션잡화", "여성패션", "남성패션", "인사관리", "시설자재", "안전관리", "지점장"];
-  const positionList = ["팀원", "실장", "팀장", "대표이사"];
+  const [deptList, setDeptList] = useState([]);
+  const [jbttlList, setJbttlList] = useState([]);
+
+  useEffect(() => {
+    fetcher(`/gw/schedule/instruction/teams`)
+    .then(dd => {
+        setDeptList(Array.isArray(dd) ? dd : [dd])
+        console.log(dd)
+    })
+    .catch(e => console.log(e))
+
+    fetcher(`/gw/orgChart/register/jbttl`)
+    .then(dd => {
+        setJbttlList(Array.isArray(dd) ? dd : [dd])
+        console.log(dd)
+    })
+    .catch(e => console.log(e))
+  }, [])
 
   // 입력 값 변경 핸들러
   const handleChange = (e) => {
@@ -22,10 +38,33 @@ const MemberRegistrationForm = () => {
   };
 
   // 저장 버튼 클릭 시
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log("저장될 데이터:", formData);
-    alert(`${formData.name} 계정 생성 완료`);
+    alert(`${formData.EMP_NM} 계정 생성 완료`);
+
+    try {
+        await fetcher('/gw/orgChart/register', {
+        method: 'POST',
+        body: { 
+          empNm: formData.EMP_NM,
+          empBirth: formData.EMP_BIRTH,
+          deptId: formData.DEPT_ID,
+          jbttlId: formData.JBTTL_ID
+        }
+        });
+
+    } catch (err) {
+        console.error('계정 생성 실패:', err.message);
+    }
+
   };
+
+
+
+  // 부서번호 6(인사팀)만 접근 가능
+  // if (localStorage.getItem("DEPT_ID") != 6) {
+  //     return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
+  // }
 
   return (
     <div style={styles.container}>
@@ -35,7 +74,7 @@ const MemberRegistrationForm = () => {
         <label style={styles.label}>이름</label>
         <input 
           type="text" 
-          name="name"
+          name="EMP_NM"
           placeholder="이름을 입력하세요"
           style={styles.input}
           onChange={handleChange}
@@ -54,22 +93,22 @@ const MemberRegistrationForm = () => {
 
       <div style={styles.formGroup}>
         <label style={styles.label}>팀</label>
-        <select name="team" style={styles.input} onChange={handleChange}>
+        <select name="DEPT_ID" style={styles.input} onChange={handleChange}>
           <option value="">팀을 선택하세요</option>
-          {teamList.map(team => <option key={team} value={team}>{team}</option>)}
+          {deptList.map(team => <option key={team.deptId} value={team.deptId}>{team.deptName}</option>)}
         </select>
       </div>
 
       <div style={styles.formGroup}>
         <label style={styles.label}>직책</label>
-        <select name="position" style={styles.input} onChange={handleChange}>
+        <select name="JBTTL_ID" style={styles.input} onChange={handleChange}>
           <option value="">직책을 선택하세요</option>
-          {positionList.map(pos => <option key={pos} value={pos}>{pos}</option>)}
+          {jbttlList.map(pos => <option key={pos.jbttlId} value={pos.jbttlId}>{pos.jbttlNm}</option>)}
         </select>
       </div>
 
       <div style={styles.buttonGroup}>
-        <button style={styles.cancelBtn} onClick={() => alert('취소되었습니다.')}>취소</button>
+        <button style={styles.cancelBtn} onClick={() => window.location.reload()}>취소</button>
         <button style={styles.submitBtn} onClick={handleSubmit}>완료</button>
       </div>
     </div>

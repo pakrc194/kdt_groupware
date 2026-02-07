@@ -7,6 +7,6 @@ public class AprvDocDtlVlResponse {
 	int docInptVlId;
 	int aprvDocId;
 	int docInptNo;
-	String docInptLbl, docInptType, docInptRmrk, docInptVl;
+	String docInptLbl, docInptType, docInptNm, docInptRmrk, docInptVl;
 	
 }

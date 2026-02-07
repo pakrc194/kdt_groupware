@@ -1,23 +1,72 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ApprovalLine from './ApprovalLine';
 import Button from '../../../shared/components/Button';
+import AttendCheckModal from './modals/AttendCheckModal';
+import EditAprvLine from './modals/EditAprvLine';
+import { fetcher } from '../../../shared/api/fetcher';
+import InputForm from './InputForm';
 
-const AttendanceContent = () => {
+const AttendanceContent = ({docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc}) => {
+    const [isAttendCheckOpen, setIsAttendCheckOpen] = useState(false);
+    const [drftDate, setDrftDate] = useState({})
+
+    const fn_attendCheck = () => {
+        setIsAttendCheckOpen(true)
+    }
+    const fn_attendCheckClose = () => {
+        setIsAttendCheckOpen(false)
+    }
+    const fn_attendCheckOk = () => {
+        setIsAttendCheckOpen(false)
+    }
+
+    const [isEditLineOpen, setIsEditLineOpen] = useState(false);
+    
+    const fn_editLine = () => {
+        setIsEditLineOpen(true)
+    }
+    const fn_editLineClose = () => {
+        setIsEditLineOpen(false)
+    }
+    const fn_editLineOk = (addLine) => {
+        setIsEditLineOpen(false)
+        console.log("editOk : ",addLine)
+        setDocLine(prev => {
+            return [...prev, {roleCd:addLine.roleCd, aprvPrcsEmpId:addLine.empId}]
+        })
+
+        //docLine
+    }
+
+
+    useEffect(()=> {
+        fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
+    },[docFormId])
+
+
     return (
         <>
-            <div>
-                기간 선택 
-                <input type="date" name="docStart"/>
-                ~
-                <input type="date" name="docEnd"/>
-            </div>
             <div> 
-                결재선 <Button>결재선 편집</Button>
-                <ApprovalLine/>
+                결재선 <Button onClick={fn_editLine}>결재선 추가</Button>
+                <ApprovalLine docLine={docLine}/>
+                {isEditLineOpen && <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk}/>}
             </div>
             <div>
-                결재 내용<br/>
-                <textarea/>
+                <Button type="primary" onClick={fn_attendCheck}>기간 확인</Button>
+            </div>
+            <div>
+                {inputList.map((v, k)=>
+                    <div key={k}>
+                        <InputForm drftDate={drftDate} setDrftDate={setDrftDate} setInputList={setInputList}
+                            inputForm={v} docLoc={docLoc} setDocLoc={setDocLoc}/>
+                    </div>
+                )}
+            </div>
+
+
+            <div>
+                {isAttendCheckOpen && <AttendCheckModal drftDate={drftDate}  
+                        onClose={fn_attendCheckClose} onOk={fn_attendCheckOk} />}
             </div>
         </>
     );

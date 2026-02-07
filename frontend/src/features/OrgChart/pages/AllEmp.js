@@ -6,8 +6,11 @@ function AllEmp(props) {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetcher('/gw/home/1/list')
-        .then(dd => setData(Array.isArray(dd) ? dd : [dd]))
+        fetcher('/gw/orgChart/list')
+        .then(dd => {
+            setData(Array.isArray(dd) ? dd : [dd]);
+            console.log(dd)
+        })
         .catch(e => console.log(e))
     }, []);
 
@@ -15,13 +18,12 @@ function AllEmp(props) {
     return (
         <div>
             <h1>전체사원리스트</h1>
-            {data.deptId}
             <table border="">
                 <tbody>
                 <tr>
                     <td>이름</td>
-                    <td>부서번호</td>
-                    <td>직책번호</td>
+                    <td>부서</td>
+                    <td>직책</td>
                 </tr>
                 </tbody>
             {data.map((vv, kk) => (
@@ -29,11 +31,11 @@ function AllEmp(props) {
                 <tr>
                     <td>
                         <nav className="nav">
-                        <Link to={`detail/${vv.empId}`}>{vv.empNm}</Link>
+                        <Link to={`detail/${vv.EMP_ID}`}>{vv.EMP_NM}</Link>
                         </nav>
                     </td>
-                    <td>{vv.deptId}</td>
-                    <td>{vv.jbttlId}</td>
+                    <td>{vv.DEPT_NAME}</td>
+                    <td>{vv.JBTTL_NM}</td>
                 </tr>
                 </tbody>
             ))}

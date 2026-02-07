@@ -6,9 +6,9 @@ import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  // </React.StrictMode>// 개발자 모드라서 2번 실행 하게 하는 부분
 );
