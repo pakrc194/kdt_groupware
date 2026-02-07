@@ -37,12 +37,12 @@ const UserProfile = () => {
       </div>
       <div className="profile-info">
         <div className="profile-main">
-          <span className="user-name">{user.name}</span>
-          <span className="user-rank">{user.rank}</span>
+          <span className="user-name">{user.empNm}</span>
+          <span className="user-rank">{user.jbttlNm}</span>
         </div>
-        <p className="user-team">{user.team}</p>
-        <p className="user-detail">{user.email}</p>
-        <p className="user-detail">사번: {user.empNo}</p>
+        <p className="user-team">{user.deptName}</p>
+        <p className="user-detail">{user.empEmlAddr}</p>
+        <p className="user-detail">사번: {user.empSn}</p>
       </div>
     </div>
   );
