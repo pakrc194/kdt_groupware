@@ -52,7 +52,7 @@ public class LoginController {
 	
 	@RequestMapping("/hello")
 	Object hello(Authentication authentication) {
-		System.out.println("hello 진입 "+authentication.getName());
-		return Map.of("Hello ",authentication.getName());
+		//System.out.println("hello 진입 "+authentication.getName());
+		return Map.of("Hello",authentication.getName());
 	}
 }

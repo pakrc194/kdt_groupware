@@ -37,7 +37,13 @@ public class SecurityConfig {
 		config.setAllowCredentials(true);
 		
 		// 허용할 프론트앤드
-		config.addAllowedOrigin("http://192.168.0.117:3000");
+		config.setAllowedOriginPatterns(Arrays.asList(
+				"http://192.168.0.117:3000", 
+				"http://192.168.219.106:3000",
+				"http://192.168.0.36:3000",
+				"http://192.168.0.49:3000", 
+				"http://192.168.0.67:3000"
+			));
 		
 		//모든 헤더 허용 - "Content-Type"  등등
 		config.addAllowedHeader("*");

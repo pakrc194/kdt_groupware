@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter{
 		//Http 헤더 에서 Authorization 읽기
 		String authHeader = request.getHeader("Authorization");
 		
-		System.out.println(authHeader);
+		
 		if(authHeader != null && authHeader.startsWith("Bearer ")) {
 			
 			String token = authHeader.substring(7);
