@@ -12,13 +12,17 @@ function BoardList(props) {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(3);
 
+    // 검색 상태
+    const [searchInput , setSearchInput] = useState('');
+    const [keyword , setKeyword] = useState('');
+
     useEffect(() => {
         fetchBoards();
-    }, [sideId, currentPage, pageSize]);
+    }, [sideId, currentPage, pageSize,keyword]);
 
     const fetchBoards = () => {
         setIsLoading(true);
-        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}`)
+        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}`)
             .then(dd => {
                 // 핵심: 데이터와 페이지 정보만 상태에 저장합니다.
                 setBoards(dd.boards || dd); 
@@ -31,24 +35,37 @@ function BoardList(props) {
             });
     };
 
+
+    const handleSearch = () => {
+        setKeyword(searchInput);
+        setCurrentPage(1);
+    };
+
+
+
+
     const goDetail = (id) => {
         props.goBoardId(id);
         props.goService('detail');
     };
 
-    // 로딩 중일 때 표시할 화면
+
     if (isLoading) return <div>데이터를 불러오는 중입니다...</div>;
 
-    // 최종 결과물 (리액트 방식)
+
     return (
         <div className="board-list-container">
-            {/* 1. 검색 영역 */}
-            <div style={{ marginBottom: '10px' }}>
-                <input type='text' placeholder="검색어를 입력하세요" />
-                <button>검색</button>
+            <div >
+                <select>
+                    <option>제목</option>
+                    <option>작성자</option>
+                    <option>문서번호</option>
+                </select>
+
+                <input type='text' placeholder="검색어를 입력하세요" value={searchInput} onChange={(e)=>setSearchInput(e.target.value)}/>
+                <button onClick={handleSearch}>검색</button>
             </div>
 
-            {/* 2. 테이블 영역 (thead, tbody를 사용해 에러 원천 차단) */}
             <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr style={{ backgroundColor: '#f4f4f4' }}>

@@ -36,6 +36,7 @@ public interface BoardMapper {
 //    int totalByType(@Param("boardType") String boardType, 
 //    		@Param("keyword") String keyword);
     
+    
     /**
      * 전체 게시물 목록 조회 (페이징)
      */

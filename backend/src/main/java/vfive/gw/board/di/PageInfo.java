@@ -31,8 +31,6 @@ public class PageInfo {
         this.endPage = Math.min(startPage+blockSize-1,totalPage);
         this.prevBut = startPage > 1;
         this.nextBut = endPage < totalPage;
-        
-        
     }
     
     public void setCurPage(int curPage) {
@@ -79,4 +77,9 @@ public class PageInfo {
 		this.pNo = pNo;
 		this.curPage = pNo;
 	}
+	
+	
+	public String getKeyword() { return keyword;}
+	public void setKeyword(String keyword) {this.keyword = keyword; }
+	
 }

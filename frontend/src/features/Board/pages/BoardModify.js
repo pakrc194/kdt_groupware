@@ -10,8 +10,8 @@ function BoardModify(props){
         console.log("수정할 게시글 ID :", props.boardId);
              fetcher(`/board/detail/${props.boardId}`)
              .then(data => {
-                setTitle(data.title);
-                setContent(data.content);
+                setTitle(data.title || '');
+                setContent(data.content || '');
              })
         }, []);
 
@@ -45,10 +45,10 @@ function BoardModify(props){
             <>
                 <h1>게시글 수정</h1>
                 <div>제목
-                    <input type="text" value={title} onChange={(e)=>setTitle(e.target.value)}/>
+                    <input type="text" value={title || ''} onChange={(e)=>setTitle(e.target.value)}/>
                 </div>
                 <div>내용
-                    <input tupe="text" value={content} onChange={(e)=>setContent(e.target.value)}/>
+                    <textarea type="text" value={content || ''} onChange={(e)=>setContent(e.target.value)}/>
                 </div>
             
 
