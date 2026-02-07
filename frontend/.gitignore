@@ -22,3 +22,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+//이메일인증을 위한 키
+id  : onop_gw_prj
+key : kklw zzuj qaih fcjj

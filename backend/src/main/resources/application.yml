@@ -17,3 +17,19 @@ spring :
 mybatis :
     configuration :
         map-underscore-to-camel-case : true
+
+#mail:
+#  host: smtp.gmail.com
+#  port: 587
+#  username: 
+#  password: kklw zzuj qaih fcjj
+#  properties:
+#    mail:
+#      smtp:
+#        auth: true
+#        starttls:
+#          enable: true
+#          required: true
+#        connectiontimeout: 5000
+#        timeout: 5000
+
