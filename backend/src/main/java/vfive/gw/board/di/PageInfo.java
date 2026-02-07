@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PageInfo {
-	String keyword, sideId;
+	String keyword, sideId , searchType;
 	int pNo = 1;
     
     private int curPage = 1;      // 현재 페이지
@@ -80,6 +80,14 @@ public class PageInfo {
 	
 	
 	public String getKeyword() { return keyword;}
+	public String getSearchType() { return searchType;}
+	
 	public void setKeyword(String keyword) {this.keyword = keyword; }
+	public void setSearchType(String searchType) {this.searchType= searchType; }
+	
+	
+	
+	
+	
 	
 }

@@ -1,10 +1,15 @@
 package vfive.gw.board.controller;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +20,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 
 import vfive.gw.board.di.PageInfo;
 import vfive.gw.board.dto.BoardPrvc;
@@ -68,6 +76,63 @@ public class BoardController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @PostMapping("/insertWithFile")
+    public ResponseEntity<?> createBoard(
+            @RequestPart("board") BoardPrvc board,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        
+        // 1. 게시글 먼저 저장 (SelectKey로 ID 획득)
+        boardMapper.insertKey(board);
+        
+        // 2. 파일 저장 로직 (로컬 디스크 저장 및 DB 기록)
+        if (files != null) {
+           saveFiles(board.getBoardId(),files);
+        }
+        return ResponseEntity.ok(Map.of("success", true,"boardId", board.getBoardId()));
+    }
+    
+    
+    @PostMapping("/updateWithFile")
+    public ResponseEntity<?> updateBoardWithFile(
+            @RequestPart("board") BoardPrvc board,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        
+        // 1. 기본 정보 수정
+        int result = boardMapper.update(board);
+        
+        // 2. 새 파일이 있으면 저장
+        if (files != null && !files.isEmpty()) {
+            saveFiles(board.getBoardId(), files);
+        }
+        
+        return ResponseEntity.ok(Map.of("success", result > 0));
+    }
+
+    /**
+     * 파일 다운로드
+     */
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable int fileId) {
+        try {
+            // DB에서 파일 정보 조회 (BoardFile 객체 반환하도록 Mapper 수정 필요)
+            BoardPrvc fileItem = boardMapper.getFileById(fileId); 
+            Path filePath = Paths.get(fileItem.getSavedPath());
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileItem.getOriginName() + "\"")
+                    .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    
     
     /**
      * 게시물 등록
@@ -134,8 +199,36 @@ public class BoardController {
         return ResponseEntity.ok(boards);
     }
     
+    private void saveFiles(int boardId, List<MultipartFile> files) {
+        for (MultipartFile file : files) {
+            String originName = file.getOriginalFilename();
+            // 경로 세팅 (폴더가 실제 존재해야 함)
+            String savedPath = "C:/uploads/" + System.currentTimeMillis() + "_" + originName;
+            try {
+                file.transferTo(new java.io.File(savedPath));
+                
+                // BoardFile 객체 생성 (사용하시는 필드명 확인: savePath vs savedPath)
+                BoardPrvc fileDTO = new BoardPrvc();
+                fileDTO.setBoardId(boardId);
+                fileDTO.setOriginName(originName);
+                fileDTO.setSavedPath(savedPath); // Mapper SQL의 필드명과 일치시킴
+                fileDTO.setFileSize(file.getSize());
+                
+                boardMapper.insertFile(fileDTO);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     
 
-   
+    @GetMapping("/selectFile/{boardId}")
+   public ResponseEntity<List<BoardPrvc>> selectFiles (@PathVariable("boardId")int boardId) {
+    	List<BoardPrvc> selFile = boardMapper.selectFilesByBoardId(boardId);
+    	return  ResponseEntity.ok(selFile);
+}
+    
+    
+    
     
 }

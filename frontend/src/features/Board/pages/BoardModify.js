@@ -4,6 +4,7 @@ import { fetcher } from "../../../shared/api/fetcher";
 function BoardModify(props){
     const [title, setTitle] = useState('');
     const [content,setContent] = useState('');
+    const [newFiles, setNewFiles] = useState([]);
 
 
     useEffect(() => {
@@ -17,15 +18,20 @@ function BoardModify(props){
 
 
     const ModifyBut = () => {
+        const formData = new FormData();
         const mobifyBoard ={
             title: title,
-            content: content
+            content: content,
+            boardId: props.boardId
         }
         console.log("수정 데이터 확인",'ModifyBut')
 
-        fetcher(`/board/detail/${props.boardId}`,{
-            method: 'PUT',
-            body:  mobifyBoard
+        formData.append("board",new Blob([JSON.stringify(mobifyBoard)], { type: "application/json" }))
+        newFiles.forEach(file=>formData.append("file",file));
+
+        fetcher(`/board/detail/updateWithFile`,{
+            method: 'POST',
+            body:  formData
             
         })
         .then(data=>{
@@ -38,9 +44,6 @@ function BoardModify(props){
         })
 
     }    
-
-
-
         return(
             <>
                 <h1>게시글 수정</h1>
@@ -49,6 +52,11 @@ function BoardModify(props){
                 </div>
                 <div>내용
                     <textarea type="text" value={content || ''} onChange={(e)=>setContent(e.target.value)}/>
+                </div>
+
+                <div>
+                    <label>파일수정</label>
+                    <input type="file" multiple onChange={(e) => setNewFiles(Array.from(e.target.files))}/>
                 </div>
             
 

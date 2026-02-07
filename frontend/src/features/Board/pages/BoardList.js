@@ -15,6 +15,7 @@ function BoardList(props) {
     // 검색 상태
     const [searchInput , setSearchInput] = useState('');
     const [keyword , setKeyword] = useState('');
+    const [searchType , setSearchType] = useState('title');
 
     useEffect(() => {
         fetchBoards();
@@ -22,9 +23,8 @@ function BoardList(props) {
 
     const fetchBoards = () => {
         setIsLoading(true);
-        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}`)
-            .then(dd => {
-                // 핵심: 데이터와 페이지 정보만 상태에 저장합니다.
+        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}`)
+            .then(dd => {  // 데이터와 페이지 정보만 상태에 저장
                 setBoards(dd.boards || dd); 
                 setPInfo(dd.pInfo);
                 setIsLoading(false);
@@ -56,10 +56,13 @@ function BoardList(props) {
     return (
         <div className="board-list-container">
             <div >
-                <select>
-                    <option>제목</option>
-                    <option>작성자</option>
-                    <option>문서번호</option>
+                <select
+                    value={searchType}
+                    onChange={(e)=>setSearchType(e.target.value)}
+                >
+                    <option value="title">제목</option>
+                    <option value="creator">작성자</option>
+                    <option value="boardId">문서번호</option>
                 </select>
 
                 <input type='text' placeholder="검색어를 입력하세요" value={searchInput} onChange={(e)=>setSearchInput(e.target.value)}/>
