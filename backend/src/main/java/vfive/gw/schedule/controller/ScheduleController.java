@@ -1,9 +1,12 @@
 package vfive.gw.schedule.controller;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.SelectKey;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,8 +43,8 @@ public class ScheduleController {
 	
 	@GetMapping("view/{sdate}/{edate}/{dept_id}/{emp_id}")
 	List<Sched> schedList(
-			@PathVariable("sdate") Date sdate,
-			@PathVariable("edate") Date edate,
+			@PathVariable("sdate") String sdate,
+			@PathVariable("edate") String edate,
 			@PathVariable("dept_id") String dept_id,
 			@PathVariable("emp_id") int emp_id
 			) {
@@ -50,7 +53,7 @@ public class ScheduleController {
 		sc.setSchedEndDate(edate);
 		sc.setSchedState("0");		// 고정
 		sc.setSchedDeptId(dept_id);
-		sc.setSchedEmpId(emp_id);	// 사번
+		sc.setSchedEmpId(emp_id+"");	// 사번
 		sc.setSchedAuthorId(emp_id);
 		return schedMapper.schedList(sc);
 	}
@@ -63,29 +66,25 @@ public class ScheduleController {
 	}
 	
 	@GetMapping("sched_search/{date}")
-	List<Sched> schedMonthList(@PathVariable("date") Date date) {
+	List<Sched> schedMonthList(@PathVariable("date") String date) {
 		Sched sc = new Sched();
 		sc.setSchedStartDate(date);
-		System.out.println("일정리스트 "+ sc.getSchedDeptId()+", "+sc.getSchedAuthorId());
 		return schedMapper.schedDailyList(sc);
 	}
 	
 	@PostMapping("/todo/add")
 	int schedAddTodo(@RequestBody Sched sc, HttpServletRequest request) {
-		System.out.println("todo 생성 "+sc);
-		sc.setSchedType("DTODO");
+		sc.setSchedType("TODO");
 		return todoMapper.addTodo(sc);
 	}
 	
 	@PostMapping("/todo/toggle")
 	int schedToggleTodo(@RequestBody Sched sc) {
-		System.out.println("todo 토글: "+sc);
 		return todoMapper.toggleModifyTodo(sc);
 	}
 	
 	@PostMapping("/todo/modify")
 	int schedModifyTodo(@RequestBody Sched sc) {
-		System.out.println("TODO 수정: "+sc);
 		return todoMapper.schedModifyTodo(sc);
 	}
 	
@@ -99,19 +98,19 @@ public class ScheduleController {
 	
 	@GetMapping("todo/view/{date}/{id}")
 	List<Sched> schedTodoList(
-			@PathVariable("date") Date date,
+			@PathVariable("date") String date,
 			@PathVariable("id") int id) {
 		Sched sc = new Sched();
 		sc.setSchedStartDate(date);
 		sc.setSchedType("TODO");
 		sc.setSchedAuthorId(id);
-		return todoMapper.shedTodoList(sc);
+		List<Sched> res = todoMapper.shedTodoList(sc);
+		return res;
 	}
 	
 	// 업무지시 팀 리스트
 	@GetMapping("instruction/teams")
 	List<DeptInfo> teamList() {
-		System.out.println("팀 리스트");
 		return schedMapper.teamList();
 	}
 	
@@ -124,10 +123,27 @@ public class ScheduleController {
 	// 업무지시 등록
 	@PostMapping("/instruction/upload")
 	int instructionUpload(@RequestBody Sched sc) {
-//		sc.getId();
-		return schedMapper.instructionUpload(sc);
-		
-//		return sc.getId();
+		schedMapper.instructionUpload(sc);
+		return sc.getSchedId();
+	}
+	
+	// 업무 삭제
+	@GetMapping("sched_delete/{id}")
+	int sched_delete(@PathVariable("id") int id) {
+		Sched sc = new Sched();
+		sc.setSchedId(id);
+		return schedMapper.sched_delete(sc);
+	}
+	
+	// 업무 지시 중 일정이 있는 팀 조회
+	@GetMapping("instruction/schedTeams/{sdate}/{edate}")
+	List<String> schedTeamList(
+			@PathVariable("sdate") String sdate,
+			@PathVariable("edate") String edate) {
+		Sched sc = new Sched();
+		sc.setSchedStartDate(sdate);
+		sc.setSchedEndDate(edate);
+		return schedMapper.schedTeamList(sc);
 	}
 
 }

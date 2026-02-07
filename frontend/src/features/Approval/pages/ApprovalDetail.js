@@ -36,8 +36,6 @@ const ApprovalDetail = () => {
         fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
             setAprvDocDetail(res)
         })
-
-
     },[docId])
 
     useEffect(()=>{
@@ -83,6 +81,9 @@ const ApprovalDetail = () => {
 
     const fn_list = () => {
         navigate(`/approval/${sideId}`)
+    }
+    const fn_redraft = () => {
+        navigate(`/approval/${sideId}/redrft/${docId}`)
     }
 
     return (
@@ -134,6 +135,7 @@ const ApprovalDetail = () => {
 
             <div>
                 <Button variant='secondary' onClick={fn_list}>뒤로</Button>
+                {sideId=="rejectBox" && <Button variant='primary' onClick={fn_redraft}>재기안</Button>}
             </div>
         </>
     );

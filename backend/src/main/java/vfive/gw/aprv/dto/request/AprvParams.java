@@ -7,4 +7,7 @@ public class AprvParams {
 	String service;
 	int year;
 	int empId;
+	
+	String filterNm;
+	String filterVl;
 }

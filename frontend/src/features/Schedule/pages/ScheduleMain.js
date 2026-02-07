@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Outlet, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Instruction from './Instruction';
 import ScheduleView from './ScheduleView';
 import { fetcher } from '../../../shared/api/fetcher';
@@ -8,7 +8,6 @@ import { fetcher } from '../../../shared/api/fetcher';
 function ScheduleMain(props) {
 
     const { sideId } = useParams();
-    const [empInfo, setEmpInfo] = useState('');
 
     // 권한 상태 관리
 
@@ -18,8 +17,6 @@ function ScheduleMain(props) {
             // 사용자 정보 가져오기
             fetcher(`/gw/schedule/empinfo/${localStorage.getItem("EMP_ID")}`)
             .then(data => {
-                setEmpInfo(data)
-                console.log(data)
                 
                 localStorage.setItem("EMP_NM", data.EMP_NM)
                 localStorage.setItem("DEPT_ID", data.DEPT_ID)        // 소속 팀 ID
@@ -32,7 +29,6 @@ function ScheduleMain(props) {
             .catch(err => console.error('유저 정보 로딩 실패', err));
         },[])
         
-        // console.log("정보 "+localStorage.getItem("USER_ROLE"))
     const renderContent = () => {
         switch(sideId) {
             case 'check':

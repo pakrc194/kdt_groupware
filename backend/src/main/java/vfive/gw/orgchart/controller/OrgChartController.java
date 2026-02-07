@@ -35,7 +35,7 @@ public class OrgChartController {
 	}
 	
 	@GetMapping("detail/{id}")
-	Map<EmpPrvc, DeptInfo> emp(@PathVariable("id") Integer id) {
+	Map<Map<EmpPrvc, DeptInfo>, JbttlInfo> emp(@PathVariable("id") Integer id) {
 		System.out.println("사원 상세 정보");
 		EmpPrvc emp = new EmpPrvc();
 		emp.setEmpId(id);
@@ -82,6 +82,19 @@ public class OrgChartController {
 	int registerEmp(@RequestBody EmpPrvc emp) {
 		System.out.println("계정 생성 시도");
 		return orgchartMapper.registerEmp(emp);
-//		return 0;
+	}
+	
+	// 계정 정보 수정
+	@PostMapping("/modifyInfo")
+	int modifyEmp(@RequestBody EmpPrvc emp) {
+		System.out.println("계정 수정 시도 "+ emp);
+		return orgchartMapper.modifyEmp(emp);
+	}
+	
+	// 계정 비활성화
+	@PostMapping("/deactivate")
+	int deactivateEmp(@RequestBody EmpPrvc emp) {
+		System.out.println("계정 비활성화 시도 "+ emp);
+		return orgchartMapper.deactivateEmp(emp);
 	}
 }

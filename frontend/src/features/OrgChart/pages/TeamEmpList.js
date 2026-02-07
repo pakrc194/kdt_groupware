@@ -14,7 +14,6 @@ function TeamEmpList(props) {
 
         fetcher(`/gw/orgChart/teamName/${props.code}`)
         .then(dd => {setDeptData(dd)
-            // console.log(dd)
         })
         .catch(e => console.log(e))
     }, [props.code]);
@@ -22,30 +21,29 @@ function TeamEmpList(props) {
     useEffect(() => {
         setDeptName(deptData.deptName);
     }, [deptData])
-    console.log('팀 정보 '+deptmname)
     
     return (
-        <div>
-            <h1>{deptData.deptName}팀</h1>
+        <div style={styles.container}>
+            <h1 style={styles.title}>{deptData.deptName}팀</h1>
             
-            <table border="">
+            <table style={styles.table}>
                 <tbody>
                 <tr>
-                    <td>이름</td>
-                    <td>부서</td>
-                    <td>직책</td>
+                    <td style={styles.th}>이름</td>
+                    <td style={styles.th}>부서</td>
+                    <td style={styles.th}>직책</td>
                 </tr>
                 </tbody>
             {data.map((vv, kk) => (
                 <tbody key={kk}>
                 <tr>
-                    <td>
+                    <td style={styles.td}>
                         <nav className="nav">
-                        <Link to={`detail/${vv.EMP_ID}`}>{vv.EMP_NM}</Link>
+                        <Link to={`detail/${vv.EMP_ID}`} style={styles.link}>{vv.EMP_NM}</Link>
                         </nav>
                     </td>
-                    <td>{vv.DEPT_NAME}</td>
-                    <td>{vv.JBTTL_NM}</td>
+                    <td style={styles.td}>{vv.DEPT_NAME}</td>
+                    <td style={styles.td}>{vv.JBTTL_NM}</td>
                 </tr>
                 </tbody>
             ))}
@@ -54,5 +52,54 @@ function TeamEmpList(props) {
         </div>
     );
 }
+
+// 스타일
+const styles = {
+    container: {
+        maxWidth: '800px',
+        margin: '40px auto',
+        padding: '20px',
+        fontFamily: 'Arial, sans-serif',
+        border: '1px solid #ddd',
+        borderRadius: '8px',
+        backgroundColor: '#fff',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+    },
+    title: {
+        fontSize: '22px',
+        fontWeight: 'bold',
+        marginBottom: '20px',
+        color: '#333',
+    },
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+    },
+    th: {
+        textAlign: 'left',
+        padding: '12px 10px',
+        backgroundColor: '#f5f5f5',
+        borderBottom: '2px solid #ddd',
+        fontWeight: 'bold',
+        color: '#555',
+    },
+    tr: {
+        borderBottom: '1px solid #eee',
+        transition: 'background-color 0.2s',
+    },
+    td: {
+        padding: '12px 10px',
+        color: '#333',
+    },
+    link: {
+        color: '#007bff',
+        textDecoration: 'none',
+    }
+};
+
+// tr hover 효과
+styles.tr[':hover'] = {
+    backgroundColor: '#f9f9f9'
+};
 
 export default TeamEmpList;

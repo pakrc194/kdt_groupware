@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
 import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
@@ -27,6 +28,7 @@ import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
+import vfive.gw.aprv.service.AprvDocVerList;
 import vfive.gw.aprv.service.AprvDrftUpload;
 import vfive.gw.aprv.service.AprvDutyScheDtl;
 import vfive.gw.aprv.service.AprvEmpAnnlLv;
@@ -98,6 +100,12 @@ public class AprvController {
 		return provider.getContext().getBean(AprvSchedUpload.class).load(req);
 	}
 	
+	@PostMapping("/AprvDocVerList")
+	Object aprvDocVerList(@RequestBody AprvDocVerListRequest req) {
+		Object oo = provider.getContext().getBean(AprvDocVerList.class).load(req);
+		System.out.println(oo);
+		return oo;
+	}
 	
 	
 	String getServiceName(String service) {
