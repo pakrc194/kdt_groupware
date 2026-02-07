@@ -26,6 +26,24 @@ repositories {
 }
 
 dependencies {
+	//spring-boot-starter-security
+	//jjwt-api
+	//jjwt-impl
+	//jjwt-jackson
+
+	// Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	
+	// Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+
+	// Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+
+	// Source: https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+	
+	
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1"
 	
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:11.0.15'

@@ -28,7 +28,7 @@ export default function AppRouter() {
       <Route path="/FindPassword" element={<FindPassword />} />
 
       <Route path="/" element={<Layout />}>
-        <Route index element={<Navigate to="/home/dashboard" replace />} />
+        <Route index element={<Navigate to="/login" replace />} />
         <Route path="home/:sideId" element={<HomeMain />} />
 
         <Route path="approval/:sideId" element={<ApprovalMain />} />
