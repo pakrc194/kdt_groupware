@@ -1,5 +1,6 @@
 package vfive.gw.board.controller;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.util.UriUtils;
 
 import vfive.gw.board.di.PageInfo;
 import vfive.gw.board.dto.BoardPrvc;
@@ -113,24 +114,68 @@ public class BoardController {
      * 파일 다운로드
      */
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable int fileId) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") int fileId) {
         try {
             // DB에서 파일 정보 조회 (BoardFile 객체 반환하도록 Mapper 수정 필요)
+        	System.out.println("0");
             BoardPrvc fileItem = boardMapper.getFileById(fileId); 
+            System.out.println("1");
             Path filePath = Paths.get(fileItem.getSavedPath());
+            System.out.println("2");
             Resource resource = new UrlResource(filePath.toUri());
-
+            System.out.println("3");
             if (resource.exists()) {
+                // 한글 파일명을 UTF-8로 인코딩
+                String encodedFileName = UriUtils.encode(fileItem.getOriginName(), StandardCharsets.UTF_8);
+                
+                // RFC 5987 표준 방식인 filename*=UTF-8''... 형식
+                String contentDisposition = "attachment; filename=\"" + encodedFileName + "\"; filename*=UTF-8''" + encodedFileName;
+
                 return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileItem.getOriginName() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                     .body(resource);
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+        	System.out.println("6");
             return ResponseEntity.internalServerError().build();
         }
     }
+    
+    
+    
+    //파일 삭제 로직
+    private void delFile(String savedPath) {
+    	try {
+    		java.io.File file = new java.io.File(savedPath);
+    		if(file.exists()) {
+    			if(file.delete()) {
+    				System.out.println("파일이 삭제 되었습니다."+savedPath);
+    			}else {
+    				System.out.println("파일이 삭제 되지 않았습니다"+savedPath);
+    			}
+    		}
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    
+    @DeleteMapping("/deletedFile/{fileId}")
+    public ResponseEntity<?> deleteFile(@PathVariable("fileId")int fileId){
+    	BoardPrvc fileItem = boardMapper.getFileById(fileId);
+    	
+    	if(fileItem != null) {
+    		delFile(fileItem.getSavedPath());
+    		
+    		int result = boardMapper.deleteFile(fileId);
+    		return ResponseEntity.ok(Map.of("success",result>0));
+    	}
+    	return ResponseEntity.notFound().build();
+    }
+    
+    
     
     
     

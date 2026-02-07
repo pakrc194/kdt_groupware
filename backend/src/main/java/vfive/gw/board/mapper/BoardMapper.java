@@ -136,8 +136,8 @@ public interface BoardMapper {
 
     
     // 파일 업,다운 로드를 위한 SQL 
-    @Insert ("INSERT INTO BoardFile (BoardId,OriginName,SavePath,FileSize)"+
-    	"VALUES (#{boardId},#{originName},#{savePath},#{fileSize})")
+    @Insert ("INSERT INTO BoardFile (BoardId,OriginName,SavedPath,FileSize)"+
+    	"VALUES (#{boardId},#{originName},#{savedPath},#{fileSize})")
     	int insertFile(BoardPrvc file);
 
  // 특정 게시글의 파일 목록 조회
@@ -150,16 +150,6 @@ public interface BoardMapper {
 
     @Select("SELECT * FROM BoardFile WHERE FileId = #{fileId}")
     BoardPrvc getFileById(int fileId);
-
-
-
-
-
-
-
-
-
-
 
 
 
