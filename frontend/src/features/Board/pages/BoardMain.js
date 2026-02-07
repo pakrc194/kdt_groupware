@@ -8,6 +8,15 @@ import BoardModify from './BoardModify';
 
 function BoardMain(props) {
 
+    const { sideId } = useParams();
+
+    //sideId가 바뀌는지 확인 하고 Service로 바꿔준다
+    useEffect(() => {
+           console.log("사이드메뉴가 바꼇어",sideId)
+           setService('list')
+       }, [sideId]);
+   
+
     const [service, setService] = useState('list')
     const [boardId, setBoardId] = useState(2)
 

@@ -1,105 +1,100 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import BoardWrite from './BoardInsert';
 import Pagination from './Pagination';
-import {fetcher} from '../../../shared/api/fetcher';
+import { fetcher } from '../../../shared/api/fetcher';
 
 function BoardList(props) {
-
     const { sideId } = useParams();
-    const navigate = useNavigate();
-    const [data, setData] = useState([]);
-    const [boards, setBoards] = useState([]);
+    const [boards, setBoards] = useState([]); // 데이터만 관리
+    const [pInfo, setPInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     
-    // 페이지네이션 상태
     const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(0);
-    const [pInfo, setPInfo] = useState(null);
-   
-    
-    // 검색 및 설정
-    const [keyword, setKeyword] = useState('');
-    const [searchInput, setSearchInput] = useState('');
     const [pageSize, setPageSize] = useState(3);
 
-    // 게시판 타이틀 매핑
-    const boardTitles = {
-        'important': '중요 게시판',
-        'common': '공용 게시판',
-        'team': '팀별 게시판',
-        'my': '내가 쓴 게시물'
-    };
-
-    // 데이터 로드
     useEffect(() => {
         fetchBoards();
-    }, [sideId, currentPage, pageSize, keyword]);
+    }, [sideId, currentPage, pageSize]);
 
     const fetchBoards = () => {
-        
         setIsLoading(true);
-
-        function goDetail(i){
-            props.goBoardId(i)
-            props.goService('detail')
-        }
-
-
-        
         fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}`)
-        .then(
-            dd =>{
-                setBoards(data.boards);
+            .then(dd => {
+                // 핵심: 데이터와 페이지 정보만 상태에 저장합니다.
+                setBoards(dd.boards || dd); 
                 setPInfo(dd.pInfo);
-                console.log(dd)
-
-                 
-                 let vv = (<table border="">
-                <input type='text'></input>
-                <button>검색</button>
-                <tr>
-                    <td>문서번호</td>
-                    <td>유형</td>
-                    <td>제목</td>
-                    <td>작성일</td>
-                    <td>조회수</td>
-                    <td>작성자</td>
-                </tr>
-                {dd.boards.map((st,i)=>{
-                    let detailUrl = `/board/boarddtail/${currentPage}`
-
-                    return <tr>
-                        <td>{st.boardId}</td>
-                        <td>{st.boardType}</td>
-                        <td onClick={()=>goDetail(`${st.boardId}`)}>  {st.title}   </td>
-                        <td>{st.createdAt}</td>
-                        <td>{st.views}</td>
-                        <td>{st.creator}</td>
-                    </tr>
-            })}
-
-            <button onClick={()=>props.goService('Insert')}>글쓰기</button>
-              
-
-
-                 <Pagination pInfo={dd.pInfo} onPageChange={setCurrentPage}/>
-            </table>
-
-        )
-         setData(vv)
-        }
-        )
-
-       
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("데이터 로드 실패", err);
+                setIsLoading(false);
+            });
     };
 
+    const goDetail = (id) => {
+        props.goBoardId(id);
+        props.goService('detail');
+    };
 
+    // 로딩 중일 때 표시할 화면
+    if (isLoading) return <div>데이터를 불러오는 중입니다...</div>;
 
+    // 최종 결과물 (리액트 방식)
     return (
-        <div>
-            {data}
+        <div className="board-list-container">
+            {/* 1. 검색 영역 */}
+            <div style={{ marginBottom: '10px' }}>
+                <input type='text' placeholder="검색어를 입력하세요" />
+                <button>검색</button>
+            </div>
+
+            {/* 2. 테이블 영역 (thead, tbody를 사용해 에러 원천 차단) */}
+            <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                    <tr style={{ backgroundColor: '#f4f4f4' }}>
+                        <th>문서번호</th>
+                        <th>제목</th>
+                        <th>작성일</th>
+                        <th>조회수</th>
+                        <th>작성자</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {boards && boards.length > 0 ? (
+                        boards.map((st) => (
+                            <tr key={st.boardId}>
+                                <td>{st.boardId}</td>
+                                <td 
+                                    onClick={() => goDetail(st.boardId)} 
+                                    style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                                >
+                                    {st.title}
+                                </td>
+                                <td>{st.createdAt}</td>
+                                <td>{st.views}</td>
+                                <td>{st.creator}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+                                게시글이 없습니다.
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+
+            {/* 3. 하단 컨트롤 영역 */}
+            <div style={{ marginTop: '10px' }}>
+                <button onClick={() => props.goService('Insert')}>글쓰기</button>
+            </div>
+
+            {pInfo && (
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                    <Pagination pInfo={pInfo} onPageChange={setCurrentPage} />
+                </div>
+            )}
         </div>
     );
 }
