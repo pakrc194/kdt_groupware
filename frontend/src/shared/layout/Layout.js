@@ -75,15 +75,18 @@ const Layout = () => {
           </Link>
         </div>
         <nav className="nav">
-          {Object.keys(SIDE_CONFIG).map((key) => (
-            <Link
-              key={key}
-              to={`/${key}/${SIDE_CONFIG[key].sideMenus[0].id}`}
-              className={`nav-item ${currentMain === key ? "active" : ""}`}
-            >
-              {SIDE_CONFIG[key].title}
-            </Link>
-          ))}
+          {Object.keys(SIDE_CONFIG).map(
+            (key) =>
+              SIDE_CONFIG[key].title !== "메인페이지" && (
+                <Link
+                  key={key}
+                  to={`/${key}/${SIDE_CONFIG[key].sideMenus[0].id}`}
+                  className={`nav-item ${currentMain === key ? "active" : ""}`}
+                >
+                  {SIDE_CONFIG[key].title}
+                </Link>
+              ),
+          )}
         </nav>
         <nav className="nav-right">
           <button className={"nav-icon"} onClick={fn_logout}>
