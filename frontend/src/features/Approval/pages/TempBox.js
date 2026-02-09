@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 import AprvBoxBoard from '../components/AprvBoxBoard';
-import { Link, useParams } from 'react-router-dom';
 
-const RejectBox = () => {
+const TempBox = () => {
     const [aprvDocList, setAprvDocList] = useState([]);
     const {sideId} = useParams();
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(() => {
         
-        console.log("RejectBox useEffect");
-        fetcher(`/gw/aprv/RejectDocList/${myInfo.empId}`).then(setAprvDocList)
+        console.log("TempBox useEffect");
+        fetcher(`/gw/aprv/AprvTempList/${myInfo.empId}`).then(setAprvDocList)
+
+        
     }, [])
 
     return (
         <>
-            <h4>전자결재 > 반려함 </h4>
+            <h4>전자결재 > 임시저장함 </h4>
             <div>
-                {aprvDocList.map((v, k)=><Link to={`/approval/${sideId}/detail/`+v.aprvDocId} key={k}><div><AprvBoxBoard aprvDoc={v}/></div></Link>)}
+                {aprvDocList.map((v, k)=><Link to={`/approval/${sideId}/temp/`+v.aprvDocId} key={k}><div><AprvBoxBoard aprvDoc={v}/></div></Link>)}
             </div>
         </>
     );
 };
 
-export default RejectBox;
+export default TempBox;

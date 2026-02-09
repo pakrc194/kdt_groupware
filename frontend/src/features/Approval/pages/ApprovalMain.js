@@ -10,14 +10,13 @@ import RejectBox from './RejectBox';
 import DocStatus from './DocStatus';
 import DocFormList from './DocFormList';
 import DocFormInsert from './DocFormInsert';
+import TempBox from './TempBox';
 
 
 const ApprovalMain = () => {
   const { sideId, service } = useParams(); // URL의 :sideId 값을 가져옴
 
   useEffect(()=>{
-    localStorage.setItem("EMP_ID", "1")
-    localStorage.setItem("EMP_NM", "강백호")
   },[])
 
   
@@ -43,7 +42,8 @@ const ApprovalMain = () => {
           default : 
             return <DocFormList/>
         }
-        
+      case 'tempBox':
+        return <TempBox/>
       default:
         return <div>페이지를 찾을 수 없습니다.</div>;
     }

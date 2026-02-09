@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vfive.gw.aprv.dto.request.AprvAttendUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
+import vfive.gw.aprv.dto.request.AprvDrftTempRequest;
 import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
@@ -32,6 +33,7 @@ import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
 import vfive.gw.aprv.service.AprvAttendUpload;
 import vfive.gw.aprv.service.AprvDocVerList;
+import vfive.gw.aprv.service.AprvDrftTemp;
 import vfive.gw.aprv.service.AprvDrftUpload;
 import vfive.gw.aprv.service.AprvDutyScheDtl;
 import vfive.gw.aprv.service.AprvEmpAnnlLv;
@@ -112,6 +114,11 @@ public class AprvController {
 	@PostMapping("/AprvAttendUpload")
 	Object aprvAttendUpload(@RequestBody AprvAttendUploadRequest req) {
 		return provider.getContext().getBean(AprvAttendUpload.class).load(req);
+	}
+	
+	@PostMapping("/AprvDrftTemp")
+	Object aprvDrftTemp(@RequestBody AprvDrftTempRequest req) {
+		return provider.getContext().getBean(AprvDrftTemp.class).load(req);
 	}
 	
 	

@@ -6,9 +6,7 @@ import RedrftContent from '../components/RedrftContent';
 
 const RedraftPage = () => {
     const {sideId, draft, docId} = useParams();
-    
-    const empId = localStorage.getItem("EMP_ID");
-    const empNm = localStorage.getItem("EMP_NM");
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
     const navigate = useNavigate();
 
@@ -16,7 +14,7 @@ const RedraftPage = () => {
     const [inputList, setInputList] = useState([]);
     const [docLine, setDocLine] = useState([
         {
-            aprvPrcsEmpId:empId,
+            aprvPrcsEmpId:myInfo.empId,
             roleCd:"DRFT",
             roleSeq:"0"
         }
@@ -69,7 +67,7 @@ const RedraftPage = () => {
     }
     const fn_drftConfirm = () => {
         const drftDoc = {
-            drftEmpId:empId,
+            drftEmpId:myInfo.empId,
             docFormId:aprvDocDetail.docFormId,
             aprvDocNo:aprvDocDetail.aprvDocNo,
             aprvDocTtl:docTitle
@@ -106,6 +104,7 @@ const RedraftPage = () => {
                 <div>파일 첨부 <input type="file" name="docFile"/></div>
             </div>
             <br/>
+            
             <div className="draftForm">
                 <RedrftContent docLine={docLine} docFormId={aprvDocDetail.docFormId} setDocLine={setDocLine} 
                     inputList={inputList} setInputList={setInputList}

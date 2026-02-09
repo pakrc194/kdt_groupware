@@ -20,7 +20,7 @@ public interface AprvListMapper {
 			+ "and aprv_prcs_stts != 'WAIT'")
 	List<AprvDocListResponse> aprvList(int pNo); 
 	
-	@Select("select * from APRV_DOC where drft_emp_id = #{pNo}")
+	@Select("select * from APRV_DOC where drft_emp_id = #{pNo} and aprv_doc_stts != 'TEMP'")
 	List<AprvDocListResponse> drftList(int pNo); 
 	
 	@Select("select * from APRV_DOC D join APRV_PRCS P "
@@ -32,6 +32,9 @@ public interface AprvListMapper {
 	
 	@Select("select * from APRV_DOC where drft_emp_id = #{pNo} and aprv_doc_stts='REJECTED'")
 	List<AprvDocListResponse> rejectList(int pNo); 
+	
+	@Select("select * from APRV_DOC where drft_emp_id = #{pNo} and aprv_doc_stts = 'TEMP'")
+	List<AprvDocListResponse> tempList(int pNo); 
 	
 	@Select("select * from DOC_FORM")
 	List<AprvDocFormListResponse> docFormList();
