@@ -5,15 +5,16 @@ import { fetcher } from "../api/fetcher";
 const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+  const [myInfo, setMyInfo] = useState(
+    JSON.parse(localStorage.getItem("MyInfo")),
+  );
 
   const loadProfile = async () => {
     try {
       setLoading(true);
-      
-      // const data = await fetcher(`/gw/home/profile?empId=1`);
-      const data = await fetcher(`/gw/home/profile?empId=${myInfo.empId}`);
-      console.log('사이드메뉴 프로필, '+data.empNm)
+
+      const data = await fetcher(`/gw/home/myProf?empId=${myInfo.empId}`);
+      console.log("사이드메뉴 프로필, " + data.empNm);
       setUser(data);
     } catch (error) {
       console.error("프로필 가져오기 실패:", error);
@@ -24,7 +25,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     setMyInfo(JSON.parse(localStorage.getItem("MyInfo")));
-    console.log("myInfo, "+myInfo)
+    console.log("myInfo, " + myInfo);
     loadProfile();
   }, []);
 

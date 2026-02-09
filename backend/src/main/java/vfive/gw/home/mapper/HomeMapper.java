@@ -1,10 +1,13 @@
 package vfive.gw.home.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import vfive.gw.attendance.dto.domain.EmpDTO;
 import vfive.gw.attendance.dto.domain.LeaveDTO;
+import vfive.gw.board.dto.BoardPrvc;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.home.dto.request.MyDashResDTO;
 
@@ -46,5 +49,14 @@ public interface HomeMapper {
           "FROM ANNL_LV_STTS " +
           "WHERE EMP_ID = #{empId} AND BASE_YY = #{year}")
   LeaveDTO.Info selectLeaveInfo(MyDashResDTO req);
+  
+  // 중요 상단공지 최신 5개
+  @Select("SELECT B.*, E.EMP_NM "
+  		+ "FROM Board B "
+  		+ "JOIN EMP_PRVC E ON B.Creator = E.EMP_SN "
+  		+ "WHERE B.IsTop = 1 "
+  		+ "ORDER BY B.BoardId DESC "
+  		+ "LIMIT 5")
+  List<BoardPrvc> selectHeadNoticeLimitFive();
 	
 }

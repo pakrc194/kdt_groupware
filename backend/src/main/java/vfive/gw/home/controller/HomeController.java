@@ -48,7 +48,6 @@ public class HomeController {
 	
 	@GetMapping("myDash")
 	Map<String, Object> MyDashBoard(MyDashResDTO req) {
-		System.out.println("대시보드 컨트롤러");
 		
 		return getMyDashService.execute(req);
 	}
