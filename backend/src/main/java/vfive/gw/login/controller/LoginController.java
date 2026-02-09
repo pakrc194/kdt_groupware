@@ -24,9 +24,6 @@ public class LoginController {
 		this.jwtUtil = jwtUtil;
 	}
 
-	
-	
-	
 	@Resource
 	LoginMapper mapper;
 	
