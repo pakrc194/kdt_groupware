@@ -21,9 +21,6 @@ function BoardMain(props) {
     const [boardId, setBoardId] = useState(2)
 
     useEffect(()=>{
-        localStorage.setItem("EMP_ID","19")
-        localStorage.setItem("EMP_NM","이계훈")
-        localStorage.setItem("DEPT_ID","8")
     },[])
 
     return (
