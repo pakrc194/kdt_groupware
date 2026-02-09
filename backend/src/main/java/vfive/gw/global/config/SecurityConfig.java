@@ -36,6 +36,7 @@ public class SecurityConfig {
 		
 		// 허용할 프론트앤드
 		config.addAllowedOrigin("http://192.168.0.117:3000");
+		config.addAllowedOrigin("http://192.168.0.36:3000");
 		
 		//모든 헤더 허용 - "Content-Type"  등등
 		config.addAllowedHeader("*");
