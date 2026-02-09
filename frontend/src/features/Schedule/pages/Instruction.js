@@ -123,16 +123,6 @@ function Instruction(props) {
             return;
         }
 
-        const payload = {
-            schedType: workType,
-            schedStartDate: startDate,
-            schedEndDate: endDate,
-            schedTitle: title,
-            schedDetail: detail,
-            schedDept: selectedTeams.map(t => t.deptName).join(','),
-            schedDeptId: selectedTeams.map(t => t.deptId).join(','),
-            schedLoc: location === '0' ? null : parseInt(location),
-        };
         let id = 0;
         try {
             id = await fetcher(`/gw/schedule/instruction/upload`, {

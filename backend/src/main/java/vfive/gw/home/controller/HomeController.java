@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vfive.gw.BackendApplication;
 import jakarta.annotation.Resource;
@@ -34,9 +35,10 @@ public class HomeController {
 	
 	@GetMapping
 	EmpPrvc home(
-	    @PathVariable("service") String service
+	    @PathVariable("service") String service,
+	    @RequestParam("empId") int id
 	) {
-	    return getUserProfileService.execute(10);
+	    return getUserProfileService.execute(id);
 	}
 	
 	@PostMapping

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { SIDE_CONFIG } from "./sideConfig";
 import "./Layout.css";
@@ -96,7 +96,7 @@ const Layout = () => {
       <div className="main-wrapper">
         <aside className="sidebar">
           <UserProfile />
-          <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3>
+          {/* <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3> */}
           <ul className="sidebar-list">
             {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => {
               // 하위 메뉴 존재 여부 확인
@@ -109,7 +109,13 @@ const Layout = () => {
 
               return (
                 <li key={menu.id} className="sidebar-item-container">
-                  {hasSubMenus && (
+                  <Link
+                      to={`/${currentMain}/${menu.id}`}
+                      className={`side-item ${isParentActive ? "active" : ""}`}
+                    >
+                      {menu.name}
+                    </Link>
+                  {/* {hasSubMenus && (
                     <Link
                       to={`/${currentMain}/${menu.id}`}
                       onClick={(e) => e.preventDefault()}
@@ -126,10 +132,10 @@ const Layout = () => {
                     >
                       {menu.name}
                     </Link>
-                  )}
+                  )} */}
 
                   {/* subMenus가 있을 때 */}
-                  {hasSubMenus && (
+                  {isParentActive && hasSubMenus && (
                     <ul className="sub-menu-list">
                       {menu.subMenus.map((sub) => (
                         <li key={sub.id}>

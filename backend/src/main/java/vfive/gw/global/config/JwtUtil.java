@@ -21,7 +21,7 @@ public class JwtUtil {
 				.setIssuedAt(new Date())
 				//토큰 만료시간
 				.setExpiration(
-					new Date(System.currentTimeMillis()+1000*60*60)
+					new Date(System.currentTimeMillis()+1000*60*60*24)
 				)
 				//서명 알고리즘
 				.signWith(

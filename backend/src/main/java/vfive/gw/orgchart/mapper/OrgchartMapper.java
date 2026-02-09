@@ -13,7 +13,6 @@ import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
 import vfive.gw.orgchart.dto.JbttlInfo;
-import vfive.gw.schedule.dto.Sched;
 
 @Mapper
 public interface OrgchartMapper {
