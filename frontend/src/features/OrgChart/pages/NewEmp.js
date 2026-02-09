@@ -11,6 +11,7 @@ const MemberRegistrationForm = () => {
 
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
+  const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
 
   useEffect(() => {
     fetcher(`/gw/schedule/instruction/teams`)
@@ -64,7 +65,7 @@ const MemberRegistrationForm = () => {
   }
 
   // 부서번호 6(인사팀)만 접근 가능
-  if (localStorage.getItem("DEPT_ID") != 6) {
+  if (myInfo.deptId != 6) {
     return (
         <div style={{
             maxWidth: '400px',

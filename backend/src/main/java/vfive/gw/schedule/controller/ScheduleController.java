@@ -65,12 +65,15 @@ public class ScheduleController {
 		return schedMapper.schedDetail(sc);
 	}
 	
-	@GetMapping("sched_search/{date}")
-	List<Sched> schedMonthList(@PathVariable("date") String date) {
-		Sched sc = new Sched();
-		sc.setSchedStartDate(date);
-		return schedMapper.schedDailyList(sc);
-	}
+//	@GetMapping("sched_search/{date}/{empId}")
+//	List<Sched> schedMonthList(
+//			@PathVariable("date") String date,
+//			@PathVariable("empId") String empId) {
+//		Sched sc = new Sched();
+//		sc.setSchedStartDate(date);
+//		sc.setSchedEmpId(empId);		// 수정 필요
+//		return schedMapper.schedDailyList(sc);
+//	}
 	
 	@PostMapping("/todo/add")
 	int schedAddTodo(@RequestBody Sched sc, HttpServletRequest request) {

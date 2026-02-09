@@ -8,14 +8,14 @@ import { fetcher } from '../../../shared/api/fetcher';
 function ScheduleMain(props) {
 
     const { sideId } = useParams();
-
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
     // 권한 상태 관리
 
     useEffect(()=>{
-            localStorage.setItem("EMP_ID", "1")
-            
+            localStorage.setItem("EMP_ID", myInfo.empId)
+            console.log("useEffect", myInfo) 
             // 사용자 정보 가져오기
-            fetcher(`/gw/schedule/empinfo/${localStorage.getItem("EMP_ID")}`)
+            fetcher(`/gw/schedule/empinfo/${myInfo.empId}`)
             .then(data => {
                 
                 localStorage.setItem("EMP_NM", data.EMP_NM)
