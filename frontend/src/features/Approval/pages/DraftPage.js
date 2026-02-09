@@ -8,12 +8,12 @@ import CompListModal from "../components/modals/CompListModal";
 
 const DraftPage = () => {
     const navigate = useNavigate();
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
-    const empId = localStorage.getItem("EMP_ID");
     const [docTitle, setDocTitle] = useState("");
     const [docLine, setDocLine] = useState([
         {
-            aprvPrcsEmpId:empId,
+            aprvPrcsEmpId:myInfo.empId,
             roleCd:"DRFT",
             roleSeq:"0"
         }
@@ -47,13 +47,14 @@ const DraftPage = () => {
         setIsFormOpen(false)
     }
     const fn_formOk = (form) => {
-        console.log("formOk", form.docFormId)
+        console.log("formOk", form)
         fetcher(`/gw/aprv/AprvDocFormLine/${form.docFormId}`)
         .then(res=>{
             setDocLine(prev=>{
                 const drafter = prev.find(v => v.roleCd === "DRFT");
                 return drafter ? [drafter, ...res] : [...res];
             })
+            
             setDocForm(form)
             setIsFormOpen(false)
         }).catch(e=>{
@@ -67,7 +68,7 @@ const DraftPage = () => {
     const fn_drftConfirm = () => {
         
         const drftDoc = {
-            drftEmpId:empId,
+            drftEmpId:myInfo.empId,
             docFormId:docForm.docFormId,
             aprvDocNo:docForm.docFormCd,
             aprvDocTtl:docTitle

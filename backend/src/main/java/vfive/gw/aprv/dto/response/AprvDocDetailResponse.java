@@ -8,5 +8,7 @@ public class AprvDocDetailResponse {
 	int drftEmpId;
 	int docFormId;
 	String drftEmpNm;
-	String aprvDocNo, aprvDocTtl, aprvDocStts, aprvDocAtrzDt, drftDt, aprvDocVer;
+	int deptId;
+	String deptName;
+	String aprvDocNo, aprvDocTtl, aprvDocStts, aprvDocAtrzDt, aprvDocDrftDt, aprvDocVer;
 }

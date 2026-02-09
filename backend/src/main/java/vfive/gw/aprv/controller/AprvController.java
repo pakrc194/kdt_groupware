@@ -2,6 +2,7 @@ package vfive.gw.aprv.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vfive.gw.aprv.dto.request.AprvAttendUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
 import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
@@ -28,6 +30,7 @@ import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
+import vfive.gw.aprv.service.AprvAttendUpload;
 import vfive.gw.aprv.service.AprvDocVerList;
 import vfive.gw.aprv.service.AprvDrftUpload;
 import vfive.gw.aprv.service.AprvDutyScheDtl;
@@ -66,8 +69,7 @@ public class AprvController {
 	}
 	
 	@PostMapping("/AprvEmpAnnlLv")
-	AprvEmpAnnlLvResponse empAnnlLv(@RequestBody AprvEmpAnnlLvRequest req) {
-		
+	List<AprvEmpAnnlLvResponse> empAnnlLv(@RequestBody AprvEmpAnnlLvRequest req) {
 		return provider.getContext().getBean(AprvEmpAnnlLv.class).load(req);
 	}
 	
@@ -78,13 +80,13 @@ public class AprvController {
 	
 	@PostMapping("/AprvDutyScheDtl")
 	Object aprvDutyScheDtl(@RequestBody AprvDutyScheDtlRequest req) {
-		System.out.println(req);
+		System.out.println("AprvDutyScheDtl "+req);
 		return provider.getContext().getBean(AprvDutyScheDtl.class).load(req);
 	}
 	
 	@PostMapping("/AprvSchedList")
 	Object aprvSchedList(@RequestBody AprvSchedRequest req) {
-		System.out.println(req);
+		System.out.println("contoller AprvSchedList "+req);
 		return provider.getContext().getBean(AprvSchedList.class).load(req);
 	}
 	
@@ -105,6 +107,11 @@ public class AprvController {
 		Object oo = provider.getContext().getBean(AprvDocVerList.class).load(req);
 		System.out.println(oo);
 		return oo;
+	}
+	
+	@PostMapping("/AprvAttendUpload")
+	Object aprvAttendUpload(@RequestBody AprvAttendUploadRequest req) {
+		return provider.getContext().getBean(AprvAttendUpload.class).load(req);
 	}
 	
 	

@@ -10,8 +10,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
     const {docId} = useParams();
     const navigate = useNavigate();
-    const empId = Number(localStorage.getItem("EMP_ID"))
-    const empDeptId = Number(localStorage.getItem("DEPT_ID"))
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
     const [selectedEmp, setSelectedEmp] = useState(null);
     const [openModal, setOpenModal] = useState(""); 
@@ -96,28 +95,26 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         //{inptList}
         let docSched = inptList.filter(v=>v.docInptNm=="docSchedType")[0].docInptVl
         let docRole = inptList.filter(v=>v.docInptNm=="docRole")[0].docInptVl
-        let schedEmpId = empId;
-        let deptId = empDeptId;
+        let schedEmpId = docDetail.drftEmpId;
+        let deptId = docDetail.deptId;
         switch(docRole) {
             case "COMPANY" :
-                schedEmpId = empId;
-                deptId = empDeptId;
+                schedEmpId = docDetail.drftEmpId;
+                deptId = docDetail.deptId;
                 break;
             case "DEPT" :
-                schedEmpId = empId;
+                schedEmpId = docDetail.drftEmpId;
                 deptId = docSched;
                 break;
             case "PERSONAL" :
                 schedEmpId = docSched;
-                deptId = empDeptId;
+                deptId = docDetail.deptId;
                 break;
             default : 
                 break;
         }
         console.log(inptList)
 
-        //empId = 1;
-        deptId = 2;
         console.log(`body--
             schedTitle : ${docDetail.aprvDocTtl},
             schedStartDate : ${inptList.filter(v=>v.docInptNm=="docStart")[0].docInptVl},
@@ -126,7 +123,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             schedDetail : ${inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl},
             schedLoc : ${inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl},
             schedEmpId : ${schedEmpId},
-            schedAuthorId : ${empId},
+            schedAuthorId : ${myInfo.empId},
             schedDeptId : ${deptId}
         `)
 
@@ -141,13 +138,29 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 schedDetail : inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl,
                 schedLoc : inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl,
                 schedEmpId : schedEmpId,
-                schedAuthorId : empId,
+                schedAuthorId : myInfo.empId,
                 schedDeptId : deptId
             }
         })
     }
     const fn_attendCheck = () => {
+        let docStart = inptList.find(v=>v.docInptNm=="docStart").docInptVl
+        let docEnd = inptList.find(v=>v.docInptNm=="docEnd").docInptVl
 
+        console.log(`attend check-- 
+            empId : ${docDetail.drftEmpId}
+            docStart:${docStart}    
+            docEnd:${docEnd}    
+            
+        `)
+        fetcher(`/gw/aprv/AprvAttendUpload`,{
+            method:"POST",
+            body: {
+                empId : docDetail.drftEmpId,
+                docStart: docStart,
+                docEnd: docEnd,
+            }
+        })
     }
 
 
@@ -182,7 +195,9 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                             }}>
                                     {v.empNm}
                             </div>
-                            {v.aprvPrcsDt && <div>{formatToYYMMDD(v.aprvPrcsDt)}</div>}
+                            <div>
+                                {v.aprvPrcsDt && formatToYYMMDD(v.aprvPrcsDt)}
+                            </div>
                         </div>
                     )
                 })}

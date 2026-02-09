@@ -6,10 +6,10 @@ import { Link, useParams } from 'react-router-dom';
 const DraftBox = () => {
     const {sideId} = useParams();
     const [aprvDocList, setAprvDocList] = useState([]);
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(() => {
-        const empId = localStorage.getItem("EMP_ID")
-        console.log("drftBox useEffect : "+empId);
-        fetcher(`/gw/aprv/DrftDocList/${empId}`).then(setAprvDocList)
+        console.log("drftBox useEffect : "+myInfo.empId);
+        fetcher(`/gw/aprv/DrftDocList/${myInfo.empId}`).then(setAprvDocList)
     }, [])
 
     return (

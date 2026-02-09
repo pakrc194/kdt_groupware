@@ -40,7 +40,7 @@ const EditAprvLine = ({onClose, onOk}) => {
                     <option value="" disabled>선택</option>
                     <option value="DRFT_REF">참조자</option>
                     <option value="MID_ATRZ">중간관리자</option>
-                    <option valute="MID_REF">중간참조자</option>
+                    <option value="MID_REF">중간참조자</option>
                 </select>
                 <select name="empNm"  value={selectedEmp || ""} onChange={fn_selectChange}>
                     <option value="" disabled>선택</option>

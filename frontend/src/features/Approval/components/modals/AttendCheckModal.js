@@ -3,21 +3,20 @@ import Modal from '../../../../shared/components/Modal';
 import { fetcher } from '../../../../shared/api/fetcher';
 
 const AttendCheckModal = ({onClose, onOk, drftDate}) => {
-    const [attend, setAttend] = useState({});
+    const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
 
-    const empId = localStorage.getItem("EMP_ID");
-    const empNm = localStorage.getItem("EMP_NM");
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(()=>{
         fetcher("/gw/aprv/AprvEmpAnnlLv", {
             method:"POST",
             body: {
-                empId:empId,
+                ids:[myInfo.empId],
                 year:2026
             }
         }).then(res => {
-            setAttend(res)
+            setAttendList(res)
         })
         console.log("check 날짜 ㅣ ",drftDate)
 
@@ -26,7 +25,7 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
         fetcher("/gw/aprv/AprvDutyScheDtl",{
                 method:"POST",
                 body:{
-                    empId:empId,
+                    ids:[myInfo.empId],
                     docStart:drftDate.docStart.replaceAll("-", ""),
                     docEnd:drftDate.docEnd.replaceAll("-", "")
                 }
@@ -37,7 +36,7 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
         fetcher("/gw/aprv/AprvSchedList",{
                 method:"POST",
                 body:{
-                    empId:empId,
+                    ids:[myInfo.empId],
                     docStart:drftDate.docStart.replaceAll("-", ""),
                     docEnd:drftDate.docEnd.replaceAll("-", "")
                 }
@@ -50,25 +49,29 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
 
     return (
         <Modal
-            title={`기간 확인 ${empNm}`}
-            message={<>
-                <h4>{attend.baseYy} 연차 개수</h4>
-                {attend.remLv}/{attend.occrrLv}
-                <hr/>
-                {drftDate.docStart}~{drftDate.docEnd}<br/>
-                {dutyList.map((v,k)=>(
-                    <div key={k}>
-                        {v.scheId}/{v.dutyYmd}/{v.wrkCd}
-                    </div>
-                ))}
-                <hr/>
-                <h4>일정</h4>
-                {schedList.map((v,k)=>(
-                    <div key={k}>
-                        {v.schedTitle}/{v.schedStartDate.substring(0, 10)}/{v.schedEndDate.substring(0, 10)}/{v.schedType}
-                    </div>
-                ))}
-            </>}
+            title={`기간 확인 ${myInfo.empNm}`}
+            message={attendList.map((attend,k)=>(
+                <div key={k}>
+                    <h4>{attend.baseYy} 연차 개수</h4>
+                    {attend.remLv}/{attend.occrrLv}
+                    <hr/>
+                    {drftDate.docStart}~{drftDate.docEnd}<br/>
+                    {dutyList.map((v,k)=>(
+                        <div key={k}>
+                            {v.scheId}/{v.dutyYmd}/{v.wrkCd}
+                        </div>
+                    ))}
+                    <hr/>
+                    <h4>일정</h4>
+                    {schedList.map((v,k)=>(
+                        <div key={k}>
+                            {v.map((vv, kk)=>(
+                                <div key={kk}>{vv.empNm}/{vv.schedTitle}/{vv.schedStartDate.substring(0, 10)}/{vv.schedEndDate.substring(0, 10)}/{vv.schedType}</div>
+                            ))} 
+                        </div>
+                    ))}
+                </div>
+            ))}
             onClose={onClose}
             onOk={onOk}
             okMsg={"확인"}

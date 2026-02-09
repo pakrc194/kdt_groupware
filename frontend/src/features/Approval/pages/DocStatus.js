@@ -6,10 +6,10 @@ import { fetcher } from '../../../shared/api/fetcher';
 const DocStatus = () => {
     const [drftList, setDrftList] = useState([]);
     const [aprvList, setAprvList] = useState([]);
-    const empId = localStorage.getItem('EMP_ID')
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(()=>{
-        fetcher(`/gw/aprv/DrftDocList/${empId}`).then(setDrftList)
-        fetcher(`/gw/aprv/AprvDocList/${empId}`).then(setAprvList)
+        fetcher(`/gw/aprv/DrftDocList/${myInfo.empId}`).then(setDrftList)
+        fetcher(`/gw/aprv/AprvDocList/${myInfo.empId}`).then(setAprvList)
     },[])
 
 

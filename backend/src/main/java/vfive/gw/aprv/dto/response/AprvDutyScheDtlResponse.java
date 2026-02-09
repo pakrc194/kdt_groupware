@@ -4,6 +4,9 @@ import lombok.Data;
 
 @Data
 public class AprvDutyScheDtlResponse {
-	int scheDtlId, scheId;
+	int empId, deptId;
+	String empNm, deptName, deptCode;
+	
+	int scheDtlId, dutyDtlId;
 	String dutyYmd, wrkCd;
 }

@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 const ApprovalBox = () => {
     const [aprvDocList, setAprvDocList] = useState([]);
-    const empId = localStorage.getItem("EMP_ID")
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(() => {
-        console.log("aprvBox useEffect : "+empId);
-        fetcher(`/gw/aprv/AprvDocList/${empId}`).then(setAprvDocList)
+        console.log("aprvBox useEffect : "+myInfo.empId);
+        fetcher(`/gw/aprv/AprvDocList/${myInfo.empId}`).then(setAprvDocList)
     }, [])
 
     return (

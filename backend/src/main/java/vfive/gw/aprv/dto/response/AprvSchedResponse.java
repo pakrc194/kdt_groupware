@@ -4,7 +4,10 @@ import lombok.Data;
 
 @Data
 public class AprvSchedResponse {
-	int schedId, schedEmpId; 
+	int schedId;
+	String schedEmpId;
+	String empNm;
 	String schedDeptId;
+	String deptName;
 	String schedTitle, schedStartDate, schedEndDate, schedType;
 }

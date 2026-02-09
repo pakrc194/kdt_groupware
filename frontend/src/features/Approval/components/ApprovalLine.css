@@ -1,5 +1,19 @@
 .approvalLine {
     width: 1200px;
     display: flex;
-    justify-content: space-evenly;
+}
+
+.approvalLine > .empInfo > div {
+    text-align: center;
+    box-sizing: border-box;
+    border: 1px solid #333;
+    width: 100px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 2rem;
+    line-height: 2rem;
+}
+
+.approvalLine > .empInfo > div:first-child {
+    background-color: #aaa;
 }
