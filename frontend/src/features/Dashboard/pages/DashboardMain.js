@@ -5,6 +5,7 @@ import AccessList from './AccessList';
 
 function DashboardMain(props) {
     const { sideId } = useParams();
+    console.log("sideId 정보 확인",sideId)
 
     const renderContent = () => {
         switch(sideId) {

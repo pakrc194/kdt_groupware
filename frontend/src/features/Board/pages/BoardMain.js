@@ -4,6 +4,7 @@ import BoardList from './BoardList';
 import Boarddetail from './Boarddetail';
 import BoardWrite from './BoardInsert';
 import BoardModify from './BoardModify';
+import MyBoardList from './MyBoardList';
 // import './BoardMain.css';
 
 function BoardMain(props) {
@@ -29,6 +30,7 @@ function BoardMain(props) {
             {service==='detail' && <Boarddetail goBoardId={setBoardId}  boardId={boardId} goService={setService}/>}
             {service==='Insert' && <BoardWrite goService={setService}/>}
             {service==='Modify' && <BoardModify boardId={boardId} goService={setService}/>}
+            {service==='MyPosts' && <MyBoardList boardId={boardId} goService={setService}/>}
         </>
     )
 }

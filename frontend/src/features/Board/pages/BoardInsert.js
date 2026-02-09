@@ -9,7 +9,8 @@ function BoardInsert(props) {
     const [creator, setCreator] = useState('testUser'); // 실제론 로그인 정보 사용
     const [selectedFiles ,setSelectedFiles] = useState([]);
 
-
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
+    const loginUserSn = myInfo?.empSn;
 
     const FileUpload = (e) => {
         setSelectedFiles(Array.from(e.target.files));
@@ -22,7 +23,7 @@ function BoardInsert(props) {
         const boardData = {
             title: title,
             content: content,
-            creator: creator,
+            creator: loginUserSn,
             boardType: sideId // 중요: 현재 게시판 유형 전달
         };
 

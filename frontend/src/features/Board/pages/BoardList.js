@@ -81,8 +81,9 @@ function BoardList(props) {
                 </thead>
                 <tbody>
                     {boards && boards.length > 0 ? (
-                        boards.map((st) => (
-                            <tr key={st.boardId}>
+                        boards.map((st) => {
+                            console.log("fwewef:", st)
+                            return <tr key={st.boardId}>
                                 <td>{st.boardId}</td>
                                 <td 
                                     onClick={() => goDetail(st.boardId)} 
@@ -92,9 +93,9 @@ function BoardList(props) {
                                 </td>
                                 <td>{st.createdAt}</td>
                                 <td>{st.views}</td>
-                                <td>{st.creator}</td>
+                                <td>{st.empNm}</td>
                             </tr>
-                        ))
+                        })
                     ) : (
                         <tr>
                             <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>

@@ -78,6 +78,9 @@ public class BoardController {
         }
     }
     
+    
+    
+ 
     @PostMapping("/insertWithFile")
     public ResponseEntity<?> createBoard(
             @RequestPart("board") BoardPrvc board,
@@ -227,22 +230,61 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * 내가 쓴 게시물 조회
-     */
-    @GetMapping("/my/{userId}")
-    public ResponseEntity<List<BoardPrvc>> getMyBoards(
+//    /**
+//     * 내가 쓴 게시물 조회
+//     */
+//    @GetMapping("/MyPosts/{userId}")
+//    public ResponseEntity<Map<String,Object>> getMyBoards(
+//            @PathVariable("userId") String userId,
+//            @RequestParam(defaultValue = "1") int pNo,
+//            @RequestParam(defaultValue = "10") int pageSize) {
+//        
+//    	
+//    	
+//        PageInfo pInfo = new PageInfo();
+//        pInfo.setCurPage(pNo);
+//        pInfo.setPageSize(pageSize);
+//        
+//        int total = boardMapper.totalByCreator(userId);
+//        pInfo.setTotal(total);
+//        
+//        List<BoardPrvc> boards = boardMapper.listByCreator(userId, pInfo);
+//        Map<String,Object>res = Map.of(
+//        		"boards",boards,
+//        		"pInfo",pInfo
+//        		);
+//        
+//        return ResponseEntity.ok(res);
+//    }
+    @GetMapping("/MyPosts/{userId}")
+    public ResponseEntity<Map<String, Object>> getMyBoards(
             @PathVariable("userId") String userId,
-            @RequestParam(defaultValue = "1") int pNo,
-            @RequestParam(defaultValue = "10") int pageSize) {
-        
+            @RequestParam(value = "pNo" ,defaultValue = "1") int pNo,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    	System.out.println( "userId데이터 값 확인" +userId);
+    	
+
         PageInfo pInfo = new PageInfo();
         pInfo.setCurPage(pNo);
         pInfo.setPageSize(pageSize);
-        
+
+        // 1. 내가 쓴 전체 글 개수 조회 (모든 게시판 대상)
+        int total = boardMapper.totalByCreator(userId);
+        System.out.println("조회 된 총 개수 :"+total);
+        pInfo.setTotal(total);
+
+        // 2. 내가 쓴 게시물 목록 조회 (페이징 포함)
         List<BoardPrvc> boards = boardMapper.listByCreator(userId, pInfo);
-        return ResponseEntity.ok(boards);
+        System.out.println("조회 된 리스트 크기 :"+boards.size());
+
+        // 3. 리액트가 기대하는 구조로 Map 구성
+        Map<String, Object> res = new HashMap<>();
+        res.put("boards", boards);
+        res.put("pInfo", pInfo);
+
+        return ResponseEntity.ok(res);
     }
+    
     
     private void saveFiles(int boardId, List<MultipartFile> files) {
         for (MultipartFile file : files) {

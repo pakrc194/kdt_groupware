@@ -20,6 +20,7 @@ public class BoardPrvc {
 	private int views;
 	private String creator;
 	private boolean isTop;
+	private String empNm;
 	
 	
 	private String temId;

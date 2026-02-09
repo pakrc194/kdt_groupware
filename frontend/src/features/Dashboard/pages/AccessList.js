@@ -4,13 +4,14 @@ import { fetcher } from '../../../shared/api/fetcher';
 function AccessList(props) {
     const [teamList, setTeamList] = useState([]);
     const [jbttlList, setJbttlList] = useState([]);
-
+    
     useEffect(() => {
         // 전체 팀 리스트
         fetcher('/gw/schedule/instruction/teams')
         .then(dd => {
             setTeamList(dd)
         })
+        
         .catch(err => console.error('팀 리스트 로딩 실패', err));
 
         fetcher('/gw/orgChart/register/jbttl')
@@ -19,6 +20,7 @@ function AccessList(props) {
         })
         .catch(err => console.error('팀 리스트 로딩 실패', err));
     }, [])
+    console.log(setTeamList)
 
     // 지점장만 접근 가능
     if (localStorage.getItem("EMP_ID") != 1) {
