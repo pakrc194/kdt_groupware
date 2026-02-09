@@ -11,11 +11,11 @@ function BoardDetail(props) {
     const [isLoading, setIsLoading] = useState(true);
     const [files , setFiles] = useState([]);
     
-    // 현재 사용자 정보 (실제로는 인증 컨텍스트에서 가져와야 함)
-    const currentUser = 'testUser'; // 임시
+    // 현재 사용자 정보 
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
+    const loginUserSn = myInfo?.empSn;
 
     useEffect(() => {
-
         console.log('props.boardId', props.boardId)
         fetchBoardDetail();
         fetcher(`/board/selectFile/${props.boardId}`)
@@ -76,6 +76,11 @@ function BoardDetail(props) {
         return <div className="error">게시물을 찾을 수 없습니다.</div>;
     }
 
+
+    const isOwner = String(board.creator) === String(loginUserSn);
+
+
+
     return (
         <div className="board-detail-container">
             <div className="detail-header">
@@ -84,7 +89,7 @@ function BoardDetail(props) {
                     <h1>{board.title}</h1>
                 </div>
                 <div className="meta-info">
-                    <span className="author">작성자: {board.creator}</span>
+                    <span className="author">작성자: {board.empNm}</span>
                     <span className="date">
                         등록일: {new Date(board.createdAt).toLocaleString()}
                     </span>

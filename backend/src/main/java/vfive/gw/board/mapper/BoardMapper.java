@@ -16,17 +16,23 @@ import vfive.gw.board.dto.BoardPrvc;
 @Mapper
 public interface BoardMapper {
     
-    /**
-     * 전체 게시물 수 조회
-     */
+    /** 전체 게시물 수 조회*/
     @Select("SELECT COUNT(*) FROM Board")
     int total();
+    
+  
+    
+    /** 내가 쓴 게시물 총 숫자 **/
+    @Select("SELECT COUNT(*) FROM Board WHERE Creator = #{creator}")
+    int totalByCreator(@Param("creator")String creator);
+    
+    
     
     
     /**
      * 전체 게시물 목록 조회 (페이징)
      */
-    @Select("SELECT * FROM Board ORDER BY BoardId DESC LIMIT #{start}, #{cnt}")
+    @Select("SELECT * FROM Board ORDER BY BoardId DESC LIMIT #{start}, #{cnt} , #{empSn}")
     List<BoardPrvc> list(PageInfo pInfo);
     
     
@@ -102,13 +108,26 @@ public interface BoardMapper {
                 "</if>" +
                 "</script>")
         int totalByType(PageInfo pInfo);
+        
+        
+        @Select("SELECT b.*, e.EMP_NM as creatorNm " + // EMP_NM을 creatorNm으로 가져옴
+                "FROM Board b " +
+                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
+                "WHERE b.BoardId = #{boardId}")
+        BoardPrvc CreatorDetail(@Param("boardId") int boardId);
 
-        /**
-         * 조건별 목록 조회
-         */
+        @Select("SELECT b.*, e.EMP_NM as creatorNm " +
+                "FROM Board b " +
+                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
+                "WHERE b.BoardType = #{sideId} ...") // 목록 조회 시에도 동일하게 적용
+        List<BoardPrvc> selectList();
+        
+        
+
+        /*** 조건별 목록 조회* 작성자 이름 조회하기*/
         @Select("<script>" +
-                "SELECT * FROM Board " +
-                "WHERE BoardType = #{sideId} " +
+                "SELECT Board.*, EMP_NM FROM Board , EMP_PRVC  " +
+                "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN " +
                 "<if test='keyword != null and keyword != \"\"'>" +
                     "<choose>" +
                     "  <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
@@ -123,15 +142,15 @@ public interface BoardMapper {
     
     
     
-    /**
-     * 작성자별 게시물 목록 조회
-     */
-    @Select("SELECT * FROM Board " +
-            "WHERE Creator = #{creator} " +
-            "ORDER BY CreatedAt DESC " +
-            "LIMIT #{pInfo.start}, #{pInfo.cnt}")
-    List<BoardPrvc> listByCreator(@Param("creator") String creator, 
-                                   @Param("pInfo") PageInfo pInfo);
+    /**작성자별 게시물 목록 조회(내가 쓴 게시물 조회)*/
+        @Select("SELECT b.*, e.EMP_NM as empNm "+
+                "FROM Board b " +
+                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN "+
+                "WHERE b.Creator = #{creator} "+ 
+                "ORDER BY b.BoardId DESC "+
+                "LIMIT #{pInfo.start}, #{pInfo.cnt}")
+        List<BoardPrvc> listByCreator(@Param("creator") String creator, 
+                                       @Param("pInfo") PageInfo pInfo);
 
 
     
