@@ -10,13 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.Resource;
 import vfive.gw.dashboard.di.AccessEmpowerList;
 import vfive.gw.dashboard.di.AccessList;
+import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.dashboard.dto.response.AddAccessEmpower;
+import vfive.gw.dashboard.mapper.AccessListMapper;
 import vfive.gw.dashboard.mapper.AddAccessEmpowerMapper;
 import vfive.gw.dashboard.provider.DashboardProvider;
 
 @RestController
 @RequestMapping("/gw/dashboard")
-public class DashboardController {    
+public class AccessController {    
 	@Resource
 	DashboardProvider provider;
 	
@@ -40,6 +42,15 @@ public class DashboardController {
 	Object addAccess(@RequestBody AddAccessEmpower aae) {
 		System.out.println("권한 추가 "+aae);
 		return empowerMapper.addAccessEmpower(aae);
+	}
+	
+	@Resource
+	AccessListMapper empowerListMapper;
+	
+	@PostMapping("/delAccess")
+	int accessEmpowerDelete(@RequestBody AccessEmpowerDTO dto) {
+		System.out.println(dto);
+		return empowerListMapper.accessEmpowerDelete(dto);
 //		return 0;
 	}
 }

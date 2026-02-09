@@ -13,6 +13,13 @@ function ScheduleList(props) {
     const formattedStart = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}-${String(monthStart.getDate()).padStart(2, '0')}`;
     const formattedEnd = `${monthEnd.getFullYear()}-${String(monthEnd.getMonth() + 1).padStart(2, '0')}-${String(monthEnd.getDate()).padStart(2, '0')}`;
 
+    const [sched, setSched] = useState([]);
+
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+    // fetch로 보낼 데이터
+    const dept_id = myInfo.deptId;
+    const emp_id = myInfo.empId;
+
     
     // 버튼 핸들러
     const goToday = () => {setCurrentDate(new Date()); props.sDate(new Date())};
@@ -44,11 +51,7 @@ function ScheduleList(props) {
     // let monthEnd = new Date(yyyy, date.getMonth() + 1, 0);
 
 
-    const [sched, setSched] = useState([]);
-
-    // fetch로 보낼 데이터
-    const dept_id = localStorage.getItem("DEPT_ID")
-    const emp_id = localStorage.getItem("EMP_ID")
+    
 
     
 

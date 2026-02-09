@@ -59,12 +59,12 @@ public interface SchedMapper {
 		@Select("select * from SCHED where sched_id = #{schedId}")
 		Sched schedDetail(Sched sc);
 		
-		@Select("select * from SCHED "
-				+ "where ("
-				+ "(sched_start_date <= #{schedStartDate} and sched_end_date >= #{schedStartDate}) "
-				+ "and (sched_type != 'TODO' and sched_state = 0)"
-				+ ")")
-		List<Sched> schedDailyList(Sched sc);
+//		@Select("select * from SCHED "
+//				+ "where ("
+//				+ "(sched_start_date <= #{schedStartDate} and sched_end_date >= #{schedStartDate}) "
+//				+ "and (sched_type != 'TODO' and sched_state = 0) "
+//				+ ")")
+//		List<Sched> schedDailyList(Sched sc);
 		
 		@Update("update SCHED "
 				+ "set sched_state = '1', sched_delete_date = now() "

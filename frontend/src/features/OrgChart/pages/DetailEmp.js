@@ -6,6 +6,8 @@ function DetailEmp() {
     const [data, setData] = useState({});
     const { id } = useParams();
     const navigate = useNavigate();
+    // 로그인 정보
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
     
     useEffect(() => {
         fetcher(`/gw/orgChart/detail/${id}`)
@@ -63,7 +65,7 @@ function DetailEmp() {
                     </tr>
 
                     {/* 같은 팀 팀장 권한 */}
-                    {localStorage.getItem("JBTTL_ID") < 3 && (
+                    {myInfo.jbttlId < 3 && (
                         <>
                             <tr>
                                 <td style={styles.th}>이메일</td>
@@ -73,14 +75,14 @@ function DetailEmp() {
                                 <td style={styles.th}>전화번호</td>
                                 <td style={styles.td}>{data.EMP_TELNO || '-'}</td>
                             </tr>
-                            {((localStorage.getItem("JBTTL_ID") < 3 && localStorage.getItem("DEPT_ID") == data.DEPT_ID)
-                              || (localStorage.getItem("JBTTL_ID") == 1)) && (
+                            {((myInfo.jbttlId < 3 && myInfo.deptId == data.DEPT_ID)
+                              || (myInfo.jbttlId == 1)) && (
                                 <>
                                     <tr>
                                         <td style={styles.th}>주소</td>
                                         <td style={styles.td}>{data.EMP_ADDR || '-'}</td>
                                     </tr>
-                                    {localStorage.getItem("JBTTL_ID") == 1 && (
+                                    {myInfo.jbttlId == 1 && (
                                         <tr>
                                             <td style={styles.th}>계좌번호</td>
                                             <td style={styles.td}>{data.EMP_ACTNO || '-'}</td>
@@ -97,7 +99,7 @@ function DetailEmp() {
                 <button style={styles.backBtn} onClick={() => navigate(-1)}>뒤로</button>
 
                 {/* 인사팀 권한 */}
-                {localStorage.getItem("DEPT_ID") == 6 && (
+                {myInfo.deptId == 6 && (
                     <>
                         <button style={styles.modifyBtn} onClick={modifyInfo}>정보수정</button>
                         <button style={styles.deactivateBtn} onClick={retired}>비활성화</button>

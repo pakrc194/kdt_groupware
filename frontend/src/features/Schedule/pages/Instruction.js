@@ -24,9 +24,11 @@ function Instruction(props) {
 
     // 팀 리스트
     const [teamList, setTeamList] = useState([]);
-
+    
     // 유저 정보
-    const deptId = parseInt(localStorage.getItem('DEPT_ID'));
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+    const deptId = myInfo.deptId;
+    const jbttlId = myInfo.jbttlId;
 
     useEffect(() => {
         // 직책 가져오기
@@ -76,7 +78,7 @@ function Instruction(props) {
     
 
     // 직책 id로 권한 설정
-    if (localStorage.getItem("JBTTL_ID") == 3) {
+    if (jbttlId == 3) {
         return (
         <div style={{
             maxWidth: '400px',
@@ -136,8 +138,8 @@ function Instruction(props) {
                     schedDept: selectedTeams.map(t => t.deptName).join(','),
                     schedDeptId: selectedTeams.map(t => t.deptId).join(','),
                     schedLoc: location === '0' ? null : parseInt(location),
-                    schedAuthorId: localStorage.getItem("EMP_ID"),
-                    schedEmpSn: localStorage.getItem("EMP_SN")
+                    schedAuthorId: myInfo.empId,
+                    schedEmpSn: myInfo.empSn
                 }
             });
         } catch (err) {

@@ -12,6 +12,7 @@ const ModifyEmp = () => {
     DEPT_ID: '',
     JBTTL_ID: ''
   });
+  const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
 
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
@@ -66,9 +67,9 @@ const ModifyEmp = () => {
   
 
   // 부서번호 6(인사팀)만 접근 가능
-  // if (localStorage.getItem("DEPT_ID") != 6) {
-  //     return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
-  // }
+  if (myInfo.deptId != 6) {
+      return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
+  }
 
   return (
     <div style={styles.container}>

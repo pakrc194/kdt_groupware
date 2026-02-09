@@ -15,6 +15,8 @@ function ScheduleCalendar(props) {
     // const [day, setDay] = useState();
     const navigate = useNavigate();
     const defaultDate = new Date();
+    // 로그인 정보
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
 
     // 현재 화면 날짜 상태
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -30,8 +32,8 @@ function ScheduleCalendar(props) {
 
 
     // fetch로 보낼 데이터
-    const dept_id = localStorage.getItem("DEPT_ID")
-    const emp_id = localStorage.getItem("EMP_ID")
+    const dept_id = myInfo.deptId;
+    const emp_id = myInfo.empId;
 
     
 

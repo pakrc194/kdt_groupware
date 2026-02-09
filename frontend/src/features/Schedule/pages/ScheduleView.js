@@ -16,7 +16,10 @@ function ScheduleView(props) {
     const [newTodo, setNewTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: Boolean });
     const [editTodoId, setEditTodoId] = useState(null);
     const [editTodo, setEditTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: Boolean });
-
+    // 로그인 정보
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+    const dept_id = myInfo.deptId;
+    const emp_id = myInfo.empId;
 
     const setDate = (date) => {
         setDefaultDate(date);
@@ -46,7 +49,7 @@ function ScheduleView(props) {
 
     // 특정 날짜로 일정 받아와서 화면에 출력
     useEffect(() => {
-        fetcher(`/gw/schedule/sched_search/${formatted}`)
+        fetcher(`/gw/schedule/view/${formatted}/${formatted}/${dept_id}/${emp_id}`)
         .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
         })
         .catch(e => console.log(e))
@@ -54,7 +57,7 @@ function ScheduleView(props) {
 
     // TODO 가져오기
     useEffect(() => {
-        fetcher(`/gw/schedule/todo/view/${formatted}/${localStorage.getItem("EMP_ID")}`) // 날짜별 TODO API
+        fetcher(`/gw/schedule/todo/view/${formatted}/${myInfo.empId}`) // 날짜별 TODO API
             .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
             })
             .catch(e => console.log(e));
@@ -70,7 +73,7 @@ function ScheduleView(props) {
                 schedTitle: newTodo.schedTitle,
                 schedDetail: newTodo.schedDetail,
                 schedState: newTodo.schedState,
-                schedAuthorId: localStorage.getItem("EMP_ID")
+                schedAuthorId: myInfo.empId
             }
             });
 
@@ -93,7 +96,7 @@ function ScheduleView(props) {
                 schedDetail: editTodo.schedDetail,
                 schedId: editTodoId,
                 schedState: editTodo.schedState,
-                schedAuthorId: localStorage.getItem("EMP_ID")
+                schedAuthorId: myInfo.empId
             }
             });
 
@@ -121,7 +124,7 @@ function ScheduleView(props) {
                 schedId: cktodo.schedId,
                 schedType: "TODO",
                 schedState: flag,
-                schedAuthorId: localStorage.getItem("EMP_ID")
+                schedAuthorId: myInfo.empId
             }
             });
 
