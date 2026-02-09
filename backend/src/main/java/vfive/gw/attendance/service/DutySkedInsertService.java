@@ -21,12 +21,12 @@ public class DutySkedInsertService {
 		
 		mapper.insertDutyMaster(req);
 		
-		int generatedScheId = req.getScheId();
+		int generatedScheId = req.getDutyId();
 		List<DutySkedDetailDTO> details = req.getDetails();
 		
 		if(details != null && !details.isEmpty()) {
 			for(DutySkedDetailDTO detail : details) {
-				detail.setScheId(generatedScheId);
+				detail.setDutyId(generatedScheId);
 			}
 			mapper.insertDutyDetails(details);
 		}

@@ -40,32 +40,31 @@ const Layout = () => {
     }
   };
 
-  useEffect(()=> {
-    const myInfoStr = localStorage.getItem("MyInfo")
-    const myInfo = JSON.parse(myInfoStr)
-    const token = myInfo?.token || null
-    
-    if(token){  //토큰이 있을 경우에만 진입
-      fetcher(
-      `/gw/login/hello`,
-      {
-          method:"GET",
-          headers:{
-          "Authorization" : `Bearer ${token}`
-          }
-      })
-      .then(response=>{
-          console.log(`logChk 결과 : `, response)})
-      .catch(error=>{
-          console.log(`logChk 에러 : `, error)
-          navigate("/")
-      })
-    }else{
-      console.log("토큰없음")
-      navigate("/")
-    }
-  },[])
+  useEffect(() => {
+    const myInfoStr = localStorage.getItem("MyInfo");
+    const myInfo = JSON.parse(myInfoStr);
+    const token = myInfo?.token || null;
 
+    if (token) {
+      //토큰이 있을 경우에만 진입
+      fetcher(`/gw/login/hello`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log(`logChk 결과 : `, response);
+        })
+        .catch((error) => {
+          console.log(`logChk 에러 : `, error);
+          navigate("/");
+        });
+    } else {
+      console.log("토큰없음");
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="container">
@@ -95,7 +94,7 @@ const Layout = () => {
 
       <div className="main-wrapper">
         <aside className="sidebar">
-          <UserProfile />
+          {currentMain === "home" && <UserProfile />}
           <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3>
           <ul className="sidebar-list">
             {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => {

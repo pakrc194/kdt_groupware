@@ -4,15 +4,15 @@ export const SIDE_CONFIG = {
   approval: {
     title: "전자결재",
     sideMenus: [
-      { id: 'docStatus', name: '결재현황' },
-      { id: 'draft', name: '기안 작성' },
-      { id: 'draftBox', name: '기안함' },
-      { id: 'approvalBox', name: '결재함' },
-      { id: 'referBox', name: '참조함' },
-      { id: 'tempBox', name: '임시저장함' },
-      { id: 'rejectBox', name: '반려함' },
-      { id: 'docFormBox', name: '양식보관함' },
-    ]
+      { id: "docStatus", name: "결재현황" },
+      { id: "draft", name: "기안 작성" },
+      { id: "draftBox", name: "기안함" },
+      { id: "approvalBox", name: "결재함" },
+      { id: "referBox", name: "참조함" },
+      { id: "tempBox", name: "임시저장함" },
+      { id: "rejectBox", name: "반려함" },
+      { id: "docFormBox", name: "양식보관함" },
+    ],
   },
   schedule: {
     title: "일정관리",
@@ -71,6 +71,12 @@ export const SIDE_CONFIG = {
       { id: "bbb", name: "인사팀 대시보드" },
       { id: "ccc", name: "시설자재팀 대시보드" },
       { id: "ddd", name: "권한 목록" },
+    ],
+  },
+  home: {
+    title: "개인 대시보드",
+    sideMenus: [
+      { id: "my", name: "개인정보 수정" },
     ],
   },
   // 나머지 메뉴들도 같은 방식으로 팀원들이 추가...

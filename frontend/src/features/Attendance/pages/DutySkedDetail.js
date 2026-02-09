@@ -8,7 +8,7 @@ import "../css/DutySkedDetail.css";
 function DutySkedDetail() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const scheId = searchParams.get("scheId");
+  const dutyId = searchParams.get("dutyId");
 
   const [title, setTitle] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("");
@@ -48,10 +48,10 @@ function DutySkedDetail() {
 
   useEffect(() => {
     const loadDetail = async () => {
-      if (!scheId) return;
+      if (!dutyId) return;
       try {
         setIsLoading(true);
-        const data = await fetcher(`/gw/duty/detail?scheId=${scheId}`);
+        const data = await fetcher(`/gw/duty/detail?dutyId=${dutyId}`);
         setStatus(data.master.prgrStts || "DRAFT");
         setTitle(data.master.scheTtl);
         const ymd = data.master.trgtYmd;
@@ -82,7 +82,7 @@ function DutySkedDetail() {
       }
     };
     loadDetail();
-  }, [scheId]);
+  }, [dutyId]);
 
   const handleBulkGenerate = () => {
     if (isReadOnly) return;
@@ -134,13 +134,13 @@ function DutySkedDetail() {
     if (!window.confirm("변경 내용을 저장하시겠습니까?")) return;
     try {
       const payload = {
-        scheId: parseInt(scheId),
+        dutyId: parseInt(dutyId),
         empId: 10,
         deptId: 8,
         scheTtl: title,
         details: employees.flatMap((emp) =>
           Object.entries(emp.duties).map(([day, cd]) => ({
-            scheId: parseInt(scheId),
+            dutyId: parseInt(dutyId),
             empId: emp.id,
             dutyYmd: `${selectedMonth.replace("-", "")}${day.toString().padStart(2, "0")}`,
             wrkCd: cd,
@@ -160,7 +160,7 @@ function DutySkedDetail() {
   const handleApprovalSubmit = async (approvData) => {
     try {
       const payload = {
-        scheId: scheId,
+        dutyId: dutyId,
         title: approvData.title,
         content: approvData.content,
         // 필요시 기안자 ID 등 추가

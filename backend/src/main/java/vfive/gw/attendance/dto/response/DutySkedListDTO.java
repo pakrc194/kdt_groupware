@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class DutySkedListDTO {
-	private int scheId;
+	private int dutyId;
 	private String scheTtl;
 	private String empNm;
 	private String trgtYmd;
