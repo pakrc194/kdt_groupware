@@ -1,0 +1,218 @@
+/* 기본 배경 및 폰트 설정 */
+.mod-profile-wrapper {
+  background-color: #f4f7fa;
+  min-height: 100vh;
+  padding: 50px 20px;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+}
+
+.mod-profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.mod-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.mod-header h2 {
+  font-size: 28px;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.mod-header p {
+  color: #666;
+  font-size: 15px;
+}
+
+/* 카드 공통 스타일 */
+.auth-card,
+.mod-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eef0f2;
+}
+
+.accent-card {
+  border-left: 5px solid #1976d2;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title span {
+  font-size: 12px;
+  font-weight: 400;
+  color: #999;
+}
+
+/* 입력 필드 레이아웃 */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.grid-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.flex-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* 공통 입력창 스타일 */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+input:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+input[readOnly] {
+  background-color: #f8f9fa;
+  color: #888;
+  border-color: #eee;
+}
+
+/* 버튼 스타일 */
+.input-with-btn {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.primary-btn {
+  background: #1976d2;
+  color: #fff;
+}
+
+.primary-btn:hover {
+  background: #1565c0;
+}
+
+.sub-btn {
+  background: #444;
+  color: #fff;
+  padding: 0 15px;
+  white-space: nowrap;
+}
+
+.wide-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 16px;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* 배지 및 메시지 */
+.verified-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 0 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.pw-hint {
+  font-size: 13px;
+  margin-top: 8px;
+}
+.pw-hint.error {
+  color: #d32f2f;
+}
+.pw-hint.success {
+  color: #2e7d32;
+}
+
+/* 체크박스 커스텀 */
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.pw-sub-area {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 애니메이션 */
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

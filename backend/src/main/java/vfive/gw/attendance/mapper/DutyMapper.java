@@ -22,7 +22,7 @@ public interface DutyMapper {
 
 	// 해당 부서의 근무표 리스트
 	@Select("SELECT " +
-      "    M.SCHE_ID, " +
+      "    M.DUTY_ID, " +
       "    M.SCHE_TTL, " +
       "    E.EMP_NM, " + // 작성자 성함을 가져오기 위한 JOIN용 필드
       "    M.TRGT_YMD, " +
@@ -38,16 +38,16 @@ public interface DutyMapper {
 	// 근무표 리스트 삭제
   @Delete("<script>" +
           "DELETE FROM DUTY_SCHE_MST " +
-          "WHERE SCHE_ID IN " +
-          "<foreach collection='scheIds' item='id' open='(' separator=',' close=')'>" +
+          "WHERE DUTY_ID IN " +
+          "<foreach collection='dutyIds' item='id' open='(' separator=',' close=')'>" +
           "#{id}" +
           "</foreach>" +
           "</script>")
-  void deleteDutyMasters(@Param("scheIds") List<Integer> scheIds);
+  void deleteDutyMasters(@Param("dutyIds") List<Integer> dutyIds);
 	
 //근무표 상세 내역 조회 (사원명 포함)
   @Select("SELECT " +
-          "    D.SCHE_ID, " +
+          "    D.DUTY_ID, " +
           "    D.EMP_ID, " +
           "    E.EMP_NM, " +
           "    D.GRP_NM, " +
@@ -56,17 +56,17 @@ public interface DutyMapper {
           "    D.WRK_CD " +
           "FROM DUTY_SCHE_DTL D " +
           "INNER JOIN EMP_PRVC E ON D.EMP_ID = E.EMP_ID " +
-          "WHERE D.SCHE_ID = #{scheId} " +
+          "WHERE D.DUTY_ID = #{dutyId} " +
           "ORDER BY E.EMP_ID ASC, D.DUTY_YMD ASC")
   List<DutySkedDetailDTO> selectDutySkedDetailList(DutyRequestDTO req);
   
   // 마스터 정보 조회 (제목, 대상월 등)
-  @Select("SELECT SCHE_ID, SCHE_TTL, TRGT_YMD, PRGR_STTS " +
-          "FROM DUTY_SCHE_MST WHERE SCHE_ID = #{scheId}")
+  @Select("SELECT DUTY_ID, SCHE_TTL, TRGT_YMD, PRGR_STTS " +
+          "FROM DUTY_SCHE_MST WHERE DUTY_ID = #{dutyId}")
   DutySkedListDTO selectDutySkedMaster(DutyRequestDTO req);
   
   // 조회용 - 결재된 근무표 조회
-  @Select("SELECT SCHE_ID, SCHE_TTL, TRGT_YMD, PRGR_STTS " +
+  @Select("SELECT DUTY_ID, SCHE_TTL, TRGT_YMD, PRGR_STTS " +
           "FROM DUTY_SCHE_MST " +
           "WHERE DEPT_ID = #{deptId} " + 
           "  AND TRGT_YMD = #{trgtYmd} " +
@@ -86,14 +86,14 @@ public interface DutyMapper {
   // EMP_ID는 작성자 사번, TRGT_YMD는 8자리(YYYYMMDD) 기준
   @Insert("INSERT INTO DUTY_SCHE_MST (EMP_ID, DEPT_ID, SCHE_TTL, TRGT_YMD) " +
           "VALUES (#{empId}, #{deptId}, #{scheTtl}, #{trgtYmd})")
-  @Options(useGeneratedKeys = true, keyProperty = "scheId")
+  @Options(useGeneratedKeys = true, keyProperty = "dutyId")
   int insertDutyMaster(DutyRequestDTO req);
   
   // 상세 내역 저장 (DUTY_SCHE_DTL)
   @Insert("<script>" +
-          "INSERT INTO DUTY_SCHE_DTL (SCHE_ID, EMP_ID, DUTY_YMD, WRK_CD, GRP_NM) VALUES " +
+          "INSERT INTO DUTY_SCHE_DTL (DUTY_ID, EMP_ID, DUTY_YMD, WRK_CD, GRP_NM) VALUES " +
           "<foreach collection='list' item='item' separator=','>" +
-          "(#{item.scheId}, #{item.empId}, #{item.dutyYmd}, #{item.wrkCd}, #{item.grpNm})" +
+          "(#{item.dutyId}, #{item.empId}, #{item.dutyYmd}, #{item.wrkCd}, #{item.grpNm})" +
           "</foreach>" +
           "</script>")
   int insertDutyDetails(List<DutySkedDetailDTO> list);
@@ -123,11 +123,11 @@ public interface DutyMapper {
           "SCHE_TTL = #{scheTtl}, " +
           "EMP_ID = #{empId}, " +
           "MOD_DTM = NOW() " +
-          "WHERE SCHE_ID = #{scheId}")
+          "WHERE DUTY_ID = #{dutyId}")
   int updateDutyMaster(DutyRequestDTO req);
   
   //근무표 기존 상세 내역 삭제
-  @Delete("DELETE FROM DUTY_SCHE_DTL WHERE SCHE_ID = #{scheId}")
+  @Delete("DELETE FROM DUTY_SCHE_DTL WHERE DUTY_ID = #{dutyId}")
   void deleteDutyDetails(DutyRequestDTO req);
   
   

@@ -68,11 +68,11 @@ public class DutyController {
 	// 근무표 리스트 삭제
 	@DeleteMapping("delete")
 	ResponseEntity<?> delete(@RequestBody Map<String, List<Integer>> req) {
-		List<Integer> scheIds = req.get("scheIds");
+		List<Integer> dutyIds = req.get("dutyIds");
 		
-		System.out.println(scheIds);
+		System.out.println(dutyIds);
 		
-		dutySkedDeleteService.execute(scheIds);
+		dutySkedDeleteService.execute(dutyIds);
 		
 		Map<String, String> res = new HashMap<>();
 		res.put("message", "삭제 성공");

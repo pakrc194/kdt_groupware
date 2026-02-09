@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class DutySkedDetailDTO {
 
-	private int scheId;      // 근무표 ID
+	private int dutyId;      // 근무표 ID
   private int empId;       // 사원 번호
   private String empNm;    // 사원 이름 (JOIN)
   private String grpNm;    // 조 이름 (JOIN)

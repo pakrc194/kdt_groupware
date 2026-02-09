@@ -37,7 +37,7 @@ function DutySkedListPage() {
   // 전체 선택 체크박스
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedIds(schedules.map((item) => item.scheId));
+      setSelectedIds(schedules.map((item) => item.dutyId));
     } else {
       setSelectedIds([]);
     }
@@ -59,7 +59,7 @@ function DutySkedListPage() {
         // 백엔드에 삭제 요청 (Delete API는 구현되어 있다고 가정)
         await fetcher(`/gw/duty/delete`, {
           method: "DELETE",
-          body: { scheIds: selectedIds },
+          body: { dutyIds: selectedIds },
         });
         alert("삭제되었습니다.");
         setSelectedIds([]);
@@ -119,23 +119,23 @@ function DutySkedListPage() {
             {schedules.length > 0 ? (
               schedules.map((item) => (
                 <tr
-                  key={item.scheId}
+                  key={item.dutyId}
                   className={
-                    selectedIds.includes(item.scheId) ? "selected-row" : ""
+                    selectedIds.includes(item.dutyId) ? "selected-row" : ""
                   }
                 >
                   <td>
                     <input
                       type="checkbox"
-                      checked={selectedIds.includes(item.scheId)}
-                      onChange={() => handleSelect(item.scheId)}
+                      checked={selectedIds.includes(item.dutyId)}
+                      onChange={() => handleSelect(item.dutyId)}
                     />
                   </td>
-                  <td>{item.scheId}</td>
+                  <td>{item.dutyId}</td>
                   <td
                     className="title-link"
                     onClick={() =>
-                      navigate(`/attendance/dtskdDet?scheId=${item.scheId}`)
+                      navigate(`/attendance/dtskdDet?dutyId=${item.dutyId}`)
                     }
                   >
                     {item.scheTtl}

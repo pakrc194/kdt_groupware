@@ -31,7 +31,7 @@ public class DutySkedViewService {
 			return null;
 		}
 		
-		req.setScheId(master.getScheId());
+		req.setDutyId(master.getDutyId());
 		List<DutySkedDetailDTO> details = mapper.selectDutySkedDetailList(req);
 		
 		res.put("master", master);

@@ -9,7 +9,7 @@ const UserProfile = () => {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const data = await fetcher(`/gw/home/profile?empId=10`);
+      const data = await fetcher(`/gw/home/myProf?empId=10`);
       setUser(data);
     } catch (error) {
       console.error("프로필 가져오기 실패:", error);
