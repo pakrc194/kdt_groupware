@@ -25,7 +25,7 @@ public interface AtdcMapper {
 	List<AtdcDTO> selectAtdcHistory(@Param("empId") int empId,@Param("yearMonth") String yearMonth);
 	
 	// 연차 요약 정보 조회
-  @Select("SELECT OCCRR_LV as totalDays, USED_LV as usedDays, (OCCRR_LV - USED_LV) as leftDays " +
+  @Select("SELECT OCCRR_LV as totalDays, USED_LV as usedDays, REM_LV as leftDays " +
           "FROM ANNL_LV_STTS " +
           "WHERE EMP_ID = #{empId} AND BASE_YY = #{year}")
   LeaveDTO.Info selectLeaveInfo(@Param("empId") int empId, @Param("year") String year);

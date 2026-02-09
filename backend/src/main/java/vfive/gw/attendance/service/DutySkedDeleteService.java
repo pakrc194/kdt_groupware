@@ -15,10 +15,10 @@ public class DutySkedDeleteService {
 	private DutyMapper mapper;
 	
 	@Transactional
-	public void execute(List<Integer> scheIds) {
-		if(scheIds == null || scheIds.isEmpty()) return;
+	public void execute(List<Integer> dutyIds) {
+		if(dutyIds == null || dutyIds.isEmpty()) return;
 		
-		mapper.deleteDutyMasters(scheIds);
+		mapper.deleteDutyMasters(dutyIds);
 	}
 	
 }

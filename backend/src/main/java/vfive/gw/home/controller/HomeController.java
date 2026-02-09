@@ -1,47 +1,56 @@
 package vfive.gw.home.controller;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vfive.gw.BackendApplication;
 import jakarta.annotation.Resource;
 import vfive.gw.home.dto.EmpPrvc;
-import vfive.gw.home.mapper.HomeMapper;
+import vfive.gw.home.dto.request.MyDashResDTO;
+import vfive.gw.home.service.GetModFormService;
+import vfive.gw.home.service.GetMyDashService;
 import vfive.gw.home.service.GetUserProfileService;
 
 @RestController
-@RequestMapping("/gw/home/{service}")
+@RequestMapping("/gw/home")
 public class HomeController {
 
 	@Resource
 	GetUserProfileService getUserProfileService;
 	
-//	@GetMapping
-//	EmpPrvc emp() {
-//		EmpPrvc emp = new EmpPrvc();
-//		emp.setEmpId(1);
-//		
-//		return mapper.empPrvc(emp);
-//	}
+	@Resource
+	GetModFormService getModFormService;
 	
-	@GetMapping
-	EmpPrvc home(
-	    @PathVariable("service") String service
-	) {
-	    return getUserProfileService.execute(10);
-	}
+	@Resource
+	GetMyDashService getMyDashService;
+
 	
-	@PostMapping
+	@PostMapping("test")
 	public Map<String, Object> test(@RequestBody Map<String, Object> body) {
 		body.put("result", "ok");
 	    return body;
 	}
+	
+	@GetMapping("myProf")
+	EmpPrvc myProfile(EmpPrvc req) {
+	    return getUserProfileService.execute(req);
+	}
+	
+	@GetMapping("modProf")
+	EmpPrvc modProfForm(EmpPrvc req) {
+		
+		return getModFormService.execute(req);
+	}
+	
+	@GetMapping("myDash")
+	Map<String, Object> MyDashBoard(MyDashResDTO req) {
+		System.out.println("대시보드 컨트롤러");
+		
+		return getMyDashService.execute(req);
+	}
+	
+
 }

@@ -74,9 +74,10 @@ export const SIDE_CONFIG = {
     ],
   },
   home: {
-    title: "개인 대시보드",
+    title: "메인페이지",
     sideMenus: [
-      { id: "my", name: "개인정보 수정" },
+      { id: "dashboard", name: "개인 대시보드" },
+      { id: "modProf", name: "개인정보 수정" },
     ],
   },
   // 나머지 메뉴들도 같은 방식으로 팀원들이 추가...
