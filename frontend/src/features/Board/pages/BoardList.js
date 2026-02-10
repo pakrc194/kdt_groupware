@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Pagination from './Pagination';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function BoardList(props) {
-    const { sideId } = useParams();
+function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
+    const {sideId} = useParams();
     const [boards, setBoards] = useState([]); // 데이터만 관리
     const [pInfo, setPInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -17,13 +17,18 @@ function BoardList(props) {
     const [keyword , setKeyword] = useState('');
     const [searchType , setSearchType] = useState('title');
 
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
+    const empSn = myInfo?.empSn;
+
     useEffect(() => {
+        console.log("BOardList 진입")
         fetchBoards();
     }, [sideId, currentPage, pageSize,keyword]);
 
     const fetchBoards = () => {
         setIsLoading(true);
-        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}`)
+        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}&empSn=${empSn}`)
+            /// `/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`
             .then(dd => {  // 데이터와 페이지 정보만 상태에 저장
                 setBoards(dd.boards || dd); 
                 setPInfo(dd.pInfo);
@@ -69,9 +74,9 @@ function BoardList(props) {
                 <button onClick={handleSearch}>검색</button>
             </div>
 
-            <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table border="1" >
                 <thead>
-                    <tr style={{ backgroundColor: '#f4f4f4' }}>
+                    <tr >
                         <th>문서번호</th>
                         <th>제목</th>
                         <th>작성일</th>
@@ -87,7 +92,7 @@ function BoardList(props) {
                                 <td>{st.boardId}</td>
                                 <td 
                                     onClick={() => goDetail(st.boardId)} 
-                                    style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                                    
                                 >
                                     {st.title}
                                 </td>
@@ -107,12 +112,12 @@ function BoardList(props) {
             </table>
 
             {/* 3. 하단 컨트롤 영역 */}
-            <div style={{ marginTop: '10px' }}>
+            <div >
                 <button onClick={() => props.goService('Insert')}>글쓰기</button>
             </div>
 
             {pInfo && (
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                <div >
                     <Pagination pInfo={pInfo} onPageChange={setCurrentPage} />
                 </div>
             )}

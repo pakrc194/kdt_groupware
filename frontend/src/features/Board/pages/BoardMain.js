@@ -14,10 +14,17 @@ function BoardMain(props) {
     //sideId가 바뀌는지 확인 하고 Service로 바꿔준다
     useEffect(() => {
            console.log("사이드메뉴가 바꼇어",sideId)
-           setService('list')
+
+           setService('list');
+
+        //    if (sideId === 'MyPosts') {
+        //     setService('MyPosts');
+        // } else {
+        //     setService('list');
+        // }
        }, [sideId]);
    
-
+    //      변수   , setter함수      변화시키는 값
     const [service, setService] = useState('list')
     const [boardId, setBoardId] = useState(2)
 
@@ -30,7 +37,7 @@ function BoardMain(props) {
             {service==='detail' && <Boarddetail goBoardId={setBoardId}  boardId={boardId} goService={setService}/>}
             {service==='Insert' && <BoardWrite goService={setService}/>}
             {service==='Modify' && <BoardModify boardId={boardId} goService={setService}/>}
-            {service==='MyPosts' && <MyBoardList boardId={boardId} goService={setService}/>}
+            {/* {service === 'MyPosts' && <MyBoardList goBoardId={setBoardId} goService={setService}/>} */}
         </>
     )
 }

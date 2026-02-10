@@ -51,7 +51,11 @@ export default function AppRouter() {
           <Route path="schedule/:sideId/calendar/detail/:id" element={<ScheduleDetail />} />
           <Route path="schedule/:sideId/detail/:id" element={<ScheduleDetail />} />
           <Route path="attendance/:sideId" element={<AttendanceMain />} />
+          
           <Route path="board/:sideId" element={<BoardMain />} />
+          {/* <Route path="board/:sideId/:empSn" element={<BoardMain />} /> */}
+
+
           <Route path="orgChart/:sideId" element={<OrgChartMain />} />
           <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
           <Route path="dashboard/:sideId" element={<DashboardMain />} />

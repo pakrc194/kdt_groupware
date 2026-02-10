@@ -19,8 +19,8 @@ public class BoardPrvc {
 	private Date createdAt ;
 	private int views;
 	private String creator;
-	private boolean isTop;
-	private String empNm;
+	private String isTop;// 상단 공지 등록
+	private String empNm; // 사원이름
 	
 	
 	private String temId;
