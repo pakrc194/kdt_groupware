@@ -85,11 +85,15 @@ function AccessList(props) {
     }
 
     const deleteAccess = async (e) => {
-        console.log('삭제 버튼 클릭 '+e)
+        console.log('삭제 버튼 클릭 '+e.accessType+", "+e.empowerId+", "+e.accessSection+", "+e.accessDetail)
         await fetcher('/gw/dashboard/delAccess', {
             method: 'POST',
             body: { 
-                accessEmpowerId: e
+                accessDeleteId: e.accessEmpowerId,
+                accessDeleteType: e.accessType, 
+                deleteEmpowerId: e.empowerId, 
+                accessDeleteSection: e.accessSection, 
+                accessDeleteDetail: e.accessDetail, 
             }
         });
         setIsDelete(!isDelete);
@@ -202,7 +206,8 @@ function AccessList(props) {
                                         <td style={styles.td}>{v.accessName}</td>
                                         <td style={styles.td}>
                                             {/* <button style={styles.smallBtn}>수정</button> */}
-                                            <button style={styles.deleteBtn} onClick={() => deleteAccess(v.accessEmpowerId)}>삭제</button>
+                                            <button style={styles.deleteBtn} onClick={() => {deleteAccess(v)
+                                            }}>삭제</button>
                                         </td>
                                     </tr>
                                 ))
