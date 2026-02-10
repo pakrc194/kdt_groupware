@@ -75,9 +75,14 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
         });
     };
 
+    useEffect(()=>{
+        console.log("child inputList", inputList);
+    },[inputList]);
 
     useEffect(()=> {
-        fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
+        if(inputList==null) {
+            fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
+        }
     },[docFormId])
 
 
@@ -93,15 +98,15 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                 
             </div>
             <div>
-                {inputList.map((v, k)=>
-                    <div key={k}>
+                {inputList.map(v=>(
+                    <div key={v.docInptVlId ?? v.docInptId}>
                         <InputForm drftDate={drftDate} setDrftDate={setDrftDate} 
                             inputList={inputList} setInputList={setInputList} inputForm={v} 
                             docLoc={docLoc} setDocLoc={setDocLoc}
                             docEmp={docEmp} setDocEmp={setDocEmp}
                             docRole={docRole} setDocRole={setDocRole}/>
                     </div>
-                )}
+                ))}
             </div>
 
 

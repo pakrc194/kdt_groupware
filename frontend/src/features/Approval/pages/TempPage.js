@@ -1,15 +1,17 @@
-import { useState } from "react";
-import Button from "../../../shared/components/Button";
-import FormListModal from "../components/modals/FormListModal";
-import DrftContent from "../components/DrftContent";
-import { useNavigate } from "react-router-dom";
-import { fetcher } from "../../../shared/api/fetcher";
-import CompListModal from "../components/modals/CompListModal";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Button from '../../../shared/components/Button';
+import { fetcher } from '../../../shared/api/fetcher';
+import RedrftContent from '../components/RedrftContent';
+import CompListModal from '../components/modals/CompListModal';
+import DrftContent from '../components/DrftContent';
 
-const DraftPage = () => {
+const TempPage = () => {
     const navigate = useNavigate();
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
-
+    const {docId} = useParams();
+    
+    const [aprvDocDetail, setAprvDocDetail] = useState({});
     const [docTitle, setDocTitle] = useState("");
     const [docLine, setDocLine] = useState([
         {
@@ -33,6 +35,43 @@ const DraftPage = () => {
     const [inputList, setInputList] = useState([]);
     const [formList, setFormList] = useState([]);
     
+    useEffect(() => {
+        if (!docId) return;
+
+        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList);
+
+        fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res => {
+            setAprvDocDetail(res);
+            setDocTitle(res.aprvDocTtl);
+        });
+    }, [docId]);
+    useEffect(() => {
+        fetcher("/gw/aprv/AprvDocFormList").then(setFormList);
+    }, []);
+    useEffect(() => {
+        if (!aprvDocDetail?.docFormId) return;
+        if (!formList?.length) return;
+
+        const ttForm = formList.find(v => v.docFormId === aprvDocDetail.docFormId);
+        setDocForm(ttForm); 
+    }, [aprvDocDetail?.docFormId, formList]);
+
+    useEffect(() => {
+    const formId = docForm?.docFormId;
+    if (!formId) return;
+
+    fetcher(`/gw/aprv/AprvDocFormLine/${formId}`)
+        .then(res => {
+        setDocLine(prev => {
+            const drafter = prev?.find(v => v.roleCd === "DRFT");
+            return drafter ? [drafter, ...res] : [...res];
+        });
+        })
+        .catch(e => console.log("fetch formLine : " + e));
+    }, [docForm?.docFormId]);
+
+
+
 
     const fn_formClick = () => {
         console.log("formClick")
@@ -123,15 +162,15 @@ const DraftPage = () => {
 
 
     return <>
-        <h4>전자결재 > 기안작성</h4>
+        <h4>전자결재 > 임시저장함</h4>
         <div className="draftForm basicForm" >
-            <div>문서 제목 <input type="text" name="docTitle" onChange={(e)=>setDocTitle(e.target.value)}/></div>
+            <div>문서 제목 <input type="text" name="docTitle" value={docTitle || ""} onChange={(e)=>setDocTitle(e.target.value)}/></div>
             <div>파일 첨부 <input type="file" name="docFile"/></div>
         </div>
         <br/>
         <div className="draftForm">
             <div>양식 선택 
-                <input type="text" name="docTitle" value={docForm.docFormNm} readOnly/>
+                <input type="text" name="docTitle" value={docForm?.docFormNm} readOnly/>
                 <Button variant="primary" onClick={fn_formClick}>양식 선택</Button>
                 {isFormOpen && 
                     <CompListModal onClose={fn_formClose} onOk={fn_formOk} itemList={formList} 
@@ -139,7 +178,7 @@ const DraftPage = () => {
             </div>
         </div>
         <br/>
-        {docForm.docFormType && <div className="draftForm">
+        {docForm?.docFormType && <div className="draftForm">
             <DrftContent docFormType={docForm.docFormType} docLine={docLine} docFormId={docForm.docFormId} setDocLine={setDocLine} 
                 inputList={inputList} setInputList={setInputList}
                 docLoc={docLoc} setDocLoc={setDocLoc}
@@ -152,4 +191,5 @@ const DraftPage = () => {
         </div>
     </>
 };
-export default DraftPage;
+
+export default TempPage;

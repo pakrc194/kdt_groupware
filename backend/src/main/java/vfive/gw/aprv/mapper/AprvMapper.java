@@ -104,4 +104,7 @@ public interface AprvMapper {
 			</script>
 			""")
 	int insertAtdcHist(@Param("empId")int empId, @Param("list")List<LocalDate> list);
+	
+	
+
 }

@@ -60,7 +60,7 @@ public interface AprvPostMapper {
 	@Insert("insert into APRV_DOC "
 			+ "(DRFT_EMP_ID, DOC_FORM_ID, APRV_DOC_NO, APRV_DOC_TTL, APRV_DOC_STTS, APRV_DOC_DRFT_DT, APRV_DOC_VER) "
 			+ "values "
-			+ "(#{drftEmpId}, #{docFormId}, #{aprvDocNo}, #{aprvDocTtl}, 'DRFT', #{aprvDocDrftDt}, #{aprvDocVer})")
+			+ "(#{drftEmpId}, #{docFormId}, #{aprvDocNo}, #{aprvDocTtl}, #{aprvDocStts}, #{aprvDocDrftDt}, #{aprvDocVer})")
 	@Options(useGeneratedKeys = true, keyProperty = "aprvDocId")
 	int insertAprvDoc(AprvDrftDocRequest req);
 	
@@ -94,4 +94,14 @@ public interface AprvPostMapper {
 	
 	@Select("select * from APRV_DOC where APRV_DOC_NO = #{docNo} ORDER BY APRV_DOC_VER DESC")
 	List<AprvDocVerListResponse> aprvDocVerList(AprvDocVerListRequest req);
+	
+	@Select("""
+			SELECT MAX(APRV_DOC_NO)
+			FROM APRV_DOC
+			WHERE APRV_DOC_NO LIKE CONCAT(#{prefix}, '-', #{year}, '-%')
+			""")
+			String selectMaxDocNo(
+			    @Param("prefix") String prefix,
+			    @Param("year") String year
+			);
 }

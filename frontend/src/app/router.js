@@ -21,6 +21,7 @@ import ApprovalDetail from "../features/Approval/pages/ApprovalDetail";
 import RedraftPage from "../features/Approval/pages/RedraftPage";
 import { useState } from "react";
 import RequireAuth from "./RequireAuth";
+import TempPage from "../features/Approval/pages/TempPage";
 
 export default function AppRouter() {
 
@@ -40,7 +41,8 @@ export default function AppRouter() {
           <Route path="approval/:sideId" element={<ApprovalMain />} />
           <Route path="approval/:sideId/:service" element={<ApprovalMain />} />
           <Route path="approval/:sideId/detail/:docId" element={<ApprovalDetail />} />
-          <Route path="approval/:sideId/:draft/:docId" element={<RedraftPage />} />
+          <Route path="approval/:sideId/redrft/:docId" element={<RedraftPage />} />
+          <Route path="approval/:sideId/temp/:docId" element={<TempPage />} />
 
 
           <Route path="schedule/:sideId" element={<ScheduleMain />} />
