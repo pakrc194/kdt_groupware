@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import "../css/HomeModProf.css";
+import styles from "../css/HomeModProf.module.css";
 import { fetcher } from "../../../shared/api/fetcher";
 import dayjs from "dayjs";
 
