@@ -9,9 +9,11 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 
+import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
+import vfive.gw.orgchart.dto.HRChangeHistDTO;
 import vfive.gw.orgchart.dto.JbttlInfo;
 
 @Mapper
@@ -51,10 +53,6 @@ public interface OrgchartMapper {
 			+ "from EMP_PRVC "
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id"
-//			+ "<if test = 'schFilter == JBTTL_NM'>"
-//			+ "select EMP_PRVC.*, DEPT_INFO.* "
-//			+ "from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
-//			+ "</if>"
 			+ "<where>"
 			+ "<if test = 'schValue != null'>"
 			+ "${schFilter} like concat('%', #{schValue}, '%')"
@@ -76,8 +74,8 @@ public interface OrgchartMapper {
 			before = true,
 			statement = "select count(*)+1 from EMP_PRVC where dept_id = #{deptId}"
 			)
-	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_SN, EMP_PSWD) "
-			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, "
+	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_JNCMP_YMD, EMP_SN, EMP_PSWD) "
+			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, #{empJncmpYmd}, "
 			+ "concat("
 			+ "(select dept_code from DEPT_INFO where dept_id = #{deptId}), "
 			+ "(LPAD(#{empId}, 4, '0'))"
@@ -87,7 +85,7 @@ public interface OrgchartMapper {
 	int registerEmp(EmpPrvc emp);
 	
 	@Update("UPDATE EMP_PRVC "
-			+ "SET emp_nm = #{empNm}, emp_birth = #{empBirth}, dept_id = #{deptId}, jbttl_id = #{jbttlId} "
+			+ "SET emp_nm = #{empNm}, dept_id = #{deptId}, jbttl_id = #{jbttlId} "
 			+ "WHERE emp_id = #{empId}")
 	int modifyEmp(EmpPrvc emp);
 	
@@ -95,4 +93,17 @@ public interface OrgchartMapper {
 			+ "SET EMP_ACNT_STTS = 'RETIRED', EMP_RSGNTN_YMD = now() "
 			+ "WHERE emp_id = #{empId}")
 	int deactivateEmp(EmpPrvc emp);
+	
+	@Select("select count(access_empower_id) from ACCESS_EMPOWER "
+			+ "where access_type = #{accessType} "
+			+ "and access_section = #{accessSection} "
+			+ "and empower_id = #{empowerId} "
+			+ "and access_detail = #{accessDetail}")
+	int acccessDeptCk(AccessEmpowerDTO dto);
+	
+	@Insert("insert into HR_CHANGE_HISTORY "
+			+ "set HIST_EMP_ID = #{histEmpId}, HIST_EMP_SN = #{histEmpSn}, HIST_EMP_NM = #{histEmpNm}, "
+			+ "BEFORE_NM = #{beforeNm}, BEFORE_DEPT_ID = #{beforeDeptId}, BEFORE_JBTTL_ID = #{beforeJbttlId}, "
+			+ "AFTER_NM = #{afterNm}, AFTER_DEPT_ID = #{afterDeptId}, AFTER_JBTTL_ID = #{afterJbttlId}, CHANGE_DATE = now()")
+	int modifyHist(HRChangeHistDTO dto);
 }

@@ -70,6 +70,7 @@ const styles = {
         borderBottom: '2px solid #ddd',
         fontWeight: 'bold',
         color: '#555',
+        width: '100px'
     },
     tr: {
         borderBottom: '1px solid #eee',

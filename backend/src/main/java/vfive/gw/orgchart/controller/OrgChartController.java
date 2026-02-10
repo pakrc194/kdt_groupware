@@ -8,12 +8,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
+import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
+import vfive.gw.orgchart.dto.HRChangeHistDTO;
 import vfive.gw.orgchart.dto.JbttlInfo;
 import vfive.gw.orgchart.mapper.OrgchartMapper;
 
@@ -77,8 +80,9 @@ public class OrgChartController {
 	// 사원 추가
 	@PostMapping("/register")
 	int registerEmp(@RequestBody EmpPrvc emp) {
-		System.out.println("계정 생성 시도");
+		System.out.println("계정 생성 시도 "+emp);
 		return orgchartMapper.registerEmp(emp);
+//		return 1;
 	}
 	
 	// 계정 정보 수정
@@ -86,6 +90,15 @@ public class OrgChartController {
 	int modifyEmp(@RequestBody EmpPrvc emp) {
 		System.out.println("계정 수정 시도 "+ emp);
 		return orgchartMapper.modifyEmp(emp);
+//		return 0;
+	}
+	
+	// 수정 정보 저장
+	@PostMapping("/modifyHist")
+	int modifyHist(@RequestBody HRChangeHistDTO dto) {
+		System.out.println("사원정보수정 히스토리 "+dto);
+		return orgchartMapper.modifyHist(dto);
+//		return 0;
 	}
 	
 	// 계정 비활성화
@@ -94,4 +107,23 @@ public class OrgChartController {
 		System.out.println("계정 비활성화 시도 "+ emp);
 		return orgchartMapper.deactivateEmp(emp);
 	}
+	
+	@GetMapping("access")
+	int accessCk(
+			@RequestParam("id") int id,
+			@RequestParam("section") String section,
+			@RequestParam("type") String type,
+			@RequestParam("accessId") int accessId) {
+		AccessEmpowerDTO dto = new AccessEmpowerDTO();
+		dto.setAccessType(type);	// 팀, 직책 구분
+		dto.setEmpowerId(id);	// 권한을 확인할 ID (팀 ID, 직책 ID)
+		dto.setAccessSection(section);	// 권한 확인 위치 (상단메뉴 중 하나)
+		dto.setAccessDetail(accessId);	// 상세 권한 ID
+		int ck = orgchartMapper.acccessDeptCk(dto);
+		System.out.println("권한 확인 "+ck+", "+dto);
+		
+		return ck;
+	}
+	
+
 }

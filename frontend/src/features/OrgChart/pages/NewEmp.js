@@ -6,14 +6,24 @@ const MemberRegistrationForm = () => {
     EMP_NM: '',
     EMP_BIRTH: '',
     DEPT_ID: '',
-    JBTTL_ID: ''
+    JBTTL_ID: '',
+    EMP_JNCMP_YMD: ''
   });
 
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
   const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+  const [accessCk, setAccessCk] = useState(0);
 
   useEffect(() => {
+    // 권한 확인용
+    fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=10`)
+    .then(dd => {
+      setAccessCk(dd)
+      console.log(dd)
+    })
+    .catch(e => console.log(e))
+
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
@@ -36,9 +46,10 @@ const MemberRegistrationForm = () => {
         method: 'POST',
         body: { 
           empNm: formData.EMP_NM,
-          empBirth: formData.EMP_BIRTH,
+          empBirth: formData.EMP_BIRTH.split("T")[0],
           deptId: formData.DEPT_ID,
-          jbttlId: formData.JBTTL_ID
+          jbttlId: formData.JBTTL_ID,
+          empJncmpYmd: formData.EMP_JNCMP_YMD 
         }
       });
 
@@ -65,7 +76,9 @@ const MemberRegistrationForm = () => {
   }
 
   // 부서번호 6(인사팀)만 접근 가능
-  if (myInfo.deptId != 6) {
+  // accessCk
+  // myInfo.deptId != 6
+  if (accessCk === 0) {
     return (
         <div style={{
             maxWidth: '400px',
@@ -128,6 +141,18 @@ const MemberRegistrationForm = () => {
           <option value="">직책을 선택하세요</option>
           {jbttlList.map(pos => <option key={pos.jbttlId} value={pos.jbttlId}>{pos.jbttlNm}</option>)}
         </select>
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>입사날짜</label>
+        <input 
+          type="date" 
+          name="EMP_JNCMP_YMD"
+          style={styles.input}
+          value={formData.EMP_JNCMP_YMD}
+          // onChange={handleChange}
+          onChange={e => setFormData({...formData, EMP_JNCMP_YMD: e.target.value})}
+        />
       </div>
 
       <div style={styles.buttonGroup}>

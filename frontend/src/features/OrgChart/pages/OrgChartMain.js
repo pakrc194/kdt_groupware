@@ -79,7 +79,7 @@ const styles = {
         border: '1px solid #ccc',
         borderRadius: '4px',
         fontSize: '14px',
-        minWidth: '200px',
+        width: '200px',
     },
     submitBtn: {
         padding: '8px 15px',

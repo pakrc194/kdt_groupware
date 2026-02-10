@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import vfive.gw.dashboard.di.AccessEmpowerList;
 import vfive.gw.dashboard.di.AccessList;
 import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
+import vfive.gw.dashboard.dto.response.AccessDeleteDTO;
 import vfive.gw.dashboard.dto.response.AddAccessEmpower;
 import vfive.gw.dashboard.mapper.AccessListMapper;
 import vfive.gw.dashboard.mapper.AddAccessEmpowerMapper;
@@ -48,8 +49,9 @@ public class AccessController {
 	AccessListMapper empowerListMapper;
 	
 	@PostMapping("/delAccess")
-	int accessEmpowerDelete(@RequestBody AccessEmpowerDTO dto) {
+	int accessEmpowerDelete(@RequestBody AccessDeleteDTO dto) {
 		System.out.println(dto);
+		empowerListMapper.accessDeleteLog(dto);
 		return empowerListMapper.accessEmpowerDelete(dto);
 //		return 0;
 	}

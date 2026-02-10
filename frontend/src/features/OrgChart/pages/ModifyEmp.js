@@ -6,9 +6,10 @@ const ModifyEmp = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get('id');
   const navigate = useNavigate();
+  const [empData, setEmpData] = useState([])
   const [formData, setFormData] = useState({
     EMP_NM: '',
-    EMP_BIRTH: '',
+    // EMP_BIRTH: '',
     DEPT_ID: '',
     JBTTL_ID: ''
   });
@@ -18,6 +19,7 @@ const ModifyEmp = () => {
   const [jbttlList, setJbttlList] = useState([]);
 
   useEffect(() => {
+    console.log('정보수정 '+id)
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
@@ -32,9 +34,11 @@ const ModifyEmp = () => {
 
     fetcher(`/gw/orgChart/detail/${id}`)
     .then(dd => {
+      console.log(dd)
+      setEmpData(dd)
       setFormData({
           EMP_NM: dd.EMP_NM,
-          EMP_BIRTH: dd.EMP_BIRTH.split("T")[0],
+          // EMP_BIRTH: dd.EMP_BIRTH.split("T")[0],
           DEPT_ID: dd.DEPT_ID,
           JBTTL_ID: dd.JBTTL_ID
       });
@@ -45,31 +49,41 @@ const ModifyEmp = () => {
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
     alert(`${formData.EMP_NM} 정보 수정 완료`);
-
+    console.log(empData)
     try {
+      // 사원 정보 수정
       await fetcher('/gw/orgChart/modifyInfo', {
         method: 'POST',
         body: { 
           empId: id,
           empNm: formData.EMP_NM,
-          empBirth: formData.EMP_BIRTH,
           deptId: formData.DEPT_ID,
           jbttlId: formData.JBTTL_ID
         }
       });
 
+      // 수정된 정보를 HIST 테이블에 기록
+      await fetcher('/gw/orgChart/modifyHist', {
+        method: 'POST',
+        body: { 
+          // empData
+          histEmpId: id,
+          histEmpSn: empData.EMP_SN,
+          histEmpNm: empData.EMP_NM,
+          beforeNm: empData.EMP_NM,
+          beforeDeptId: empData.DEPT_ID,
+          beforeJbttlId: empData.JBTTL_ID,
+          afterNm: formData.EMP_NM,
+          afterDeptId: formData.DEPT_ID,
+          afterJbttlId: formData.JBTTL_ID
+        }
+      });
+
     } catch (err) {
-        console.error('계정 생성 실패:', err.message);
+        console.error('계정 정보 수정 실패:', err.message);
     }
     navigate(-1)
   };
-
-  
-
-  // 부서번호 6(인사팀)만 접근 가능
-  if (myInfo.deptId != 6) {
-      return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
-  }
 
   return (
     <div style={styles.container}>
@@ -87,7 +101,7 @@ const ModifyEmp = () => {
         />
       </div>
 
-      <div style={styles.formGroup}>
+      {/* <div style={styles.formGroup}>
         <label style={styles.label}>생년월일</label>
         <input 
           type="date" 
@@ -97,7 +111,7 @@ const ModifyEmp = () => {
           // onChange={handleChange}
           onChange={e => setFormData({...formData, EMP_BIRTH: e.target.value})}
         />
-      </div>
+      </div> */}
 
       <div style={styles.formGroup}>
         <label style={styles.label}>팀</label>

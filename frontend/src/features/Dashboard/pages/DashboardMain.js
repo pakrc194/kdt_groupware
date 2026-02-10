@@ -3,6 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import AccessList from './AccessList';
 import CompDashboard from './CompDashboard';
+import HRDashboard from './HrDashboard';
 
 function DashboardMain(props) {
     const { sideId } = useParams();
@@ -12,6 +13,8 @@ function DashboardMain(props) {
         switch(sideId) {
             case 'aaa':
                 return <CompDashboard />
+            case 'bbb':
+                return <HRDashboard />
             case 'ddd':
                 return <AccessList />
             default :
