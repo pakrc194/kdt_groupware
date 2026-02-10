@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, Link, useParams, useSearchParams } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 
 function TeamEmpList(props) {
     const [data, setData] = useState([]);
     const [deptData, setDeptData] = useState('');
-    const [deptmname, setDeptName] = useState('');
+    // const [deptmname, setDeptName] = useState('');
     
     useEffect(() => {
         fetcher(`/gw/orgChart/teamList/${props.code}`)
@@ -18,9 +18,9 @@ function TeamEmpList(props) {
         .catch(e => console.log(e))
     }, [props.code]);
 
-    useEffect(() => {
-        setDeptName(deptData.deptName);
-    }, [deptData])
+    // useEffect(() => {
+    //     setDeptName(deptData.deptName);
+    // }, [deptData])
     
     return (
         <div style={styles.container}>
@@ -82,6 +82,7 @@ const styles = {
         borderBottom: '2px solid #ddd',
         fontWeight: 'bold',
         color: '#555',
+        width: '100px'
     },
     tr: {
         borderBottom: '1px solid #eee',

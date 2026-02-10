@@ -43,6 +43,7 @@ function AccessList(props) {
         fetcher('/gw/dashboard/accessEmpowerList')
         .then(dd => {
             setAccessEmpowerList(Array.isArray(dd) ? dd : [dd])
+            console.log(dd)
         })
         .catch(err => console.error('권한 부여 리스트 로딩 실패', err));
     }, [])

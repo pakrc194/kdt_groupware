@@ -8,15 +8,33 @@ function DetailEmp() {
     const navigate = useNavigate();
     // 로그인 정보
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+    const [modify, setModify] = useState(0);
+    const [deact, setDeact] = useState(0);
     
     useEffect(() => {
+        // 정보 수정 권한
+        fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=11`)
+        .then(dd => {
+            setModify(dd)
+            console.log(dd)
+        })
+        .catch(e => console.log(e))
+
+        // 계정 비활성화 권한
+        fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=13`)
+        .then(dd => {
+            setDeact(dd)
+            console.log(dd)
+        })
+        .catch(e => console.log(e))
+
         fetcher(`/gw/orgChart/detail/${id}`)
             .then(dd => setData(dd))
             .catch(e => console.log(e))
     }, [id]);
 
     const modifyInfo = () => {
-        navigate(`../../modify?id=${id}`);
+        navigate(`/orgChart/modify?id=${id}`);
     }
 
     const retired = async () => {
@@ -96,15 +114,15 @@ function DetailEmp() {
             </table>
 
             <div style={styles.buttonGroup}>
-                <button style={styles.backBtn} onClick={() => navigate(-1)}>뒤로</button>
-
-                {/* 인사팀 권한 */}
-                {myInfo.deptId == 6 && (
-                    <>
-                        <button style={styles.modifyBtn} onClick={modifyInfo}>정보수정</button>
-                        <button style={styles.deactivateBtn} onClick={retired}>비활성화</button>
-                    </>
+                {/* 수정 권한 */}
+                {modify > 0 && (
+                    <button style={styles.modifyBtn} onClick={modifyInfo}>정보수정</button>
                 )}
+                {/* 비활성화 권한 */}
+                {deact > 0 && (
+                    <button style={styles.deactivateBtn} onClick={retired}>비활성화</button>
+                )}
+                <button style={styles.backBtn} onClick={() => navigate(-1)}>뒤로</button>
             </div>
         </div>
     );

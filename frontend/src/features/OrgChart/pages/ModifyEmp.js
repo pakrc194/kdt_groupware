@@ -18,6 +18,7 @@ const ModifyEmp = () => {
   const [jbttlList, setJbttlList] = useState([]);
 
   useEffect(() => {
+    console.log('정보수정 '+id)
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
@@ -52,7 +53,7 @@ const ModifyEmp = () => {
         body: { 
           empId: id,
           empNm: formData.EMP_NM,
-          empBirth: formData.EMP_BIRTH,
+          empBirth: formData.EMP_BIRTH.split("T")[0],
           deptId: formData.DEPT_ID,
           jbttlId: formData.JBTTL_ID
         }
@@ -63,13 +64,6 @@ const ModifyEmp = () => {
     }
     navigate(-1)
   };
-
-  
-
-  // 부서번호 6(인사팀)만 접근 가능
-  if (myInfo.deptId != 6) {
-      return <div style={{ color: 'red', fontWeight: 'bold' }}><h1>권한이 없습니다</h1></div>;
-  }
 
   return (
     <div style={styles.container}>

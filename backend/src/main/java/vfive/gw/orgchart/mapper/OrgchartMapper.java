@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
 
+import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
@@ -51,10 +52,6 @@ public interface OrgchartMapper {
 			+ "from EMP_PRVC "
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id"
-//			+ "<if test = 'schFilter == JBTTL_NM'>"
-//			+ "select EMP_PRVC.*, DEPT_INFO.* "
-//			+ "from EMP_PRVC join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
-//			+ "</if>"
 			+ "<where>"
 			+ "<if test = 'schValue != null'>"
 			+ "${schFilter} like concat('%', #{schValue}, '%')"
@@ -95,4 +92,11 @@ public interface OrgchartMapper {
 			+ "SET EMP_ACNT_STTS = 'RETIRED', EMP_RSGNTN_YMD = now() "
 			+ "WHERE emp_id = #{empId}")
 	int deactivateEmp(EmpPrvc emp);
+	
+	@Select("select count(access_empower_id) from ACCESS_EMPOWER "
+			+ "where access_type = #{accessType} "
+			+ "and access_section = #{accessSection} "
+			+ "and empower_id = #{empowerId} "
+			+ "and access_detail = #{accessDetail}")
+	int acccessDeptCk(AccessEmpowerDTO dto);
 }

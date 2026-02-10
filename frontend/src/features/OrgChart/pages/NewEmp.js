@@ -12,8 +12,17 @@ const MemberRegistrationForm = () => {
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
   const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+  const [accessCk, setAccessCk] = useState(0);
 
   useEffect(() => {
+    // 권한 확인용
+    fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=10`)
+    .then(dd => {
+      setAccessCk(dd)
+      console.log(dd)
+    })
+    .catch(e => console.log(e))
+
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
@@ -36,7 +45,7 @@ const MemberRegistrationForm = () => {
         method: 'POST',
         body: { 
           empNm: formData.EMP_NM,
-          empBirth: formData.EMP_BIRTH,
+          empBirth: formData.EMP_BIRTH.split("T")[0],
           deptId: formData.DEPT_ID,
           jbttlId: formData.JBTTL_ID
         }
@@ -65,7 +74,9 @@ const MemberRegistrationForm = () => {
   }
 
   // 부서번호 6(인사팀)만 접근 가능
-  if (myInfo.deptId != 6) {
+  // accessCk
+  // myInfo.deptId != 6
+  if (accessCk === 0) {
     return (
         <div style={{
             maxWidth: '400px',

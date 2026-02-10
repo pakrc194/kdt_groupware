@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
+import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
@@ -93,5 +95,23 @@ public class OrgChartController {
 	int deactivateEmp(@RequestBody EmpPrvc emp) {
 		System.out.println("계정 비활성화 시도 "+ emp);
 		return orgchartMapper.deactivateEmp(emp);
+	}
+	
+	@GetMapping("access")
+	int accessCk(
+			@RequestParam("id") int id,
+			@RequestParam("section") String section,
+			@RequestParam("type") String type,
+			@RequestParam("accessId") int accessId) {
+		AccessEmpowerDTO dto = new AccessEmpowerDTO();
+		dto.setAccessType(type);	// 팀, 직책 구분
+		dto.setEmpowerId(id);	// 권한을 확인할 ID (팀 ID, 직책 ID)
+		dto.setAccessSection(section);	// 권한 확인 위치 (상단메뉴 중 하나)
+		dto.setAccessDetail(accessId);	// 상세 권한 ID
+		int ck = orgchartMapper.acccessDeptCk(dto);
+		System.out.println("권한 확인 "+ck+", "+dto);
+		
+//		orgchartMapper.acccessCk(dto);
+		return ck;
 	}
 }
