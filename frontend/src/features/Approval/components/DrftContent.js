@@ -5,8 +5,10 @@ import AttendCheckModal from './modals/AttendCheckModal';
 import EditAprvLine from './modals/EditAprvLine';
 import { fetcher } from '../../../shared/api/fetcher';
 import InputForm from './InputForm';
+import { useParams } from 'react-router-dom';
 
 const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc, docEmp, setDocEmp}) => {
+    const {sideId} = useParams();
     const ORDER = {
         DRFT: 0,
         DRFT_REF: 1,
@@ -80,8 +82,13 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
     },[inputList]);
 
     useEffect(()=> {
-        if(inputList==null) {
+        
+        if(sideId == "draft") {
             fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
+        } else {
+            if(inputList==null) {
+                fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
+            }
         }
     },[docFormId])
 
@@ -98,8 +105,8 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                 
             </div>
             <div>
-                {inputList.map(v=>(
-                    <div key={v.docInptVlId ?? v.docInptId}>
+                {inputList.map((v,k)=>(
+                    <div key={k}>
                         <InputForm drftDate={drftDate} setDrftDate={setDrftDate} 
                             inputList={inputList} setInputList={setInputList} inputForm={v} 
                             docLoc={docLoc} setDocLoc={setDocLoc}

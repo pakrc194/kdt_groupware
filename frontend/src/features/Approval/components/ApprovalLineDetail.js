@@ -86,7 +86,9 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 : item
             )
         );
-
+        
+        alert("결재 완료")
+        
         navigate(0);
     }
 
@@ -141,6 +143,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 schedAuthorId : myInfo.empId,
                 schedDeptId : deptId
             }
+        }).then(res => {
+            alert("일정 등록 완료")
         })
     }
     const fn_attendCheck = () => {
@@ -160,6 +164,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 docStart: docStart,
                 docEnd: docEnd,
             }
+        }).then(res => {
+            alert("근태 등록 완료")
         })
     }
 

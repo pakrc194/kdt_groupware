@@ -14,6 +14,7 @@ const DraftPage = () => {
     const [docLine, setDocLine] = useState([
         {
             aprvPrcsEmpId:myInfo.empId,
+            aprvPrcsEmpNm:myInfo.empNm,
             roleCd:"DRFT",
             roleSeq:"0"
         }
@@ -88,10 +89,12 @@ const DraftPage = () => {
             }
         ).then(res=>{
             console.log(res)
+            alert("기안 작성 완료")
+            navigate("/approval/draftBox")
         })
 
 
-        //navigate("/approval/draftBox")
+        
     }
 
     const fn_drftCancel = () => {
@@ -118,6 +121,7 @@ const DraftPage = () => {
             }
         ).then(res=>{
             console.log(res)
+            alert("임시저장 완료")
         })
     }
 

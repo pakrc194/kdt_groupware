@@ -20,14 +20,13 @@ public class AprvDutyScheDtl {
 		System.out.println("AprvDutyScheDtl "+req);
 		List<AprvDutyScheDtlResponse> list = new ArrayList<>();
 		for(Integer id : req.getIds()) {
-			list = new ArrayList<>();
-			mapper.dutyScheDtl(id, req.getDeptId(), req.getDocStart(), req.getDocEnd());
+			list = mapper.dutyScheDtl(id, req.getDeptId(), req.getDocStart(), req.getDocEnd());
 			System.out.println("AprvDutyScheDtl "+id+" "+list);
-			if(list.size()>0) {
+			if(!list.isEmpty()) {
 				res.add(list);
 			}
 		}
-		
+		System.out.println("res : "+res);
 		
 		return res;
 	}

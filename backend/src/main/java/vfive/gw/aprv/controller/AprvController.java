@@ -28,6 +28,7 @@ import vfive.gw.aprv.dto.request.AprvParams;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
 import vfive.gw.aprv.dto.request.AprvSchedRequest;
 import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
+import vfive.gw.aprv.dto.request.AprvTempDeleteRequest;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
@@ -41,6 +42,7 @@ import vfive.gw.aprv.service.AprvLocList;
 import vfive.gw.aprv.service.AprvPrcs;
 import vfive.gw.aprv.service.AprvSchedList;
 import vfive.gw.aprv.service.AprvSchedUpload;
+import vfive.gw.aprv.service.AprvTempDelete;
 
 @RestController
 @RequestMapping("/gw/aprv")
@@ -119,6 +121,11 @@ public class AprvController {
 	@PostMapping("/AprvDrftTemp")
 	Object aprvDrftTemp(@RequestBody AprvDrftTempRequest req) {
 		return provider.getContext().getBean(AprvDrftTemp.class).load(req);
+	}
+	@PostMapping("/AprvTempDelete")
+	Object aprvTempDelete(@RequestBody AprvTempDeleteRequest req) {
+		
+		return provider.getContext().getBean(AprvTempDelete.class).load(req);
 	}
 	
 	
