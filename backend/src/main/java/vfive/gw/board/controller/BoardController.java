@@ -56,7 +56,7 @@ public class BoardController {
         		"boards", boards,
         		"pInfo", pInfo
         		);
-        
+        System.out.println("res 데이터  확인"+res);
         return ResponseEntity.ok(res);
     }
     
@@ -79,7 +79,9 @@ public class BoardController {
         } else {
             return ResponseEntity.notFound().build();
         }
+        System.out.println("board 정보 확인" +board);
     }
+    
     
     @PostMapping("/insertWithFile")
     public ResponseEntity<?> createBoard(

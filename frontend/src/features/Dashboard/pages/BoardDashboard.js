@@ -5,11 +5,15 @@ import BoardMain from '../../Board/pages/BoardMain copy';
 
 function BorderDash (props){
     const [borderDash , setBorderDash ] = useState([]);
+    const [boardPosts , setBoardPosts ];
     const [] = useState([]);
 
     useEffect(()=>{
-
-    })
+        fetcher('/board/{sideId}')
+        .then(dd=>{
+            setBoardPosts (dd);
+        })
+    },[])
 
 
 
@@ -17,7 +21,8 @@ function BorderDash (props){
     return
     <>
         <h1>게시판 대시보드</h1>
-        {boardTitles}
+        
+        
     </>
         
 }
