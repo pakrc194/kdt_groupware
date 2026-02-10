@@ -16,6 +16,7 @@ import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
+import vfive.gw.orgchart.dto.HRChangeHistDTO;
 import vfive.gw.orgchart.dto.JbttlInfo;
 import vfive.gw.orgchart.mapper.OrgchartMapper;
 
@@ -89,6 +90,15 @@ public class OrgChartController {
 	int modifyEmp(@RequestBody EmpPrvc emp) {
 		System.out.println("계정 수정 시도 "+ emp);
 		return orgchartMapper.modifyEmp(emp);
+//		return 0;
+	}
+	
+	// 수정 정보 저장
+	@PostMapping("/modifyHist")
+	int modifyHist(@RequestBody HRChangeHistDTO dto) {
+		System.out.println("사원정보수정 히스토리 "+dto);
+		return orgchartMapper.modifyHist(dto);
+//		return 0;
 	}
 	
 	// 계정 비활성화
@@ -112,7 +122,8 @@ public class OrgChartController {
 		int ck = orgchartMapper.acccessDeptCk(dto);
 		System.out.println("권한 확인 "+ck+", "+dto);
 		
-//		orgchartMapper.acccessCk(dto);
 		return ck;
 	}
+	
+
 }

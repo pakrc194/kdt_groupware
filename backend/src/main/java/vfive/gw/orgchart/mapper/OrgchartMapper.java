@@ -13,6 +13,7 @@ import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.orgchart.dto.EmpSearchReq;
+import vfive.gw.orgchart.dto.HRChangeHistDTO;
 import vfive.gw.orgchart.dto.JbttlInfo;
 
 @Mapper
@@ -84,7 +85,7 @@ public interface OrgchartMapper {
 	int registerEmp(EmpPrvc emp);
 	
 	@Update("UPDATE EMP_PRVC "
-			+ "SET emp_nm = #{empNm}, emp_birth = #{empBirth}, dept_id = #{deptId}, jbttl_id = #{jbttlId} "
+			+ "SET emp_nm = #{empNm}, dept_id = #{deptId}, jbttl_id = #{jbttlId} "
 			+ "WHERE emp_id = #{empId}")
 	int modifyEmp(EmpPrvc emp);
 	
@@ -99,4 +100,10 @@ public interface OrgchartMapper {
 			+ "and empower_id = #{empowerId} "
 			+ "and access_detail = #{accessDetail}")
 	int acccessDeptCk(AccessEmpowerDTO dto);
+	
+	@Insert("insert into HR_CHANGE_HISTORY "
+			+ "set HIST_EMP_ID = #{histEmpId}, HIST_EMP_SN = #{histEmpSn}, HIST_EMP_NM = #{histEmpNm}, "
+			+ "BEFORE_NM = #{beforeNm}, BEFORE_DEPT_ID = #{beforeDeptId}, BEFORE_JBTTL_ID = #{beforeJbttlId}, "
+			+ "AFTER_NM = #{afterNm}, AFTER_DEPT_ID = #{afterDeptId}, AFTER_JBTTL_ID = #{afterJbttlId}, CHANGE_DATE = now()")
+	int modifyHist(HRChangeHistDTO dto);
 }
