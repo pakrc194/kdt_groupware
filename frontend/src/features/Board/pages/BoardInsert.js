@@ -8,6 +8,7 @@ function BoardInsert(props) {
     const [content, setContent] = useState('');
     const [creator, setCreator] = useState('testUser'); // 실제론 로그인 정보 사용
     const [selectedFiles ,setSelectedFiles] = useState([]);
+    const [isTop , setIsTop ] = useState(false);
 
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     const loginUserSn = myInfo?.empSn;
@@ -24,7 +25,8 @@ function BoardInsert(props) {
             title: title,
             content: content,
             creator: loginUserSn,
-            boardType: sideId // 중요: 현재 게시판 유형 전달
+            boardType: sideId, // 중요: 현재 게시판 유형 전달
+            isTop: isTop  // 체크박스에 체크하면 '1' , 아니면 '0'
         };
 
         formData.append("board", new Blob([JSON.stringify(boardData)], { type: "application/json" }));
@@ -58,7 +60,7 @@ function BoardInsert(props) {
         <>
             <h2>게시글 작성</h2>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                <div className="primary-btn">
                     <label>제목</label>
                     <input 
                         type="text" 
@@ -66,7 +68,15 @@ function BoardInsert(props) {
                         onChange={(e) => setTitle(e.target.value)} 
                         required 
                     />
-                     {sideId ==='important' && (<input type='checkbox'/>)} 
+                    {/* 
+                    setTitle(v) {
+                        title = v
+                    }
+                    */}
+                     {sideId ==='important' && <div>상단공지등록<input type='checkbox'
+                        checked={isTop}
+                        onChange={(e) => setIsTop(e.target.checked)}
+                     /></div>} 
                 </div>
 
                 <div>
@@ -92,7 +102,11 @@ function BoardInsert(props) {
                 </div>
                 <div className="Insert-actions">
                     <button type="submit">등록</button>
-                    <button type="button" onClick={() => props.goService('list')}>취소</button>
+                    <button type="button" onClick={() => {
+                        if(window.confirm("작성 중인 글이 저장 되지 않고 취소 됩니다")){
+                            props.goService('list');
+                        }
+                    }}>취소</button>
                 </div>
             </form>
         </>

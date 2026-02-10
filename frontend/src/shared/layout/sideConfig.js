@@ -82,6 +82,7 @@ export const SIDE_CONFIG = {
       { id: "bbb", name: "인사팀 대시보드" },
       { id: "ccc", name: "시설자재팀 대시보드" },
       { id: "ddd", name: "권한 목록" },
+      { id: "eee", name: "공지게시판" },
     ],
   },
   home: {

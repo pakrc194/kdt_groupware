@@ -77,7 +77,7 @@ function BoardDetail(props) {
     }
 
 
-    const isOwner = String(board.creator) === String(loginUserSn);
+    // const isOwner = String(board.creator) === String(loginUserSn);
 
 
 

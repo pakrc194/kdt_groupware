@@ -1,12 +1,14 @@
 import React, { useEffect,useState } from "react";
+import { useParams } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
 
 function BoardModify(props){
+    const { sideId } = useParams();
     const [title, setTitle] = useState('');
     const [content,setContent] = useState('');
     const [newFiles, setNewFiles] = useState([]);
     const [oldFiles, setOldFiles] = useState([]);
-
+    const [isTop , setIsTop ] = useState(false);
 
     useEffect(() => {
         console.log("수정할 게시글 ID :", props.boardId);
@@ -47,6 +49,7 @@ function BoardModify(props){
         const mobifyBoard ={
             title: title,
             content: content,
+            isTop: isTop,
             boardId: props.boardId
         }
         console.log("수정 데이터 확인",'ModifyBut')
@@ -76,7 +79,13 @@ function BoardModify(props){
                 <h1>게시글 수정</h1>
                 <div>제목
                     <input type="text" value={title || ''} onChange={(e)=>setTitle(e.target.value)}/>
+
+                    {sideId ==='important' && <div>상단공지등록<input type='checkbox'
+                        checked={isTop}
+                        onChange={(e) => setIsTop(e.target.checked)}
+                     /></div>}
                 </div>
+                
                 <div>내용
                     <textarea type="text" value={content || ''} onChange={(e)=>setContent(e.target.value)}/>
                 </div>

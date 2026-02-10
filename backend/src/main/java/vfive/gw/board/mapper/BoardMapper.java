@@ -29,53 +29,42 @@ public interface BoardMapper {
     
     
     
-    /**
-     * 전체 게시물 목록 조회 (페이징)
-     */
+    /*전체 게시물 목록 조회 (페이징)*/
     @Select("SELECT * FROM Board ORDER BY BoardId DESC LIMIT #{start}, #{cnt} , #{empSn}")
     List<BoardPrvc> list(PageInfo pInfo);
     
     
-
-    /**
-     * 게시물 상세 조회
-     */
+    /* 게시물 상세 조회 */
     @Select("SELECT * FROM Board WHERE BoardId = #{boardId}")
     BoardPrvc detail(@Param("boardId") int boardId);
     
-    /**
-     * 조회수 증가
-     */
+    /* 조회수 증가 */
     @Update("UPDATE Board SET Views = Views + 1 WHERE BoardId = #{boardId}")
     int incrementViews(@Param("boardId") int boardId);
     
-    /**
-     * 게시물 등록 (자동 증가 ID)
-     */
+    /* 게시물 등록 (자동 증가 ID)*/
     @SelectKey(
         keyProperty = "boardId",
         resultType = Integer.class,
         before = true,
         statement = "SELECT IFNULL(MAX(BoardId), 0) + 1 FROM Board"
     )
+    
+    
     @Insert("INSERT INTO Board " +
             "(BoardId, BoardType, Title, Content, CreatedAt, Views, Creator, IsTop) " +
             "VALUES " +
             "(#{boardId}, #{boardType}, #{title}, #{content}, NOW(), 0, #{creator}, #{isTop})")
     int insertKey(BoardPrvc dto);
     
-    /**
-     * 게시물 등록 (일반)
-     */
+    /*게시물 등록 (일반) */
     @Insert("INSERT INTO Board " +
             "(BoardType, Title, Content, CreatedAt, Views, Creator, IsTop) " +
             "VALUES " +
             "(#{boardType}, #{title}, #{content}, NOW(), #{views}, #{creator}, #{isTop})")
     int insert(BoardPrvc dto);
     
-    /**
-     * 게시물 수정
-     */
+    /* 게시물 수정*/
     @Update("UPDATE Board SET " +
             "Title = #{title}, " +
             "Content = #{content}, " +
@@ -83,19 +72,13 @@ public interface BoardMapper {
             "WHERE BoardId = #{boardId}")
     int update(BoardPrvc dto);
     
-    /**
-     * 게시물 삭제
-     */
+    /*게시물 삭제*/
     @Delete("DELETE FROM Board WHERE BoardId = #{boardId}")
     int delete(@Param("boardId") int boardId);
     
     
-    
-   
 
-        /**
-         * 조건별 게시물 수 조회
-         */
+    /* 조건별 게시물 수 조회*/
         @Select("<script>" +
                 "SELECT COUNT(*) FROM Board " +
                 "WHERE BoardType = #{sideId} " +
@@ -124,10 +107,16 @@ public interface BoardMapper {
         
         
 
-        /*** 조건별 목록 조회* 작성자 이름 조회하기*/
+        /* 조건별 목록 조회* 작성자 이름 조회하기*/
         @Select("<script>" +
-                "SELECT Board.*, EMP_NM FROM Board , EMP_PRVC  " +
-                "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN " +
+        		// 상단공지글 처리 
+        		" (SELECT Board.*, EMP_NM FROM Board, EMP_PRVC " +
+                "  WHERE BoardType = #{sideId} AND Board.Creator = EMP_PRVC.EMP_SN AND IsTop = 1) " + // 1. 모든 공지글 가져오기
+                " UNION ALL " +
+        		
+        		// 일반글 페이징 처리
+        		"SELECT Board.*, EMP_NM FROM Board , EMP_PRVC  " +
+                "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN  and IsTop = 0" +
                 "<if test='keyword != null and keyword != \"\"'>" +
                     "<choose>" +
                     "  <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
@@ -142,7 +131,7 @@ public interface BoardMapper {
     
     
     
-    /**작성자별 게시물 목록 조회(내가 쓴 게시물 조회)*/
+    /*작성자별 게시물 목록 조회(내가 쓴 게시물 조회)*/
         @Select("SELECT b.*, e.EMP_NM as empNm "+
                 "FROM Board b " +
                 "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN "+
@@ -159,7 +148,7 @@ public interface BoardMapper {
     	"VALUES (#{boardId},#{originName},#{savedPath},#{fileSize})")
     	int insertFile(BoardPrvc file);
 
- // 특정 게시글의 파일 목록 조회
+    // 특정 게시글의 파일 목록 조회
     @Select("SELECT * FROM BoardFile WHERE BoardId = #{boardId}")
     List<BoardPrvc> selectFilesByBoardId(int boardId);
 
@@ -172,7 +161,8 @@ public interface BoardMapper {
 
 
 
-
+   
+    
 
 
 

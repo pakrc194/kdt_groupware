@@ -38,9 +38,7 @@ public class BoardController {
     @Autowired
     private BoardMapper boardMapper;
     
-    /**
-     * 게시판 목록 조회 (페이징, 검색 포함)
-     */
+    /* 게시판 목록 조회 (페이징, 검색 포함) */
     @GetMapping("{sideId}")
     public ResponseEntity<Map<String,Object>> getBoards(
     		PageInfo pInfo) {
@@ -58,13 +56,18 @@ public class BoardController {
         		"boards", boards,
         		"pInfo", pInfo
         		);
-        
+        System.out.println("res 데이터  확인"+res);
         return ResponseEntity.ok(res);
     }
     
-    /**
-     * 게시물 상세 조회
-     */
+    
+//    /*상단공지 체크박스 체크 여부 확인*/
+//    @GetMapping ("{isTop}")
+//    public ResponseEntity<Map<String,Object>>
+    
+    
+    
+    /* 게시물 상세 조회*/
     @GetMapping("/detail/{boardId}")
     public ResponseEntity<BoardPrvc> getBoard(@PathVariable("boardId") int boardId) {
         BoardPrvc board = boardMapper.detail(boardId);
@@ -76,11 +79,10 @@ public class BoardController {
         } else {
             return ResponseEntity.notFound().build();
         }
+        System.out.println("board 정보 확인" +board);
     }
     
     
-    
- 
     @PostMapping("/insertWithFile")
     public ResponseEntity<?> createBoard(
             @RequestPart("board") BoardPrvc board,
@@ -112,10 +114,9 @@ public class BoardController {
         
         return ResponseEntity.ok(Map.of("success", result > 0));
     }
+    
 
-    /**
-     * 파일 다운로드
-     */
+    /*파일 다운로드*/
     @GetMapping("/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") int fileId) {
         try {
@@ -181,10 +182,7 @@ public class BoardController {
     
     
     
-    
-    /**
-     * 게시물 등록
-     */
+    /* 게시물 등록*/
     @PostMapping("/Insert") //리액트 fetch 주소와 일치 시켜야함
     public ResponseEntity<Map<String, Object>> createBoard(
             @RequestBody BoardPrvc board) {
@@ -218,9 +216,7 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
     
-    /**
-     * 게시물 삭제
-     */
+    /**게시물 삭제 */
     @DeleteMapping("/detail/{boardId}")
     public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("boardId") int boardId) {
         int result = boardMapper.delete(boardId);
@@ -256,12 +252,12 @@ public class BoardController {
 //        
 //        return ResponseEntity.ok(res);
 //    }
-    @GetMapping("/MyPosts/{userId}")
+    @GetMapping("/MyPosts")
     public ResponseEntity<Map<String, Object>> getMyBoards(
-            @PathVariable("userId") String userId,
+    		@RequestParam("empSn") String empSn,
             @RequestParam(value = "pNo" ,defaultValue = "1") int pNo,
             @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
-    	System.out.println( "userId데이터 값 확인" +userId);
+    	System.out.println( "userId데이터 값 확인" +empSn);
     	
 
         PageInfo pInfo = new PageInfo();
@@ -269,13 +265,33 @@ public class BoardController {
         pInfo.setPageSize(pageSize);
 
         // 1. 내가 쓴 전체 글 개수 조회 (모든 게시판 대상)
-        int total = boardMapper.totalByCreator(userId);
+        int total = boardMapper.totalByCreator(empSn);
         System.out.println("조회 된 총 개수 :"+total);
         pInfo.setTotal(total);
 
         // 2. 내가 쓴 게시물 목록 조회 (페이징 포함)
-        List<BoardPrvc> boards = boardMapper.listByCreator(userId, pInfo);
+        List<BoardPrvc> boards = boardMapper.listByCreator(empSn, pInfo);
         System.out.println("조회 된 리스트 크기 :"+boards.size());
+        
+        
+        // 각 게시글 정보 출력
+        if (!boards.isEmpty()) {
+            System.out.println("--- 조회된 게시글 목록 ---");
+            for (BoardPrvc board : boards) {
+                System.out.println(String.format(
+                    "ID: %d, 제목: %s, 게시판: %s, 작성자명: %s, 조회수: %d",
+                    board.getBoardId(),
+                    board.getTitle(),
+                    board.getBoardType(),
+                    board.getEmpNm(),
+                    board.getViews()
+                ));
+            }
+        } else {
+            System.out.println("조회된 게시글이 없습니다!");
+        }
+        
+        
 
         // 3. 리액트가 기대하는 구조로 Map 구성
         Map<String, Object> res = new HashMap<>();

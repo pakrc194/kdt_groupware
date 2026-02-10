@@ -23,7 +23,7 @@ function MyBoardList(props) {
 
     const fetchMyBoards = () => {
         setIsLoading(true);
-        fetcher(`board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`)
+        fetcher(`/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`)
         .then(data => {
             setBoards(data.boards || []);
             setPInfo(data.pInfo);
@@ -39,7 +39,7 @@ function MyBoardList(props) {
     return(
         <>
             <h2>내가 작성한 글 목록</h2>
-            <table>
+            <table border="">
                 <thead>
                     <tr>
                         <th>문서번호</th>
@@ -51,8 +51,11 @@ function MyBoardList(props) {
                 </thead>
                 <tbody>
                     {boards.length > 0 ? (
-                        boards.map((b) => (
-                            <tr key={b.boardId}>
+                        boards.map((b) => {
+                            console.log("b값을 확인 :",b)
+
+                            return(
+                                <tr key={b.boardId}>
                                 <td>{b.boardId}</td>
                                 <td><span>{b.boardType}</span></td>
                                 <td 
@@ -60,16 +63,17 @@ function MyBoardList(props) {
                                         props.goBoardId(b.boardId);
                                         props.goService('detail');
                                     }}
-                                    style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
                                 >
                                     {b.title}
                                 </td>
-                                <td>{new Date(b.createdAt).toLocaleDateString()}</td>
+                                <td>{b.createdAt}</td>
                                 <td>{b.views}</td>
                             </tr>
-                        ))
+                            );
+                                
+                    })
                     ) : (
-                        <tr><td colSpan="4">작성한 게시글이 없습니다.</td></tr>
+                        <tr><td colSpan="5">작성한 게시글이 없습니다.</td></tr>
                     )}
                 </tbody>
             </table>

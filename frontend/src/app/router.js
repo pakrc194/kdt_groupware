@@ -29,11 +29,10 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginMain />} />
+      <Route path="/EmpDetails" element={<Employee_details />} />
+      <Route path="/FindPassword" element={<FindPassword />} />
       
       <Route element={<RequireAuth />}>
-        <Route path="/EmpDetails" element={<Employee_details />} />
-        <Route path="/FindPassword" element={<FindPassword />} />
-
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="home/:sideId" element={<HomeMain />} />
@@ -53,7 +52,11 @@ export default function AppRouter() {
           <Route path="schedule/:sideId/calendar/detail/:id" element={<ScheduleDetail />} />
           <Route path="schedule/:sideId/detail/:id" element={<ScheduleDetail />} />
           <Route path="attendance/:sideId" element={<AttendanceMain />} />
+          
           <Route path="board/:sideId" element={<BoardMain />} />
+          {/* <Route path="board/:sideId/:empSn" element={<BoardMain />} /> */}
+
+
           <Route path="orgChart/:sideId" element={<OrgChartMain />} />
           <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
           <Route path="dashboard/:sideId" element={<DashboardMain />} />
