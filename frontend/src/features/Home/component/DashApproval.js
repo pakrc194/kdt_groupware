@@ -14,7 +14,7 @@ function DashApproval({ drft, aprv }) {
         </tr>
       </thead>
       <tbody>
-        {data.map((v, k) => (
+        {data != null && data.map((v, k) => (
           <tr key={k}>
             <td>{v.aprvDocNo}</td>
             <td>
