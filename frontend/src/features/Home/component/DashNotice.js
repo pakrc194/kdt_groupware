@@ -15,7 +15,7 @@ function DashNotice({ notice }) {
         </tr>
       </thead>
       <tbody>
-        {notice.map((st) => (
+        {notice != null &&  notice.map((st) => (
           <tr key={st.boardId}>
             <td>{st.boardId}</td>
             <td>
