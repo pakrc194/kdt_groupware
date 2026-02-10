@@ -28,11 +28,10 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginMain />} />
+      <Route path="/EmpDetails" element={<Employee_details />} />
+      <Route path="/FindPassword" element={<FindPassword />} />
       
       <Route element={<RequireAuth />}>
-        <Route path="/EmpDetails" element={<Employee_details />} />
-        <Route path="/FindPassword" element={<FindPassword />} />
-
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/login" replace />} />
           <Route path="home/:sideId" element={<HomeMain />} />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import Pagination from './Pagination';
 import { fetcher } from '../../../shared/api/fetcher';
+import boardst from '../../Home/css/Board.module.css'
 
 function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     const {sideId} = useParams();
@@ -10,7 +11,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     const [isLoading, setIsLoading] = useState(true);
     
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(3);
+    const [pageSize, setPageSize] = useState(5);
 
     // 검색 상태
     const [searchInput , setSearchInput] = useState('');
@@ -46,7 +47,10 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
         setCurrentPage(1);
     };
 
-
+    const pageSizeChange = (e) =>{
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
+    };
 
 
     const goDetail = (id) => {
@@ -61,7 +65,16 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     return (
         <div className="board-list-container">
             <div >
-                <select
+
+
+                <select  className ={boardst['selectBox']} value={pageSize} onChange={pageSizeChange}>
+                    <option value="5"> 5개</option>
+                    <option value="10"> 10개</option>
+                    <option value="20"> 20개</option>
+                    <option value="30"> 30개</option>
+                </select>
+
+                <select className ={boardst['selectBox']}
                     value={searchType}
                     onChange={(e)=>setSearchType(e.target.value)}
                 >
@@ -70,14 +83,14 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                     <option value="boardId">문서번호</option>
                 </select>
 
-                <input type='text' placeholder="검색어를 입력하세요" value={searchInput} onChange={(e)=>setSearchInput(e.target.value)}/>
-                <button onClick={handleSearch}>검색</button>
+                <input className ={boardst['input']} type='text' placeholder="검색어를 입력하세요" value={searchInput} onChange={(e)=>setSearchInput(e.target.value)}/>
+                <button className ={boardst['button']} onClick={handleSearch}>검색</button>
             </div>
 
-            <table border="1" >
+            <table border="" >
                 <thead>
-                    <tr >
-                        <th>문서번호</th>
+                    <tr>
+                        <th >문서번호</th>
                         <th>제목</th>
                         <th>작성일</th>
                         <th>조회수</th>
@@ -113,7 +126,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
 
             {/* 3. 하단 컨트롤 영역 */}
             <div >
-                <button onClick={() => props.goService('Insert')}>글쓰기</button>
+                <button className ={boardst['button']} onClick={() => props.goService('Insert')}>글쓰기</button>
             </div>
 
             {pInfo && (

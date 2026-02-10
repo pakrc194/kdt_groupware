@@ -60,7 +60,7 @@ function BoardInsert(props) {
         <>
             <h2>게시글 작성</h2>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                <div className="primary-btn">
                     <label>제목</label>
                     <input 
                         type="text" 
@@ -102,7 +102,11 @@ function BoardInsert(props) {
                 </div>
                 <div className="Insert-actions">
                     <button type="submit">등록</button>
-                    <button type="button" onClick={() => props.goService('list')}>취소</button>
+                    <button type="button" onClick={() => {
+                        if(window.confirm("작성 중인 글이 저장 되지 않고 취소 됩니다")){
+                            props.goService('list');
+                        }
+                    }}>취소</button>
                 </div>
             </form>
         </>
