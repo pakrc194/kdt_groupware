@@ -5,7 +5,7 @@ import BoardMain from '../../Board/pages/BoardMain copy';
 
 function BorderDash (props){
     const [borderDash , setBorderDash ] = useState([]);
-    const [boardPosts , setBoardPosts ];
+    
     const [] = useState([]);
 
     useEffect(()=>{
