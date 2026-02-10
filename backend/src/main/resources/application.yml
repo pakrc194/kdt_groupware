@@ -12,6 +12,21 @@ spring :
         url : jdbc:mysql://192.168.0.84:32933/kdt_12_3d_gw?characterEncoding=utf-8
         username : kdt_gw_admin
         password : kdt_gw_admin
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: lucky36505@gmail.com
+        password: stne cost nvxh ximt  # 따옴표 없이 띄어쓰기 없이 입력
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+                        required: true
+                    connectiontimeout: 5000
+                    timeout: 5000
+                    writetimeout: 5000
 #내 : 192.168.0.84
 #외 : citek707.iptime.org
 mybatis :

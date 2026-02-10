@@ -228,7 +228,7 @@ function DutySkedDetail() {
             </select>
           </div>
         </div>
-        <div className="controls-right">
+        {/* <div className="controls-right">
           {!isReadOnly && (
             <>
               <button className="btn-bulk" onClick={handleBulkGenerate}>
@@ -253,7 +253,7 @@ function DutySkedDetail() {
               </button>
             </>
           )}
-        </div>
+        </div> */}
       </div>
 
       <div className="timeline-container">

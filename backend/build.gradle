@@ -47,6 +47,8 @@ dependencies {
 
 	//이메일 인증을 위한 의존성 설치
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	// Redis
+  implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1"
 	
