@@ -73,8 +73,8 @@ public interface OrgchartMapper {
 			before = true,
 			statement = "select count(*)+1 from EMP_PRVC where dept_id = #{deptId}"
 			)
-	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_SN, EMP_PSWD) "
-			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, "
+	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_JNCMP_YMD, EMP_SN, EMP_PSWD) "
+			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, #{empJncmpYmd}, "
 			+ "concat("
 			+ "(select dept_code from DEPT_INFO where dept_id = #{deptId}), "
 			+ "(LPAD(#{empId}, 4, '0'))"

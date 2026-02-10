@@ -6,7 +6,8 @@ const MemberRegistrationForm = () => {
     EMP_NM: '',
     EMP_BIRTH: '',
     DEPT_ID: '',
-    JBTTL_ID: ''
+    JBTTL_ID: '',
+    EMP_JNCMP_YMD: ''
   });
 
   const [deptList, setDeptList] = useState([]);
@@ -47,7 +48,8 @@ const MemberRegistrationForm = () => {
           empNm: formData.EMP_NM,
           empBirth: formData.EMP_BIRTH.split("T")[0],
           deptId: formData.DEPT_ID,
-          jbttlId: formData.JBTTL_ID
+          jbttlId: formData.JBTTL_ID,
+          empJncmpYmd: formData.EMP_JNCMP_YMD 
         }
       });
 
@@ -139,6 +141,18 @@ const MemberRegistrationForm = () => {
           <option value="">직책을 선택하세요</option>
           {jbttlList.map(pos => <option key={pos.jbttlId} value={pos.jbttlId}>{pos.jbttlNm}</option>)}
         </select>
+      </div>
+
+      <div style={styles.formGroup}>
+        <label style={styles.label}>입사날짜</label>
+        <input 
+          type="date" 
+          name="EMP_JNCMP_YMD"
+          style={styles.input}
+          value={formData.EMP_JNCMP_YMD}
+          // onChange={handleChange}
+          onChange={e => setFormData({...formData, EMP_JNCMP_YMD: e.target.value})}
+        />
       </div>
 
       <div style={styles.buttonGroup}>

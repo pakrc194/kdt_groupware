@@ -79,8 +79,9 @@ public class OrgChartController {
 	// 사원 추가
 	@PostMapping("/register")
 	int registerEmp(@RequestBody EmpPrvc emp) {
-		System.out.println("계정 생성 시도");
+		System.out.println("계정 생성 시도 "+emp);
 		return orgchartMapper.registerEmp(emp);
+//		return 1;
 	}
 	
 	// 계정 정보 수정
