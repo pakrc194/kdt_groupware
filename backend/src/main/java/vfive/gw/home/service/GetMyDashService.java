@@ -25,8 +25,8 @@ public class GetMyDashService {
 		
 		res.put("leave", mapper.selectLeaveInfo(req));
 		res.put("notice", mapper.selectHeadNoticeLimitFive());
-		
-		System.out.println(mapper.selectHeadNoticeLimitFive());
+		res.put("drft", mapper.selectDrftLimitFive(req));
+		res.put("aprv", mapper.selectAprvLimitFive(req));
 		
 		return res;
 	}

@@ -103,14 +103,8 @@ function AttendancePage() {
                       )}
                     </div>
                   ) : (
-                    /* 2. DB에 기록은 없지만 주말인 경우 자동으로 '휴무' 표시 */
-                    day &&
-                    isWeekend && (
-                      <div className="atdc-entry off-day">
-                        <div className="atdc-status OFF">🏠 휴무</div>
-                        <div className="atdc-time">주말 정기 휴무</div>
-                      </div>
-                    )
+                    /* 2. DB에 기록은 없지만 주말인 경우 */
+                    day && isWeekend
                   )}
                 </>
               )}

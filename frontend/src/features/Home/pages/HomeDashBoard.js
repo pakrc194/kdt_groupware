@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
-import dayjs from "dayjs";
+import DashDailyBoard from "../component/DashDailyBoard";
+import DashLeave from "../component/DashLeave";
+import DashNotice from "../component/DashNotice";
+import DashApproval from "../component/DashApproval";
+import "../css/HomeDashBoard.css";
 
 function HomeDashBoard(props) {
   const [myDash, setMyDash] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
   const loadMyDash = async () => {
-    console.log("패치함수 실행");
     try {
       setIsLoading(true);
-      const data = await fetcher(`/gw/home/myDash?empId=10`);
+      const data = await fetcher(`/gw/home/myDash?empId=${myInfo.empId}`);
       setMyDash(data);
     } catch (error) {
       console.log("데이터 로드 실패: ", error);
@@ -26,42 +30,26 @@ function HomeDashBoard(props) {
   if (isLoading) return <div className="loading">데이터 로드 중...</div>;
 
   return (
-    <div>
-      <h1>메인 대시보드 입니다</h1>
-      <h3>연차현황</h3>
-      <div>
-        부여: {myDash.leave.totalDays}
-        <br />
-        사용: {myDash.leave.usedDays}
-        <br />
-        잔여: {myDash.leave.leftDays}
-      </div>
-      <h3>상단공지</h3>
-      <div>
-        <table border={1}>
-          <thead>
-            <tr>
-              <td>문서번호</td>
-              <td>제목</td>
-              <td>작성일</td>
-              <td>조회수</td>
-              <td>작성자</td>
-            </tr>
-          </thead>
-          <tbody>
-            {myDash.notice.map((st) => {
-              return (
-                <tr key={st.boardId}>
-                  <td>{st.boardId}</td>
-                  <td>{st.title}</td>
-                  <td>{dayjs(st.createdAt).format("YYYY-MM-DD")}</td>
-                  <td>{st.views}</td>
-                  <td>{st.empNm}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+    <div className="dashboard-main">
+      {/* 1. 데일리보드 (기존 코드 유지, 내부 float:left에 의해 좌측 배치) */}
+      <DashDailyBoard />
+
+      {/* 2. 우측 콘텐츠 영역 */}
+      <div className="dashboard-content-right">
+        <section className="dash-section">
+          <h3>결재현황</h3>
+          <DashApproval drft={myDash.drft} aprv={myDash.aprv} />
+        </section>
+
+        <section className="dash-section">
+          <h3>상단공지</h3>
+          <DashNotice notice={myDash.notice} />
+        </section>
+
+        <section className="dash-section">
+          <h3>연차현황</h3>
+          <DashLeave leave={myDash.leave} />
+        </section>
       </div>
     </div>
   );

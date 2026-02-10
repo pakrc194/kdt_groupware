@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import BoardList from './BoardList';
 import Boarddetail from './Boarddetail';
 import BoardWrite from './BoardInsert';
@@ -10,13 +10,19 @@ import MyBoardList from './MyBoardList';
 function BoardMain(props) {
 
     const { sideId } = useParams();
+    const [searchParams] = useSearchParams();   // 쿼리스트링 받아옴
 
     //sideId가 바뀌는지 확인 하고 Service로 바꿔준다
     useEffect(() => {
-           console.log("사이드메뉴가 바꼇어",sideId)
-           setService('list')
-       }, [sideId]);
-   
+        if(searchParams.get('id')){ // 쿼리스트링에 id가 있으면 해당 id 상세페이지로
+            setBoardId(searchParams.get('id'))
+            setService('detail')
+        }else{
+            console.log("사이드메뉴가 바꼇어",sideId)
+            setService('list')
+        }
+    }, [sideId]);
+
 
     const [service, setService] = useState('list')
     const [boardId, setBoardId] = useState(2)
