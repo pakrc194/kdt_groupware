@@ -24,7 +24,9 @@ public class GetMyDashService {
 		req.setYear(String.valueOf(now.getYear()));
 		
 		res.put("leave", mapper.selectLeaveInfo(req));
-		System.out.println(mapper.selectLeaveInfo(req));
+		res.put("notice", mapper.selectHeadNoticeLimitFive());
+		res.put("drft", mapper.selectDrftLimitFive(req));
+		res.put("aprv", mapper.selectAprvLimitFive(req));
 		
 		return res;
 	}

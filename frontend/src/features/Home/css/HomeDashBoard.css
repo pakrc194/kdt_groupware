@@ -1,0 +1,99 @@
+/* 전체 컨테이너 */
+.dashboard-main {
+  padding: 20px;
+  background-color: #f4f7f9;
+  min-height: 100vh;
+  overflow: hidden; /* float 해제용 */
+}
+
+/* 우측 콘텐츠 영역 (데일리보드 300px 제외한 나머지) */
+.dashboard-content-right {
+  margin-left: 320px; /* 데일리보드 너비 300px + 여백 20px */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 개별 섹션 카드 스타일 */
+.dash-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.dash-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #333;
+  border-left: 5px solid #007bff;
+  padding-left: 12px;
+}
+
+/* 연차현황 레이아웃 (수정) */
+.leave-flex {
+  display: flex;
+  justify-content: space-around;
+  background: #fcfcfc;
+  padding: 20px 15px; /* 상하 패딩을 조금 더 주면 시원해 보입니다 */
+  border-radius: 8px;
+  border: 1px solid #f0f0f0; /* 테두리를 살짝 주면 더 깔끔합니다 */
+}
+
+.leave-box {
+  flex: 1; /* 동일한 너비 공유 */
+  text-align: center;
+  position: relative; /* 구분선 배치를 위해 필요 */
+}
+
+/* 요소 사이 세로 구분선 추가 */
+.leave-box:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 20%; /* 선의 시작 높이 */
+  height: 60%; /* 선의 길이 */
+  width: 1px;
+  background-color: #eee; /* 너무 진하지 않은 회색 */
+}
+
+.leave-box label {
+  display: block;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.leave-box span {
+  font-size: 22px;
+  font-weight: 800; /* 숫자를 더 두껍게 */
+  color: #333;
+}
+
+.leave-box.blue span {
+  color: #007bff;
+}
+
+/* 테이블 공통 스타일 */
+.dash-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.dash-table thead {
+  background-color: #f8f9fa;
+}
+.dash-table td,
+.dash-table th {
+  padding: 12px;
+  border: 1px solid #eee;
+  text-align: center;
+  font-size: 14px;
+}
+.dash-table a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+}

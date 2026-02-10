@@ -97,7 +97,7 @@ const Layout = () => {
 
       <div className="main-wrapper">
         <aside className="sidebar">
-          <UserProfile />
+          {currentMain === "home" && <UserProfile />}
           {/* <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3> */}
           <ul className="sidebar-list">
             {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => {
@@ -112,11 +112,11 @@ const Layout = () => {
               return (
                 <li key={menu.id} className="sidebar-item-container">
                   <Link
-                      to={`/${currentMain}/${menu.id}`}
-                      className={`side-item ${isParentActive ? "active" : ""}`}
-                    >
-                      {menu.name}
-                    </Link>
+                    to={`/${currentMain}/${menu.id}`}
+                    className={`side-item ${isParentActive ? "active" : ""}`}
+                  >
+                    {menu.name}
+                  </Link>
                   {/* {hasSubMenus && (
                     <Link
                       to={`/${currentMain}/${menu.id}`}
