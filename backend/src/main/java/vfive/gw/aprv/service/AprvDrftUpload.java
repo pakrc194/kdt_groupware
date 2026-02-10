@@ -18,11 +18,16 @@ import vfive.gw.aprv.dto.request.AprvInptVlRequest;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
 import vfive.gw.aprv.dto.response.AprvDocVerListResponse;
 import vfive.gw.aprv.mapper.AprvPostMapper;
+import vfive.gw.ntf.dto.NtfRequest;
+import vfive.gw.ntf.mapper.NtfMapper;
 
 @Service
 public class AprvDrftUpload {
 	@Resource
 	AprvPostMapper mapper;
+	
+	@Resource
+	NtfMapper ntfMapper;
 	
 	
 	@Transactional
@@ -61,14 +66,38 @@ public class AprvDrftUpload {
 		System.out.println("-------------");
 		List<AprvPrcsRequest> drftLineList = req.getDrftLineReq();
 		
+		boolean hasMidAtrz = drftLineList.stream()
+		        .anyMatch(l -> "MID_ATRZ".equals(l.getRoleCd()) && l.getAprvPrcsEmpId() != 0);
+
+		
 		for(AprvPrcsRequest line : drftLineList) {
 			line.setAprvDocId(aprvDocId);
-			line.setAprvPrcsStts("WAIT");
-			if(line.getRoleCd().equals("DRFT")) {
-				line.setAprvPrcsStts("APPROVED");
-				line.setAprvPrcsDt(drftDoc.getAprvDocDrftDt());
-			} else {
-				line.setAprvPrcsDt(null);
+			switch (line.getRoleCd()) {
+			  case "DRFT":
+			    line.setAprvPrcsStts("APPROVED");
+			    line.setAprvPrcsDt(drftDoc.getAprvDocDrftDt());
+			    break;
+
+			  case "DRFT_REF":
+			  case "MID_ATRZ":
+			    line.setAprvPrcsStts("PENDING");
+			    line.setAprvPrcsDt(null);
+			    break;
+
+			  case "MID_REF":
+				line.setAprvPrcsStts("WAIT");
+			    line.setAprvPrcsDt(null);
+			    break;
+			    
+			  case "LAST_ATRZ":
+		            // ✅ MID_ATRZ가 없으면 LAST가 바로 결재해야 함
+		            line.setAprvPrcsStts(hasMidAtrz ? "WAIT" : "PENDING");
+		            line.setAprvPrcsDt(null);
+		            break;
+
+		        default:
+		            line.setAprvPrcsStts("WAIT");
+		            line.setAprvPrcsDt(null);
 			}
 			System.out.println(line);
 		}
@@ -86,6 +115,50 @@ public class AprvDrftUpload {
 		}
 		
 		mapper.drftInpt(req.getDrftInptReq());
+		
+		
+		
+		
+		String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+		// 1) 알림 내용 생성
+		NtfRequest n = new NtfRequest();
+		n.setNtfType("APRV_REQ");
+		n.setTitle("결재 요청");
+		n.setBody(drftDoc.getAprvDocTtl()); // 예: 문서 제목/요약
+		n.setLinkUrl("/aprv/detail/" + aprvDocId);
+		n.setSrcType("APRV_DOC");
+		n.setSrcId(aprvDocId);
+		n.setCreatedBy(drftDoc.getDrftEmpId());
+		n.setCreatedAt(now);
+
+		ntfMapper.insertNtf(n); // n.ntfId 생성됨
+
+		// 2) 수신자 조회(PENDING인 다음 결재자 + 참조자)
+		List<Integer> empIds = ntfMapper.selectDraftReceivers(aprvDocId);
+
+		// 3) 수신자 insert
+		if (!empIds.isEmpty()) {
+		    // 혹시 모를 중복 제거
+		    empIds = empIds.stream().distinct().toList();
+		    ntfMapper.insertReceivers(n.getNtfId(), empIds, now);
+		}
+		
+		List<Integer> receivers =
+			    ntfMapper.selectNextApprovers(aprvDocId);
+
+		if (receivers != null && !receivers.isEmpty()) {
+
+		    // 혹시 모를 중복 제거
+		    receivers = receivers.stream().distinct().toList();
+
+		  
+		    ntfMapper.insertNtfReceivers(
+		        n.getNtfId(),
+		        receivers,
+		        now
+		    );
+		}
 		
 		return Map.of("result", req);
 	}

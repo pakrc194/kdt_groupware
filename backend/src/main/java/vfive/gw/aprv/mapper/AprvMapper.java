@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -106,5 +107,9 @@ public interface AprvMapper {
 	int insertAtdcHist(@Param("empId")int empId, @Param("list")List<LocalDate> list);
 	
 	
-
+	@Delete("delete from APRV_PRCS where APRV_DOC_ID = #{docId}")
+	int deleteAprvPrcs(@Param("docId")int docId);
+	
+	@Delete("delete from APRV_DOC where APRV_DOC_ID = #{docId}")
+	int deleteAprvDoc(@Param("docId")int docId);
 }

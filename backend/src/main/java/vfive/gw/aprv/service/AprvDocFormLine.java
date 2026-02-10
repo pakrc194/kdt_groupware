@@ -23,25 +23,23 @@ public class AprvDocFormLine implements AprvAction {
 	@Override
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
-		/*
-		 	int docFormLineId, docFormId;
-			int midAtrzEmpId, lastAtrzEmpId;
-			String midAtrzEmpNm, lastAtrzEmpNm;
-		 * */
+		
 		AprvDocFormLineResponse res = mapper.docFormLine(pInfo.getPNo()); 
 		
-		List<AprvDocLineResponse> ListLineRes = List.of(
-				new AprvDocLineResponse(res.getMidAtrzEmpId(), "MID_ATRZ", "0"),
-				new AprvDocLineResponse(res.getLastAtrzEmpId(), "LAST_ATRZ", "0")
-		);
+		
+		
+		List<AprvDocLineResponse> ListLineRes = new ArrayList();
 				
 		
-		/*
-		int aprvLineId, aprvDocId, aprvPrcsEmpId;
-		String roleCd, roleSeq, aprvPrcsDt, aprvPrcsStts, rjctRsn;
-		String empNm;
-		String nextEmpNm;
-		*/
+		if(res.getMidAtrzEmpId()!=0) {
+			ListLineRes.add(new AprvDocLineResponse(res.getMidAtrzEmpId(), res.getMidAtrzEmpNm(),"MID_ATRZ", "0"));
+		}
+		ListLineRes.add(new AprvDocLineResponse(res.getLastAtrzEmpId(), res.getLastAtrzEmpNm(), "LAST_ATRZ", "0"));	
+			
+		
+				
+		
+		
 
 		
 		return ListLineRes;

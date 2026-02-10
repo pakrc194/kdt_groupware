@@ -32,7 +32,8 @@ public class AprvDrftTemp {
 		System.out.println(req.getDrftDocReq());
 		AprvDrftDocRequest drftDoc = req.getDrftDocReq();
 		
-		drftDoc.setAprvDocNo(generateDocNo(drftDoc.getAprvDocNo()));
+		
+		
 		drftDoc.setAprvDocStts("TEMP");
 		String nextVersion = "1.0";
 		
@@ -47,13 +48,14 @@ public class AprvDrftTemp {
 				
 		
 		System.out.println("-------------");
-		for(AprvInptVlRequest item : req.getDrftInptReq()) {
-			item.setAprvDocId(aprvDocId);
-			System.out.println(item);
+		if(req.getDrftInptReq().size()>0) {
+			for(AprvInptVlRequest item : req.getDrftInptReq()) {
+				item.setAprvDocId(aprvDocId);
+				System.out.println(item);
+			}
+			
+			mapper.drftInpt(req.getDrftInptReq());
 		}
-		
-		mapper.drftInpt(req.getDrftInptReq());
-		
 		return Map.of("result", req);
 	}
 	

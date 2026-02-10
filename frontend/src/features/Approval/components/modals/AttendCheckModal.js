@@ -30,6 +30,7 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
                     docEnd:drftDate.docEnd.replaceAll("-", "")
                 }
         }).then(res=>{
+            console.log("dutySched : ", res)
             setDutyList(res)
         })
 
@@ -50,18 +51,27 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
     return (
         <Modal
             title={`기간 확인 ${myInfo.empNm}`}
-            message={attendList.map((attend,k)=>(
-                <div key={k}>
-                    <h4>{attend.baseYy} 연차 개수</h4>
-                    {attend.remLv}/{attend.occrrLv}
-                    <hr/>
+            message={<>
+                {attendList.map((attend,k)=>(
+                    <div key={k}>
+                        <h4>{attend.baseYy} 연차 개수</h4>
+                        {attend.remLv}/{attend.occrrLv}
+                        <hr/>
+                    </div>))}
+
+                {dutyList?.length>0 && <div>
                     {drftDate.docStart}~{drftDate.docEnd}<br/>
-                    {dutyList.map((v,k)=>(
-                        <div key={k}>
-                            {v.scheId}/{v.dutyYmd}/{v.wrkCd}
-                        </div>
+                    {dutyList.map(v=>(
+                        v.map((vv,kk)=>(
+                            <div key={kk}>
+                                {vv.empNm}/{vv.deptName}/{vv.dutyYmd}/{vv.wrkCd}
+                            </div>
+                        ))
                     ))}
                     <hr/>
+                </div>}   
+                    
+                {schedList?.length > 0 && <div>
                     <h4>일정</h4>
                     {schedList.map((v,k)=>(
                         <div key={k}>
@@ -70,8 +80,8 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
                             ))} 
                         </div>
                     ))}
-                </div>
-            ))}
+                </div>}
+            </>}
             onClose={onClose}
             onOk={onOk}
             okMsg={"확인"}

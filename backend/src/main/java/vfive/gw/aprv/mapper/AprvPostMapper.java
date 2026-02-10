@@ -104,4 +104,20 @@ public interface AprvPostMapper {
 			    @Param("prefix") String prefix,
 			    @Param("year") String year
 			);
+	
+	@Update("""
+			UPDATE APRV_PRCS 
+			SET APRV_PRCS_STTS = 'PENDING' 
+			WHERE APRV_DOC_ID = #{aprvDocId} 
+			  AND ROLE_CD = #{roleCd} 
+			  AND APRV_PRCS_STTS = 'WAIT' 
+			""")
+	int activateRole(@Param("aprvDocId")int aprvDocId, @Param("roleCd")String roleCd);
+	
+	@Select("""
+			SELECT DRFT_EMP_ID
+			FROM APRV_DOC
+			WHERE APRV_DOC_ID = #{aprvDocId}
+			""")
+	Integer selectDrafter(int aprvDocId);
 }

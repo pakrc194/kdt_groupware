@@ -4,9 +4,14 @@ const AprvBoxBoard = ({aprvDoc}) => {
     return (
         <>
             <div>
-                {aprvDoc.aprvDocNo}/{aprvDoc.aprvDocTtl}/{aprvDoc.empNm}/{aprvDoc.aprvDocDrftDt}/{aprvDoc.aprvDocStts}
-            </div>  
+            {aprvDoc.aprvDocNo}
+            {aprvDoc.aprvDocTtl}
+            {aprvDoc.empNm}
+            {aprvDoc.aprvDocDrftDt.substring(0,10)}
+            {aprvDoc.aprvDocStts}
+            </div>
         </>
+
     );
 };
 
