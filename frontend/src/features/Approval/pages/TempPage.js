@@ -30,46 +30,48 @@ const TempPage = () => {
         locNm: '담당자 지정'
     });
 
-    useEffect(()=> {
-        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList)
-        fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
-            setAprvDocDetail(res)
-            setDocTitle(res.aprvDocTtl)
-        })
-        
-    },[docId])
-
-    useEffect(()=> {
-        fetcher("/gw/aprv/AprvDocFormList").then(res => {
-            setFormList(res)
-            
-            
-        });
-        let ttForm = formList.find(v=>v.docFormId==aprvDocDetail.docFormId);
-        console.log(ttForm)
-        setDocForm(ttForm)
-        fetcher(`/gw/aprv/AprvDocFormLine/${docForm.docFormId}`)
-        .then(res=>{
-            setDocLine(prev=>{
-                const drafter = prev.find(v => v.roleCd === "DRFT");
-                return drafter ? [drafter, ...res] : [...res];
-            })
-        }).catch(e=>{
-            console.log("fetch formLine : "+e)
-        })
-    },[aprvDocDetail])
-
-    useEffect(()=>{
-        
-
-    },[docForm])
-
-
     const [isFormOpen, setIsFormOpen] = useState(false);
 
     const [inputList, setInputList] = useState([]);
     const [formList, setFormList] = useState([]);
     
+    useEffect(() => {
+        if (!docId) return;
+
+        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList);
+
+        fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res => {
+            setAprvDocDetail(res);
+            setDocTitle(res.aprvDocTtl);
+        });
+    }, [docId]);
+    useEffect(() => {
+        fetcher("/gw/aprv/AprvDocFormList").then(setFormList);
+    }, []);
+    useEffect(() => {
+        if (!aprvDocDetail?.docFormId) return;
+        if (!formList?.length) return;
+
+        const ttForm = formList.find(v => v.docFormId === aprvDocDetail.docFormId);
+        setDocForm(ttForm); 
+    }, [aprvDocDetail?.docFormId, formList]);
+
+    useEffect(() => {
+    const formId = docForm?.docFormId;
+    if (!formId) return;
+
+    fetcher(`/gw/aprv/AprvDocFormLine/${formId}`)
+        .then(res => {
+        setDocLine(prev => {
+            const drafter = prev?.find(v => v.roleCd === "DRFT");
+            return drafter ? [drafter, ...res] : [...res];
+        });
+        })
+        .catch(e => console.log("fetch formLine : " + e));
+    }, [docForm?.docFormId]);
+
+
+
 
     const fn_formClick = () => {
         console.log("formClick")
