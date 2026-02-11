@@ -38,6 +38,16 @@ public class AprvPrcs {
         // 2) 현재 결재선 업데이트
         postMapper.uAprvPrcs(ap);
 
+        // ==============================
+        // A) 반려 처리 (우선 리턴)
+        // ==============================
+        if ("REJECTED".equals(ap.getAprvPrcsStts())) {
+            sendAprvRejectToDrafter(ap.getAprvDocId(),
+                                    ap.getAprvPrcsEmpId(),
+                                    ap.getRjctRsn());
+            return Map.of("res", "success");
+        }
+        
         // ======================================================
         // 3) MID_ATRZ 승인 → MID_REF + LAST_ATRZ 활성화 + 알림(APRV_REQ)
         // ======================================================
@@ -81,7 +91,7 @@ public class AprvPrcs {
         ntf.setNtfType("APRV_REQ");
         ntf.setTitle("결재 요청");
         ntf.setBody("결재 요청이 도착했습니다.");
-        ntf.setLinkUrl("/aprv/detail/" + aprvDocId);
+        ntf.setLinkUrl("/approval/approvalBox/detail/" + aprvDocId);
         ntf.setSrcType("APRV_DOC");
         ntf.setSrcId(aprvDocId);
         ntf.setCreatedBy(senderEmpId);
@@ -106,7 +116,36 @@ public class AprvPrcs {
         ntf.setNtfType("APRV_DONE");
         ntf.setTitle("결재 완료");
         ntf.setBody("결재가 완료되었습니다.");
-        ntf.setLinkUrl("/aprv/detail/" + aprvDocId);
+        ntf.setLinkUrl("/approval/approvalBox/detail/" + aprvDocId);
+        ntf.setSrcType("APRV_DOC");
+        ntf.setSrcId(aprvDocId);
+        ntf.setCreatedBy(senderEmpId);
+        ntf.setCreatedAt(now);
+
+        ntfMapper.insertNtf(ntf);
+        ntfMapper.insertNtfReceivers(ntf.getNtfId(), List.of(drafterEmpId), now);
+    }
+    
+    
+    // --------------------------
+    // 반려 알림 (APRV_REJECT)
+    // --------------------------
+    private void sendAprvRejectToDrafter(int aprvDocId, int senderEmpId, String rjctRsn) {
+        Integer drafterEmpId = postMapper.selectDrafter(aprvDocId);
+        if (drafterEmpId == null || drafterEmpId == 0) return;
+
+        String now = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+        String reason = (rjctRsn == null || rjctRsn.isBlank())
+                ? "반려 사유가 입력되지 않았습니다."
+                : rjctRsn;
+
+        NtfRequest ntf = new NtfRequest();
+        ntf.setNtfType("APRV_REJECT");
+        ntf.setTitle("결재 반려");
+        ntf.setBody("반려 사유: " + reason);
+        ntf.setLinkUrl("/approval/approvalBox/detail/" + aprvDocId);
         ntf.setSrcType("APRV_DOC");
         ntf.setSrcId(aprvDocId);
         ntf.setCreatedBy(senderEmpId);

@@ -16,6 +16,7 @@ import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
+import vfive.gw.aprv.dto.request.AprvRoleVlRequest;
 import vfive.gw.aprv.dto.request.AprvSchedRequest;
 import vfive.gw.aprv.dto.response.AprvDocDetailResponse;
 import vfive.gw.aprv.dto.response.AprvDocDtlVlResponse;
@@ -25,11 +26,16 @@ import vfive.gw.aprv.dto.response.AprvDocVerListResponse;
 import vfive.gw.aprv.dto.response.AprvDutyScheDtlResponse;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.dto.response.AprvLocListResponse;
+import vfive.gw.aprv.dto.response.AprvRoleVlResponse;
 import vfive.gw.aprv.dto.response.AprvSchedResponse;
 
 @Mapper
 public interface AprvMapper {
-	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM as DRFT_EMP_NM, EMP_PRVC.DEPT_ID from APRV_DOC join EMP_PRVC on APRV_DOC.DRFT_EMP_ID = EMP_PRVC.EMP_ID where aprv_doc_id = #{docId}")
+	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM as DRFT_EMP_NM, EMP_PRVC.DEPT_ID, DOC_FORM.DOC_FORM_TYPE "
+			+ "from APRV_DOC "
+			+ "join DOC_FORM on APRV_DOC.DOC_FORM_ID = DOC_FORM.DOC_FORM_ID "
+			+ "join EMP_PRVC on APRV_DOC.DRFT_EMP_ID = EMP_PRVC.EMP_ID "
+			+ "where aprv_doc_id = #{docId}")
 	AprvDocDetailResponse detail(int docId);
 	
 	@Select("select * from DOC_INPT where doc_form_id = #{formId}")
@@ -57,14 +63,14 @@ public interface AprvMapper {
 			+ "JOIN EMP_PRVC E on E.EMP_ID = #{empId} "
 			+ "JOIN DEPT_INFO D on D.DEPT_ID = E.DEPT_ID "
 			+ "where DUTY_SCHE_DTL.EMP_ID = #{empId} and DUTY_YMD between #{docStart} and #{docEnd}")
-	List<AprvDutyScheDtlResponse> dutyScheDtl(@Param("empId") int empId, @Param("deptId") int deptId, @Param("docStart")String docStart, @Param("docEnd")String docEnd);
+	List<AprvDutyScheDtlResponse> dutyScheDtl(@Param("empId") int empId, @Param("docStart")String docStart, @Param("docEnd")String docEnd);
 	
 	@Select("SELECT SCHED.*, D.DEPT_NAME, D.DEPT_CODE, E.EMP_NM FROM SCHED "
 			+ "JOIN EMP_PRVC E on E.EMP_ID = #{empId} "
 			+ "JOIN DEPT_INFO D on D.DEPT_ID = E.DEPT_ID "
 			+ "WHERE SCHED_START_DATE <= #{docEnd} AND SCHED_END_DATE >= #{docStart} "
 			+ "AND find_in_set(#{empId}, sched_emp_id)>0")//
-	List<AprvSchedResponse> personalSchedList(@Param("empId") int empId, @Param("deptId") int deptId, @Param("docStart")String docStart, @Param("docEnd")String docEnd);
+	List<AprvSchedResponse> personalSchedList(@Param("empId") int empId, @Param("docStart")String docStart, @Param("docEnd")String docEnd);
 	
 	@Select("SELECT SCHED.*, DEPT_INFO.DEPT_NAME, DEPT_INFO.DEPT_CODE FROM SCHED "
 			+ "join DEPT_INFO on DEPT_ID = #{deptId} "
@@ -112,4 +118,42 @@ public interface AprvMapper {
 	
 	@Delete("delete from APRV_DOC where APRV_DOC_ID = #{docId}")
 	int deleteAprvDoc(@Param("docId")int docId);
+	
+	@Select("""
+			<script>
+				SELECT
+				  <choose>
+				    <when test="role == 'PERSONAL'">
+				      e.EMP_ID,
+				      e.EMP_NM
+				    </when>
+				    <when test="role == 'DEPT'">
+				      d.DEPT_ID,
+				      d.DEPT_NAME
+				    </when>
+				  </choose>
+				FROM 
+				  <choose>
+				    <when test="role == 'PERSONAL'">
+				      EMP_PRVC e 
+				    </when>
+				    <when test="role == 'DEPT'">
+				      DEPT_INFO d 
+				    </when>
+				  </choose>
+				WHERE 
+				  <choose>
+				    <when test="role == 'PERSONAL'">
+				      FIND_IN_SET(e.EMP_ID, #{ids})
+				    </when>
+				    <when test="role == 'DEPT'">
+				      FIND_IN_SET(d.DEPT_ID, #{ids})
+				    </when>
+				    <otherwise>
+				      1 = 0
+				    </otherwise>
+				  </choose>
+			</script>
+			""")
+	List<AprvRoleVlResponse> aprvRoleVl(AprvRoleVlRequest req);
 }

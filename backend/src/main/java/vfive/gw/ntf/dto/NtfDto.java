@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class NtfDto {
 	int ntfId;
-	String ntfType, title, body, linkedUrl, createdAt, readYn, readAt;
+	int empId;
+	int createdBy, rcpEmpId;
+	String ntfType, title, body, linkUrl, createdAt, readYn, readAt;
 }

@@ -18,9 +18,10 @@ public class AprvDutyScheDtl {
 	public List<List<AprvDutyScheDtlResponse>> load(AprvDutyScheDtlRequest req) {
 		List<List<AprvDutyScheDtlResponse>> res= new ArrayList<>();
 		System.out.println("AprvDutyScheDtl "+req);
+		
 		List<AprvDutyScheDtlResponse> list = new ArrayList<>();
 		for(Integer id : req.getIds()) {
-			list = mapper.dutyScheDtl(id, req.getDeptId(), req.getDocStart(), req.getDocEnd());
+			list = mapper.dutyScheDtl(id, req.getDocStart(), req.getDocEnd());
 			System.out.println("AprvDutyScheDtl "+id+" "+list);
 			if(!list.isEmpty()) {
 				res.add(list);

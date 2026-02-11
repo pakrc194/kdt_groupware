@@ -40,7 +40,7 @@ public class AprvSchedList {
 			//System.out.println(req.getRole()+" ---");
 			for(Integer id : req.getIds()) {
 				System.out.println("AprvSchedResponse id : "+id);
-				List<AprvSchedResponse> list = mapper.personalSchedList(id, req.getDeptId(), req.getDocStart(), req.getDocEnd());
+				List<AprvSchedResponse> list = mapper.personalSchedList(id, req.getDocStart(), req.getDocEnd());
 				System.out.println("AprvSchedResponse list : "+list);
 				if(list.size()>0) {
 					res.add(list);

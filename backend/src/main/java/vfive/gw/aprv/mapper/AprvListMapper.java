@@ -26,8 +26,9 @@ public interface AprvListMapper {
 			  AND P.ROLE_CD LIKE '%ATRZ%'
 			  AND P.APRV_PRCS_STTS != 'WAIT'
 			<if test="stts != null and stts != ''">
-			  AND D.APRV_DOC_STTS = #{stts}
+			  AND D.APRV_DOC_STTS = #{stts} 
 			</if>
+			ORDER BY APRV_DOC_DRFT_DT DESC
 			</script>
 			""")
 			List<AprvDocListResponse> aprvList(@Param("pNo") int pNo, @Param("stts") String stts);
@@ -40,8 +41,9 @@ public interface AprvListMapper {
 			WHERE A.DRFT_EMP_ID = #{empId}
 			  AND A.APRV_DOC_STTS NOT IN ('TEMP','REJECTED')
 			<if test="stts != null and stts != ''">
-			  AND A.APRV_DOC_STTS = #{stts}
+			  AND A.APRV_DOC_STTS = #{stts} 
 			</if>
+			ORDER BY APRV_DOC_DRFT_DT DESC
 			</script>
 			""")
 			List<AprvDocListResponse> drftList(
@@ -53,17 +55,43 @@ public interface AprvListMapper {
 			+ "on D.APRV_DOC_ID = P.APRV_DOC_ID "
 			+ "join EMP_PRVC E on D.drft_emp_id = E.emp_id "
 			+ "and aprv_prcs_emp_id = #{pNo} "
-			+ "and role_cd like '%REF%' ")
+			+ "and role_cd like '%REF%' "
+			+ "ORDER BY APRV_DOC_DRFT_DT DESC")
 			//+ "and aprv_prcs_stts != 'WAIT'")
 	List<AprvDocListResponse> referList(int pNo); 
 	
-	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC join EMP_PRVC on drft_emp_id = emp_id where drft_emp_id = #{pNo} and aprv_doc_stts='REJECTED'")
+	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC "
+			+ "join EMP_PRVC on drft_emp_id = emp_id "
+			+ "where drft_emp_id = #{pNo} and aprv_doc_stts='REJECTED' "
+			+ "ORDER BY APRV_DOC_DRFT_DT DESC")
 	List<AprvDocListResponse> rejectList(int pNo); 
 	
-	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC join EMP_PRVC on drft_emp_id = emp_id where drft_emp_id = #{pNo} and aprv_doc_stts = 'TEMP'")
+	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC "
+			+ "join EMP_PRVC on drft_emp_id = emp_id "
+			+ "where drft_emp_id = #{pNo} and aprv_doc_stts = 'TEMP' "
+			+ "ORDER BY APRV_DOC_DRFT_DT DESC")
 	List<AprvDocListResponse> tempList(int pNo); 
 	
-	@Select("select * from DOC_FORM")
+	@Select("""
+			SELECT
+		    df.DOC_FORM_ID,
+		    df.DOC_FORM_CD,
+		    df.DOC_FORM_NM,
+		    df.DOC_FORM_TYPE,
+		    df.DEPT_ID,
+		    df.DOC_FORM_YN,
+		    GROUP_CONCAT(di.DEPT_NAME) AS DEPT_NAMES
+		FROM DOC_FORM df
+		LEFT JOIN DEPT_INFO di
+		  ON FIND_IN_SET(di.DEPT_ID, df.DEPT_ID)
+		GROUP BY
+		    df.DOC_FORM_ID,
+		    df.DOC_FORM_CD,
+		    df.DOC_FORM_NM,
+		    df.DOC_FORM_TYPE,
+		    df.DEPT_ID,
+		    df.DOC_FORM_YN;
+			""")
 	List<AprvDocFormListResponse> docFormList();
 	
 	@Select("""
@@ -92,4 +120,6 @@ public interface AprvListMapper {
 	
 	@Select("select * from DEPT_INFO")
 	List<AprvDeptListResponse> aprvDeptList();
+	
+	
 }

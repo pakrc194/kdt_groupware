@@ -5,6 +5,7 @@ import Button from '../../../shared/components/Button';
 import ApprovalLineDetail from '../components/ApprovalLineDetail';
 import InputForm from '../components/InputForm';
 import DetailForm from '../components/DetailForm';
+import AttendContent from '../components/AttendContent';
 
 const ApprovalDetail = () => {
     const {sideId, docId} = useParams();
@@ -15,22 +16,57 @@ const ApprovalDetail = () => {
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
-
+    const [docVerList, setDocVerList] = useState([]);
     const [rejectData, setRejectData] = useState({});
-
+    const [drftDate, setDrftDate] = useState({});
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
-
+    
     const navigate = useNavigate();
 
     useEffect(()=>{
         fetcher(`/gw/aprv/AprvLine/${docId}`).then(res=>{
             setAprvLine(res)
-            if(res.filter(v=>v.aprvPrcsStts=='REJECTED').length>0) {
-                setRejectData(res.filter(v=>v.aprvPrcsStts=='REJECTED')[0])
-            }
+            setRejectData(res.find(v=>v.aprvPrcsStts=='REJECTED'))
         })
 
-        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList)
+        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(res => {
+            const drftStart = res.find(v=>v.docInptNm=="docStart")
+            const drftEnd = res.find(v=>v.docInptNm=="docEnd")
+            setDrftDate({
+                docStart : drftStart.docInptVl,
+                docEnd : drftEnd.docInptVl
+            })
+
+            const role = res.find(v=>v.docInptNm=="docRole");
+            if(role!=null) {
+                const ids = res.find(v=>v.docInptNm=="docSchedType")
+                let idsVl = ""
+                fetcher(`/gw/aprv/AprvRoleVl`, {
+                    method:"POST",
+                    body:{
+                        role: role?.docInptVl,
+                        ids : ids?.docInptVl
+                    }
+                }).then(vv => {
+                    console.log("fetch AprvRoleVl : ",vv);
+                    if(role.docInptVl=="PERSONAL") {
+                        vv.map(v=>{
+                            idsVl+=v.empNm+" "
+                        })
+                    } else if(role.docInptVl=="DEPT") {
+                        vv.map(v=>{
+                            idsVl+=v.deptName+" "
+                        })
+                    }
+                    console.log("idsVl", idsVl)
+                    ids.docInptVl = idsVl;
+                })
+            }
+
+            
+
+            setInputList(res)
+        })
 
         fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
             console.log("detail ", res)
@@ -39,6 +75,80 @@ const ApprovalDetail = () => {
     },[docId])
 
     useEffect(()=>{
+       
+
+        if(aprvDocDetail.docFormType=="일정") {
+            fn_warnSched();
+        } else if(aprvDocDetail.docFormType=="근태") {
+            fn_warnAttend();
+        }
+
+
+        fetcher(`/gw/aprv/AprvDocVerList`, {
+            method:"POST",
+            body: {
+                docNo:aprvDocDetail.aprvDocNo
+            }
+        }).then(res=>{
+            console.log(res)
+            setDocVerList(res);
+        })
+
+    },[aprvDocDetail])
+
+    const fn_warnAttend = () => {
+        const docRole = "duty"
+        const ids = [aprvDocDetail.drftEmpId]
+        const deptId = null
+        const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl.replaceAll('-',"");
+        const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl.replaceAll('-',"");
+
+
+        console.log("warnAttend", ids, docStart, docEnd)
+
+        fetcher("/gw/aprv/AprvEmpAnnlLv", {
+            method:"POST",
+            body: {
+                role : docRole,
+                ids : ids,
+                deptId: deptId,
+                year:2026
+            }
+        }).then(res => {
+            console.log("fetch AprvEmpAnnlLv",res)
+            setAttendList(res)
+        })
+        
+        fetcher("/gw/aprv/AprvDutyScheDtl",{
+                method:"POST",
+                body:{
+                    role : docRole,
+                    ids : ids,
+                    deptId: deptId,
+                    docStart:docStart,
+                    docEnd:docEnd
+                }
+        }).then(res=>{
+            setDutyList(res)
+        })
+        
+
+        fetcher("/gw/aprv/AprvSchedList",{
+            method:"POST",
+            body:{
+                role : docRole,
+                ids : ids,
+                deptId: deptId,
+                docStart:docStart,
+                docEnd:docEnd
+            }
+        }).then(res=>{
+            console.log("fetch AprvSchedList",res)
+            setSchedList(res)
+        })
+    }
+
+    const fn_warnSched = () => {
         const docRole = inputList.find(v=>v.docInptNm==="docRole")?.docInptVl;
         const schedType = inputList.find(v=>v.docInptNm==="docSchedType")?.docInptVl;
         const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl;
@@ -109,11 +219,7 @@ const ApprovalDetail = () => {
                 setSchedList(res)
             })
         }
-
-        
-
-    },[aprvDocDetail])
-
+    }
 
     const fn_list = () => {
         navigate(`/approval/${sideId}`)
@@ -121,6 +227,7 @@ const ApprovalDetail = () => {
     const fn_redraft = () => {
         navigate(`/approval/${sideId}/redrft/${docId}`)
     }
+
 
     return (
         <>
@@ -134,43 +241,18 @@ const ApprovalDetail = () => {
                 <div>
                     {inputList.map((v, k)=>
                         <div key={k}>
-                            <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl,name:v.docInptNm, option:v.docInptRmrk}}/>
+                            <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl, name:v.docInptNm, option:v.docInptRmrk}}/>
                         </div>
                     )}
                 </div>
-                {rejectData.aprvPrcsEmpId && <div>
+
+                {rejectData?.aprvPrcsEmpId && <div>
                     <h3>반려사유</h3>
-                    {rejectData.empNm}/{rejectData.rjctRsn}
+                    {rejectData.aprvPrcsEmpNm}/{rejectData.rjctRsn}
                 </div>}
 
-
-
                 <div>
-                    <h3>경고</h3>
-                    {attendList.length>0 && attendList.map((attend, k)=>(
-                        <div key={k}>
-                            <h4>{attend.empNm} {attend.baseYy} 연차 개수</h4>
-                            {attend.remLv}/{attend.occrrLv}
-                            <hr/>
-                            {"2026-02-06"}~{"2026-02-08"}<br/>
-                            {dutyList.map((v,k)=>(
-                                <div key={k}>
-                                    {v.scheId}/{v.dutyYmd}/{v.wrkCd}
-                                </div>
-                            ))}
-                            <hr/>
-                        </div>
-                    ))}
-                    
-                    
-                    <h4>일정</h4>
-                    {schedList.map((v,k)=>(
-                        <div key={k}>
-                            {v.map((vv, kk)=>(
-                                <div key={kk}>{vv.empNm}/{vv.schedTitle}/{vv.schedStartDate.substring(0, 10)}/{vv.schedEndDate.substring(0, 10)}/{vv.schedType}</div>
-                            ))} 
-                        </div>
-                    ))}
+                    <AttendContent attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}/>
                 </div>
             </div>
             

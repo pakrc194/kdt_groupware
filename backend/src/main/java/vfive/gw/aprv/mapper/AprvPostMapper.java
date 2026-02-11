@@ -28,7 +28,7 @@ public interface AprvPostMapper {
 			SET APRV_DOC_STTS =
 			<choose>
 			  <when test="nextEmpNm != null and nextEmpNm != ''">
-			    CONCAT('PENDING(', #{nextEmpNm}, ')')
+			    'PENDING'
 			  </when>
 			  <otherwise>
 			    #{aprvPrcsStts}

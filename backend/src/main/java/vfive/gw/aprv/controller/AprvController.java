@@ -26,6 +26,7 @@ import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
 import vfive.gw.aprv.dto.request.AprvPrcsRequest;
+import vfive.gw.aprv.dto.request.AprvRoleVlRequest;
 import vfive.gw.aprv.dto.request.AprvSchedRequest;
 import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
 import vfive.gw.aprv.dto.request.AprvTempDeleteRequest;
@@ -40,6 +41,7 @@ import vfive.gw.aprv.service.AprvDutyScheDtl;
 import vfive.gw.aprv.service.AprvEmpAnnlLv;
 import vfive.gw.aprv.service.AprvLocList;
 import vfive.gw.aprv.service.AprvPrcs;
+import vfive.gw.aprv.service.AprvRoleVl;
 import vfive.gw.aprv.service.AprvSchedList;
 import vfive.gw.aprv.service.AprvSchedUpload;
 import vfive.gw.aprv.service.AprvTempDelete;
@@ -127,7 +129,11 @@ public class AprvController {
 		
 		return provider.getContext().getBean(AprvTempDelete.class).load(req);
 	}
-	
+	@PostMapping("/AprvRoleVl")
+	Object aprvRoleVl(@RequestBody AprvRoleVlRequest req) {
+		System.out.println("req "+req);
+		return provider.getContext().getBean(AprvRoleVl.class).load(req);
+	}
 	
 	String getServiceName(String service) {
 		String tt = "";
