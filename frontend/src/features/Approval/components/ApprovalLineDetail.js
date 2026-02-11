@@ -87,6 +87,12 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             )
         );
         
+        if(docDetail.docFormType==="근태") {
+            fn_attendCheck();
+        } else if(docDetail.docFormType==="일정") {
+            fn_schedCheck();
+        }
+
         alert("결재 완료")
         
         navigate(0);
@@ -188,8 +194,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
     return (
         <>  
-            <button onClick={fn_schedCheck}>일정 등록</button>
-            <button onClick={fn_attendCheck}>근태 등록</button>
+            {/* <button onClick={fn_schedCheck}>일정 등록</button>
+            <button onClick={fn_attendCheck}>근태 등록</button> */}
             <div className='approvalLine'>
                 {lineData.map((v, k)=> {
                     return (
@@ -197,8 +203,13 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                             <div>{v.roleCd}</div>
                             <div onClick={()=>{
                                 if(v.aprvPrcsEmpId == myInfo.empId) {
-                                    setSelectedEmp(v)
-                                    setOpenModal(v.roleCd)
+                                    if(v.aprvPrcsDt!=null && v.aprvPrcsDt!="") {
+                                        alert("이미 결재처리된 문서입니다")
+                                    } else {
+                                        setSelectedEmp(v)
+                                        setOpenModal(v.roleCd)
+                                    }
+                                    
                                 }
                             }}>
                                     {v.aprvPrcsEmpNm}

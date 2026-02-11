@@ -7,7 +7,7 @@ public class AprvDocDetailResponse {
 	int aprvDocId;
 	int drftEmpId;
 	int docFormId;
-	String drftEmpNm;
+	String drftEmpNm, docFormType;
 	int deptId;
 	String deptName;
 	String aprvDocNo, aprvDocTtl, aprvDocStts, aprvDocAtrzDt, aprvDocDrftDt, aprvDocVer;

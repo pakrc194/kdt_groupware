@@ -8,6 +8,6 @@ import lombok.Data;
 public class AprvSchedRequest {
 	String role;
 	List<Integer> ids; 
-	int deptId;
+	Integer deptId;
 	String docStart, docEnd;
 }
