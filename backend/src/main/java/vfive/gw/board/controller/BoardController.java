@@ -72,6 +72,7 @@ public class BoardController {
     public ResponseEntity<BoardPrvc> getBoard(@PathVariable("boardId") int boardId) {
         BoardPrvc board = boardMapper.detail(boardId);
         
+        System.out.println("board 정보 확인" +board);
         if (board != null) {
             // 조회수 증가
             boardMapper.incrementViews(boardId);
@@ -79,7 +80,6 @@ public class BoardController {
         } else {
             return ResponseEntity.notFound().build();
         }
-        System.out.println("board 정보 확인" +board);
     }
     
     

@@ -5,7 +5,10 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import vfive.gw.dashboard.dto.request.AccessDeleteDTO;
+import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.dashboard.dto.request.CompHRDTO;
+import vfive.gw.dashboard.dto.request.CompSchedDTO;
 import vfive.gw.orgchart.dto.HRChangeHistDTO;
 
 @Mapper
@@ -33,4 +36,53 @@ public interface CompDashMapper {
 			+ "LEFT JOIN JBTTL_INFO bJbttl ON h.before_jbttl_id = bJbttl.jbttl_id "
 			+ "LEFT JOIN JBTTL_INFO aJbttl ON h.after_jbttl_id = aJbttl.jbttl_id")
 	List<HRChangeHistDTO> hrHistList();
+	
+	@Select("SELECT ACCESS_DELETE.*, ACCESS_LIST.ACCESS_DETAIL AS ACCESS_NAME, "
+			+ "case "
+			+ "when ACCESS_DELETE.ACCESS_DELETE_TYPE = 'DEPT' "
+			+ "then DEPT_INFO.DEPT_NAME "
+			+ "else JBTTL_INFO.JBTTL_NM "
+			+ "end as EMPOWER_NAME "
+			+ "FROM ACCESS_DELETE "
+			+ "left JOIN DEPT_INFO "
+			+ "ON DEPT_INFO.DEPT_ID = ACCESS_DELETE.DELETE_EMPOWER_ID "
+			+ "JOIN ACCESS_LIST "
+			+ "ON ACCESS_DELETE.ACCESS_DELETE_DETAIL = ACCESS_LIST.ACCESS_LIST_ID "
+			+ "left JOIN JBTTL_INFO on JBTTL_INFO.JBTTL_ID = ACCESS_DELETE.DELETE_EMPOWER_ID")
+	List<AccessDeleteDTO> accessDeleteList();
+	
+//	@Select("select SCHED.*, DEPT_INFO.dept_name as schedDeptNm, EMP_PRVC.emp_nm as schedEmpNm, LOC_INFO.loc_nm as schedLocNm "
+//			+ "from SCHED "
+//			+ "left join DEPT_INFO on FIND_IN_SET(DEPT_INFO.dept_ID, SCHED.sched_dept_id) > 0 "
+//			+ "left join EMP_PRVC on FIND_IN_SET(EMP_PRVC.emp_id, SCHED.sched_emp_id) > 0 "
+//			+ "left join LOC_INFO on FIND_IN_SET(LOC_INFO.loc_id, SCHED.sched_loc) > 0 "
+//			+ "where sched_delete_date is not null")
+	
+	@Select("""
+			SELECT
+			    SCHED.*,
+
+			    GROUP_CONCAT(DISTINCT DEPT_INFO.dept_name SEPARATOR ', ') AS schedDeptNm,
+			    GROUP_CONCAT(DISTINCT EMP_PRVC.emp_nm SEPARATOR ', ') AS schedEmpNm,
+			    GROUP_CONCAT(DISTINCT LOC_INFO.loc_nm SEPARATOR ', ') AS schedLocNm
+
+			FROM SCHED
+
+			LEFT JOIN DEPT_INFO
+			    ON SCHED.sched_dept_id IS NOT NULL
+			   AND FIND_IN_SET(DEPT_INFO.dept_id, SCHED.sched_dept_id) > 0
+
+			LEFT JOIN EMP_PRVC
+			    ON SCHED.sched_emp_id IS NOT NULL
+			   AND FIND_IN_SET(EMP_PRVC.emp_id, SCHED.sched_emp_id) > 0
+
+			LEFT JOIN LOC_INFO
+			    ON SCHED.sched_loc IS NOT NULL
+			   AND FIND_IN_SET(LOC_INFO.loc_id, SCHED.sched_loc) > 0
+
+			WHERE SCHED.sched_delete_date IS NOT NULL
+
+			GROUP BY SCHED.sched_id
+			""")
+	List<CompSchedDTO> schedList();
 }
