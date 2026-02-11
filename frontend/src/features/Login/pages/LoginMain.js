@@ -95,6 +95,7 @@ function LoginMain(props) {
         </Button>
         <Button onClick={() => navigate("/FindPassword")}>비밀번호 찾기</Button>
         <br /> test계정 20240101/ 1234
+        <br />("지점장") test계정 CP0001/ 1111
       </div>
     </>
   );

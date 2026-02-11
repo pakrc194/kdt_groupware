@@ -11,20 +11,6 @@
     margin-bottom: 90px; 
 }
 
-.button {
-    background: #1976d2;
-    color: #fff;
-    margin: 10px;
-    padding: 12px;
-    font-size: 18px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.button:hover {
-    background: #1565c0; 
-}
 
 /* 테이블 관련 스타일*/
 .boardTable {
@@ -130,15 +116,5 @@
     margin: 0 auto; 
 }
 
-/* 버튼들을 감싸는 영역이 있다면 이것도 중앙 정렬이 필요할 수 있습니다 */
-.detail_button_container {
-    width: 700px;
-    margin: 10px auto;
-    display: flex;
-    justify-content: flex-end; /* 버튼을 오른쪽 끝에 정렬하고 싶을 때 */
-}
 
 
-.detail_button:hover{
-    background: #1565c0;
-}
