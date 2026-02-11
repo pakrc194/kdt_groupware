@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function HrDashboard(props) {
+function FoDashboard(props) {
     const [emp, setEmp] = useState([]);
     const [sched, setSched] = useState([]);
+    const [docPrc, setDocPrc] = useState([]);
 
     const date = new Date;
     const yyyy = date.getFullYear();
@@ -32,21 +33,23 @@ function HrDashboard(props) {
 
     useEffect(() => {
         // 팀 근태
-        fetcher(`/gw/dashboard/dashTeamEmpList?dept=6&date=${formatted}`)
+        fetcher(`/gw/dashboard/dashTeamEmpList?dept=2&date=${formatted}`)
         .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]) })
 
         // 팀 일정
-        fetcher(`/gw/dashboard/dashTeamSchedList?dept=6`)
+        fetcher(`/gw/dashboard/dashTeamSchedList?dept=2`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
             console.log(dd)
          })
+
+         // 결재 속도
+         fetcher('/gw/dashboard/docPrcsTime?dept=2')
+         .then(dd => setDocPrc(Array.isArray(dd) ? dd : [dd]))
     }, [])
     
     return (
         <div>
-            <h1>인사관리</h1>
-            팀 근태 현황(근태), 문서 처리 속도(결재 - APRV_PRCS테이블, 문서 양식별 시간), 팀 일정(일정), 교육 종류별 통계(일정)<br/>
-            
+            <h1>식품</h1>
 
             <div>
         <h1>근태현황</h1>
@@ -153,6 +156,54 @@ function HrDashboard(props) {
                     ))}
                 </tbody>
             </table>
+            <h3>결재 속도(속도 계산 필요)</h3>
+
+
+<div style={styles.container}>
+            <h2>문서 정보</h2>
+            <table style={styles.table}>
+                <thead>
+                    <tr>
+                        <th style={styles.th}>문서 제목</th>
+                        <th style={styles.th}>문서 상태</th>
+                        <th style={styles.th}>작성자</th>
+                        <th style={styles.th}>작성일</th>
+                        <th style={styles.th}>승인자</th>
+                        <th style={styles.th}>승인 날짜</th>
+                        <th style={styles.th}>문서 유형</th>
+                        <th style={styles.th}>역할</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {docPrc.length > 0 ? (
+                        docPrc.map((dd, index) => (
+                            <tr key={index}>
+                                <td style={styles.td}>{dd.aprvDocTtl}</td>
+                                <td style={styles.td}>{dd.aprvDocStts}</td>
+                                <td style={styles.td}>{dd.drftEmpNm}</td>
+                                <td style={styles.td}>
+                                    {dd.aprvDocDrftDt ? dd.aprvDocDrftDt : '미정'}
+                                </td>
+                                <td style={styles.td}>{dd.aprvPrcsEmpNm}</td>
+                                <td style={styles.td}>
+                                    {dd.aprvPrcsDt ? dd.aprvPrcsDt : '미승인'}
+                                </td>
+                                <td style={styles.td}>{dd.docFormNm}</td>
+                                <td style={styles.td}>{dd.roleCd}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5" style={styles.noData}>
+                                데이터가 없습니다.
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+
+
         </div>
     );
 }
@@ -214,4 +265,4 @@ const styles = {
   },
 };
 
-export default HrDashboard;
+export default FoDashboard;
