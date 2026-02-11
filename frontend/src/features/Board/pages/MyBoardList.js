@@ -86,7 +86,6 @@ function MyBoardList(props) {
                                 <td>{b.boardId}</td>
                                 <td>{b.boardType}</td>
                                 <td 
-                                    style={{ cursor: 'pointer', color: 'blue' }}
                                     onClick={() => {
                                         props.goBoardId(b.boardId);
                                         props.goService('detail');

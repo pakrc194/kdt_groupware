@@ -120,12 +120,12 @@ public interface BoardMapper {
         @Select("<script>" +
         		// 상단공지글 처리 
         		" (SELECT Board.*, EMP_NM FROM Board, EMP_PRVC " +
-                "  WHERE BoardType = #{sideId} AND Board.Creator = EMP_PRVC.EMP_SN AND IsTop = 1) " + // 1. 모든 공지글 가져오기
+                "  WHERE Board.Creator = EMP_PRVC.EMP_SN AND IsTop = 'true') " + // 모든 공지글 가져오기
                 " UNION ALL " +
         		
         		// 일반글 페이징 처리
         		"SELECT Board.*, EMP_NM FROM Board , EMP_PRVC  " +
-                "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN  and IsTop = 0" +
+                "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN  and IsTop = 'false'" +
                 "<if test='keyword != null and keyword != \"\"'>" +
                     "<choose>" +
                     "  <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +

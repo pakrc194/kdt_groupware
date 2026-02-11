@@ -110,8 +110,6 @@ function BoardDetail(props) {
                 <div dangerouslySetInnerHTML={{ __html: board.content }} />
             </div>
 
-
-
             <div >
                 <button className={boardst['detail_button']} onClick={handleList} >목록</button>
                 {isOwner && (
@@ -122,12 +120,6 @@ function BoardDetail(props) {
 
                 )}
             </div>
-
-
-           
-
-
-
         </div>
     );
 }
