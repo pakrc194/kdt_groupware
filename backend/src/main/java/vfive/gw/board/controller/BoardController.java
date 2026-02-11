@@ -121,13 +121,9 @@ public class BoardController {
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") int fileId) {
         try {
             // DB에서 파일 정보 조회 (BoardFile 객체 반환하도록 Mapper 수정 필요)
-        	System.out.println("0");
             BoardPrvc fileItem = boardMapper.getFileById(fileId); 
-            System.out.println("1");
             Path filePath = Paths.get(fileItem.getSavedPath());
-            System.out.println("2");
             Resource resource = new UrlResource(filePath.toUri());
-            System.out.println("3");
             if (resource.exists()) {
                 // 한글 파일명을 UTF-8로 인코딩
                 String encodedFileName = UriUtils.encode(fileItem.getOriginName(), StandardCharsets.UTF_8);

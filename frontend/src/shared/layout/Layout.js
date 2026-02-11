@@ -46,14 +46,14 @@ const Layout = () => {
 
   useEffect(()=>{
     const intervalId = setInterval(() => {
-      console.log("10초마다 실행");
+      //console.log("10초마다 실행");
       fetcher(`/gw/ntf/list`,{
         method:"POST",
         body:{
           empId : myInfo.empId
         }
       }).then(res=>{
-        console.log("ntf ",res)
+        //console.log("ntf ",res)
         setNotis(res)
       })
     }, 1000*10);

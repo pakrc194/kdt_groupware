@@ -89,6 +89,8 @@ const DraftPage = () => {
             }
         ).then(res=>{
             console.log(res)
+            let docId = res.result.drftDocReq.aprvDocId
+            fn_uploadTest(docId)
             alert("기안 작성 완료")
             navigate("/approval/draftBox")
         })
@@ -125,12 +127,50 @@ const DraftPage = () => {
         })
     }
 
+    const [selectedFiles ,setSelectedFiles] = useState([]);
+                                                                                           
+    const FileUpload = (e) => {
+        setSelectedFiles(Array.from(e.target.files));
+    };    
+
+    const fn_uploadTest = (docId) => {
+        const form = document.getElementById("draftForm");
+        const formData = new FormData(form);
+
+        console.log(Object.fromEntries(formData));
+        formData.append("aprvDocId", docId)
+        fetcher(`/gw/aprv/AprvFileUpload`, {
+            method: "POST",
+            body: formData
+        }).then(res=>{
+            console.log("fetcher", res)
+        });
+    }
+
+
 
     return <>
         <h4>전자결재 > 기안작성</h4>
         <div className="draftForm basicForm" >
             <div>문서 제목 <input type="text" name="docTitle" onChange={(e)=>setDocTitle(e.target.value)}/></div>
-            <div>파일 첨부 <input type="file" name="docFile"/></div>
+            <div>
+                <form id="draftForm">
+                    <label>파일첨부</label>
+                    
+                    <input
+                        type="file"
+                        name="docFile"
+                        onChange={FileUpload}
+                    />
+                    <div>
+                        <ul>
+                        {selectedFiles.map((file, idx) => (
+                            <li key={idx}>{file.name}</li>
+                        ))}
+                        </ul>
+                    </div>
+                </form>
+            </div>
         </div>
         <br/>
         <div className="draftForm">
@@ -153,6 +193,7 @@ const DraftPage = () => {
             <Button variant='secondary' onClick={fn_drftCancel}>취소</Button>
             <Button variant='secondary' onClick={fn_tempSave}>임시 저장</Button>
             <Button variant='primary' onClick={fn_drftConfirm}>기안</Button>
+            {/* <Button variant='primary' onClick={fn_uploadTest}>기안</Button> */}
         </div>
     </>
 };

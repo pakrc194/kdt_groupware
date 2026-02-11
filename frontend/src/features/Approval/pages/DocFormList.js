@@ -15,6 +15,13 @@ const DocFormList = () => {
         navigate("/approval/docFormBox/insert");
     }
 
+    const fn_visible = (v) => {
+        fetcher(`/gw/aprv/AprvFormVisible/${v.docFormId}`)
+        .then(() => fetcher("/gw/aprv/AprvDetailFormList"))
+        .then(setFormList)
+        .catch(e => console.log("visible error:", e));
+    }
+
 
     return (
         <div>
@@ -54,7 +61,7 @@ const DocFormList = () => {
                                 <td>{v.docFormType}</td>
                                 <td>{v.deptNames}</td>
                                 <td>{v.docFormYn}</td>
-                                <td><Button>숨김</Button></td>
+                                <td><Button onClick={()=>fn_visible(v)}>숨김</Button></td>
                             </tr>
                         ))
                     ) : (
@@ -64,8 +71,13 @@ const DocFormList = () => {
                         </td>
                     </tr>
                     )}
+                    <tr>
+                        <td colSpan="7">
+                        <Button type="secondary" onClick={fn_formInsert}>양식 등록</Button>
+                        </td>
+                    </tr>
                 </tbody>
-                    <Button type="secondary" onClick={fn_formInsert}>양식 등록</Button>
+                    
                 </table>
             </div>
         </div>

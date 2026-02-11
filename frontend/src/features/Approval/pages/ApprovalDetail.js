@@ -21,13 +21,21 @@ const ApprovalDetail = () => {
     const [rejectData, setRejectData] = useState({});
     const [drftDate, setDrftDate] = useState({});
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
-    
+    const [isApproved, setIsApproved] = useState(false);
+
+    const [docFile, setDocFile] = useState({});
+
     const navigate = useNavigate();
 
     useEffect(()=>{
         fetcher(`/gw/aprv/AprvLine/${docId}`).then(res=>{
             setAprvLine(res)
             setRejectData(res.find(v=>v.aprvPrcsStts=='REJECTED'))
+            res.find(v=>{
+                if(v.roleCd!="DRFT" && v.aprvPrcsDt!=null) {
+                    setIsApproved(true)
+                }
+            })
         })
 
         fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(res => {
@@ -74,6 +82,11 @@ const ApprovalDetail = () => {
         fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
             console.log("detail ", res)
             setAprvDocDetail(res)
+        })
+
+        fetcher(`/gw/aprv/AprvDocFile/${docId}`).then(res=>{
+            console.log("file ", res)
+            setDocFile(res)
         })
     },[docId])
 
@@ -228,6 +241,22 @@ const ApprovalDetail = () => {
         navigate(`/approval/${sideId}/redrft/${docId}`)
     }
 
+    const fn_drftCancel = () => {
+        fetcher(`/gw/aprv/AprvDrftDelete`,{
+            method:"POST",
+            body:{
+                docId : docId
+            }
+        }).then(res => {
+            console.log(`fetch AprvDrftDelete ${res.res}`)
+            alert("기안 취소 되었습니다.")
+            navigate(`/approval/${sideId}`);
+        })
+    }
+
+    const fn_download = () => {
+        
+    }
 
     return (
         <>
@@ -250,6 +279,10 @@ const ApprovalDetail = () => {
                         }
                     )}
                 </div>
+                <div>
+                    <h4>첨부파일</h4>
+                    <a href={`http://192.168.0.117:8080/board/download/${docFile.fileId}`}>{docFile.originName}</a>
+                </div>
 
                 {rejectData?.aprvPrcsEmpId && <div>
                     <h3>반려사유</h3>
@@ -267,6 +300,7 @@ const ApprovalDetail = () => {
             <div>
                 <Button variant='secondary' onClick={fn_list}>뒤로</Button>
                 {sideId=="rejectBox" && <Button variant='primary' onClick={fn_redraft}>재기안</Button>}
+                {(!isApproved && aprvDocDetail.drftEmpId==myInfo.empId )&& <Button variant='secondary' onClick={fn_drftCancel}>기안취소</Button>}
             </div>
         </>
     );

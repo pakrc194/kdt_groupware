@@ -54,6 +54,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
             {
                 roleCd: addLine.roleCd,
                 aprvPrcsEmpId: addLine.empId,
+                aprvPrcsEmpNm: addLine.empNm,
                 roleSeq: 0, // 아래에서 다시 계산
             }
             ];
