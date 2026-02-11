@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.attendance.dto.domain.AtdcDTO;
 import vfive.gw.attendance.dto.domain.EmpDTO;
@@ -14,6 +15,7 @@ import vfive.gw.attendance.dto.request.EmpAtdcRequestDTO;
 import vfive.gw.attendance.dto.response.EmpAtdcDetailDTO;
 import vfive.gw.attendance.dto.response.EmpAtdcListDTO;
 import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.login.dto.LoginRequest;
 
 @Mapper
 public interface AtdcMapper {
@@ -97,5 +99,27 @@ public interface AtdcMapper {
       "ORDER BY A.WRK_YMD DESC" +
       "</script>")
 		List<EmpAtdcDetailDTO> selectEmpAtdcDetail(EmpAtdcRequestDTO req);
+	
+  // 퇴근
+  @Update({
+    "UPDATE ATDC_HIST",
+    "SET ",
+    "  CLK_OUT_DTM = NOW()",        // 현재 서버 시간으로 퇴근 기록
+    "WHERE EMP_ID = #{empId}",
+    "  AND WRK_YMD = CURDATE()",    // 오늘 날짜 데이터 대상
+    "  AND CLK_OUT_DTM IS NULL"     // 이미 퇴근 처리된 경우 중복 업데이트 방지
+	})
+	int updateClkOut(EmpAtdcRequestDTO req);
+  
+  // 부서 근태 현황
+  @Select({
+    "SELECT E.EMP_ID, E.EMP_SN, E.EMP_NM, A.CLK_IN_DTM, A.CLK_OUT_DTM, A.ATDC_STTS_CD ",
+    "FROM EMP_PRVC E ",
+    "LEFT OUTER JOIN ATDC_HIST A ON E.EMP_ID = A.EMP_ID AND A.WRK_YMD = CURDATE() ",
+    "WHERE E.EMP_ACNT_STTS = 'ACTIVE' ",
+    "  AND E.DEPT_ID = #{deptId} ",
+    "ORDER BY E.EMP_NM ASC"
+	})
+	List<Map<String, Object>> selectMyDeptEmpStatus(EmpAtdcRequestDTO req);
   
 }
