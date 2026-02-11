@@ -17,6 +17,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
     const [lineData, setLineData] = useState([]);
 
+    console.log("inptList: ", inptList);
+    console.log("docDetail: ", docDetail);
 
     useEffect(()=>{
         console.log(aprvLine);
@@ -91,12 +93,33 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             fn_attendCheck();
         } else if(docDetail.docFormType==="일정") {
             fn_schedCheck();
+        } else if(docDetail.docFormType==="근무") {
+            fn_dutyCheck();
         }
 
         alert("결재 완료")
         
         navigate(0);
     }
+
+    const fn_dutyCheck = async () => {
+        const dutyId = inptList[0]?.docInptVl;
+        if (!dutyId) {
+            alert("근무표 식별 번호가 없습니다.");
+            return;
+        }
+
+        try {
+            const res = await fetcher("/gw/duty/confirmDuty", {
+                method: "POST",
+                body: { dutyId: dutyId }
+            });
+            alert(res.message);
+        } catch (error) {
+            console.error("근무표 확정 에러 상세:", error);
+            alert(`[결재 실패] ${error.message}`);
+        }
+    };
 
     const fn_schedCheck = () => {
         console.log(inptList)
