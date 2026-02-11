@@ -17,6 +17,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
     const [lineData, setLineData] = useState([]);
 
+    console.log("inptList: ", inptList);
+    console.log("docDetail: ", docDetail);
 
     useEffect(()=>{
         console.log(aprvLine);
@@ -100,9 +102,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         
         navigate(0);
     }
-    const fn_dutyCheck = () => {
-        
-    }
+
     const fn_schedCheck = () => {
         console.log(inptList)
         //{inptList}

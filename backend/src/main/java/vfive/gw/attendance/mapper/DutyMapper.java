@@ -130,7 +130,20 @@ public interface DutyMapper {
   @Delete("DELETE FROM DUTY_SCHE_DTL WHERE DUTY_ID = #{dutyId}")
   void deleteDutyDetails(DutyRequestDTO req);
   
-  
+  // 중복 확정 근무표 체크
+  @Select("SELECT COUNT(*) FROM DUTY_SCHE_MST " +
+          "WHERE DEPT_ID = #{deptId} " +
+          "AND TRGT_YMD = #{trgtYmd} " +
+          "AND PRGR_STTS = 'CONFIRMED'")
+  int countConfirmedDuty(DutySkedListDTO dto);
+
+  // 상태 업데이트
+  @Update("UPDATE DUTY_SCHE_MST SET PRGR_STTS = 'CONFIRMED' WHERE DUTY_ID = #{dutyId}")
+  int updateDutyToConfirmed(DutyRequestDTO req);
+
+  // 현재 근무표 정보 조회 (부서ID와 날짜를 알아내기 위함)
+  @Select("SELECT * FROM DUTY_SCHE_MST WHERE DUTY_ID = #{dutyId}")
+  DutySkedListDTO selectDutyById(DutyRequestDTO req);
   
   
   
