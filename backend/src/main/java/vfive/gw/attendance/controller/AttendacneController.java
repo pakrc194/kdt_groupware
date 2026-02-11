@@ -86,7 +86,7 @@ public class AttendacneController {
     
     return Map.of(
         "success", isSuccess,
-        "message", isSuccess ? "퇴근 처리가 완료되었습니다." : "이미 퇴근 처리되었거나 대상이 없습니다."
+        "message", isSuccess ? "퇴근 처리가 완료되었습니다." : "이미 퇴근 기록이 있습니다."
     );
 	}
 	
