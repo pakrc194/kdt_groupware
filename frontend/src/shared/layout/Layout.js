@@ -44,17 +44,15 @@ const Layout = () => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      console.log("10초마다 실행");
-      fetcher(`/gw/ntf/list`, {
-        method: "POST",
-        body: {
-          empId: myInfo.empId,
-        },
-      }).then((res) => {
-        console.log("ntf ", res);
-        setNotis(res);
-      });
-    }, 1000 * 10);
+      fetcher(`/gw/ntf/list`,{
+        method:"POST",
+        body:{
+          empId : myInfo.empId
+        }
+      }).then(res=>{
+        setNotis(res)
+      })
+    }, 1000*10);
 
     // cleanup (컴포넌트 언마운트 시 실행)
     return () => {

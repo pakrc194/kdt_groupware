@@ -9,9 +9,8 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     const [boards, setBoards] = useState([]); // 데이터만 관리
     const [pInfo, setPInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
 
     // 검색 상태
     const [searchInput , setSearchInput] = useState('');
@@ -27,6 +26,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
         fetchBoards();
     }, [sideId, currentPage, pageSize,keyword]);
 
+    // 화면이동을 하면 1페이지로 이동하도록 한다
     useEffect(()=>{
          setCurrentPage(1);
     },[sideId])
@@ -35,7 +35,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     /*** 날짜 포맷팅 함수
      * @param {string} dateString : '2026-02-09T15:00:00.000Z'
      * @returns {string} : '2026-02-09 15:00'*/
-    const formatDate = (dateString) => {
+        const formatDate = (dateString) => {
         if (!dateString) return "-";
         
         const date = new Date(dateString);
@@ -52,12 +52,13 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
 
     const fetchBoards = () => {
         setIsLoading(true);
-        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}&empSn=${empSn}`)
+        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}&empSn=${empSn} `)
             /// `/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`
             .then(dd => {  // 데이터와 페이지 정보만 상태에 저장
                 setBoards(dd.boards || dd); 
                 setPInfo(dd.pInfo);
                 setIsLoading(false);
+                console.log("sideId값 : ",dd)
             })
             .catch(err => {
                 console.error("데이터 로드 실패", err);
@@ -85,13 +86,9 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
 
 
     if (isLoading) return <div>데이터를 불러오는 중입니다...</div>;
-
-
     return (
         <div className="board-list-container">
             <div >
-
-
                 <select  className ={boardst['selectBox']} value={pageSize} onChange={pageSizeChange}>
                     <option value="5"> 5개</option>
                     <option value="10"> 10개</option>
@@ -125,15 +122,11 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                 <tbody>
                     {boards && boards.length > 0 ? (
                         boards.map((st) => {
-                            console.log("werew",st)
                             // 1. 조건을 아주 엄격하게 체크 (문자열 "true" 혹은 불리언 true일 때만)
                             const isTopItem = String(st.isTop) === "true";
 
                             // 2. 조건에 맞지 않으면 명시적으로 빈 문자열("")을 할당
                             const rowClass = isTopItem ? boardst.topNotice : "";
-
-                            // 3. 디버깅용 로그
-                            console.log(`ID: ${st.boardId}, 원본isTop: ${st.isTop}, 판별결과: ${isTopItem}, 클래스: ${rowClass}`);
                             return <tr key={st.boardId} className={rowClass}>
 
                                 <td>{st.boardId}</td>
