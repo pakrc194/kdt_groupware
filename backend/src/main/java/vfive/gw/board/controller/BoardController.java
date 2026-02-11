@@ -72,6 +72,7 @@ public class BoardController {
     public ResponseEntity<BoardPrvc> getBoard(@PathVariable("boardId") int boardId) {
         BoardPrvc board = boardMapper.detail(boardId);
         
+        System.out.println("board 정보 확인" +board);
         if (board != null) {
             // 조회수 증가
             boardMapper.incrementViews(boardId);
@@ -79,7 +80,6 @@ public class BoardController {
         } else {
             return ResponseEntity.notFound().build();
         }
-        System.out.println("board 정보 확인" +board);
     }
     
     
@@ -256,16 +256,21 @@ public class BoardController {
     public ResponseEntity<Map<String, Object>> getMyBoards(
     		@RequestParam("empSn") String empSn,
             @RequestParam(value = "pNo" ,defaultValue = "1") int pNo,
-            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+    		@RequestParam(value = "keyword", required = false) String keyword,      
+    		@RequestParam(value = "searchType", required = false) String searchType) {
+    
     	System.out.println( "userId데이터 값 확인" +empSn);
     	
 
         PageInfo pInfo = new PageInfo();
         pInfo.setCurPage(pNo);
         pInfo.setPageSize(pageSize);
+        pInfo.setKeyword(keyword);       // PageInfo에 검색어 세팅
+        pInfo.setSearchType(searchType); // PageInfo에 검색타입 세팅
 
         // 1. 내가 쓴 전체 글 개수 조회 (모든 게시판 대상)
-        int total = boardMapper.totalByCreator(empSn);
+        int total = boardMapper.totalByCreator(empSn, pInfo);
         System.out.println("조회 된 총 개수 :"+total);
         pInfo.setTotal(total);
 

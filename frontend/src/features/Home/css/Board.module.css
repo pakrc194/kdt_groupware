@@ -1,29 +1,144 @@
-.input{
+/* 기존 클래스 */
+.input {
     width: 300px;
     height: 25px;
     margin: 10px;
 }
 
-
-.selectBox{
+.selectBox {
     width: 100px;
     height: 30px;
-    margin-bottom: 120px;
+    margin-bottom: 90px; 
 }
 
-
-.button{
+.button {
     background: #1976d2;
     color: #fff;
     margin: 10px;
-    width: 10;
     padding: 12px;
     font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #1565c0; 
+}
+
+/* 테이블 관련 스타일*/
+.boardTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.boardTable th {
+    text-align: left;
+    padding: 12px 10px;
+    background-color: #f5f5f5;
+    border-bottom: 2px solid #ddd;
+    font-weight: bold;
+    color: #555;
+}
+
+.boardTable td {
+    padding: 12px 10px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+/* 일반 게시글 - 기본 흰색 배경 */
+.boardTable tr {
+    background-color: #ffffff; 
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+/* 일반 게시글 호버 - 연한 회색 */
+.boardTable tr:not(.topNotice):hover {
+    background-color: #f5f5f5;
+}
+
+/* 상단 공지 - 기본 연한 붉은색 */
+.topNotice {
+    background-color: #fdecec !important;
+}
+
+/* 상단 공지 호버 - 짙은 붉은색 */
+.topNotice:hover {
+    background-color: #f9d2d2 !important;
+}
+
+/* 공지글 글자 굵기 강조 */
+.topNotice td {
+    font-weight: bold;
+}
+
+.link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.paginationContainer{
+   display: flex;
+   justify-content: center;
+   margin-top: 20px;
+}
+
+.footerArea {
+    display: flex;
+    justify-content: flex-end; 
+    margin-bottom: 10px;
+    margin-top: 50px;
+    margin-right: 40px;
+}
+
+
+/* 타이틀 영역 */
+.ditailTitle {
+    background-color: #f79e9e;
+    width: 700px;
+    height: 70px;
+    /* 핵심: 위아래 마진 0(또는 원하는 값), 좌우 마진 auto */
+    margin: 50px auto 0 auto; 
+    display: flex;          /* 글자도 중앙에 배치하고 싶다면 유지 */
+    align-items: center;
+    justify-content: center;
+}
+
+.ditail_author{
+     background-color: #eee;
+    width: 700px;
+    height: 100px;
+    margin: 50px auto 0 auto; 
+    display: flex;          /* 글자도 중앙에 배치하고 싶다면 유지 */
+    align-items: center;
+    justify-content: center;
+    /* 핵심: 위아래 마진 0, 좌우 마진 auto */
     
 }
 
 
 
-.boardName{
-    background-color: #1976d2;
+/* 컨텐츠 영역 */
+.detail-content {
+    background-color: #eee;
+    width: 700px;
+    height: 300px;
+    /* 핵심: 위아래 마진 0, 좌우 마진 auto */
+    margin: 0 auto; 
+}
+
+/* 버튼들을 감싸는 영역이 있다면 이것도 중앙 정렬이 필요할 수 있습니다 */
+.detail_button_container {
+    width: 700px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: flex-end; /* 버튼을 오른쪽 끝에 정렬하고 싶을 때 */
+}
+
+
+.detail_button:hover{
+    background: #1565c0;
 }

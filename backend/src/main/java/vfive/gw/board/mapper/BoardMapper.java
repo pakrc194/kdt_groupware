@@ -23,8 +23,17 @@ public interface BoardMapper {
   
     
     /** 내가 쓴 게시물 총 숫자 **/
-    @Select("SELECT COUNT(*) FROM Board WHERE Creator = #{creator}")
-    int totalByCreator(@Param("creator")String creator);
+    @Select("<script>" +
+            "SELECT COUNT(*) FROM Board " +
+            "WHERE Creator = #{creator} " +
+            "<if test='pInfo.keyword != null and pInfo.keyword != \"\"'>" +
+            "  <choose>" +
+            "    <when test='pInfo.searchType == \"title\"'> AND Title LIKE CONCAT('%', #{pInfo.keyword}, '%') </when>" +
+            "    <when test='pInfo.searchType == \"boardId\"'> AND BoardId = #{pInfo.keyword} </when>" +
+            "  </choose>" +
+            "</if>" +
+            "</script>")
+    int totalByCreator(@Param("creator") String creator, @Param("pInfo") PageInfo pInfo);
     
     
     
@@ -132,14 +141,21 @@ public interface BoardMapper {
     
     
     /*작성자별 게시물 목록 조회(내가 쓴 게시물 조회)*/
-        @Select("SELECT b.*, e.EMP_NM as empNm "+
+        @Select("<script>" +
+                "SELECT b.*, e.EMP_NM as empNm " +
                 "FROM Board b " +
-                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN "+
-                "WHERE b.Creator = #{creator} "+ 
-                "ORDER BY b.BoardId DESC "+
-                "LIMIT #{pInfo.start}, #{pInfo.cnt}")
-        List<BoardPrvc> listByCreator(@Param("creator") String creator, 
-                                       @Param("pInfo") PageInfo pInfo);
+                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
+                "WHERE b.Creator = #{creator} " +
+                "<if test='pInfo.keyword != null and pInfo.keyword != \"\"'>" +
+                "  <choose>" +
+                "    <when test='pInfo.searchType == \"title\"'> AND b.Title LIKE CONCAT('%', #{pInfo.keyword}, '%') </when>" +
+                "    <when test='pInfo.searchType == \"boardId\"'> AND b.BoardId = #{pInfo.keyword} </when>" +
+                "  </choose>" +
+                "</if>" +
+                "ORDER BY b.BoardId DESC " +
+                "LIMIT #{pInfo.start}, #{pInfo.cnt}" +
+                "</script>")
+        List<BoardPrvc> listByCreator(@Param("creator") String creator, @Param("pInfo") PageInfo pInfo);
 
 
     

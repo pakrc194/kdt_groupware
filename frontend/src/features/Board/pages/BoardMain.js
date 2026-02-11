@@ -34,7 +34,7 @@ function BoardMain(props) {
 
     return (
         <>
-            {service==='list' && <BoardList goBoardId={setBoardId} goService={setService}/>}
+            {service==='list' && <BoardList key={sideId} goBoardId={setBoardId} goService={setService}/>}
             {service==='detail' && <Boarddetail goBoardId={setBoardId}  boardId={boardId} goService={setService}/>}
             {service==='Insert' && <BoardWrite goService={setService}/>}
             {service==='Modify' && <BoardModify boardId={boardId} goService={setService}/>}
