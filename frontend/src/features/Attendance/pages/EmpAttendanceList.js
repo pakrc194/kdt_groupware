@@ -4,6 +4,7 @@ import "../css/EmpAttendanceList.css"; // CSS 파일은 별도로 생성 필요
 import { Link } from "react-router-dom";
 
 function EmpAttendanceList() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
 

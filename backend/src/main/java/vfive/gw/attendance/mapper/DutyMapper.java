@@ -145,6 +145,11 @@ public interface DutyMapper {
   @Select("SELECT * FROM DUTY_SCHE_MST WHERE DUTY_ID = #{dutyId}")
   DutySkedListDTO selectDutyById(DutyRequestDTO req);
   
+  // 근무표 결재진행상태로 업데이트
+  @Update("UPDATE DUTY_SCHE_MST SET PRGR_STTS = 'PENDING' " +
+          "WHERE DUTY_ID = #{dutyId} AND PRGR_STTS = 'DRAFT'")
+  int updateDutyToPending(DutyRequestDTO req);
+  
   
   
 }

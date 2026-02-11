@@ -52,4 +52,23 @@ public class DutySkedUpdateService {
     System.out.println("업데이트 까지 됐나????");
   }
 	
+	@Transactional
+  public void pendingDutySchedule(DutyRequestDTO req) {
+      // 현재 상태 확인 (안전장치)
+			DutySkedListDTO currentStatus = mapper.selectDutyById(req);
+      if (currentStatus == null) {
+          throw new RuntimeException("근무표를 찾을 수 없습니다.");
+      }
+      if (!"DRAFT".equals(currentStatus.getPrgrStts())) {
+          throw new IllegalStateException("작성 중(DRAFT) 상태인 근무표만 결재 요청이 가능합니다.");
+      }
+
+      // 업데이트 실행
+      int updatedRows = mapper.updateDutyToPending(req);
+      
+      if (updatedRows == 0) {
+          throw new RuntimeException("상태 변경에 실패했습니다.");
+      }
+  }
+	
 }

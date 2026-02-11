@@ -5,6 +5,7 @@ import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌
 import "../css/DutySkedDetail.css";
 
 function DutySkedInsertForm() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -44,7 +45,9 @@ function DutySkedInsertForm() {
     const loadInitialData = async () => {
       try {
         setIsLoading(true);
-        const memberList = await fetcher(`/gw/duty/insertForm?deptId=8`);
+        const memberList = await fetcher(
+          `/gw/duty/insertForm?deptId=${myInfo.deptId}`,
+        );
         const initialEmps = memberList.map((emp) => ({
           id: emp.empId,
           name: emp.empNm,
@@ -151,8 +154,8 @@ function DutySkedInsertForm() {
     try {
       const payload = {
         scheTtl: title,
-        empId: 10,
-        deptId: 8,
+        empId: myInfo.empId,
+        deptId: myInfo.deptId,
         trgtYmd: selectedMonth.replace("-", ""),
         details: employees.flatMap((emp) =>
           days.map((day) => ({
@@ -163,7 +166,10 @@ function DutySkedInsertForm() {
           })),
         ),
       };
-      await fetcher("/gw/duty/insert", { method: "POST", body: payload });
+      await fetcher(`/gw/duty/insert`, {
+        method: "POST",
+        body: payload,
+      });
       alert("등록되었습니다.");
       navigate("/attendance/dtskdlst");
     } catch (error) {

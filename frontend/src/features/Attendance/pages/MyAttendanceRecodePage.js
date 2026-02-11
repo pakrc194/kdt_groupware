@@ -3,6 +3,7 @@ import { fetcher } from "../../../shared/api/fetcher";
 import "../css/MyAttendanceRecodePage.css";
 
 function MyAttendanceRecodePage() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [stats, setStats] = useState(null);
   const [currentYear, setCurrentYear] = useState("2026");
 
@@ -10,7 +11,9 @@ function MyAttendanceRecodePage() {
     // 백엔드에서 가공된 전체 데이터를 한 번에 호출
     const loadStats = async () => {
       try {
-        const data = await fetcher(`/gw/atdc/myAtSt?year=${currentYear}`);
+        const data = await fetcher(
+          `/gw/atdc/myAtSt?year=${currentYear}&empId=${myInfo.empId}`,
+        );
         setStats(data);
       } catch (error) {
         console.error("통계 데이터 로드 실패:", error);
@@ -74,7 +77,9 @@ function MyAttendanceRecodePage() {
         <div className="progress-container">
           <div
             className="progress-bar"
-            style={{ width: `${(leaveInfo.usedDays / leaveInfo.totalDays) * 100}%` }}
+            style={{
+              width: `${(leaveInfo.usedDays / leaveInfo.totalDays) * 100}%`,
+            }}
           ></div>
         </div>
       </div>
