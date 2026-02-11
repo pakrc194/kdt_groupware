@@ -15,6 +15,7 @@ import vfive.gw.global.config.JwtUtil;
 import vfive.gw.login.dto.LoginRequest;
 import vfive.gw.login.dto.LoginResponse;
 import vfive.gw.login.mapper.LoginMapper;
+import vfive.gw.login.service.ClkInService;
 import vfive.gw.login.service.FindPasswordService;
 
 @RestController
@@ -28,6 +29,9 @@ public class LoginController {
 
 	@Resource
 	private FindPasswordService findPasswordService;
+	
+	@Resource
+	private ClkInService clkInService;
 	
 	@Resource
 	LoginMapper mapper;
@@ -50,6 +54,7 @@ public class LoginController {
 				res.setLogChk("Fail");
 				return res;
 			}
+			clkInService.loginClkIn(res); // 출근 서비스 호출
 			res.setLogChk("Success");
 			return res;
 		} else {

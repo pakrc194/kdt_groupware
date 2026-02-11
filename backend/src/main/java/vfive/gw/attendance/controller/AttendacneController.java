@@ -1,9 +1,11 @@
 package vfive.gw.attendance.controller;
 
 import java.util.List;
-
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +18,8 @@ import vfive.gw.attendance.dto.response.EmpAtdcDetailDTO;
 import vfive.gw.attendance.dto.response.EmpAtdcListDTO;
 import vfive.gw.attendance.dto.response.MyAtdcStatDTO;
 import vfive.gw.attendance.service.AtdcCalService;
+import vfive.gw.attendance.service.ClkOutService;
+import vfive.gw.attendance.service.DeptAtdcStatusService;
 import vfive.gw.attendance.service.EmpAtdcDetailService;
 import vfive.gw.attendance.service.EmpAtdcListService;
 import vfive.gw.attendance.service.MyAtdcStatService;
@@ -36,6 +40,12 @@ public class AttendacneController {
 	
 	@Resource
 	private EmpAtdcDetailService empAtdcDetail;
+	
+	@Resource
+	private ClkOutService clkOutService;
+	
+	@Resource
+	private DeptAtdcStatusService deptAtdcStatusService;
 
 	// 근태 관리 캘린더 (메인)
 	@GetMapping("atdcCal")
@@ -69,6 +79,22 @@ public class AttendacneController {
 		
 		return res;
 	}
+	
+	@PostMapping("clkOut")
+	public Map<String, Object> clockOut(@RequestBody EmpAtdcRequestDTO req) {
+    boolean isSuccess = clkOutService.processClkOut(req);
+    
+    return Map.of(
+        "success", isSuccess,
+        "message", isSuccess ? "퇴근 처리가 완료되었습니다." : "이미 퇴근 처리되었거나 대상이 없습니다."
+    );
+	}
+	
+	@GetMapping("deptStatus")
+	public List<Map<String, Object>> getDeptEmpStatus(EmpAtdcRequestDTO req) {
+		System.out.println(deptAtdcStatusService.getDeptAtdcStatus(req));
+    return deptAtdcStatusService.getDeptAtdcStatus(req);
+}
 	
 
 	

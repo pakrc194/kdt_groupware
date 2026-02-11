@@ -39,5 +39,17 @@ public interface LoginMapper {
   // 비밀번호 리셋(재설정)
   @Update("UPDATE EMP_PRVC SET EMP_PSWD = #{empPswd} WHERE EMP_SN = #{empSn}")
   int updatePassword(LoginRequest req);
-
+  
+  // 출근
+  @Update({
+    "UPDATE ATDC_HIST",
+    "SET ",
+    "  ATDC_STTS_CD = 'PRESENT',",
+    "  CLK_IN_DTM = NOW()", // 현재 서버 시간 입력
+    "WHERE EMP_ID = #{empId}",
+    "  AND WRK_YMD = CURDATE()", // 오늘 날짜 데이터만 대상
+    "  AND CLK_IN_DTM IS NULL"   // 이미 출근 찍힌 경우는 중복 방지
+	})
+	int updateClkIn(LoginResponse req);
+  
 }
