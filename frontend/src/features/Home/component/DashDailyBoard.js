@@ -13,14 +13,14 @@ function DashDailyBoard(props) {
     schedStartDate: "",
     schedTitle: "",
     schedDetail: "",
-    schedState: Boolean,
+    schedState: "",
   });
   const [editTodoId, setEditTodoId] = useState(null);
   const [editTodo, setEditTodo] = useState({
     schedStartDate: "",
     schedTitle: "",
     schedDetail: "",
-    schedState: Boolean,
+    schedState: "",
   });
   // 로그인 정보
   const [myInfo, setMyInfo] = useState(
@@ -107,7 +107,6 @@ function DashDailyBoard(props) {
 
   // 완료 표시
   const toggleTodoComplete = async (cktodo) => {
-    // const todo = todos.find(t => t.schedId === cktodo.schedId);
     try {
       var flag = 0;
       if (cktodo.schedState == false) {
@@ -126,13 +125,7 @@ function DashDailyBoard(props) {
         },
       });
 
-      setTodos(
-        todos.map((t) =>
-          t.schedId === cktodo.schedId
-            ? { ...t, shcedState: !t.shcedState }
-            : t,
-        ),
-      );
+      setTodos(todos.map(t => t.schedId === cktodo.schedId ? { ...t, shcedState: !t.shcedState } : t));
     } catch (err) {
       console.error("Todo 토글 실패:", err.message);
     }
@@ -217,7 +210,7 @@ function DashDailyBoard(props) {
                 <ul style={styles.todoList}>
                   {sortedTodos.map((todo) => (
                     <li key={todo.schedId} style={styles.todoItem}>
-                      <input
+                      {/* <input
                         type="checkbox"
                         checked={todo.schedState == 1}
                         onChange={(e) => {
@@ -227,7 +220,7 @@ function DashDailyBoard(props) {
                             schedState: e.target.value,
                           });
                         }}
-                      />
+                      /> */}
 
                       {editTodoId === todo.schedId ? (
                         <>
@@ -285,7 +278,7 @@ function DashDailyBoard(props) {
                           <span
                             style={{
                               textDecoration:
-                                todo.schedState === 1 ? "line-through" : "none",
+                                todo.schedState != 0 ? "line-through" : "none",
                               flex: 1,
                               marginLeft: "8px",
                             }}
@@ -320,7 +313,7 @@ function DashDailyBoard(props) {
                   ))}
                 </ul>
 
-                {showTodoForm ? (
+                {/* {showTodoForm ? (
                   <div style={styles.todoForm}>
                     <input
                       type="date"
@@ -365,7 +358,7 @@ function DashDailyBoard(props) {
                   >
                     추가하기
                   </button>
-                )}
+                )} */}
               </div>
             </div>
           </div>

@@ -111,7 +111,6 @@ function ScheduleView(props) {
 
     // 완료 표시
     const toggleTodoComplete = async (cktodo) => {
-        // const todo = todos.find(t => t.schedId === cktodo.schedId);
         try {
             var flag = 0;
             if (cktodo.schedState == false) {flag = 1}
