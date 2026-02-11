@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.ntf.dto.NtfDto;
 import vfive.gw.ntf.dto.NtfRequest;
@@ -14,16 +15,18 @@ import vfive.gw.ntf.dto.NtfRequest;
 @Mapper
 public interface NtfMapper {
 	@Select("""
-			SELECT N.NTF_ID, N.NTF_TYPE, N.TITLE, N.BODY, N.LINK_URL, N.CREATED_AT,
+			SELECT N.NTF_ID, N.NTF_TYPE, N.TITLE, N.BODY, N.LINK_URL, N.CREATED_AT, R.RCP_EMP_ID,
 		     R.READ_YN, R.READ_AT
 			FROM NTF_RCP R
 			JOIN NTF N ON N.NTF_ID = R.NTF_ID
 			WHERE R.RCP_EMP_ID = #{empId}
 			  AND R.DEL_YN = 'N'
-			ORDER BY N.NTF_ID DESC
+			ORDER BY
+			R.READ_YN ASC, 
+			N.NTF_ID DESC
 			LIMIT 20;
 			""")
-	int polling(int empId);
+	List<NtfDto> polling(int empId);
 	
 	@Select("""
 			SELECT N.NTF_ID, N.NTF_TYPE, N.TITLE, N.BODY, N.LINK_URL, N.CREATED_AT,
@@ -101,4 +104,32 @@ public interface NtfMapper {
 			  AND APRV_PRCS_STTS = 'PENDING'
 			""")
 			List<Integer> selectPendingApprovers(int aprvDocId);
+	
+	@Update("""
+			UPDATE NTF_RCP
+			SET READ_YN = 'Y',
+			    READ_AT = #{now} 
+			WHERE NTF_ID = #{ntfId}
+			  AND RCP_EMP_ID = #{empId}
+			  AND DEL_YN = 'N'
+			""")
+			int markRead(@Param("ntfId") int ntfId, @Param("empId") int empId, @Param("now") String now);
+	
+	@Update("""
+			UPDATE NTF_RCP
+			SET DEL_YN = 'Y'
+			WHERE NTF_ID = #{ntfId}
+			  AND RCP_EMP_ID = #{empId}
+			""")
+			int delete(@Param("ntfId") int ntfId, @Param("empId") int empId);
+
+	@Select("""
+			SELECT COUNT(*)
+			FROM NTF_RCP
+			WHERE RCP_EMP_ID = #{empId}
+			  AND DEL_YN = 'N'
+			  AND READ_YN = 'N'
+			""")
+			int unreadCount(int empId);
+
 }

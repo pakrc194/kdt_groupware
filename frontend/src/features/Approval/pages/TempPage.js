@@ -7,9 +7,10 @@ import CompListModal from '../components/modals/CompListModal';
 import DrftContent from '../components/DrftContent';
 
 const TempPage = () => {
+    
     const navigate = useNavigate();
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
-    const {docId} = useParams();
+    const {sideId, docId} = useParams();
     
     const [aprvDocDetail, setAprvDocDetail] = useState({});
     const [docTitle, setDocTitle] = useState("");
@@ -157,6 +158,8 @@ const TempPage = () => {
             }
         ).then(res=>{
             console.log(res)
+            alert("작성 완료")
+            navigate(`/approval/${sideId}`)
         })
     }
 

@@ -16,6 +16,7 @@ import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
+import vfive.gw.aprv.dto.request.AprvRoleVlRequest;
 import vfive.gw.aprv.dto.request.AprvSchedRequest;
 import vfive.gw.aprv.dto.response.AprvDocDetailResponse;
 import vfive.gw.aprv.dto.response.AprvDocDtlVlResponse;
@@ -25,6 +26,7 @@ import vfive.gw.aprv.dto.response.AprvDocVerListResponse;
 import vfive.gw.aprv.dto.response.AprvDutyScheDtlResponse;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.dto.response.AprvLocListResponse;
+import vfive.gw.aprv.dto.response.AprvRoleVlResponse;
 import vfive.gw.aprv.dto.response.AprvSchedResponse;
 
 @Mapper
@@ -112,4 +114,42 @@ public interface AprvMapper {
 	
 	@Delete("delete from APRV_DOC where APRV_DOC_ID = #{docId}")
 	int deleteAprvDoc(@Param("docId")int docId);
+	
+	@Select("""
+			<script>
+				SELECT
+				  <choose>
+				    <when test="role == 'PERSONAL'">
+				      e.EMP_ID,
+				      e.EMP_NM
+				    </when>
+				    <when test="role == 'DEPT'">
+				      d.DEPT_ID,
+				      d.DEPT_NAME
+				    </when>
+				  </choose>
+				FROM 
+				  <choose>
+				    <when test="role == 'PERSONAL'">
+				      EMP_PRVC e 
+				    </when>
+				    <when test="role == 'DEPT'">
+				      DEPT_INFO d 
+				    </when>
+				  </choose>
+				WHERE 
+				  <choose>
+				    <when test="role == 'PERSONAL'">
+				      FIND_IN_SET(e.EMP_ID, #{ids})
+				    </when>
+				    <when test="role == 'DEPT'">
+				      FIND_IN_SET(d.DEPT_ID, #{ids})
+				    </when>
+				    <otherwise>
+				      1 = 0
+				    </otherwise>
+				  </choose>
+			</script>
+			""")
+	List<AprvRoleVlResponse> aprvRoleVl(AprvRoleVlRequest req);
 }

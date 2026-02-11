@@ -63,7 +63,26 @@ public interface AprvListMapper {
 	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC join EMP_PRVC on drft_emp_id = emp_id where drft_emp_id = #{pNo} and aprv_doc_stts = 'TEMP'")
 	List<AprvDocListResponse> tempList(int pNo); 
 	
-	@Select("select * from DOC_FORM")
+	@Select("""
+			SELECT
+		    df.DOC_FORM_ID,
+		    df.DOC_FORM_CD,
+		    df.DOC_FORM_NM,
+		    df.DOC_FORM_TYPE,
+		    df.DEPT_ID,
+		    df.DOC_FORM_YN,
+		    GROUP_CONCAT(di.DEPT_NAME) AS DEPT_NAMES
+		FROM DOC_FORM df
+		LEFT JOIN DEPT_INFO di
+		  ON FIND_IN_SET(di.DEPT_ID, df.DEPT_ID)
+		GROUP BY
+		    df.DOC_FORM_ID,
+		    df.DOC_FORM_CD,
+		    df.DOC_FORM_NM,
+		    df.DOC_FORM_TYPE,
+		    df.DEPT_ID,
+		    df.DOC_FORM_YN;
+			""")
 	List<AprvDocFormListResponse> docFormList();
 	
 	@Select("""
@@ -92,4 +111,6 @@ public interface AprvListMapper {
 	
 	@Select("select * from DEPT_INFO")
 	List<AprvDeptListResponse> aprvDeptList();
+	
+	
 }

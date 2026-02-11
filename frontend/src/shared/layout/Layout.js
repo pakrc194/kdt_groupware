@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { SIDE_CONFIG } from "./sideConfig";
 import "./Layout.css";
@@ -10,12 +10,63 @@ const Layout = () => {
   const pathParts = location.pathname.split("/");
   const currentMain = pathParts[1] || "main"; // 현재 메인 메뉴 (예: approval)
   const currentSide = pathParts[2]; // 현재 사이드 메뉴 (예: draft)
-
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const navigate = useNavigate();
 
+  const [notis, setNotis] = useState([
+    
+  ]);
+  
+  const unreadCount = notis.filter(n => n.readYn === "N").length;
+  const [openNoti, setOpenNoti] = useState(false);
+
+  const fn_ntf = () => {
+    setOpenNoti(prev => !prev);
+  };
+
+  // 바깥 클릭하면 닫기
+  // useEffect(() => {
+  //   function onDown(e) {
+  //     if (!openNoti) return;
+  //     if (popupRef.current?.contains(e.target)) return;
+  //     if (bellRef.current?.contains(e.target)) return;
+  //     setOpenNoti(false);
+  //   }
+  //   function onEsc(e) {
+  //     if (e.key === "Escape") setOpenNoti(false);
+  //   }
+
+  //   document.addEventListener("mousedown", onDown);
+  //   document.addEventListener("keydown", onEsc);
+  //   return () => {
+  //     document.removeEventListener("mousedown", onDown);
+  //     document.removeEventListener("keydown", onEsc);
+  //   };
+  // }, [openNoti]);
+
+  useEffect(()=>{
+    const intervalId = setInterval(() => {
+      console.log("10초마다 실행");
+      fetcher(`/gw/ntf/list`,{
+        method:"POST",
+        body:{
+          empId : myInfo.empId
+        }
+      }).then(res=>{
+        console.log("ntf ",res)
+        setNotis(res)
+      })
+    }, 1000*10);
+
+    // cleanup (컴포넌트 언마운트 시 실행)
+    return () => {
+      clearInterval(intervalId);
+    };
+
+  },[])
+
+
   const fn_logout = () => {
-    const myInfoStr = localStorage.getItem("MyInfo");
-    const myInfo = JSON.parse(myInfoStr);
     const token = myInfo.token;
 
     if (token) {
@@ -39,6 +90,8 @@ const Layout = () => {
       console.log("토큰없음");
     }
   };
+
+
 
   useEffect(() => {
     const myInfoStr = localStorage.getItem("MyInfo");
@@ -66,6 +119,39 @@ const Layout = () => {
     }
   }, []);
 
+  const fn_notiItem = (item) => {
+    if(item.readYn=='N') {
+      fetcher(`/gw/ntf/read`, {
+        method:"POST",
+        body:{
+          ntfId : item.ntfId,
+          empId : myInfo.empId
+        }
+      })
+    }
+    setNotis(prev =>
+      prev.map(n =>
+        n.ntfId === item.ntfId
+          ? { ...n, readYn: "Y" }
+          : n
+      )
+    );
+
+    navigate(item.linkUrl)
+  }
+  const fn_deleteNoti = (item) => {
+    fetcher(`/gw/ntf/delete`, {
+      method:"POST",
+      body:{
+        ntfId : item.ntfId,
+        empId : myInfo.empId
+      }
+    })
+    setNotis(prev =>
+      prev.filter(n => n.ntfId !== item.ntfId)
+    );
+  }
+
   return (
     <div className="container">
       <header className="header">
@@ -89,9 +175,48 @@ const Layout = () => {
           )}
         </nav>
         <nav className="nav-right">
-          <button className={"nav-icon"} onClick={fn_logout}>
-            로그아웃
-          </button>
+            <div className="nav-noti-wrap">
+                <button className="nav-icon" onClick={fn_ntf}>
+                  🔔
+                  {unreadCount>0 &&<span className="noti-badge">{unreadCount}</span>}
+                </button>
+                {openNoti && (
+                  <div className="noti-popup">
+                      <div className="noti-header">알림</div>
+                          <div className="noti-list">
+                            {notis.length > 0 ? (
+                              notis.map((v, k) => (
+                                <div
+                                  className={`noti-item ${v.readYn === "N" ? "unread" : ""}`}
+                                  key={k}
+                                  onClick={() => fn_notiItem(v)}
+                                >
+                                    <div className="noti-main">
+                                      <div className="noti-title">{v.title}</div>
+                                      <div className="noti-body">{v.body}</div>
+                                    </div>
+
+                                    <button
+                                      className="noti-del-btn"
+                                      onClick={(e) => {
+                                        e.stopPropagation(); // 아이템 클릭 막기
+                                        fn_deleteNoti(v);
+                                      }}
+                                    >
+                                      삭제
+                                    </button>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="noti-empty">알림 내용이 없습니다</div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+        </div> 
+            <button className={"nav-icon"} onClick={fn_logout}>
+              로그아웃
+            </button>
         </nav>
       </header>
 

@@ -196,10 +196,12 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                         <div className='empInfo' key={k}>
                             <div>{v.roleCd}</div>
                             <div onClick={()=>{
-                                setSelectedEmp(v)
-                                setOpenModal(v.roleCd)
+                                if(v.aprvPrcsEmpId == myInfo.empId) {
+                                    setSelectedEmp(v)
+                                    setOpenModal(v.roleCd)
+                                }
                             }}>
-                                    {v.empNm}
+                                    {v.aprvPrcsEmpNm}
                             </div>
                             <div>
                                 {v.aprvPrcsDt && formatToYYMMDD(v.aprvPrcsDt)}

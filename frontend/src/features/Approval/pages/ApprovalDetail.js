@@ -15,22 +15,50 @@ const ApprovalDetail = () => {
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
-
+    const [docVerList, setDocVerList] = useState([]);
     const [rejectData, setRejectData] = useState({});
 
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
-
+    
     const navigate = useNavigate();
 
     useEffect(()=>{
         fetcher(`/gw/aprv/AprvLine/${docId}`).then(res=>{
             setAprvLine(res)
-            if(res.filter(v=>v.aprvPrcsStts=='REJECTED').length>0) {
-                setRejectData(res.filter(v=>v.aprvPrcsStts=='REJECTED')[0])
-            }
+            setRejectData(res.find(v=>v.aprvPrcsStts=='REJECTED'))
         })
 
-        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList)
+        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(res => {
+            const role = res.find(v=>v.docInptNm=="docRole");
+            if(role!=null) {
+                const ids = res.find(v=>v.docInptNm=="docSchedType")
+                let idsVl = ""
+                fetcher(`/gw/aprv/AprvRoleVl`, {
+                    method:"POST",
+                    body:{
+                        role: role?.docInptVl,
+                        ids : ids?.docInptVl
+                    }
+                }).then(vv => {
+                    console.log("fetch AprvRoleVl : ",vv);
+                    if(role.docInptVl=="PERSONAL") {
+                        vv.map(v=>{
+                            idsVl+=v.empNm+" "
+                        })
+                    } else if(role.docInptVl=="DEPT") {
+                        vv.map(v=>{
+                            idsVl+=v.deptName+" "
+                        })
+                    }
+                    console.log("idsVl", idsVl)
+                    ids.docInptVl = idsVl;
+                })
+            }
+
+            
+
+            setInputList(res)
+        })
 
         fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
             console.log("detail ", res)
@@ -110,7 +138,15 @@ const ApprovalDetail = () => {
             })
         }
 
-        
+        fetcher(`/gw/aprv/AprvDocVerList`, {
+            method:"POST",
+            body: {
+                docNo:aprvDocDetail.aprvDocNo
+            }
+        }).then(res=>{
+            console.log(res)
+            setDocVerList(res);
+        })
 
     },[aprvDocDetail])
 
@@ -121,6 +157,7 @@ const ApprovalDetail = () => {
     const fn_redraft = () => {
         navigate(`/approval/${sideId}/redrft/${docId}`)
     }
+
 
     return (
         <>
@@ -134,16 +171,15 @@ const ApprovalDetail = () => {
                 <div>
                     {inputList.map((v, k)=>
                         <div key={k}>
-                            <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl,name:v.docInptNm, option:v.docInptRmrk}}/>
+                            <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl, name:v.docInptNm, option:v.docInptRmrk}}/>
                         </div>
                     )}
                 </div>
-                {rejectData.aprvPrcsEmpId && <div>
+
+                {rejectData?.aprvPrcsEmpId && <div>
                     <h3>반려사유</h3>
-                    {rejectData.empNm}/{rejectData.rjctRsn}
+                    {rejectData.aprvPrcsEmpNm}/{rejectData.rjctRsn}
                 </div>}
-
-
 
                 <div>
                     <h3>경고</h3>

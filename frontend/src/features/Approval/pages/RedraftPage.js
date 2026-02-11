@@ -87,6 +87,8 @@ const RedraftPage = () => {
             }
         ).then(res=>{
             console.log(res)
+            alert("기안 작성 완료")
+            navigate(`/approval/${sideId}`)
         })
     }
     const fn_verChange = (e) => {
