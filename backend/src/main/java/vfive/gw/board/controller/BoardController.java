@@ -79,7 +79,7 @@ public class BoardController {
         } else {
             return ResponseEntity.notFound().build();
         }
-        System.out.println("board 정보 확인" +board);
+//        System.out.println("board 정보 확인" +board);
     }
     
     

@@ -24,6 +24,8 @@ const HomeModProf = () => {
   });
 
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
+  console.log(myInfo.empId);
+  console.log(myInfo.empSn);
 
   // --- 데이터 로드 ---
   const fetchUserData = async () => {
