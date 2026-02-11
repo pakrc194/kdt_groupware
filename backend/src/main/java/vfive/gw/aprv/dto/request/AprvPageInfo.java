@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class AprvPageInfo {
-	int pNo;
+	Integer pNo;
+	Integer limit;
 }

@@ -25,6 +25,14 @@ const ApprovalDetail = () => {
 
     const [docFile, setDocFile] = useState({});
 
+    const sideTitleMap = {
+        approvalBox: "결재함",
+        drftBox: "기안함",
+        refBox: "참조함",
+        tempBox: "임시저장함",
+        rejectBox: "반려함",
+    };
+
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -97,7 +105,7 @@ const ApprovalDetail = () => {
             fn_warnSched();
         } else if(aprvDocDetail.docFormType=="근태") {
             fn_warnAttend();
-        }
+        } 
 
 
         fetcher(`/gw/aprv/AprvDocVerList`, {
@@ -260,7 +268,7 @@ const ApprovalDetail = () => {
 
     return (
         <>
-            <h4>전자결재 > 결재함 > {aprvDocDetail.aprvDocTtl}</h4>
+            <h4>전자결재 &gt; {sideTitleMap[sideId]} &gt; {aprvDocDetail.aprvDocTtl}</h4>
             <div className="draftForm" >
                 <div><h1>{aprvDocDetail.aprvDocTtl}</h1></div>
                 <div>문서번호 {aprvDocDetail.aprvDocNo}</div>

@@ -28,10 +28,16 @@ public interface AprvListMapper {
 			<if test="stts != null and stts != ''">
 			  AND D.APRV_DOC_STTS = #{stts} 
 			</if>
-			ORDER BY APRV_DOC_DRFT_DT DESC
+			<if test="code != null and code != ''">
+			  AND D.APRV_DOC_NO LIKE CONCAT('%', #{code}, '%') 
+			</if>
+			ORDER BY APRV_DOC_DRFT_DT DESC 
+			<if test="limit != null and limit &gt; 0">
+			 limit 0, #{limit}
+			</if>
 			</script>
 			""")
-			List<AprvDocListResponse> aprvList(@Param("pNo") int pNo, @Param("stts") String stts);
+			List<AprvDocListResponse> aprvList(@Param("pNo") int pNo, @Param("stts") String stts, @Param("code")String code, @Param("limit") Integer limit);
 	
 	@Select("""
 			<script>
@@ -43,12 +49,20 @@ public interface AprvListMapper {
 			<if test="stts != null and stts != ''">
 			  AND A.APRV_DOC_STTS = #{stts} 
 			</if>
-			ORDER BY APRV_DOC_DRFT_DT DESC
+			<if test="code != null and code != ''">
+			   AND A.APRV_DOC_NO LIKE CONCAT('%', #{code}, '%') 
+			</if>
+			ORDER BY APRV_DOC_DRFT_DT DESC 
+			<if test="limit != null and limit > 0">
+			 limit 0, #{limit}
+			</if>
 			</script>
 			""")
 			List<AprvDocListResponse> drftList(
 			    @Param("empId") int empId,
-			    @Param("stts") String stts
+			    @Param("stts") String stts,
+			    @Param("code")String code, 
+			    @Param("limit") Integer limit
 			);
 	
 	@Select("select D.*, EMP_NM from APRV_DOC D join APRV_PRCS P "

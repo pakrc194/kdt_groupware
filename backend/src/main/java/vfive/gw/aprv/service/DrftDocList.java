@@ -19,7 +19,7 @@ public class DrftDocList implements AprvAction {
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.drftList(pInfo.getPNo(), service.getStts());
+		return mapper.drftList(pInfo.getPNo(), service.getStts(), service.getCode(), pInfo.getLimit());
 	}
 
 }
