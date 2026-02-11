@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import {fetcher} from '../../../shared/api/fetcher';
 import BoardModify from  './BoardModify';
-import boardst from '../../Home/css/Board.module.css'
+import boardst from '../../Home/css/boardModify.css'
 
 function BoardDetail(props) {
     const {sideId} = useParams();

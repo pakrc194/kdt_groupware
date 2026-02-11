@@ -1,0 +1,102 @@
+/* 컨테이너 공통 */
+.board-detail-container, .board-modify-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    
+}
+
+/* 제목 섹션 */
+.detail-header {
+    border-bottom: 2px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.ditailTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 10px 0;
+}
+
+.meta-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 14px;
+    color: #666;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 4px;
+}
+
+.meta-info span {
+    display: flex;
+    align-items: center;
+}
+
+.meta-info a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+/* 본문 내용 */
+.detail-content {
+    min-height: 600px;
+    padding: 20px 0;
+    line-height: 1.8;
+    color: #333;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+    
+}
+
+/* 수정 페이지 폼 스타일 */
+.board-modify-container h1 {
+    font-size: 22px;
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.input, .board-modify-container input[type="text"], .board-modify-container textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.board-modify-container textarea {
+    height: 250px;
+    resize: vertical;
+}
+
+/* 파일 목록 스타일 */
+.board-modify-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.board-modify-container li {
+    background: #f1f1f1;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
