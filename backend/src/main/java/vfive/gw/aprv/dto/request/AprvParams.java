@@ -8,6 +8,7 @@ public class AprvParams {
 	int year;
 	int empId;
 	String stts;
+	String code;
 	
 	String filterNm;
 	String filterVl;

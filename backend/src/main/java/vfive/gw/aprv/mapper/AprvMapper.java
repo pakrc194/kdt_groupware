@@ -14,6 +14,7 @@ import org.apache.ibatis.annotations.Update;
 import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
+import vfive.gw.aprv.dto.request.AprvFileUploadRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvRoleVlRequest;
@@ -28,6 +29,7 @@ import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
 import vfive.gw.aprv.dto.response.AprvLocListResponse;
 import vfive.gw.aprv.dto.response.AprvRoleVlResponse;
 import vfive.gw.aprv.dto.response.AprvSchedResponse;
+import vfive.gw.board.dto.BoardPrvc;
 
 @Mapper
 public interface AprvMapper {
@@ -119,6 +121,11 @@ public interface AprvMapper {
 	@Delete("delete from APRV_DOC where APRV_DOC_ID = #{docId}")
 	int deleteAprvDoc(@Param("docId")int docId);
 	
+	@Delete("delete from APRV_INPT_VL where APRV_DOC_ID = #{docId}")
+	int deleteInptVl(@Param("docId")int docId);
+	
+	
+	
 	@Select("""
 			<script>
 				SELECT
@@ -156,4 +163,24 @@ public interface AprvMapper {
 			</script>
 			""")
 	List<AprvRoleVlResponse> aprvRoleVl(AprvRoleVlRequest req);
+	
+	@Update("""
+			UPDATE DOC_FORM
+			SET DOC_FORM_YN =
+			    CASE
+			        WHEN DOC_FORM_YN = 'Y' THEN 'N'
+			        ELSE 'Y'
+			    END
+			WHERE DOC_FORM_ID = #{docFormId};
+			""")
+	int updateFormVisible(@Param("docFormId") int docFormId);
+	
+    // 파일 업,다운 로드를 위한 SQL 
+    @Insert ("INSERT INTO BoardFile (AprvDocId,OriginName,SavedPath,FileSize)"+
+    	"VALUES (#{aprvDocId},#{originName},#{savedPath},#{fileSize})")
+    	int aprvUploadFile(AprvFileUploadRequest file);
+    
+ // 특정 게시글의 파일 목록 조회
+    @Select("SELECT * FROM BoardFile WHERE AprvDocId = #{docId}")
+    AprvFileUploadRequest selectFile(int docId);
 }

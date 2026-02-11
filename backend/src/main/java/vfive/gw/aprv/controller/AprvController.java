@@ -1,10 +1,13 @@
 package vfive.gw.aprv.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +26,7 @@ import vfive.gw.aprv.dto.request.AprvDrftTempRequest;
 import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
+import vfive.gw.aprv.dto.request.AprvFileUploadRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
@@ -31,10 +36,12 @@ import vfive.gw.aprv.dto.request.AprvSchedRequest;
 import vfive.gw.aprv.dto.request.AprvSchedUploadRequest;
 import vfive.gw.aprv.dto.request.AprvTempDeleteRequest;
 import vfive.gw.aprv.dto.response.AprvEmpAnnlLvResponse;
+import vfive.gw.aprv.mapper.AprvMapper;
 import vfive.gw.aprv.provider.AprvProvider;
 import vfive.gw.aprv.service.AprvAction;
 import vfive.gw.aprv.service.AprvAttendUpload;
 import vfive.gw.aprv.service.AprvDocVerList;
+import vfive.gw.aprv.service.AprvDrftDelete;
 import vfive.gw.aprv.service.AprvDrftTemp;
 import vfive.gw.aprv.service.AprvDrftUpload;
 import vfive.gw.aprv.service.AprvDutyScheDtl;
@@ -58,7 +65,6 @@ public class AprvController {
 			AprvParams aParams, 
 			AprvPageInfo pInfo,
 			HttpServletRequest request, HttpServletResponse response) {
-		
 		Object oo = provider.getContext().getBean(getServiceName(aParams.getService()), AprvAction.class).execute(aParams, pInfo, request, response);
 		
 		return oo;
@@ -129,10 +135,27 @@ public class AprvController {
 		
 		return provider.getContext().getBean(AprvTempDelete.class).load(req);
 	}
+	@PostMapping("/AprvDrftDelete")
+	Object aprvDrftDelete(@RequestBody AprvTempDeleteRequest req) {
+		
+		return provider.getContext().getBean(AprvDrftDelete.class).load(req);
+	}
 	@PostMapping("/AprvRoleVl")
 	Object aprvRoleVl(@RequestBody AprvRoleVlRequest req) {
 		System.out.println("req "+req);
 		return provider.getContext().getBean(AprvRoleVl.class).load(req);
+	}
+	@PostMapping("/AprvFileUpload")
+	Object aprvFileUpload(AprvFileUploadRequest req, HttpServletRequest request) {
+		req.setOriginName(req.getDocFile().getOriginalFilename());
+		req.setSavedPath(uploadDir);
+		if(!req.getDocFile().isEmpty()) {
+			fileSave(req, request);
+			mapper.aprvUploadFile(req);
+		}
+		
+		System.out.println("req "+req);
+		return Map.of("res","yyy");
 	}
 	
 	String getServiceName(String service) {
@@ -145,5 +168,29 @@ public class AprvController {
 		}
 		
 		return tt;
+	}
+	@Value("${file.upload-dir}")
+	private String uploadDir;
+	
+	@Resource
+	AprvMapper mapper;
+	
+	void fileSave(AprvFileUploadRequest req, HttpServletRequest request) {
+		
+		
+		File dir = new File(uploadDir);
+		if (!dir.exists()) dir.mkdirs();
+		
+		 
+		String savedPath = uploadDir + System.currentTimeMillis() + "_" + req.getDocFile().getOriginalFilename();
+		req.setSavedPath(savedPath);
+		File saveFile = new File(savedPath);
+		try {
+			req.getDocFile().transferTo(saveFile);  // 파일 저장
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

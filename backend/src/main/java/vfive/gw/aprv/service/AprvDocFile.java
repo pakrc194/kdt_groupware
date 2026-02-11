@@ -11,15 +11,15 @@ import vfive.gw.aprv.mapper.AprvListMapper;
 import vfive.gw.aprv.mapper.AprvMapper;
 
 @Service
-public class DrftDocList implements AprvAction {
+public class AprvDocFile implements AprvAction {
 	@Resource
-	AprvListMapper mapper;
+	AprvMapper mapper;
 	
 	@Override
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.drftList(pInfo.getPNo(), service.getStts(), service.getCode(), pInfo.getLimit());
+		return mapper.selectFile(pInfo.getPNo());
 	}
 
 }

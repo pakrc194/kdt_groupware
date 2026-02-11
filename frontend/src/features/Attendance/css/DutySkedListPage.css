@@ -51,15 +51,15 @@
   font-weight: bold;
 }
 
-.badge-status.CONFIRMED {
+.badge-status.CONFIRMED,.badge-status.COMPLETED {
   background-color: #e6fffa;
   color: #38a169;
 }
-.badge-status.DRAFT {
+.badge-status.DRAFT,.badge-status.DRFT,.badge-status.PENDING {
   background-color: #f7fafc;
   color: #718096;
 }
-.badge-status.PENDING {
+.badge-status.REJECTED {
   background-color: #fffaf0;
   color: #dd6b20;
 }

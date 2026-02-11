@@ -15,25 +15,19 @@ const DocFormList = () => {
         navigate("/approval/docFormBox/insert");
     }
 
+    const fn_visible = (v) => {
+        fetcher(`/gw/aprv/AprvFormVisible/${v.docFormId}`)
+        .then(() => fetcher("/gw/aprv/AprvDetailFormList"))
+        .then(setFormList)
+        .catch(e => console.log("visible error:", e));
+    }
+
 
     return (
         <div>
 
             <h4>전자결재 > 양식 보관함</h4>      
             <div className="section history-section">
-                <div>
-                    <select >
-                        <option value="">ALL</option>
-                        <option>PENDING</option>
-                        <option>REJECTED</option>
-                        <option>COMPLETED</option>
-                    </select>
-                    <select>
-                        <option>전체</option>
-                        <option>공용</option>
-                        <option>부서</option>
-                    </select>
-                </div>
                 <table className="history-table">
                 <thead>
                     <tr>
@@ -54,7 +48,7 @@ const DocFormList = () => {
                                 <td>{v.docFormType}</td>
                                 <td>{v.deptNames}</td>
                                 <td>{v.docFormYn}</td>
-                                <td><Button>숨김</Button></td>
+                                <td><Button onClick={()=>fn_visible(v)}>숨김</Button></td>
                             </tr>
                         ))
                     ) : (
@@ -64,8 +58,13 @@ const DocFormList = () => {
                         </td>
                     </tr>
                     )}
+                    <tr>
+                        <td colSpan="7">
+                        <Button type="secondary" onClick={fn_formInsert}>양식 등록</Button>
+                        </td>
+                    </tr>
                 </tbody>
-                    <Button type="secondary" onClick={fn_formInsert}>양식 등록</Button>
+                    
                 </table>
             </div>
         </div>
