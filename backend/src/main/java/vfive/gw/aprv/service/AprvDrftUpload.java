@@ -126,7 +126,7 @@ public class AprvDrftUpload {
 		n.setNtfType("APRV_REQ");
 		n.setTitle("결재 요청");
 		n.setBody(drftDoc.getAprvDocTtl()); // 예: 문서 제목/요약
-		n.setLinkUrl("/aprv/detail/" + aprvDocId);
+		n.setLinkUrl("/approval/approvalBox/detail/" + aprvDocId);
 		n.setSrcType("APRV_DOC");
 		n.setSrcId(aprvDocId);
 		n.setCreatedBy(drftDoc.getDrftEmpId());
