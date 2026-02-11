@@ -4,6 +4,7 @@ import { fetcher } from "../../../shared/api/fetcher";
 import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌트 임포트
 import DutySkedAprvReqModal from "../component/DutySkedAprvReqModal";
 import "../css/DutySkedDetail.css";
+import DutySkedAprvReqModal2 from "../component/DutySkedAprvReqModal2";
 
 function DutySkedDetail() {
   const [searchParams] = useSearchParams();
@@ -348,7 +349,7 @@ function DutySkedDetail() {
         onApply={handleGroupApply}
       />
       {/* 새 결재 요청 모달 */}
-      <DutySkedAprvReqModal
+      <DutySkedAprvReqModal2
         isOpen={isAprvModalOpen}
         onClose={() => setIsAprvModalOpen(false)}
         onSubmit={handleApprovalSubmit}
