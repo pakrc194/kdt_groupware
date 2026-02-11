@@ -7,6 +7,7 @@ import "../css/DutySkedDetail.css";
 import DutySkedAprvReqModal2 from "../component/DutySkedAprvReqModal2";
 
 function DutySkedDetail() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dutyId = searchParams.get("dutyId");

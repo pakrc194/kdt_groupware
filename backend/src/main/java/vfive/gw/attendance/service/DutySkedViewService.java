@@ -22,7 +22,6 @@ public class DutySkedViewService {
 		
 		Map<String, Object> res = new HashMap<>();
 		
-		req.setDeptId(8);
 		DutySkedListDTO master = mapper.selectConfirmedMasterByDept(req);
 		
 		

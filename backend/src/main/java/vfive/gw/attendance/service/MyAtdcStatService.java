@@ -28,10 +28,8 @@ public class MyAtdcStatService {
 
 	public MyAtdcStatDTO execute(HttpServletRequest request, HttpServletResponse response) {
 		String year = request.getParameter("year");
+		int empId = Integer.parseInt(request.getParameter("empId"));
 		if (year == null || year.isEmpty()) year = String.valueOf(LocalDate.now().getYear());
-		
-		// 임시 하드코딩된 사원번호 2 (나중에 세션 등으로 대체)
-		int empId = 2;
 
 		// 1. 연차 정보 & 리스트 가져오기
 		LeaveDTO.Info leaveInfo = mapper.selectLeaveInfo(empId, year);

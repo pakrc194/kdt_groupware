@@ -115,7 +115,6 @@ public class DutyController {
 	ResponseEntity<?> updateGroup(@RequestBody List<Map<String, Object>> req) {
 			
 		
-			System.out.println(req);
 			
 			dutyGroupUpdateService.execute(req);
 			
@@ -164,5 +163,21 @@ public class DutyController {
 	  }
 		
 	}
+	
+	@PostMapping("/pending")
+	public ResponseEntity<?> requestApproval(@RequestBody DutyRequestDTO req) {
+	    try {
+	        dutySkedUpdateService.pendingDutySchedule(req);
+	        return ResponseEntity.ok(Map.of("message", "결재 요청(PENDING)이 완료되었습니다."));
+	    } catch (IllegalStateException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	                             .body(Map.of("message", e.getMessage()));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body(Map.of("message", "처리 중 오류가 발생했습니다."));
+	    }
+	}
+	
+	
 	
 }

@@ -4,6 +4,7 @@ import { fetcher } from "../../../shared/api/fetcher";
 import "../css/EmpAttendanceList.css";
 
 function EmpAtdcDetail() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [searchParams] = useSearchParams();
 
   // URL 쿼리 스트링에서 데이터 추출 (?empId=...&startDate=...)

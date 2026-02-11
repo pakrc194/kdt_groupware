@@ -4,6 +4,7 @@ import { fetcher } from "../../../shared/api/fetcher";
 import "../css/DutySkedView.css"; // 기존 상세 페이지 CSS와 공유
 
 function DutySkedView() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const navigate = useNavigate();
 
   // 1. 초기 날짜 설정 (현재 년-월)
@@ -39,7 +40,9 @@ function DutySkedView() {
       const ymd = selectedMonth.replace("-", "");
 
       // 백엔드 Controller의 @GetMapping("view") 호출
-      const data = await fetcher(`/gw/duty/view?trgtYmd=${ymd}`);
+      const data = await fetcher(
+        `/gw/duty/view?trgtYmd=${ymd}&deptId=${myInfo.deptId}`,
+      );
 
       if (data) {
         // 백엔드 서비스에서 res.put("master", master), res.put("details", details) 한 구조 그대로 매핑
