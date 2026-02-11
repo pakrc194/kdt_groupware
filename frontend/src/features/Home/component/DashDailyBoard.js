@@ -200,8 +200,8 @@ function DashDailyBoard(props) {
                           <strong>상세:</strong> {s.schedDetail}
                         </div>
                         <div>
-                          <strong>기간:</strong> {s.schedStartDate} ~{" "}
-                          {s.schedEndDate}
+                          <strong>기간:</strong> {s.schedStartDate.split(" ")[0]} ~{" "}
+                          {s.schedEndDate.split(" ")[0]}
                         </div>
                       </div>
                     ))}

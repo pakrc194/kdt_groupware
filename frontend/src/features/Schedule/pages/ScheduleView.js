@@ -13,9 +13,9 @@ function ScheduleView(props) {
     const [sched, setSched] = useState([]);
     const [todos, setTodos] = useState([]);
     const [showTodoForm, setShowTodoForm] = useState(false);
-    const [newTodo, setNewTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: Boolean });
+    const [newTodo, setNewTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: '' });
     const [editTodoId, setEditTodoId] = useState(null);
-    const [editTodo, setEditTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: Boolean });
+    const [editTodo, setEditTodo] = useState({ schedStartDate: '', schedTitle: '', schedDetail: '', schedState: '' });
     // 로그인 정보
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
     const dept_id = myInfo.deptId;
@@ -177,7 +177,7 @@ function ScheduleView(props) {
                                     {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept} ({s.schedDeptId})</div>}
                                     {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpId}</div>}
                                     <div><strong>상세:</strong> {s.schedDetail}</div>
-                                    <div><strong>기간:</strong> {s.schedStartDate} ~ {s.schedEndDate}</div>
+                                    <div><strong>기간:</strong> {s.schedStartDate.split(" ")[0]} ~ {s.schedEndDate.split(" ")[0]}</div>
                                 </div>
                             ))}
                         </div>
@@ -242,7 +242,7 @@ function ScheduleView(props) {
                                         </>
                                         ) : (
                                         <>
-                                            <span style={{ textDecoration: todo.schedState === 1 ? 'line-through' : 'none', flex: 1, marginLeft: '8px' }}>
+                                            <span style={{ textDecoration: todo.schedState != 0 ? 'line-through' : 'none', flex: 1, marginLeft: '8px' }}>
                                                 {todo.schedStartDate.split(' ')[0]} {todo.schedTitle}
                                             </span>
 
