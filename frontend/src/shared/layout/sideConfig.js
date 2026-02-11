@@ -67,7 +67,7 @@ export const SIDE_CONFIG = {
   dashboard: {
     title: "회사 대시보드",
     sideMenus: [
-      { id: "aaa", name: "회사 대시보드",
+      { id: "CP", name: "회사 대시보드",
         // subMenus: [
         //   { id: "CP", name: "지점장" },
         //   { id: "FO", name: "식품" },
@@ -79,10 +79,15 @@ export const SIDE_CONFIG = {
         //   { id: "SO", name: "안전관리" },
         // ],
        },
-      { id: "bbb", name: "인사팀 대시보드" },
-      { id: "ccc", name: "시설자재팀 대시보드" },
-      { id: "ddd", name: "권한 목록" },
-      { id: "eee", name: "공지게시판" },
+      { id: "FO", name: "식품팀 대시보드" },
+      { id: "BU", name: "뷰티·패션잡화팀 대시보드" },
+      { id: "WF", name: "여성패션팀 대시보드" },
+      { id: "MF", name: "남성패션팀 대시보드" },
+      { id: "HR", name: "인사관리팀 대시보드" },
+      { id: "FM", name: "시설자재팀 대시보드" },
+      { id: "SO", name: "안전관리팀 대시보드" },
+      { id: "AD", name: "권한 목록" },
+      { id: "BO", name: "공지게시판" },
     ],
   },
   home: {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 
-function HrDashboard(props) {
+function FmDashboard(props) {
     const [emp, setEmp] = useState([]);
     const [sched, setSched] = useState([]);
 
@@ -32,11 +32,11 @@ function HrDashboard(props) {
 
     useEffect(() => {
         // 팀 근태
-        fetcher(`/gw/dashboard/dashTeamEmpList?dept=6&date=${formatted}`)
+        fetcher(`/gw/dashboard/dashTeamEmpList?dept=7&date=${formatted}`)
         .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]) })
 
         // 팀 일정
-        fetcher(`/gw/dashboard/dashTeamSchedList?dept=6`)
+        fetcher(`/gw/dashboard/dashTeamSchedList?dept=7`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
             console.log(dd)
          })
@@ -44,11 +44,8 @@ function HrDashboard(props) {
     
     return (
         <div>
-            <h1>인사관리</h1>
-            팀 근태 현황(근태), 문서 처리 속도(결재 - APRV_PRCS테이블, 문서 양식별 시간), 팀 일정(일정), 교육 종류별 통계(일정)<br/>
-            
-
-            <div>
+            <h1>시설자재</h1>
+          <div>
         <h1>근태현황</h1>
       {/* ================= 통계 카드 ================= */}
       <div style={styles.statsWrap}>
@@ -214,4 +211,4 @@ const styles = {
   },
 };
 
-export default HrDashboard;
+export default FmDashboard;
