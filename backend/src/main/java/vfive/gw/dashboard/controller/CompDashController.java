@@ -10,6 +10,7 @@ import jakarta.annotation.Resource;
 import vfive.gw.dashboard.dto.request.CompHRDTO;
 import vfive.gw.dashboard.dto.request.CompSchedDTO;
 import vfive.gw.dashboard.dto.request.AccessDeleteDTO;
+import vfive.gw.dashboard.dto.request.AprvPrcsDTO;
 import vfive.gw.dashboard.mapper.CompDashMapper;
 import vfive.gw.orgchart.dto.HRChangeHistDTO;
 
@@ -48,6 +49,13 @@ public class CompDashController {
 //		System.out.println("일정 삭제 기록 "+res);
 		return res;
 	}
+	
 	// 결재 처리 이력
+	@GetMapping("aprvPrcs")
+	List<AprvPrcsDTO> aprvPrcsList() {
+		List<AprvPrcsDTO> res = mapper.aprvPrcsList();
+		System.out.println("결재처리 : "+res);
+		return res;
+	}
 	
 }

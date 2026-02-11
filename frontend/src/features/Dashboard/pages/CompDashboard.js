@@ -15,6 +15,7 @@ function CompDashboard(props) {
     const [changeEmpData, setChangeEmpData] = useState([]);
     const [deleteSchedLog, setDeleteSchedLog] = useState([]);
     const [accessDeleteList, setAccessDeleteList] = useState([]);
+    const [approval, setApproval] = useState([]);
 
 
     useEffect(() => {
@@ -44,7 +45,9 @@ function CompDashboard(props) {
         .catch(e => console.log(e))
 
         // 결재 처리 이력
-
+        fetcher(`/gw/dashboard/aprvPrcs`)
+        .then(dd => { setApproval(Array.isArray(dd) ? dd : [dd]) })
+        .catch(e => console.log(e))
       }, [])
 
     // 회사 대시보드 열람 권한 (id = 14)
@@ -57,7 +60,7 @@ function CompDashboard(props) {
             <OrganizationStatistics inOut={inOut} />
             <AccessDeletionHistory accessDeleteList={accessDeleteList} />
             <ScheduleDeletionHistory deleteSchedLog={deleteSchedLog} />
-            <ApprovalProcessHistory />
+            <ApprovalProcessHistory approval={approval} />
         </div>
     );
 }

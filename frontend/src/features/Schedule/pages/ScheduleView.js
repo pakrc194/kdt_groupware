@@ -177,7 +177,7 @@ function ScheduleView(props) {
                                     {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept} ({s.schedDeptId})</div>}
                                     {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpId}</div>}
                                     <div><strong>상세:</strong> {s.schedDetail}</div>
-                                    <div><strong>기간:</strong> {s.schedStartDate} ~ {s.schedEndDate}</div>
+                                    <div><strong>기간:</strong> {s.schedStartDate.split(" ")[0]} ~ {s.schedEndDate.split(" ")[0]}</div>
                                 </div>
                             ))}
                         </div>

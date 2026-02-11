@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 
 import vfive.gw.dashboard.dto.request.AccessDeleteDTO;
 import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
+import vfive.gw.dashboard.dto.request.AprvPrcsDTO;
 import vfive.gw.dashboard.dto.request.CompHRDTO;
 import vfive.gw.dashboard.dto.request.CompSchedDTO;
 import vfive.gw.orgchart.dto.HRChangeHistDTO;
@@ -58,31 +59,25 @@ public interface CompDashMapper {
 //			+ "left join LOC_INFO on FIND_IN_SET(LOC_INFO.loc_id, SCHED.sched_loc) > 0 "
 //			+ "where sched_delete_date is not null")
 	
-	@Select("""
-			SELECT
-			    SCHED.*,
 
-			    GROUP_CONCAT(DISTINCT DEPT_INFO.dept_name SEPARATOR ', ') AS schedDeptNm,
-			    GROUP_CONCAT(DISTINCT EMP_PRVC.emp_nm SEPARATOR ', ') AS schedEmpNm,
-			    GROUP_CONCAT(DISTINCT LOC_INFO.loc_nm SEPARATOR ', ') AS schedLocNm
-
-			FROM SCHED
-
-			LEFT JOIN DEPT_INFO
-			    ON SCHED.sched_dept_id IS NOT NULL
-			   AND FIND_IN_SET(DEPT_INFO.dept_id, SCHED.sched_dept_id) > 0
-
-			LEFT JOIN EMP_PRVC
-			    ON SCHED.sched_emp_id IS NOT NULL
-			   AND FIND_IN_SET(EMP_PRVC.emp_id, SCHED.sched_emp_id) > 0
-
-			LEFT JOIN LOC_INFO
-			    ON SCHED.sched_loc IS NOT NULL
-			   AND FIND_IN_SET(LOC_INFO.loc_id, SCHED.sched_loc) > 0
-
-			WHERE SCHED.sched_delete_date IS NOT NULL
-
-			GROUP BY SCHED.sched_id
-			""")
+	@Select("SELECT SCHED.*, "
+			+ "GROUP_CONCAT(DISTINCT DEPT_INFO.dept_name SEPARATOR ', ') AS schedDeptNm, "
+			+ "GROUP_CONCAT(DISTINCT EMP_PRVC.emp_nm SEPARATOR ', ') AS schedEmpNm, "
+			+ "GROUP_CONCAT(DISTINCT LOC_INFO.loc_nm SEPARATOR ', ') AS schedLocNm "
+			+ "FROM SCHED "
+			+ "LEFT JOIN DEPT_INFO ON SCHED.sched_dept_id IS NOT NULL AND FIND_IN_SET(DEPT_INFO.dept_id, SCHED.sched_dept_id) > 0 "
+			+ "LEFT JOIN EMP_PRVC ON SCHED.sched_emp_id IS NOT NULL AND FIND_IN_SET(EMP_PRVC.emp_id, SCHED.sched_emp_id) > 0 "
+			+ "LEFT JOIN LOC_INFO ON SCHED.sched_loc IS NOT NULL AND FIND_IN_SET(LOC_INFO.loc_id, SCHED.sched_loc) > 0 "
+			+ "WHERE SCHED.sched_delete_date IS NOT NULL "
+			+ "GROUP BY SCHED.sched_id")
 	List<CompSchedDTO> schedList();
+	
+	@Select("select APRV_DOC.*, DOC_FORM.doc_form_nm, EMP_PRVC.EMP_NM AS DRAFT_EMP_NM, "
+			+ "APRV_PRCS.aprv_prcs_emp_id, APRV_PRCS_EMP.EMP_NM AS APRV_PRCS_EMP_NM "
+			+ "from APRV_DOC "
+			+ "left join DOC_FORM on APRV_DOC.DOC_FORM_ID = DOC_FORM.DOC_FORM_ID "
+			+ "LEFT JOIN EMP_PRVC ON APRV_DOC.DRFT_EMP_ID = EMP_PRVC.EMP_ID "
+			+ "LEFT JOIN APRV_PRCS ON APRV_DOC.APRV_DOC_ID = APRV_PRCS.APRV_DOC_ID "
+			+ "LEFT JOIN EMP_PRVC AS APRV_PRCS_EMP ON APRV_PRCS.aprv_prcs_emp_id = APRV_PRCS_EMP.EMP_ID ")
+	List<AprvPrcsDTO> aprvPrcsList();
 }

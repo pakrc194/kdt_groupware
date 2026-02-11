@@ -45,7 +45,7 @@ function AccessDeletionHistory({accessDeleteList}) {
                                 ))
                                     ) : (
                                         <tr>
-                                        <td colSpan="4" style={styles.noData}>데이터가 없습니다.</td>
+                                            <td colSpan="4" style={styles.noData}>데이터가 없습니다.</td>
                                         </tr>
                                     )}
                             </tbody>
@@ -81,13 +81,13 @@ const styles = {
   },
   th: {
     background: "#fafafa",
-    padding: 16,
+    padding: 10,
     borderBottom: "2px solid #f0f0f0",
     textAlign: "left",
     width: "100px"
   },
   td: {
-    padding: 16,
+    padding: 10,
     borderBottom: "1px solid #f0f0f0",
   },
   noData: {
