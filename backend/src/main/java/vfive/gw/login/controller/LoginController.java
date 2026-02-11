@@ -1,5 +1,6 @@
 package vfive.gw.login.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import vfive.gw.global.config.JwtUtil;
 import vfive.gw.login.dto.LoginRequest;
 import vfive.gw.login.dto.LoginResponse;
 import vfive.gw.login.mapper.LoginMapper;
+import vfive.gw.login.service.FindPasswordService;
 
 @RestController
 @RequestMapping("/gw/login")
@@ -24,6 +26,9 @@ public class LoginController {
 		this.jwtUtil = jwtUtil;
 	}
 
+	@Resource
+	private FindPasswordService findPasswordService;
+	
 	@Resource
 	LoginMapper mapper;
 	
@@ -37,6 +42,14 @@ public class LoginController {
 		
 		if(res!=null) {
 			res.setToken(token);
+			if(res.getEmpAcntStts().equals("초기")) {
+				res.setLogChk("NewEmp");
+				return res;
+			}
+			if(res.getEmpAcntStts().equals("RETIRED") || res.getEmpAcntStts() == "RETIRED") {
+				res.setLogChk("Fail");
+				return res;
+			}
 			res.setLogChk("Success");
 			return res;
 		} else {
@@ -46,6 +59,28 @@ public class LoginController {
 		return res;
 	}
 	
+	@PostMapping("newEmp")
+	Map<String, Object> newEmp(@RequestBody LoginRequest req) {
+		
+		int result = mapper.updateNewEmp(req);
+		
+		Map<String, Object> response = new HashMap<>();
+    response.put("success", result > 0);
+    return response;
+	}
+	
+	@PostMapping("send-code")
+	Map<String, Object> findPwdSendCode(@RequestBody LoginRequest req) {
+		
+		return findPasswordService.sendAuthCodeIfValid(req);
+	}
+	
+	@PostMapping("reset")
+	Map<String, Object> resetPassword(@RequestBody LoginRequest req) {
+		
+		boolean success = findPasswordService.resetPassword(req);
+    return Map.of("success", success);
+	}
 	
 	@RequestMapping("/hello")
 	Object hello(Authentication authentication) {
