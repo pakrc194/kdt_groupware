@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import {fetcher} from '../../../shared/api/fetcher';
 import BoardModify from  './BoardModify';
+import boardst from '../../Home/css/Board.module.css'
 
 function BoardDetail(props) {
     const {sideId} = useParams();
@@ -76,8 +77,8 @@ function BoardDetail(props) {
         return <div className="error">게시물을 찾을 수 없습니다.</div>;
     }
 
-
-    // const isOwner = String(board.creator) === String(loginUserSn);
+    //작성자 본인 확인  사번으로 본인확인하여 게시글의 수정,삭제가 가능함
+     const isOwner = board.creator === loginUserSn;
 
 
 
@@ -86,7 +87,7 @@ function BoardDetail(props) {
             <div className="detail-header">
                 <div className="title-section">
                     {board.isTop && <span className="badge-top">상단공지</span>}
-                    <h1>{board.title}</h1>
+                    <h1 className ={boardst['ditailTitle']}>{board.title}</h1>
                 </div>
                 <div className="meta-info">
                     <span className="author">작성자: {board.empNm}</span>
@@ -105,17 +106,21 @@ function BoardDetail(props) {
                 </div>
             </div>
 
-            <div className="detail-content">
+            <div className={boardst['detail-content']}>
                 <div dangerouslySetInnerHTML={{ __html: board.content }} />
             </div>
 
 
 
-            <div className="detail-actions">
-                <button onClick={handleList} >목록</button>
-                <button onClick= {handleDelete}>삭제</button>
-                 <button onClick={() => props.goService('Modify')}>수정</button> 
-            
+            <div >
+                <button className={boardst['detail_button']} onClick={handleList} >목록</button>
+                {isOwner && (
+                    <>
+                        <button className={boardst['detail_button']} onClick={handleList} onClick= {handleDelete}>삭제</button>
+                        <button className={boardst['detail_button']} onClick={handleList} onClick={() => props.goService('Modify')}>수정</button> 
+                    </>
+
+                )}
             </div>
 
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import Pagination from './Pagination';
 import { fetcher } from '../../../shared/api/fetcher';
+import boardst from '../../Home/css/Board.module.css';
 
 
 
@@ -11,6 +12,9 @@ function MyBoardList(props) {
     const [pInfo, setPInfo] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchInput, setSearchInput] = useState('');
+    const [keyword, setKeyword] = useState('');
+    const [searchType, setSearchType] = useState('title');
 
 
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -19,11 +23,11 @@ function MyBoardList(props) {
 
     useEffect(()=>{
         if(empSn) fetchMyBoards();
-    },[currentPage,empSn]);
+    },[currentPage, empSn, keyword]);
 
     const fetchMyBoards = () => {
         setIsLoading(true);
-        fetcher(`/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`)
+        fetcher(`/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10&keyword=${keyword}&searchType=${searchType}`)
         .then(data => {
             setBoards(data.boards || []);
             setPInfo(data.pInfo);
@@ -35,11 +39,37 @@ function MyBoardList(props) {
         });
     };
 
+    const handleSearch = () => {
+        setKeyword(searchInput);
+        setCurrentPage(1); // 검색 시 1페이지로 이동
+    };
 
-    return(
-        <>
+
+    return (
+        <div className="board-list-container">
             <h2>내가 작성한 글 목록</h2>
-            <table border="">
+
+            {/* 검색 UI 영역 추가 */}
+            <div style={{ marginBottom: '20px' }}>
+                <select 
+                    className={boardst['selectBox']}
+                    value={searchType}
+                    onChange={(e) => setSearchType(e.target.value)}
+                >
+                    <option value="title">제목</option>
+                    <option value="boardId">문서번호</option>
+                </select>
+                <input 
+                    className={boardst.input} 
+                    type='text' 
+                    placeholder="내 글에서 검색" 
+                    value={searchInput} 
+                    onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <button className={boardst.button} onClick={handleSearch}>검색</button>
+            </div>
+
+            <table className={boardst.boardTable}>
                 <thead>
                     <tr>
                         <th>문서번호</th>
@@ -51,14 +81,12 @@ function MyBoardList(props) {
                 </thead>
                 <tbody>
                     {boards.length > 0 ? (
-                        boards.map((b) => {
-                            console.log("b값을 확인 :",b)
-
-                            return(
-                                <tr key={b.boardId}>
+                        boards.map((b) => (
+                            <tr key={b.boardId}>
                                 <td>{b.boardId}</td>
-                                <td><span>{b.boardType}</span></td>
+                                <td>{b.boardType}</td>
                                 <td 
+                                    style={{ cursor: 'pointer', color: 'blue' }}
                                     onClick={() => {
                                         props.goBoardId(b.boardId);
                                         props.goService('detail');
@@ -66,24 +94,22 @@ function MyBoardList(props) {
                                 >
                                     {b.title}
                                 </td>
-                                <td>{b.createdAt}</td>
+                                <td>{b.createdAt?.split('T')[0]}</td>
                                 <td>{b.views}</td>
                             </tr>
-                            );
-                                
-                    })
+                        ))
                     ) : (
-                        <tr><td colSpan="5">작성한 게시글이 없습니다.</td></tr>
+                        <tr><td colSpan="5" style={{textAlign:'center', padding:'20px'}}>검색 결과가 없거나 작성한 게시글이 없습니다.</td></tr>
                     )}
                 </tbody>
             </table>
 
             {pInfo && (
-                <div>
+                <div className={boardst.paginationContainer}>
                     <Pagination pInfo={pInfo} onPageChange={setCurrentPage} />
                 </div>
             )}
-        </>
+        </div>
     );
 
 }   
