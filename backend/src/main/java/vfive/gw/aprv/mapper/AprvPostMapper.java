@@ -78,7 +78,7 @@ public interface AprvPostMapper {
 	
 	@Insert("<script>"
 			+ "insert into APRV_INPT_VL "
-			+ "(DOC_INPT_ID, APRV_DOC_ID, DOC_INPT_VL)"
+			+ "(DOC_INPT_ID, APRV_DOC_ID, DOC_INPT_VL) "
 			+ "values "
 			+ "<foreach collection='list' item='v' separator=',' index='i'>"
 			+ " (#{v.docInptId}, #{v.aprvDocId}, #{v.docInptVl}) "

@@ -91,7 +91,11 @@ public interface AprvListMapper {
 		    df.DOC_FORM_TYPE,
 		    df.DEPT_ID,
 		    df.DOC_FORM_YN;
+		
 			""")
+	List<AprvDocFormListResponse> docDetailFormList();
+	
+	@Select("Select * from DOC_FORM where DOC_FORM_YN = 'Y'")
 	List<AprvDocFormListResponse> docFormList();
 	
 	@Select("""

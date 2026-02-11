@@ -349,7 +349,8 @@ function DutySkedDetail() {
         onApply={handleGroupApply}
       />
       {/* 새 결재 요청 모달 */}
-      <DutySkedAprvReqModal2
+      <DutySkedAprvReqModal
+        dutyId={dutyId}
         isOpen={isAprvModalOpen}
         onClose={() => setIsAprvModalOpen(false)}
         onSubmit={handleApprovalSubmit}

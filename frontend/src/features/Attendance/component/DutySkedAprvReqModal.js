@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 
-function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl }) {
+function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId}) {
   const navigate = useNavigate();
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
@@ -15,7 +15,7 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl }) {
       aprvPrcsEmpId: myInfo?.empId,
       aprvPrcsEmpNm: myInfo?.empNm,
       roleCd: "DRFT",
-      roleSeq: "1",
+      roleSeq: "0",
     },
   ]);
   const [docForm, setDocForm] = useState({ docFormNm: "양식 선택" });
@@ -35,37 +35,44 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl }) {
     console.log("fn_drftConfirm");
     const drftDoc = {
       drftEmpId: myInfo.empId,
-      docFormId: 1,
-      aprvDocNo: "VA",
-      aprvDocTtl: docTitle,
+      docFormId: 9,
+      aprvDocNo: "DT",
+      aprvDocTtl: title,
     };
+    
+    fetcher(`/gw/aprv/AprvDocInpt/9`).then(res=>{
+      const updated = res.map(v => {
+        if (v.docInptNm === "docDuty") {
+          return { ...v, docInptVl: dutyId };
+        } else if(v.docInptNm=="docTxtArea") {
+          if(content!=null || content!="") {
+            return { ...v, docInptVl: content };
+          }
+        }
+        return v;
+      });
 
-    setInputList(
-      [
-        { docInptNo: 1 },
-        { docInptId: 1 },
-        { aprvDocId: null },
-        { docInptVl: "-" },
-      ],
-      [
-        { docInptNo: 2 },
-        { docInptId: 2 },
-        { aprvDocId: null },
-        { docInptVl: "-" },
-      ],
-      [
-        { docInptNo: 3 },
-        { docInptId: 3 },
-        { aprvDocId: null },
-        { docInptVl: "-" },
-      ],
-      [
-        { docInptNo: 4 },
-        { docInptId: 4 },
-        { aprvDocId: null },
-        { docInptVl: content },
-      ],
-    );
+      console.log("fetcher InptList :", content, updated);
+
+      setInputList(updated);
+      
+    })
+
+
+    // setInputList([
+    //     { 
+    //       docInptNo: 1 ,
+    //       docInptId: 71 ,
+    //       docInptNm:"docDuty",
+    //       docInptType:"DUTY",
+    //       docInptVl: content 
+    //     },
+    //   ],
+    // );
+
+    console.log("drftDocReq: ",drftDoc)
+    console.log("drftLineReq: ",docLine)
+    console.log("drftInptReq: ",inputList)
 
     fetcher("/gw/aprv/AprvDrftUpload", {
       method: "POST",
@@ -80,6 +87,18 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl }) {
       navigate("/approval/draftBox");
     });
   };
+
+  useEffect(()=>{
+      fetcher(`/gw/aprv/AprvDocFormLine/9`)
+      .then(res=>{
+          setDocLine(prev=>{
+              const drafter = prev.find(v => v.roleCd === "DRFT");
+              return drafter ? [drafter, ...res] : [...res];
+          })
+      }).catch(e=>{
+          console.log("fetch formLine : "+e)
+      })
+  },[])
 
   if (!isOpen) return null;
 

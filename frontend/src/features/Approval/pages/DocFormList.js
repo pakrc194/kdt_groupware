@@ -8,7 +8,7 @@ const DocFormList = () => {
     const navigate = useNavigate();
 
     useEffect(()=>{
-        fetcher("/gw/aprv/AprvDocFormList").then(setFormList)
+        fetcher("/gw/aprv/AprvDetailFormList").then(setFormList)
     },[])
     
     const fn_formInsert = () => {
@@ -41,7 +41,7 @@ const DocFormList = () => {
                         <th>양식 제목</th>
                         <th>양식 종류</th>
                         <th>사용 부서</th>
-                        <th>숨김 여부</th>
+                        <th>공개 여부</th>
                         <th>숨김 처리</th>
                     </tr>
                 </thead>

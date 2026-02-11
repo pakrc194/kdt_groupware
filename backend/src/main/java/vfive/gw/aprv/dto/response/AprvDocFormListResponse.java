@@ -7,5 +7,5 @@ public class AprvDocFormListResponse {
 	int docFormId;
 	String docFormCd, docFormNm, docFormType;
 	String deptId;
-	String deptNames;
+	String deptNames, docFormYn;
 }

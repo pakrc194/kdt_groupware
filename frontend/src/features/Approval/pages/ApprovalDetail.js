@@ -6,6 +6,7 @@ import ApprovalLineDetail from '../components/ApprovalLineDetail';
 import InputForm from '../components/InputForm';
 import DetailForm from '../components/DetailForm';
 import AttendContent from '../components/AttendContent';
+import DutyForm from './DutyForm';
 
 const ApprovalDetail = () => {
     const {sideId, docId} = useParams();
@@ -32,11 +33,12 @@ const ApprovalDetail = () => {
         fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(res => {
             const drftStart = res.find(v=>v.docInptNm=="docStart")
             const drftEnd = res.find(v=>v.docInptNm=="docEnd")
-            setDrftDate({
-                docStart : drftStart.docInptVl,
-                docEnd : drftEnd.docInptVl
-            })
-
+            if(drftStart!=null && drftEnd!=null) {
+                setDrftDate({
+                    docStart : drftStart.docInptVl,
+                    docEnd : drftEnd.docInptVl
+                })
+            }
             const role = res.find(v=>v.docInptNm=="docRole");
             if(role!=null) {
                 const ids = res.find(v=>v.docInptNm=="docSchedType")
@@ -66,6 +68,7 @@ const ApprovalDetail = () => {
             
 
             setInputList(res)
+            console.log("inptList ",res)
         })
 
         fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
@@ -169,9 +172,6 @@ const ApprovalDetail = () => {
             ids = [aprvDocDetail.drftEmpId]
         }
 
-
-
-
         console.log("일정확인 ",docRole, schedType, drftEmpId, ids)
 
         if(drftEmpId==null)
@@ -239,10 +239,15 @@ const ApprovalDetail = () => {
                 <div>기안일시 {aprvDocDetail.aprvDocDrftDt}</div>
                 <div>결재선 <ApprovalLineDetail aprvLine={aprvLine} setRejectData={setRejectData} inptList={inputList} docDetail={aprvDocDetail}/></div>
                 <div>
-                    {inputList.map((v, k)=>
-                        <div key={k}>
+                    {inputList.map((v, k)=> {
+                        if(v.docInptNm=="docDuty") {
+                            return <DutyForm dutyId={v.docInptVl}/>
+                        }
+
+                        return <div key={k}>
                             <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl, name:v.docInptNm, option:v.docInptRmrk}}/>
                         </div>
+                        }
                     )}
                 </div>
 
