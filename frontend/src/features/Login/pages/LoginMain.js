@@ -95,6 +95,7 @@ function LoginMain(props) {
         </Button>
         <Button onClick={() => navigate("/FindPassword")}>비밀번호 찾기</Button>
         <br /> test계정 20240101/ 1234
+        <br /> 손흥민 SO0001/ hashed_pwd_09
       </div>
     </>
   );
