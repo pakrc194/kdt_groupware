@@ -24,6 +24,7 @@ function BoardInsert(props) {
         const boardData = {
             title: title,
             content: content,
+            empId : myInfo.empId,
             creator: loginUserSn,
             boardType: sideId, // 중요: 현재 게시판 유형 전달
             isTop: isTop  // 체크박스에 체크하면 '1' , 아니면 '0'
