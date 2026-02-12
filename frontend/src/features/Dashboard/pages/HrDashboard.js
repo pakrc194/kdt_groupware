@@ -1,11 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetcher } from '../../../shared/api/fetcher';
+import AttendanceRate from '../component/AttendanceRate';
+import TeamSchdule from '../component/TeamSchdule';
+import DocPrcsTime from '../component/DocPrcsTime';
 
 function HrDashboard(props) {
+    const [emp, setEmp] = useState([]);
+    const [sched, setSched] = useState([]);
+    const [docPrc, setDocPrc] = useState([]);
+
+    const date = new Date;
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+
+    
+    const formatted = `${yyyy}-${mm}-${dd}`;
+
+
+    useEffect(() => {
+        // 팀 근태
+        fetcher(`/gw/dashboard/dashTeamEmpList?dept=6&date=${formatted}`)
+        .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]) })
+
+        // 팀 일정
+        fetcher(`/gw/dashboard/dashTeamSchedList?dept=6`)
+        .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
+            console.log(dd)
+         })
+
+         // 결재 속도
+                 fetcher('/gw/dashboard/docPrcsTime?dept=6')
+                 .then(dd => setDocPrc(Array.isArray(dd) ? dd : [dd]))
+    }, [])
+    
     return (
         <div>
-            인사팀 대시보드<br/>
-            팀 근태 현황(근태), 문서 처리 속도(결재), 팀 일정(일정), 교육 종류별 통계(일정)
-            <br/>
+            <h1>인사관리</h1>
+            <AttendanceRate emp={emp} />
+            <TeamSchdule sched={sched}/>
+            <DocPrcsTime docPrc={docPrc}/>
         </div>
     );
 }

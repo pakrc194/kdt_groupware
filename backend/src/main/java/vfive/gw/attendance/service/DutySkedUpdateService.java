@@ -1,10 +1,13 @@
 package vfive.gw.attendance.service;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 import vfive.gw.attendance.dto.request.DutyRequestDTO;
+import vfive.gw.attendance.dto.response.DutySkedListDTO;
 import vfive.gw.attendance.mapper.DutyMapper;
 
 @Service
@@ -23,5 +26,46 @@ public class DutySkedUpdateService {
 			mapper.insertDutyDetails(req.getDetails());
 		}
 	}
+	
+	@Transactional
+  public void confirmDutySchedule(DutyRequestDTO req) {
+		
+		System.out.println("req: "+req);
+    // 현재 결재 대상인 근무표 정보 가져오기
+    DutySkedListDTO currentDuty = mapper.selectDutyById(req);
+    if (currentDuty == null) {
+        throw new RuntimeException("존재하지 않는 근무표입니다.");
+    }
+
+    // 중복 체크 (같은 부서, 같은 날짜에 이미 확정된 게 있는지)
+    int alreadyConfirmedCount = mapper.countConfirmedDuty(currentDuty);
+
+    if (alreadyConfirmedCount > 0) {
+        // 이미 확정된 근무표가 있다면 예외 발생
+        throw new IllegalStateException("해당 부서의 해당 날짜에는 이미 확정된 근무표가 존재합니다.");
+    }
+
+    // 업데이트 진행
+    mapper.updateDutyToConfirmed(req);
+  }
+	
+	@Transactional
+  public void pendingDutySchedule(DutyRequestDTO req) {
+      // 현재 상태 확인 (안전장치)
+			DutySkedListDTO currentStatus = mapper.selectDutyById(req);
+      if (currentStatus == null) {
+          throw new RuntimeException("근무표를 찾을 수 없습니다.");
+      }
+      if (!"DRAFT".equals(currentStatus.getPrgrStts())) {
+          throw new IllegalStateException("작성 중(DRAFT) 상태인 근무표만 결재 요청이 가능합니다.");
+      }
+
+      // 업데이트 실행
+      int updatedRows = mapper.updateDutyToPending(req);
+      
+      if (updatedRows == 0) {
+          throw new RuntimeException("상태 변경에 실패했습니다.");
+      }
+  }
 	
 }

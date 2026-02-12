@@ -24,7 +24,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     useEffect(() => {
         
         fetchBoards();
-    }, [sideId, currentPage, pageSize,keyword]);
+    }, [sideId, currentPage, pageSize,keyword,searchType]);
 
     // 화면이동을 하면 1페이지로 이동하도록 한다
     useEffect(()=>{
@@ -52,7 +52,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
 
     const fetchBoards = () => {
         setIsLoading(true);
-        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}&empSn=${empSn} `)
+        fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}&empSn=${empSn}`)
             /// `/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`
             .then(dd => {  // 데이터와 페이지 정보만 상태에 저장
                 setBoards(dd.boards || dd); 

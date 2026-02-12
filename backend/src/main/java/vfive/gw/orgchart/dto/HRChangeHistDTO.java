@@ -7,5 +7,5 @@ public class HRChangeHistDTO {
 	private Integer historyId, histEmpId, beforeDeptId, beforeJbttlId, afterDeptId, afterJbttlId;
 	private String histEmpSn, histEmpNm, beforeNm, afterNm, changeDate;
 	
-	private String bDeptName, aDeptName, bjbttlNm, aJbttlNm;
+	private String bDeptName, aDeptName, bJbttlNm, aJbttlNm;
 }

@@ -34,19 +34,6 @@ const TempBox = () => {
         <>
             <h4>전자결재 > 임시저장함 </h4>
             <div className="section history-section">
-                <div>
-                    <select >
-                        <option value="">ALL</option>
-                        <option>PENDING</option>
-                        <option>REJECTED</option>
-                        <option>COMPLETED</option>
-                    </select>
-                    <select>
-                        <option>전체</option>
-                        <option>공용</option>
-                        <option>부서</option>
-                    </select>
-                </div>
                 <table className="history-table">
                 <thead>
                     <tr>
@@ -64,7 +51,7 @@ const TempBox = () => {
                         <td>{aprvDoc.aprvDocNo}</td>
                         <td><Link to={`/approval/${sideId}/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
-                        <td>{aprvDoc.aprvDocDrftDt.substring(0,10)}</td>
+                        <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
                                 {aprvDoc.aprvDocStts}

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -109,11 +110,11 @@ public class DutyController {
 		return res;
 	}
 	
+	// 조 편성
 	@PutMapping("updateGroups")
 	ResponseEntity<?> updateGroup(@RequestBody List<Map<String, Object>> req) {
 			
 		
-			System.out.println(req);
 			
 			dutyGroupUpdateService.execute(req);
 			
@@ -146,5 +147,36 @@ public class DutyController {
 		
 		return res;
 	}
+	
+	@PostMapping("confirmDuty")
+	ResponseEntity<?> confirmDuty(@RequestBody DutyRequestDTO req) {
+		try {
+			dutySkedUpdateService.confirmDutySchedule(req);
+      return ResponseEntity.ok(Map.of("message", "근무표가 최종 확정되었습니다."));
+	  } catch (IllegalStateException e) {
+	      // 중복 데이터 에러 (409 Conflict)
+	      return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", e.getMessage()));
+	  } catch (Exception e) {
+	      // 기타 서버 에러
+	      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "처리 중 오류가 발생했습니다."));
+	  }
+		
+	}
+	
+	@PostMapping("/pending")
+	public ResponseEntity<?> requestApproval(@RequestBody DutyRequestDTO req) {
+	    try {
+	        dutySkedUpdateService.pendingDutySchedule(req);
+	        return ResponseEntity.ok(Map.of("message", "결재 요청(PENDING)이 완료되었습니다."));
+	    } catch (IllegalStateException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+	                             .body(Map.of("message", e.getMessage()));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .body(Map.of("message", "처리 중 오류가 발생했습니다."));
+	    }
+	}
+	
+	
 	
 }

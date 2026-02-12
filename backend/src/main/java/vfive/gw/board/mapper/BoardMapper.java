@@ -90,7 +90,7 @@ public interface BoardMapper {
     /* 조건별 게시물 수 조회*/
         @Select("<script>" +
                 "SELECT COUNT(*) FROM Board " +
-                "WHERE BoardType = #{sideId} " +
+                "WHERE BoardType = #{sideId} AND IsTop = 'false'" +
                 "<if test='keyword != null and keyword != \"\"'>" +
                 "  <choose>" +
                 "    <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
@@ -117,12 +117,14 @@ public interface BoardMapper {
         
 
         /* 조건별 목록 조회* 작성자 이름 조회하기*/
-        @Select("<script>" +
-        		// 상단공지글 처리 
-        		" (SELECT Board.*, EMP_NM FROM Board, EMP_PRVC " +
-                "  WHERE Board.Creator = EMP_PRVC.EMP_SN AND IsTop = 'true') " + // 모든 공지글 가져오기
-                " UNION ALL " +
+        @Select// 상단공지글 처리 
+        		("SELECT Board.*, EMP_NM FROM Board, EMP_PRVC " +
+                "  WHERE Board.Creator = EMP_PRVC.EMP_SN AND IsTop = 'true' " + // 모든 공지글 가져오기
+                "ORDER BY Board.BoardId DESC")
+        List<BoardPrvc> listTopNotices(@Param("sideId") String sideId);
         		
+                
+		@Select("<script>" +
         		// 일반글 페이징 처리
         		"SELECT Board.*, EMP_NM FROM Board , EMP_PRVC  " +
                 "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN  and IsTop = 'false'" +
@@ -130,7 +132,7 @@ public interface BoardMapper {
                     "<choose>" +
                     "  <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
                     "  <when test='searchType == \"boardId\"'> AND BoardId = #{keyword} </when>" +
-                    "  <when test='searchType == \"creator\"'> AND Creator LIKE CONCAT('%', #{keyword}, '%') </when>" +
+                    "  <when test='searchType == \"creator\"'> AND EMP_PRVC.EMP_NM LIKE CONCAT('%', #{keyword}, '%') </when>" +
                     "</choose>" +
                 "</if>" +
                 "ORDER BY IsTop DESC, BoardId DESC " +
@@ -176,9 +178,9 @@ public interface BoardMapper {
     BoardPrvc getFileById(int fileId);
 
 
-
-   
-    
+    // 알람보내기 용으로 전체 사원 사번 조회
+    @Select("SELECT EMP_ID FROM EMP_PRVC WHERE EMP_ACNT_STTS='ACTIVE'") 
+    List<Integer> selectAllEmpIds();
 
 
 

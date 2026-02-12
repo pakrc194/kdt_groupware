@@ -5,8 +5,10 @@ import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌
 import DutySkedAprvReqModal from "../component/DutySkedAprvReqModal";
 import "../css/DutySkedDetail.css";
 import DutySkedAprvReqModal2 from "../component/DutySkedAprvReqModal2";
+import { getStatusLabel } from "../../../shared/func/formatStatus";
 
 function DutySkedDetail() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dutyId = searchParams.get("dutyId");
@@ -74,8 +76,24 @@ function DutySkedDetail() {
         });
 
         const empList = Object.values(empMap);
-        setEmployees(empList);
-        if (empList.length > 0) setWorkType(empList[0].rotPtnCd);
+
+        // 조별 정렬 로직 추가
+        const sortedEmpList = empList.sort((a, b) => {
+          const groupOrder = { A: 1, B: 2, C: 3, D: 4, 미배정: 5 };
+
+          const orderA = groupOrder[a.group] || 99;
+          const orderB = groupOrder[b.group] || 99;
+
+          // 조 순서대로 정렬
+          if (orderA !== orderB) {
+            return orderA - orderB;
+          }
+          // 같은 조 내에서는 이름순으로 정렬 (선택 사항)
+          return a.name.localeCompare(b.name);
+        });
+
+        setEmployees(sortedEmpList);
+        if (sortedEmpList.length > 0) setWorkType(sortedEmpList[0].rotPtnCd);
       } catch (error) {
         console.error("로드 실패:", error);
       } finally {
@@ -201,7 +219,7 @@ function DutySkedDetail() {
           />
           {isReadOnly && (
             <span className={`status-badge ${status}`}>
-              {status === "CONFIRMED" ? "결재 완료" : "결재 중"}
+              {getStatusLabel(status)}
             </span>
           )}
         </div>

@@ -86,6 +86,7 @@ const HomeModProf = () => {
       const res = await fetcher(`/gw/auth/verify-indentity`, {
         method: "POST",
         body: {
+          empSn: userInfo.empSn,
           email: userInfo.empEmlAddr,
           code: authCode,
           password: currentPassword,

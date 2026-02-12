@@ -8,15 +8,32 @@ const DraftBox = () => {
     const [aprvDocList, setAprvDocList] = useState([]);
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     const [stts, setStts] = useState();
+    const [formCodeList, setFormCodeList] = useState([]);
+    const [formCode, setFormCode] = useState();
+
     useEffect(() => {
-        console.log("drftBox useEffect : "+myInfo.empId);
-        
-        fetcher(`/gw/aprv/DrftDocList/${myInfo.empId}?${stts}`).then(setAprvDocList)
-    }, [stts])
+        if (!myInfo?.empId) return;
+
+        const params = new URLSearchParams();
+
+        if (stts) params.append("stts", stts);
+        if (formCode) params.append("code", formCode);
+
+        fetcher(`/gw/aprv/DrftDocList/${myInfo.empId}?${params.toString()}`)
+            .then(setAprvDocList);
+    }, [stts, formCode, myInfo?.empId]);
+
+    useEffect(()=>{
+        fetcher("/gw/aprv/AprvDocFormList").then(setFormCodeList)
+    },[])
 
     const fn_stts = (e) => {
-        setStts("stts="+e.target.value);
-    }
+        setStts(e.target.value);
+    };
+
+    const fn_code = (e) => {
+        setFormCode(e.target.value);
+    };
 
     return (
         <>
@@ -26,14 +43,16 @@ const DraftBox = () => {
                 <div>
                     <select onChange={fn_stts}>
                         <option value="">ALL</option>
-                        <option>DRFT</option>
                         <option>PENDING</option>
                         <option>COMPLETED</option>
+                        <option>REJECTED</option>
                     </select>
-                    <select>
-                        <option>전체</option>
-                        <option>공용</option>
-                        <option>부서</option>
+                    <select onChange={fn_code}>
+                        <option value="">ALL</option>
+                        {formCodeList.map((v,k)=>(
+                            <option value={v.docFormCd} key={k}>{v.docFormCd}</option>
+                        ))}
+                        
                     </select>
                 </div>
                 <table className="history-table">
@@ -52,7 +71,7 @@ const DraftBox = () => {
                         <td>{aprvDoc.aprvDocNo}</td>
                         <td><Link to={`/approval/${sideId}/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
-                        <td>{aprvDoc.aprvDocDrftDt.substring(0,10)}</td>
+                        <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
                                 {aprvDoc.aprvDocStts}

@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 import { Link } from "react-router-dom";
+import { getStatusLabel } from "../../../shared/func/formatStatus";
 
 function DashApproval({ drft, aprv }) {
   const renderTable = (data, type) => (
@@ -14,18 +15,19 @@ function DashApproval({ drft, aprv }) {
         </tr>
       </thead>
       <tbody>
-        {data != null && data.map((v, k) => (
-          <tr key={k}>
-            <td>{v.aprvDocNo}</td>
-            <td>
-              <Link to={`/approval/${type}Box/detail/${v.aprvDocId}`}>
-                {v.aprvDocTtl}
-              </Link>
-            </td>
-            <td>{v.aprvDocDrftDt}</td>
-            <td>{v.aprvDocStts}</td>
-          </tr>
-        ))}
+        {data != null &&
+          data.map((v, k) => (
+            <tr key={k}>
+              <td>{v.aprvDocNo}</td>
+              <td>
+                <Link to={`/approval/${type}Box/detail/${v.aprvDocId}`}>
+                  {v.aprvDocTtl}
+                </Link>
+              </td>
+              <td>{v.aprvDocDrftDt}</td>
+              <td>{getStatusLabel(v.aprvDocStts)}</td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );

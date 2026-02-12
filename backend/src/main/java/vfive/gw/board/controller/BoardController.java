@@ -29,6 +29,8 @@ import org.springframework.web.util.UriUtils;
 import vfive.gw.board.di.PageInfo;
 import vfive.gw.board.dto.BoardPrvc;
 import vfive.gw.board.mapper.BoardMapper;
+import vfive.gw.ntf.dto.NtfRequest;
+import vfive.gw.ntf.mapper.NtfMapper;
 
 @RestController
 @RequestMapping("/board")
@@ -38,25 +40,38 @@ public class BoardController {
     @Autowired
     private BoardMapper boardMapper;
     
-    /* 게시판 목록 조회 (페이징, 검색 포함) */
-    @GetMapping("{sideId}")
-    public ResponseEntity<Map<String,Object>> getBoards(
-    		PageInfo pInfo) {
-        
-    	System.out.println("요청받은 게시판 아이디: " + pInfo);
-        
-    	 int total = boardMapper.totalByType(pInfo);
+    @Autowired
+    private NtfMapper ntfMapper;
+    
+    @GetMapping("/{sideId}") // 경로 변수 명시
+    public ResponseEntity<Map<String, Object>> getBoards(
+            PageInfo pInfo, 
+            @PathVariable("sideId") String sideId) { // sideId를 경로에서 가져옴
 
+        // 1. sideId를 pInfo에 세팅 (쿼리에서 사용 위함)
+        pInfo.setSideId(sideId); 
+        
+        // 2. 일반글 전체 개수 조회 (공지글 제외 카운트 권장)
+        int total = boardMapper.totalByType(pInfo);
         pInfo.setTotal(total);
         
-        // 게시물 목록 조회
-        List<BoardPrvc> boards = boardMapper.listByType( pInfo);
+        // 3. 상단 공지글 가져오기 (1페이지일 때만 가져오는 것을 권장하나, 일단 요청하신 대로 합침)
+        List<BoardPrvc> topNotices = boardMapper.listTopNotices(sideId);
         
-        Map<String,Object> res = Map.of(
-        		"boards", boards,
-        		"pInfo", pInfo
-        		);
-        System.out.println("res 데이터  확인"+res);
+        // 4. 일반 게시물 목록 조회 (IsTop = 'false'인 데이터만)
+        List<BoardPrvc> normalBoards = boardMapper.listByType(pInfo);
+        
+        // 5. 리스트 합치기: 공지글 뒤에 일반글 추가
+        // 새 리스트를 만들어 합치는 것이 안전합니다.
+        List<BoardPrvc> combinedBoards = new java.util.ArrayList<>();
+        combinedBoards.addAll(topNotices);
+        combinedBoards.addAll(normalBoards);
+        
+        // 6. 결과 맵 구성
+        Map<String, Object> res = new HashMap<>();
+        res.put("boards", combinedBoards); // 합쳐진 리스트를 보냄
+        res.put("pInfo", pInfo);
+        
         return ResponseEntity.ok(res);
     }
     
@@ -95,7 +110,37 @@ public class BoardController {
         if (files != null) {
            saveFiles(board.getBoardId(),files);
         }
+        
+        if ("important".equals(board.getBoardType())) {
+            String now = java.time.LocalDateTime.now()
+                           .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+            // A. NTF 테이블 (알림 마스터) 생성
+            NtfRequest ntfReq = new NtfRequest();
+            ntfReq.setNtfType("IMPORTANT");
+            ntfReq.setTitle("📢 새로운 공지사항");
+            ntfReq.setBody(board.getTitle());      // 글 제목을 알림 본문으로
+            ntfReq.setLinkUrl("/board/important");     // 클릭 시 이동할 리액트 경로
+            ntfReq.setSrcType("BOARD");
+            ntfReq.setSrcId(board.getBoardId());
+            ntfReq.setCreatedBy(board.getEmpId());
+            ntfReq.setCreatedAt(now);
+
+            // ntfId가 auto_increment로 생성되어 ntfReq에 주입됨
+            ntfMapper.insertNtf(ntfReq); 
+
+            // B. NTF_RCP 테이블 (수신자 목록) 생성
+            // 사번(SN)이 아닌 EMP_ID 목록을 가져옵니다.
+            List<Integer> allEmpIds = boardMapper.selectAllEmpIds(); 
+
+            if (allEmpIds != null && !allEmpIds.isEmpty()) {
+                // NtfMapper의 insertReceivers 호출
+                ntfMapper.insertReceivers(ntfReq.getNtfId(), allEmpIds, now);
+            }
+        }
         return ResponseEntity.ok(Map.of("success", true,"boardId", board.getBoardId()));
+        
+        
     }
     
     
@@ -121,13 +166,9 @@ public class BoardController {
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") int fileId) {
         try {
             // DB에서 파일 정보 조회 (BoardFile 객체 반환하도록 Mapper 수정 필요)
-        	System.out.println("0");
             BoardPrvc fileItem = boardMapper.getFileById(fileId); 
-            System.out.println("1");
             Path filePath = Paths.get(fileItem.getSavedPath());
-            System.out.println("2");
             Resource resource = new UrlResource(filePath.toUri());
-            System.out.println("3");
             if (resource.exists()) {
                 // 한글 파일명을 UTF-8로 인코딩
                 String encodedFileName = UriUtils.encode(fileItem.getOriginName(), StandardCharsets.UTF_8);

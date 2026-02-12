@@ -18,11 +18,12 @@ public class AtdcCalService {
 	
 	public List<AtdcDTO> execute(HttpServletRequest request, HttpServletResponse response) {
 		String yearMonth = request.getParameter("yearMonth");
+		int empId = Integer.parseInt(request.getParameter("empId"));
 		if (yearMonth == null || yearMonth.isEmpty()) {
       yearMonth = java.time.LocalDate.now().toString().substring(0, 7);
 		}
 		
-		return mapper.selectAtdcHistory(2, yearMonth);
+		return mapper.selectAtdcHistory(empId, yearMonth);
 	}
 	
 	

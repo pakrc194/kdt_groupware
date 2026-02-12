@@ -49,3 +49,5 @@ mail:
         timeout: 5000
         writetimeout: 5000
 
+file:
+  upload-dir: C:/uploads/

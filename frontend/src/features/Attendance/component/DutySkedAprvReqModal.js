@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 
-function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId}) {
+function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
   const navigate = useNavigate();
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
@@ -31,7 +31,7 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId}) {
     { rank: "승인", name: "박부장", dept: "운영부" },
   ];
 
-  const fn_drftConfirm = () => {
+  const fn_drftConfirm = async () => {
     console.log("fn_drftConfirm");
     const drftDoc = {
       drftEmpId: myInfo.empId,
@@ -39,13 +39,13 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId}) {
       aprvDocNo: "DT",
       aprvDocTtl: title,
     };
-    
-    fetcher(`/gw/aprv/AprvDocInpt/9`).then(res=>{
-      const updated = res.map(v => {
+
+    await fetcher(`/gw/aprv/AprvDocInpt/9`).then((res) => {
+      const updated = res.map((v) => {
         if (v.docInptNm === "docDuty") {
           return { ...v, docInptVl: dutyId };
-        } else if(v.docInptNm=="docTxtArea") {
-          if(content!=null || content!="") {
+        } else if (v.docInptNm == "docTxtArea") {
+          if (content != null || content != "") {
             return { ...v, docInptVl: content };
           }
         }
@@ -55,26 +55,36 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId}) {
       console.log("fetcher InptList :", content, updated);
 
       setInputList(updated);
-      
-    })
-
+    });
 
     // setInputList([
-    //     { 
+    //     {
     //       docInptNo: 1 ,
     //       docInptId: 71 ,
     //       docInptNm:"docDuty",
     //       docInptType:"DUTY",
-    //       docInptVl: content 
+    //       docInptVl: content
     //     },
     //   ],
     // );
 
-    console.log("drftDocReq: ",drftDoc)
-    console.log("drftLineReq: ",docLine)
-    console.log("drftInptReq: ",inputList)
+    console.log("drftDocReq: ", drftDoc);
+    console.log("drftLineReq: ", docLine);
+    console.log("drftInptReq: ", inputList);
 
-    fetcher("/gw/aprv/AprvDrftUpload", {
+    try {
+      const res = await fetcher(`/gw/duty/pending`, {
+        method: "POST",
+        body: {
+          dutyId: inputList[0].docInptVl,
+        },
+      });
+      alert(res.message);
+    } catch (error) {
+      alert(`요청 실패: ${error.message}`);
+    }
+
+    await fetcher("/gw/aprv/AprvDrftUpload", {
       method: "POST",
       body: {
         drftDocReq: drftDoc,
@@ -88,17 +98,18 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId}) {
     });
   };
 
-  useEffect(()=>{
-      fetcher(`/gw/aprv/AprvDocFormLine/9`)
-      .then(res=>{
-          setDocLine(prev=>{
-              const drafter = prev.find(v => v.roleCd === "DRFT");
-              return drafter ? [drafter, ...res] : [...res];
-          })
-      }).catch(e=>{
-          console.log("fetch formLine : "+e)
+  useEffect(() => {
+    fetcher(`/gw/aprv/AprvDocFormLine/9`)
+      .then((res) => {
+        setDocLine((prev) => {
+          const drafter = prev.find((v) => v.roleCd === "DRFT");
+          return drafter ? [drafter, ...res] : [...res];
+        });
       })
-  },[])
+      .catch((e) => {
+        console.log("fetch formLine : " + e);
+      });
+  }, []);
 
   if (!isOpen) return null;
 

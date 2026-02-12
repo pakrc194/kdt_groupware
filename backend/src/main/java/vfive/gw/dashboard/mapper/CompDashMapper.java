@@ -3,13 +3,16 @@ package vfive.gw.dashboard.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import vfive.gw.dashboard.dto.request.AccessDeleteDTO;
-import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.dashboard.dto.request.AprvPrcsDTO;
 import vfive.gw.dashboard.dto.request.CompHRDTO;
 import vfive.gw.dashboard.dto.request.CompSchedDTO;
+import vfive.gw.dashboard.dto.request.DashDTO;
+import vfive.gw.dashboard.dto.request.DashSchedDashDTO;
+import vfive.gw.dashboard.dto.request.DocPrcsTimeDTO;
 import vfive.gw.orgchart.dto.HRChangeHistDTO;
 
 @Mapper
@@ -80,4 +83,73 @@ public interface CompDashMapper {
 			+ "LEFT JOIN APRV_PRCS ON APRV_DOC.APRV_DOC_ID = APRV_PRCS.APRV_DOC_ID "
 			+ "LEFT JOIN EMP_PRVC AS APRV_PRCS_EMP ON APRV_PRCS.aprv_prcs_emp_id = APRV_PRCS_EMP.EMP_ID ")
 	List<AprvPrcsDTO> aprvPrcsList();
+	
+	// 대시보드 팀 인원
+	@Select("select EMP_PRVC.dept_id, EMP_PRVC.JBTTL_ID, EMP_PRVC.EMP_NM, EMP_PRVC.EMP_SN, "
+			+ "JBTTL_INFO.JBTTL_NM, "
+			+ "ATDC_HIST.EMP_ID, ATDC_HIST.WRK_YMD, ATDC_HIST.ATDC_STTS_CD "
+			+ "from EMP_PRVC "
+			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
+			+ "left join ATDC_HIST on EMP_PRVC.emp_id = ATDC_HIST.emp_id and ATDC_HIST.WRK_YMD = #{date} "
+			+ "where EMP_PRVC.dept_id = #{dept} and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' ")
+	List<DashDTO> dashTeamEmpList(@Param("dept") int dept, @Param("date") String date);
+	
+	// 대시보드 팀 스케쥴
+	@Select("SELECT SCHED.*, IFNULL(LOC_INFO.LOC_NM, '장소 미정') AS LOC_NM "
+			+ "FROM SCHED "
+			+ "LEFT JOIN LOC_INFO ON SCHED.SCHED_LOC = LOC_INFO.LOC_ID "
+			+ "WHERE FIND_IN_SET(#{dept}, SCHED_DEPT_ID) > 0")
+	List<DashSchedDashDTO> dashTeamSchedList(String dept);
+	
+	// 결재 속도
+	@Select("""
+			SELECT
+    DEPT_INFO.DEPT_NAME,
+    APRV_DOC.APRV_DOC_ID,
+    APRV_DOC.APRV_DOC_NO,
+    APRV_DOC.APRV_DOC_TTL,
+    APRV_DOC.APRV_DOC_STTS,
+    APRV_DOC.APRV_DOC_ATRZ_DT,
+    APRV_DOC.APRV_DOC_DRFT_DT,
+    APRV_DOC.APRV_DOC_VER,
+    DOC_FORM.DOC_FORM_NM,
+    APRV_PRCS.APRV_PRCS_ID,
+    APRV_PRCS.ROLE_CD,
+    APRV_PRCS.ROLE_SEQ,
+    APRV_PRCS.APRV_PRCS_DT,
+    APRV_PRCS.APRV_PRCS_STTS,
+    APRV_PRCS.RJCT_RSN,
+    DRFT_EMP.EMP_NM AS DRFT_EMP_NM,
+    APRV_PRCS_EMP.EMP_NM AS APRV_PRCS_EMP_NM
+FROM
+    APRV_DOC
+JOIN DEPT_INFO ON APRV_DOC.DRFT_EMP_ID = DEPT_INFO.DEPT_ID
+JOIN DOC_FORM ON DOC_FORM.DOC_FORM_ID = APRV_DOC.DOC_FORM_ID
+JOIN APRV_PRCS ON APRV_DOC.APRV_DOC_ID = APRV_PRCS.APRV_DOC_ID
+LEFT JOIN EMP_PRVC AS DRFT_EMP ON APRV_DOC.DRFT_EMP_ID = DRFT_EMP.EMP_ID
+LEFT JOIN EMP_PRVC AS APRV_PRCS_EMP ON APRV_PRCS.APRV_PRCS_EMP_ID = APRV_PRCS_EMP.EMP_ID
+WHERE
+    APRV_DOC.DRFT_EMP_ID IN (
+        SELECT EMP_ID
+        FROM EMP_PRVC
+        WHERE EMP_PRVC.DEPT_ID = #{dept}
+        AND EXISTS (
+            SELECT 1
+            FROM APRV_PRCS
+            WHERE APRV_PRCS.APRV_PRCS_EMP_ID = EMP_PRVC.EMP_ID
+            AND APRV_PRCS.ROLE_CD = 'DRFT'
+        )
+    )
+    AND APRV_DOC.APRV_DOC_ID IN (
+        -- 같은 APRV_DOC_ID를 가진 다른 문서들
+        SELECT APRV_DOC_ID
+        FROM APRV_DOC
+        WHERE APRV_DOC_ID = APRV_DOC.APRV_DOC_ID
+    )
+	
+			""")
+	List<DocPrcsTimeDTO> docPrcsTime(String dept);
+	
+	
+	// aprvDocStts
 }

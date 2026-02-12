@@ -21,13 +21,29 @@ const ApprovalDetail = () => {
     const [rejectData, setRejectData] = useState({});
     const [drftDate, setDrftDate] = useState({});
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
-    
+    const [isApproved, setIsApproved] = useState(false);
+
+    const [docFile, setDocFile] = useState({});
+
+    const sideTitleMap = {
+        approvalBox: "결재함",
+        drftBox: "기안함",
+        refBox: "참조함",
+        tempBox: "임시저장함",
+        rejectBox: "반려함",
+    };
+
     const navigate = useNavigate();
 
     useEffect(()=>{
         fetcher(`/gw/aprv/AprvLine/${docId}`).then(res=>{
             setAprvLine(res)
             setRejectData(res.find(v=>v.aprvPrcsStts=='REJECTED'))
+            res.find(v=>{
+                if(v.roleCd!="DRFT" && v.aprvPrcsDt!=null) {
+                    setIsApproved(true)
+                }
+            })
         })
 
         fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(res => {
@@ -75,6 +91,11 @@ const ApprovalDetail = () => {
             console.log("detail ", res)
             setAprvDocDetail(res)
         })
+
+        fetcher(`/gw/aprv/AprvDocFile/${docId}`).then(res=>{
+            console.log("file ", res)
+            setDocFile(res)
+        })
     },[docId])
 
     useEffect(()=>{
@@ -84,7 +105,7 @@ const ApprovalDetail = () => {
             fn_warnSched();
         } else if(aprvDocDetail.docFormType=="근태") {
             fn_warnAttend();
-        }
+        } 
 
 
         fetcher(`/gw/aprv/AprvDocVerList`, {
@@ -228,10 +249,26 @@ const ApprovalDetail = () => {
         navigate(`/approval/${sideId}/redrft/${docId}`)
     }
 
+    const fn_drftCancel = () => {
+        fetcher(`/gw/aprv/AprvDrftDelete`,{
+            method:"POST",
+            body:{
+                docId : docId
+            }
+        }).then(res => {
+            console.log(`fetch AprvDrftDelete ${res.res}`)
+            alert("기안 취소 되었습니다.")
+            navigate(`/approval/${sideId}`);
+        })
+    }
+
+    const fn_download = () => {
+        
+    }
 
     return (
         <>
-            <h4>전자결재 > 결재함 > {aprvDocDetail.aprvDocTtl}</h4>
+            <h4>전자결재 &gt; {sideTitleMap[sideId]} &gt; {aprvDocDetail.aprvDocTtl}</h4>
             <div className="draftForm" >
                 <div><h1>{aprvDocDetail.aprvDocTtl}</h1></div>
                 <div>문서번호 {aprvDocDetail.aprvDocNo}</div>
@@ -250,6 +287,10 @@ const ApprovalDetail = () => {
                         }
                     )}
                 </div>
+                <div>
+                    <h4>첨부파일</h4>
+                    <a href={`http://192.168.0.117:8080/board/download/${docFile.fileId}`}>{docFile.originName}</a>
+                </div>
 
                 {rejectData?.aprvPrcsEmpId && <div>
                     <h3>반려사유</h3>
@@ -267,6 +308,7 @@ const ApprovalDetail = () => {
             <div>
                 <Button variant='secondary' onClick={fn_list}>뒤로</Button>
                 {sideId=="rejectBox" && <Button variant='primary' onClick={fn_redraft}>재기안</Button>}
+                {(!isApproved && aprvDocDetail.drftEmpId==myInfo.empId )&& <Button variant='secondary' onClick={fn_drftCancel}>기안취소</Button>}
             </div>
         </>
     );

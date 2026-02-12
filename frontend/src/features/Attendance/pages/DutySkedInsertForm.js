@@ -5,13 +5,21 @@ import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌
 import "../css/DutySkedDetail.css";
 
 function DutySkedInsertForm() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const navigate = useNavigate();
+
+  const getInitialWorkType = () => {
+    const deptId = Number(myInfo?.deptId);
+    if (deptId === 7) return "4조2교대";
+    if (deptId === 8) return "4조3교대";
+    return "사무";
+  };
 
   const [title, setTitle] = useState("");
   const today = new Date();
   const initialMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   const [selectedMonth, setSelectedMonth] = useState(initialMonth);
-  const [workType, setWorkType] = useState("4조3교대");
+  const [workType, setWorkType] = useState(getInitialWorkType);
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,7 +52,9 @@ function DutySkedInsertForm() {
     const loadInitialData = async () => {
       try {
         setIsLoading(true);
-        const memberList = await fetcher(`/gw/duty/insertForm?deptId=8`);
+        const memberList = await fetcher(
+          `/gw/duty/insertForm?deptId=${myInfo.deptId}`,
+        );
         const initialEmps = memberList.map((emp) => ({
           id: emp.empId,
           name: emp.empNm,
@@ -129,6 +139,7 @@ function DutySkedInsertForm() {
       const groupUpdates = updatedEmps.map((emp) => ({
         empId: emp.id,
         grpNm: emp.group === "미배정" || !emp.group ? null : emp.group,
+        rotPtnCd: workType,
       }));
 
       await fetcher("/gw/duty/updateGroups", {
@@ -151,8 +162,8 @@ function DutySkedInsertForm() {
     try {
       const payload = {
         scheTtl: title,
-        empId: 10,
-        deptId: 8,
+        empId: myInfo.empId,
+        deptId: myInfo.deptId,
         trgtYmd: selectedMonth.replace("-", ""),
         details: employees.flatMap((emp) =>
           days.map((day) => ({
@@ -163,7 +174,10 @@ function DutySkedInsertForm() {
           })),
         ),
       };
-      await fetcher("/gw/duty/insert", { method: "POST", body: payload });
+      await fetcher(`/gw/duty/insert`, {
+        method: "POST",
+        body: payload,
+      });
       alert("등록되었습니다.");
       navigate("/attendance/dtskdlst");
     } catch (error) {

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
 import "../css/EmpAttendanceList.css";
+import { getStatusLabel } from "../../../shared/func/formatStatus";
 
 function EmpAtdcDetail() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [searchParams] = useSearchParams();
 
   // URL 쿼리 스트링에서 데이터 추출 (?empId=...&startDate=...)
@@ -117,21 +119,8 @@ function EmpAtdcDetail() {
                     <td>{formatTime(item.clkInDtm)}</td>
                     <td>{formatTime(item.clkOutDtm)}</td>
                     <td>
-                      <span
-                        className="rate-badge"
-                        style={{
-                          backgroundColor:
-                            item.atdcSttsCd === "PRESENT"
-                              ? "#e6f7ff"
-                              : "#fff1f0",
-                          color:
-                            item.atdcSttsCd === "PRESENT"
-                              ? "#1890ff"
-                              : "#ff4d4f",
-                          border: `1px solid ${item.atdcSttsCd === "PRESENT" ? "#91d5ff" : "#ffa39e"}`,
-                        }}
-                      >
-                        {item.atdcSttsCd}
+                      <span className={`rate-badge ${item.atdcSttsCd}`}>
+                        {getStatusLabel(item.atdcSttsCd)}
                       </span>
                     </td>
                   </tr>

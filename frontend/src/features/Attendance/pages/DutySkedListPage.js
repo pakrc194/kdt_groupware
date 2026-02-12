@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 import "../css/DutySkedListPage.css"; // 아래 CSS 코드 참고
+import { getStatusLabel } from "../../../shared/func/formatStatus";
 
 function DutySkedListPage() {
+  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [schedules, setSchedules] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]); // 체크박스 선택된 ID들
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const deptId = 8; // 안전관리팀 예시
+  const deptId = myInfo.deptId; // 안전관리팀 예시
 
   const loadSchedules = async () => {
     try {
@@ -145,7 +147,7 @@ function DutySkedListPage() {
                   <td>{item.regDtm?.split("T")[0]}</td>
                   <td>
                     <span className={`badge-status ${item.prgrStts}`}>
-                      {item.prgrStts}
+                      {getStatusLabel(item.prgrStts)}
                     </span>
                   </td>
                 </tr>

@@ -38,7 +38,7 @@ public class AprvDrftUpload {
 		
 		AprvDocVerListRequest docVer = new AprvDocVerListRequest();
 		docVer.setDocNo(drftDoc.getAprvDocNo());
-		drftDoc.setAprvDocStts("DRFT");
+		drftDoc.setAprvDocStts("PENDING");
 		String nextVersion = "1.0";
 		List<AprvDocVerListResponse> docVerList = mapper.aprvDocVerList(docVer);
 		

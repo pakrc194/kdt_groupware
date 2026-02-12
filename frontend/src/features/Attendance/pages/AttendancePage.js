@@ -10,7 +10,9 @@ function AttendancePage() {
   const [deptEmpAtdc, setDeptEmpAtdc] = useState([]);
 
   useEffect(() => {
-    fetcher(`/gw/atdc/atdcCal?yearMonth=${currentMonth}`).then(setMyAtdcData);
+    fetcher(
+      `/gw/atdc/atdcCal?yearMonth=${currentMonth}&empId=${myInfo.empId}`,
+    ).then(setMyAtdcData);
   }, [currentMonth]);
 
   useEffect(() => {

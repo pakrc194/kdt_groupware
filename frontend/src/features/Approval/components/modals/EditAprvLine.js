@@ -18,7 +18,7 @@ const EditAprvLine = ({onClose, onOk}) => {
     },[])
 
     const fn_ok = () => {
-        
+        console.log("edit",addLine);
         onOk(addLine);
     }
 
@@ -27,7 +27,8 @@ const EditAprvLine = ({onClose, onOk}) => {
         addLine[e.target.name] = e.target.value;
         if(e.target.name=="empNm") {
             setSelectedEmp(e.target.value)
-            addLine["empId"] = empList.filter(v=>v.empNm==e.target.value)[0].empId
+            addLine["empId"] = empList.find(v=>v.empNm==e.target.value).empId
+            addLine["empNm"] = empList.find(v=>v.empNm==e.target.value).empNm
         } else {
             setSelectedRole(e.target.value)
         }
