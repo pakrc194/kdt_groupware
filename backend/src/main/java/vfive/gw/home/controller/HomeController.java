@@ -14,6 +14,7 @@ import vfive.gw.home.dto.request.MyDashResDTO;
 import vfive.gw.home.service.GetModFormService;
 import vfive.gw.home.service.GetMyDashService;
 import vfive.gw.home.service.GetUserProfileService;
+import vfive.gw.home.service.UpdateEmpProfService;
 
 @RestController
 @RequestMapping("/gw/home")
@@ -27,6 +28,9 @@ public class HomeController {
 	
 	@Resource
 	GetMyDashService getMyDashService;
+	
+	@Resource
+	UpdateEmpProfService updateEmpProfService;
 
 	
 	@PostMapping("test")
@@ -52,5 +56,9 @@ public class HomeController {
 		return getMyDashService.execute(req);
 	}
 	
-
+	@PostMapping("updateProf")
+	void updateProf(@RequestBody EmpPrvc req) {
+		updateEmpProfService.updateProfile(req);
+	}
+	
 }

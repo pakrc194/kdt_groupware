@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmpPrvc {
 	private int empId, deptId, jbttlId, accessId;
-	private String empSn, empNm, empPswd, empEmlAddr, empPhoto, empAddr, empTelno, empActno, empJncmpYmd, empRsgntnYmd, empAcntStts;
+	private String empSn, empNm, empPswd, empEmlAddr, empPhoto, empAddr, empTelno, empActno, empJncmpYmd, empRsgntnYmd, empAcntStts, newPassword;
 	private Date empBirth;
 	
 }

@@ -70,9 +70,14 @@ function EmpAttendanceList() {
             value={filter.deptId}
             onChange={handleFilterChange}
           >
-            <option value="0">전체 팀</option>
-            <option value="1">개발팀</option>
-            <option value="2">인사팀</option>
+            <option value="0">전체 부서</option>
+            <option value="2">식품</option>
+            <option value="3">뷰티·패션잡화</option>
+            <option value="4">여성패션</option>
+            <option value="5">남성패션</option>
+            <option value="6">인사관리</option>
+            <option value="7">시설자재</option>
+            <option value="8">안전관리</option>
           </select>
 
           <input

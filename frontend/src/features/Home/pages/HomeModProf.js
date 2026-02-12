@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styles from "../css/HomeModProf.module.css";
 import { fetcher } from "../../../shared/api/fetcher";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 const HomeModProf = () => {
+  const navigate = useNavigate();
   // --- 상태 관리 ---
   const [isAuthSuccess, setIsAuthSuccess] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -164,8 +166,11 @@ const HomeModProf = () => {
         body: updateData,
       });
 
-      alert("정보 수정이 완료되었습니다.");
-      window.location.reload();
+      alert("정보 수정이 완료되었습니다. 다시 로그인 해주세요.");
+
+      localStorage.removeItem("MyInfo");
+      localStorage.removeItem("token");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       alert("수정 중 오류가 발생했습니다.");

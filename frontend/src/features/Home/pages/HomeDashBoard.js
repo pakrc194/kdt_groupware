@@ -23,7 +23,6 @@ function HomeDashBoard(props) {
     }
   };
 
-
   useEffect(() => {
     loadMyDash();
   }, []);
@@ -43,7 +42,7 @@ function HomeDashBoard(props) {
         </section>
 
         <section className="dash-section">
-          <h3>상단공지</h3>
+          <h3>핵심공지</h3>
           <DashNotice notice={myDash.notice} />
         </section>
 

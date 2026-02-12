@@ -24,7 +24,7 @@ function DashApproval({ drft, aprv }) {
                   {v.aprvDocTtl}
                 </Link>
               </td>
-              <td>{v.aprvDocDrftDt.substring(0,8)}</td>
+              <td>{v.aprvDocDrftDt.substring(0, 8)}</td>
               <td>{getStatusLabel(v.aprvDocStts)}</td>
             </tr>
           ))}
@@ -34,10 +34,10 @@ function DashApproval({ drft, aprv }) {
 
   return (
     <div className="approval-container">
-      <h4 style={{ fontSize: "15px", color: "#666" }}>📄 기안함</h4>
+      <h4 style={{ fontSize: "15px", color: "#666" }}>📄 기안</h4>
       {renderTable(drft, "draft")}
       <h4 style={{ fontSize: "15px", color: "#666", marginTop: "30px" }}>
-        🖋️ 결재함
+        🖋️ 결재
       </h4>
       {renderTable(aprv, "approval")}
     </div>

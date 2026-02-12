@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.aprv.dto.response.AprvDocListResponse;
 import vfive.gw.attendance.dto.domain.EmpDTO;
@@ -76,4 +77,17 @@ public interface HomeMapper {
 			+ "order by D.APRV_DOC_ID desc "
 			+ "limit 5")
 	List<AprvDocListResponse> selectAprvLimitFive(MyDashResDTO req); 
+	
+	@Update("<script>" +
+      "UPDATE EMP_PRVC " +
+      "<set>" +
+      "  <if test='empTelno != null'>EMP_TELNO = #{empTelno},</if>" +
+      "  <if test='empActno != null'>EMP_ACTNO = #{empActno},</if>" +
+      "  <if test='empAddr != null'>EMP_ADDR = #{empAddr},</if>" +
+      "  <if test='empEmlAddr != null'>EMP_EML_ADDR = #{empEmlAddr},</if>" +
+      "  <if test='newPassword != null and newPassword != \"\"'>EMP_PSWD = #{newPassword},</if>" +
+      "</set>" +
+      "WHERE EMP_ID = #{empId}" +
+      "</script>")
+	int updateEmployeeProfile(EmpPrvc req);
 }
