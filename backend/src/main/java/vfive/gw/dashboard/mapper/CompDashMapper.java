@@ -85,13 +85,38 @@ public interface CompDashMapper {
 	List<AprvPrcsDTO> aprvPrcsList();
 	
 	// 대시보드 팀 인원
-	@Select("select EMP_PRVC.dept_id, EMP_PRVC.JBTTL_ID, EMP_PRVC.EMP_NM, EMP_PRVC.EMP_SN, "
-			+ "JBTTL_INFO.JBTTL_NM, "
-			+ "ATDC_HIST.EMP_ID, ATDC_HIST.WRK_YMD, ATDC_HIST.ATDC_STTS_CD "
-			+ "from EMP_PRVC "
-			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
-			+ "left join ATDC_HIST on EMP_PRVC.emp_id = ATDC_HIST.emp_id and ATDC_HIST.WRK_YMD = #{date} "
-			+ "where EMP_PRVC.dept_id = #{dept} and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' ")
+//	@Select("select EMP_PRVC.dept_id, EMP_PRVC.JBTTL_ID, EMP_PRVC.EMP_NM, EMP_PRVC.EMP_SN, "
+//			+ "JBTTL_INFO.JBTTL_NM, "
+//			+ "ATDC_HIST.EMP_ID, ATDC_HIST.WRK_YMD, ATDC_HIST.ATDC_STTS_CD "
+//			+ "from EMP_PRVC "
+//			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
+//			+ "left join ATDC_HIST on EMP_PRVC.emp_id = ATDC_HIST.emp_id and ATDC_HIST.WRK_YMD = #{date} "
+//			+ "where EMP_PRVC.dept_id = #{dept} and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' ")
+	@Select("""
+			<script>
+			select EMP_PRVC.dept_id,
+			       EMP_PRVC.JBTTL_ID,
+			       EMP_PRVC.EMP_NM,
+			       EMP_PRVC.EMP_SN,
+			       JBTTL_INFO.JBTTL_NM,
+			       ATDC_HIST.EMP_ID,
+			       ATDC_HIST.WRK_YMD,
+			       ATDC_HIST.ATDC_STTS_CD
+			from EMP_PRVC
+			join JBTTL_INFO
+			  on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id
+			left join ATDC_HIST
+			  on EMP_PRVC.emp_id = ATDC_HIST.emp_id
+			 and ATDC_HIST.WRK_YMD = #{date}
+			where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE'
+
+			<if test="dept != 0">
+			  and EMP_PRVC.dept_id = #{dept}
+			</if>
+
+			</script>
+			""")
+
 	List<DashDTO> dashTeamEmpList(@Param("dept") int dept, @Param("date") String date);
 	
 	// 대시보드 팀 스케쥴

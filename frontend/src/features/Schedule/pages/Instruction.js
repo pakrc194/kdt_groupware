@@ -20,6 +20,7 @@ function Instruction(props) {
     const [teamPopupOpen, setTeamPopupOpen] = useState(false);
     const [locationList, setLocationList] = useState([]);
     const [teamSchedList, setTeamSchedList] = useState([]);
+    const [resLoc, setResLoc] = useState([]);
 
     const hasCommon = selectedTeams.some(num => teamSchedList.includes(num.deptId.toString()))
 
@@ -55,22 +56,30 @@ function Instruction(props) {
 
         // 장소 리스트 가져오기
         fetcher('/gw/schedule/instruction/locations')
-        .then(data => { setLocationList(data) })
+        .then(data => { setLocationList(data); console.log(data) })
         .catch(err => console.error('장소 리스트 로딩 실패', err))
 
     }, []);
 
-    // 팀 일정 확인
     useEffect(() => {
         // startDate, endDate가 모두 있을 때만 fetch
         if (!startDate || !endDate) return;
         
+        // 팀 일정 확인
         fetcher(`/gw/schedule/instruction/schedTeams/${startDate}/${endDate}`)
         .then(data => {
             // ['4,5', '2', '5,7,8'] => ['4', '5', '2', '7', '8']로 변환하여 등록
             setTeamSchedList([...new Set(
-                data.flatMap(item => item.split(','))
+                data.flatMap(item => item?.split(','))
             )])
+        })
+        .catch(err => console.error('팀 일정 리스트 로딩 실패', err))
+
+        // 장소 일정 확인
+        fetcher(`/gw/schedule/instruction/schedLocs/${startDate}/${endDate}`)
+        .then(data => {
+            console.log(data)
+            setResLoc(locationList.filter(loc => !data.filter(id => id !== null).includes(loc.locId)))
         })
         .catch(err => console.error('팀 일정 리스트 로딩 실패', err))
     }, [startDate, endDate])    // 선택 날짜 바뀔 때마다 일정 정보 가져와야함
@@ -127,6 +136,22 @@ function Instruction(props) {
         } catch (err) {
             console.error('업무지시 등록 실패:', err.message);
         };
+
+        await fetcher(`/gw/schedule/instruction/alert`, {
+            method: 'POST',
+            body: { 
+                schedType: workType,
+                schedStartDate: startDate,
+                schedEndDate: endDate,
+                schedTitle: title,
+                schedDetail: detail,
+                schedDept: selectedTeams.map(t => t.deptName).join(','),
+                schedDeptId: selectedTeams.map(t => t.deptId).join(','),
+                schedLoc: location === '0' ? null : parseInt(location),
+                schedAuthorId: myInfo.empId,
+                schedEmpSn: myInfo.empSn
+            }
+        });
 
         // console.log('등록할 업무:', payload);
         hasCommon && alert('업무가 중복 등록됩니다.')
@@ -232,7 +257,7 @@ function Instruction(props) {
                     style={{ width: 150 }}
                 >
                     <option value="0">없음</option>
-                    {locationList.map(loc => (
+                    {resLoc.map(loc => (
                         <option key={loc.locId} value={loc.locId}>{loc.locNm}</option>
                     ))}
                 </select>

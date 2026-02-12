@@ -31,9 +31,11 @@ function DocPrcsTime({docPrc}) {
                 </thead>
                 <tbody>
                     {docPrc.length > 0 ? (
-                        docPrc.map((dd, index) => (
+                        docPrc
+                        .filter(dd => dd.aprvDocStts != "PENDING")
+                        .filter(dd => dd.roleCd == "LAST_ATRZ")
+                        .map((dd, index) => (
                             <tr key={index}>
-                              {/* {setAprvTime(dd.roleCd == 'DRFT' ? dd.aprvDocDrftDt : dd.aprvPrcsDt)} */}
                                 <td style={styles.td}>{dd.aprvDocTtl}</td>
                                 <td style={styles.td}>{dd.aprvDocStts}</td>
                                 <td style={styles.td}>{dd.drftEmpNm}</td>

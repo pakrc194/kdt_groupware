@@ -189,7 +189,9 @@ function ScheduleView(props) {
                     <h3 style={styles.cardTitle}>TODO</h3>
                     <div style={styles.scrollArea}>
                     <ul style={styles.todoList}>
-                        {sortedTodos.map(todo => (
+                        {sortedTodos
+                        .filter(dd => dd.schedState != 1 && dd.schedStartDate.split(' ')[0] <= formatted)
+                        .map(todo => (
                             <li key={todo.schedId} style={styles.todoItem}>
                                     <input
                                         type="checkbox"
@@ -263,6 +265,84 @@ function ScheduleView(props) {
                                     )}
                                 </li>
                             ))}
+
+                            {/* 완료된 TODO - 당일에서만 보임 */}
+                            {sortedTodos
+                            .filter(dd => dd.schedState == 1 && dd.schedStartDate.split(' ')[0] == formatted)
+                            .map(todo => (
+                                <li key={todo.schedId} style={styles.todoItem}>
+                                        <input
+                                            type="checkbox"
+                                            checked={todo.schedState == 1}
+                                            onChange={e => {
+                                                toggleTodoComplete(todo);
+                                                setEditTodo({ ...editTodo, schedState: e.target.value })
+                                            }}
+                                        />
+
+                                        {editTodoId === todo.schedId ? (
+                                            <>
+                                            <div style={styles.todoForm}>
+                                                <input
+                                                    type="date"
+                                                    value={editTodo.schedStartDate?.split(' ')[0]}
+                                                    onChange={e =>
+                                                        setEditTodo({ ...editTodo, schedStartDate: e.target.value })
+                                                    }
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={editTodo.schedTitle}
+                                                    onChange={e =>
+                                                        setEditTodo({ ...editTodo, schedTitle: e.target.value })
+                                                    }
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={editTodo.schedDetail}
+                                                    onChange={e =>
+                                                        setEditTodo({ ...editTodo, schedDetail: e.target.value })
+                                                    }
+                                                />
+
+                                                </div>
+                                                <button 
+                                                style={styles.modifyBtn}
+                                                onClick={() => {
+                                                    modifyTodo(todo);
+                                                    setEditTodoId(null);
+                                                }}>
+                                                    저장
+                                                </button>
+
+                                                <button style={styles.cancelBtn} onClick={() => setEditTodoId(null)}>
+                                                    취소
+                                                </button>
+                                            </>
+                                            ) : (
+                                            <>
+                                                <span style={{ textDecoration: todo.schedState != 0 ? 'line-through' : 'none', flex: 1, marginLeft: '8px' }}>
+                                                    {todo.schedStartDate?.split(' ')[0]} {todo.schedTitle}
+                                                </span>
+
+                                                <button 
+                                                style={styles.modifyBtn}
+                                                onClick={() => {
+                                                    setEditTodoId(todo.schedId);
+                                                    setEditTodo({
+                                                        schedStartDate: todo.schedStartDate,
+                                                        schedTitle: todo.schedTitle,
+                                                        schedDetail: todo.schedDetail
+                                                    });
+                                                }}>
+                                                    수정
+                                                </button>
+
+                                                <button style={styles.todoBtn} onClick={() => deleteTodo(todo.schedId)}>삭제</button>
+                                            </>
+                                        )}
+                                    </li>
+                                ))}
                             </ul>
 
                             {showTodoForm ? (

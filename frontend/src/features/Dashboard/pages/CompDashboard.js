@@ -7,6 +7,7 @@ import OrganizationStatistics from '../compDasComponent/OrganizationStatistics';
 import AccessDeletionHistory from '../compDasComponent/AccessDeletionHistory';
 import ScheduleDeletionHistory from '../compDasComponent/ScheduleDeletionHistory';
 import ApprovalProcessHistory from '../compDasComponent/ApprovalProcessHistory';
+import AttendanceRate from '../component/AttendanceRate';
 
 function CompDashboard(props) {
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));   // 로그인 정보
@@ -16,7 +17,16 @@ function CompDashboard(props) {
     const [deleteSchedLog, setDeleteSchedLog] = useState([]);
     const [accessDeleteList, setAccessDeleteList] = useState([]);
     const [approval, setApproval] = useState([]);
+    const [emp, setEmp] = useState([]);
 
+
+    const date = new Date;
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+
+    
+    const formatted = `${yyyy}-${mm}-${dd}`;
 
     useEffect(() => {
         // 권한 확인용
@@ -48,6 +58,10 @@ function CompDashboard(props) {
         fetcher(`/gw/dashboard/aprvPrcs`)
         .then(dd => { setApproval(Array.isArray(dd) ? dd : [dd]) })
         .catch(e => console.log(e))
+
+        // 전체 근태
+        fetcher(`/gw/dashboard/dashTeamEmpList?dept=0&date=${formatted}`)
+        .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]) })
       }, [])
 
     // 회사 대시보드 열람 권한 (id = 14)
@@ -56,6 +70,7 @@ function CompDashboard(props) {
     return (
         <div>
             <h1>회사 대시보드</h1>
+            <AttendanceRate emp={emp} />
             <PersonnelChangeStats inOut={inOut} changeEmpData={changeEmpData} />
             <OrganizationStatistics inOut={inOut} />
             <AccessDeletionHistory accessDeleteList={accessDeleteList} />
