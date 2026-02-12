@@ -61,7 +61,7 @@ function CompDashboard(props) {
 
         // 전체 근태
         fetcher(`/gw/dashboard/dashTeamEmpList?dept=0&date=${formatted}`)
-        .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]) })
+        .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]); })
       }, [])
 
     // 회사 대시보드 열람 권한 (id = 14)

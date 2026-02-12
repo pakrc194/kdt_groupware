@@ -70,6 +70,7 @@ public class CompDashController {
 			@RequestParam("date") String date
 			) {
 		List<DashDTO> res = mapper.dashTeamEmpList(dept, date);
+		System.out.println(res);
 		return res;
 	}
 	

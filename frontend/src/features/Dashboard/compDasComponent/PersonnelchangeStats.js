@@ -1,7 +1,6 @@
 import React from "react";
 
 function PersonnelChangeStats({ inOut, changeEmpData }) {
-  console.log(changeEmpData)
     const active = inOut.filter((d) => d.empAcntStts != "RETIRED");
     const retired = inOut.filter((d) => d.empAcntStts == "RETIRED")
   return (

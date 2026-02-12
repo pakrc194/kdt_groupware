@@ -5,7 +5,6 @@ function DocPrcsTime({docPrc}) {
   const [aprvTime, setAprvTime] = useState('');
   const comp = docPrc.filter(dd => dd.aprvDocStts !== "PENDING" && dd.roleCd === "DRFT").length;
   const reje = docPrc.filter(dd => dd.aprvDocStts === "REJECTED" && dd.roleCd === "DRFT").length;
-  console.log("결재속도"+comp)
 
   const presentRate = comp === 0 ? 0 : ((reje / comp) * 100).toFixed(2);
 

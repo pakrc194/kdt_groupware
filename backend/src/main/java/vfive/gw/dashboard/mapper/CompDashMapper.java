@@ -116,8 +116,7 @@ public interface CompDashMapper {
 
 			</script>
 			""")
-
-	List<DashDTO> dashTeamEmpList(@Param("dept") int dept, @Param("date") String date);
+	List<DashDTO> dashTeamEmpList(@Param("dept") Integer dept, @Param("date") String date);
 	
 	// 대시보드 팀 스케쥴
 	@Select("SELECT SCHED.*, IFNULL(LOC_INFO.LOC_NM, '장소 미정') AS LOC_NM "

@@ -1,6 +1,7 @@
 import React from 'react';
 
 function Attendance({emp}) {
+    console.log(emp)
     const statusList = [
             { code: "PRESENT", label: "출근" },
             { code: "ABSENT", label: "결근" },
