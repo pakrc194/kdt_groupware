@@ -176,7 +176,7 @@ function ScheduleView(props) {
                                     {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept} ({s.schedDeptId})</div>}
                                     {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpId}</div>}
                                     <div><strong>상세:</strong> {s.schedDetail}</div>
-                                    <div><strong>기간:</strong> {s.schedStartDate.split(" ")[0]} ~ {s.schedEndDate.split(" ")[0]}</div>
+                                    <div><strong>기간:</strong> {s.schedStartDate?.split(" ")[0]} ~ {s.schedEndDate?.split(" ")[0]}</div>
                                 </div>
                             ))}
                         </div>
@@ -190,7 +190,7 @@ function ScheduleView(props) {
                     <div style={styles.scrollArea}>
                     <ul style={styles.todoList}>
                         {sortedTodos
-                        .filter(dd => dd.schedState != 1 && dd.schedStartDate.split(' ')[0] <= formatted)
+                        .filter(dd => dd.schedState != 1 && dd.schedStartDate?.split(' ')[0] <= formatted)
                         .map(todo => (
                             <li key={todo.schedId} style={styles.todoItem}>
                                     <input
@@ -268,7 +268,7 @@ function ScheduleView(props) {
 
                             {/* 완료된 TODO - 당일에서만 보임 */}
                             {sortedTodos
-                            .filter(dd => dd.schedState == 1 && dd.schedStartDate.split(' ')[0] == formatted)
+                            .filter(dd => dd.schedState == 1 && dd.schedStartDate?.split(' ')[0] == formatted)
                             .map(todo => (
                                 <li key={todo.schedId} style={styles.todoItem}>
                                         <input

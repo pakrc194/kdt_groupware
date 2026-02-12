@@ -19,7 +19,9 @@ public interface SchedMapper {
 
 	// 한달 일정 불러오기
 		// 작성자가 본인인 TODO, 본인 팀, 본인 개인 일정
-		@Select("select * from SCHED "
+		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept "
+				+ "from SCHED "
+				+ "left join DEPT_INFO on FIND_IN_SET(DEPT_INFO.dept_id, IFNULL(SCHED.sched_dept_id, '')) > 0 "
 				+ "where "
 				+ "sched_end_date >= #{schedStartDate} and sched_start_date <= #{schedEndDate} "
 				+ "and sched_state = 0 "
@@ -30,6 +32,7 @@ public interface SchedMapper {
 				+ "or (sched_type = 'PERSONAL' and FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0) "
 				+ "or (sched_type = 'TODO' and sched_author_id = #{schedAuthorId}) "
 				+ "or (sched_author_id = #{schedAuthorId})) "
+				+ "group by SCHED.sched_id "
 				+ "order by sched_type")
 		List<Sched> schedList(Sched sc);
 		
@@ -56,7 +59,11 @@ public interface SchedMapper {
 				+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDeptId})")
 		int instructionUpload(Sched sc);
 		
-		@Select("select * from SCHED where sched_id = #{schedId}")
+		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept "
+				+ "from SCHED "
+				+ "left join DEPT_INFO on FIND_IN_SET(DEPT_INFO.dept_id, IFNULL(SCHED.sched_dept_id, '')) > 0 "
+				+ "where sched_id = #{schedId} "
+				+ "group by SCHED.sched_id")
 		Sched schedDetail(Sched sc);
 		
 //		@Select("select * from SCHED "
