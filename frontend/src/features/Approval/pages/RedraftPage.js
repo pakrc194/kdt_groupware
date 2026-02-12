@@ -38,7 +38,10 @@ const RedraftPage = () => {
                 setRejectData(res.filter(v=>v.aprvPrcsStts=='REJECTED')[0])
             }
         })
-        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(setInputList)
+        fetcher(`/gw/aprv/AprvDtlVl/${docId}`).then(res=>{
+            
+            setInputList(res)
+        })
         fetcher(`/gw/aprv/AprvDocDetail/${docId}`).then(res=>{
             setAprvDocDetail(res)
             setDocVer(res.aprvDocVer)
@@ -100,7 +103,7 @@ const RedraftPage = () => {
 
     return (
         <>
-            <h4>재기안</h4>
+            <h4>반려함 &gt; 재기안</h4>
             <div className="draftForm basicForm" >
                 <div>문서 제목 <input type="text" name="docTitle" value={docTitle || ""} onChange={(e)=>setDocTitle(e.target.value)}/></div>
                 <div>파일 첨부 <input type="file" name="docFile"/></div>

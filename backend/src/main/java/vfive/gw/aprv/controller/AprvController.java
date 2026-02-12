@@ -27,6 +27,7 @@ import vfive.gw.aprv.dto.request.AprvDrftUploadRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvFileUploadRequest;
+import vfive.gw.aprv.dto.request.AprvFormCreateRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvParams;
@@ -46,6 +47,7 @@ import vfive.gw.aprv.service.AprvDrftTemp;
 import vfive.gw.aprv.service.AprvDrftUpload;
 import vfive.gw.aprv.service.AprvDutyScheDtl;
 import vfive.gw.aprv.service.AprvEmpAnnlLv;
+import vfive.gw.aprv.service.AprvFormCreate;
 import vfive.gw.aprv.service.AprvLocList;
 import vfive.gw.aprv.service.AprvPrcs;
 import vfive.gw.aprv.service.AprvRoleVl;
@@ -156,6 +158,11 @@ public class AprvController {
 		
 		System.out.println("req "+req);
 		return Map.of("res","yyy");
+	}
+	@PostMapping("/AprvFormCreate")
+	Object aprvFormCreate(@RequestBody AprvFormCreateRequest req) {
+		System.out.println("req "+req);
+		return provider.getContext().getBean(AprvFormCreate.class).load(req);
 	}
 	
 	String getServiceName(String service) {
