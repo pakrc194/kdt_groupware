@@ -11,6 +11,15 @@ const RedrftContent = ({docFormId, docLine, setDocLine, inputList, setInputList,
     const [drftDate, setDrftDate] = useState({})
     const [docRole, setDocRole] = useState();
 
+    useEffect(()=>{
+        const docStart = inputList.find(v=>v.docInptNm=="docStart")?.docInptVl;
+        const docEnd = inputList.find(v=>v.docInptNm=="docEnd")?.docInptVl;
+        
+        setDrftDate(prev=>{
+            return {...prev, docStart:docStart, docEnd:docEnd}
+        })
+    },[inputList])
+
     const fn_attendCheck = () => {
         setIsAttendCheckOpen(true)
     }

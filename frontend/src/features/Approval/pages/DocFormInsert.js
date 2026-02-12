@@ -3,8 +3,11 @@ import ApprovalLine from '../components/ApprovalLine';
 import Button from '../../../shared/components/Button';
 import EditAprvLine from '../components/modals/EditAprvLine';
 import SelectDeptModal from '../components/modals/SelectDeptModal';
+import { fetcher } from '../../../shared/api/fetcher';
+import { useNavigate } from 'react-router-dom';
 
 const DocFormInsert = () => {
+    const navigate = useNavigate();
     const ORDER = {
         DRFT: 0,
         DRFT_REF: 1,
@@ -15,12 +18,9 @@ const DocFormInsert = () => {
     
 
 
-    const [docFormNm, setDocFormNm] = useState();
-    const [docFormCd, setDocFormCd] = useState();
-    const [docFormType, setDocFormType] = useState();
-    const [docStartLbl, setDocStartLbl] = useState();
-    const [docEndLbl, setDocEndLbl] = useState();
-    const [docLocLbl, setDocLocLbl] = useState();
+    const [docFormNm, setDocFormNm] = useState("");
+    const [docFormCd, setDocFormCd] = useState("");
+    const [docFormType, setDocFormType] = useState("");
     const [docDept, setDocDept] = useState();
     const [isSelectDeptOpen, setIsSelectDeptOpen] = useState(false);
 
@@ -45,6 +45,7 @@ const DocFormInsert = () => {
             {
                 roleCd: addLine.roleCd,
                 aprvPrcsEmpId: addLine.empId,
+                aprvPrcsEmpNm: addLine.empNm,
                 roleSeq: 0, // 아래에서 다시 계산
             }
             ];
@@ -68,52 +69,56 @@ const DocFormInsert = () => {
         });
     };
 
-    const fn_selectDeptClick = () => {
-        setIsSelectDeptOpen(true);
-    }
-    const fn_selectDeptClose = () => {
-        setIsSelectDeptOpen(false);
-    }
-    const fn_selectDeptOk = (selectDept) => {
-        console.log("fn_selectDeptOk", selectDept)
-        let deptVal = ""
-        for(let i=0; i<selectDept.length; i++) {
-            deptVal=="" ? deptVal=selectDept[i].deptId : deptVal+=","+selectDept[i].deptId
-        }
-        setDocDept(deptVal)
-        setIsSelectDeptOpen(false);
-    }
 
     const fn_formOk = () => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                               
+        let formData = {
+            docFormNm : docFormNm,
+            docFormCd : docFormCd,
+            docFormType: docFormType
+        }
+
+
+        console.log(`formData`,formData)
+        console.log(`formLine`,docLine)
+
+        fetcher(`/gw/aprv/AprvFormCreate`,{
+            method:"POST",
+            body:{
+                docFormNm : docFormNm,
+                docFormCd : docFormCd,
+                docFormType: docFormType,
+                docLine: docLine
+            }
+        }).then(res=>{
+            if(res.res=="success") {
+                alert("양식 등록 완료")
+                navigate("/approval/docFormBox")
+            } else {
+                alert("양식 등록 실패")
+            }
+            
+            
+        })
+
     }
 
     return (
         <div>
-            <h4>insert</h4>
-            양식 제목<input name="docFormNm"/><br/>
-            양식 코드<input name="docFormCd"/><br/>
+            <h4>양식보관함 &gt; 양식등록</h4>
+            양식 제목<input name="docFormNm" value={docFormNm} onChange={(e)=>{setDocFormNm(e.target.value)}}/><br/>
+            양식 코드<input name="docFormCd" value={docFormCd} onChange={(e)=>{setDocFormCd(e.target.value)}}/><br/>
             문서 유형
-            <select name="docType">
-                <option >근태</option>
-                <option >일정</option>
+            <select name="docType" value={docFormType} onChange={(e)=>setDocFormType(e.target.value)}>
+                <option value="">선택</option>
+                <option>근태</option>
+                <option>일정</option>
             </select>
             <div> 
                 결재선 <Button onClick={fn_editLine}>결재선 추가</Button>
                 <ApprovalLine docLine={docLine}/>
                 {isEditLineOpen && <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk}/>}
-                
-                시작일자 라벨 <input name="docLblStart"/><br/>
-                종료일자 라벨 <input name="docLblEnd"/><br/>
-                장소 라벨 <input name="docLblLoc"/><br/>
             </div>
-            <div>
-                <input name="docShareNm" value={docDept} readOnly/>
-                <Button variant="primary" onClick={fn_selectDeptClick}>공개범위 선택</Button>
-                {isSelectDeptOpen && 
-                    <SelectDeptModal onClose={fn_selectDeptClose} onOk={fn_selectDeptOk} schedType={"DEPT"}
-                        title={"선택"} okMsg={"불러오기"}/>}
-            </div>
+           
             <div>
                 <Button onClick={fn_formOk}>양식 등록</Button>
             </div>

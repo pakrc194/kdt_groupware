@@ -89,7 +89,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             )
         );
         
-        if(prcsRes!="rjct") {
+        if(prcsRes.prcs!="rjct") {
             if(docDetail.docFormType==="근태") {
                 fn_attendCheck();
             } else if(docDetail.docFormType==="일정") {
@@ -97,12 +97,14 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             } else if(docDetail.docFormType==="근무") {
                 fn_dutyCheck();
             }
+        } else {
+            
+
+            alert(`반려처리 : ${rjctRsn} `)
         }
 
         
 
-
-        alert("결재 완료")
         
         navigate(0);
     }
@@ -205,6 +207,13 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
     if (!aprvLine) {
         return <div>결재선 정보를 불러오는 중...</div>;
     }
+    const roleMap = {
+        DRFT : "기안자",
+        DRFT_REF : "참조자",
+        MID_ATRZ : "중간 결재자",
+        MID_REF : "중간 참조자",
+        LAST_ATRZ : "최종 결재자"
+    }
 
     return (
         <>  
@@ -214,7 +223,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 {lineData.map((v, k)=> {
                     return (
                         <div className='empInfo' key={k}>
-                            <div>{v.roleCd}</div>
+                            <div>{roleMap[v.roleCd]}</div>
                             <div onClick={()=>{
                                 if(v.aprvPrcsEmpId == myInfo.empId) {
                                     if(v.aprvPrcsDt!=null && v.aprvPrcsDt!="") {

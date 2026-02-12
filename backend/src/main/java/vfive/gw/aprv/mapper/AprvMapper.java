@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -15,6 +16,7 @@ import vfive.gw.aprv.dto.request.AprvDocVerListRequest;
 import vfive.gw.aprv.dto.request.AprvDutyScheDtlRequest;
 import vfive.gw.aprv.dto.request.AprvEmpAnnlLvRequest;
 import vfive.gw.aprv.dto.request.AprvFileUploadRequest;
+import vfive.gw.aprv.dto.request.AprvFormCreateRequest;
 import vfive.gw.aprv.dto.request.AprvLocListRequest;
 import vfive.gw.aprv.dto.request.AprvPageInfo;
 import vfive.gw.aprv.dto.request.AprvRoleVlRequest;
@@ -183,4 +185,37 @@ public interface AprvMapper {
  // 특정 게시글의 파일 목록 조회
     @Select("SELECT * FROM BoardFile WHERE AprvDocId = #{docId}")
     AprvFileUploadRequest selectFile(int docId);
+    
+    @Insert("INSERT INTO DOC_FORM (DOC_FORM_CD, DOC_FORM_NM, DOC_FORM_TYPE) "
+    		+ "values "
+    		+ "(#{docFormCd}, #{docFormNm}, #{docFormType})")
+    @Options(useGeneratedKeys = true, keyProperty = "docFormId")
+    int aprvFormCreate(AprvFormCreateRequest req);
+    
+    @Insert("INSERT INTO DOC_INPT "
+    		+ "(DOC_FORM_ID, DOC_INPT_LBL, DOC_INPT_NM, DOC_INPT_TYPE, DOC_INPT_NO)"
+    		+ "values "
+    		+ "(#{formId}, '시작일자', 'docStart', 'DATE', 1), "
+    		+ "(#{formId}, '종료일자', 'docEnd', 'DATE', 2), "
+    		+ "(#{formId}, '사유', 'docTxtArea', 'TEXTAREA', 3) "
+	)
+    int aprvInptCreateAttend(@Param("formId") int formId);
+    
+    @Insert("INSERT INTO DOC_INPT "
+    		+ "(DOC_FORM_ID, DOC_INPT_LBL, DOC_INPT_NM, DOC_INPT_TYPE, DOC_INPT_NO)"
+    		+ "values "
+    		+ "(#{formId}, '일정시작', 'docStart', 'DATE', 1), "
+    		+ "(#{formId}, '일정종료', 'docEnd', 'DATE', 2), "
+    		+ "(#{formId}, '일정장소', 'docLoc', 'LOCATION', 3), "
+    		+ "(#{formId}, '범위', 'docRole', 'DATE', 4), "
+    		+ "(#{formId}, '담당', 'docSchedType', 'DATE', 5), "
+    		+ "(#{formId}, '사유', 'docTxtArea', 'TEXTAREA', 6) "
+	)
+    int aprvInptCreateSched(@Param("formId") int formId);
+    
+    @Insert("INSERT INTO DOC_FORM_LINE (DOC_FORM_ID, MID_ATRZ_EMP_ID, LAST_ATRZ_EMP_ID) "
+    		+ "values "
+    		+ "(#{formId}, #{midAtrzId}, #{lastAtrzId})")
+    int aprvFormLineCreate(@Param("formId") int formId, @Param("midAtrzId") int midAtrzId, @Param("lastAtrzId") int lastAtrzId);
+    
 }
