@@ -150,7 +150,6 @@ public class DutyController {
 	
 	@PostMapping("confirmDuty")
 	ResponseEntity<?> confirmDuty(@RequestBody DutyRequestDTO req) {
-		System.out.println("confirmDuty 들어옴");
 		try {
 			dutySkedUpdateService.confirmDutySchedule(req);
       return ResponseEntity.ok(Map.of("message", "근무표가 최종 확정되었습니다."));

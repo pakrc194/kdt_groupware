@@ -75,8 +75,24 @@ function DutySkedDetail() {
         });
 
         const empList = Object.values(empMap);
-        setEmployees(empList);
-        if (empList.length > 0) setWorkType(empList[0].rotPtnCd);
+
+        // 조별 정렬 로직 추가
+        const sortedEmpList = empList.sort((a, b) => {
+          const groupOrder = { A: 1, B: 2, C: 3, D: 4, 미배정: 5 };
+
+          const orderA = groupOrder[a.group] || 99;
+          const orderB = groupOrder[b.group] || 99;
+
+          // 조 순서대로 정렬
+          if (orderA !== orderB) {
+            return orderA - orderB;
+          }
+          // 같은 조 내에서는 이름순으로 정렬 (선택 사항)
+          return a.name.localeCompare(b.name);
+        });
+
+        setEmployees(sortedEmpList);
+        if (sortedEmpList.length > 0) setWorkType(sortedEmpList[0].rotPtnCd);
       } catch (error) {
         console.error("로드 실패:", error);
       } finally {

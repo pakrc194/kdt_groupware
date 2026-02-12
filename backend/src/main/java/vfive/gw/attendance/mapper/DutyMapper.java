@@ -99,15 +99,19 @@ public interface DutyMapper {
   int insertDutyDetails(List<DutySkedDetailDTO> list);
   
   /**
-   * 여러 사원의 조 정보를 일괄 업데이트
-   * updates 리스트 예시: [{empId: 10, grpNm: 'A'}, {empId: 11, grpNm: 'B'}]
+   * 여러 사원의 조 정보와 근무 유형(패턴)을 일괄 업데이트
    */
   @Update("<script>" +
-          "UPDATE EMP_PRVC " + // 실제 사원 테이블명으로 변경하세요
+          "UPDATE EMP_PRVC " + 
           "<set>" +
           "  GRP_NM = CASE " +
           "    <foreach collection='updates' item='item'>" +
           "      WHEN EMP_ID = #{item.empId} THEN #{item.grpNm, jdbcType=VARCHAR} " +
+          "    </foreach>" +
+          "  END, " +
+          "  ROT_PTN_CD = CASE " +
+          "    <foreach collection='updates' item='item'>" +
+          "      WHEN EMP_ID = #{item.empId} THEN #{item.rotPtnCd, jdbcType=VARCHAR} " +
           "    </foreach>" +
           "  END " +
           "</set>" +
@@ -116,7 +120,7 @@ public interface DutyMapper {
           "  #{item.empId}" +
           "</foreach>" +
           "</script>")
-  int updateEmpGroups(@Param("updates") List<Map<String, Object>> req);
+  int updateEmpGroups(@Param("updates") List<Map<String, Object>> updates);
 	
   //근무표 마스터 정보 수정 (제목 등)
   @Update("UPDATE DUTY_SCHE_MST SET " +

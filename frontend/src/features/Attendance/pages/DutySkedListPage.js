@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 import "../css/DutySkedListPage.css"; // 아래 CSS 코드 참고
+import { getStatusLabel } from "../../../shared/func/formatStatus";
 
 function DutySkedListPage() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -146,7 +147,7 @@ function DutySkedListPage() {
                   <td>{item.regDtm?.split("T")[0]}</td>
                   <td>
                     <span className={`badge-status ${item.prgrStts}`}>
-                      {item.prgrStts}
+                      {getStatusLabel(item.prgrStts)}
                     </span>
                   </td>
                 </tr>
