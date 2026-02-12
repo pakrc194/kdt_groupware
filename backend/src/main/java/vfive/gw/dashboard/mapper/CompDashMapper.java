@@ -90,8 +90,8 @@ public interface CompDashMapper {
 			+ "ATDC_HIST.EMP_ID, ATDC_HIST.WRK_YMD, ATDC_HIST.ATDC_STTS_CD "
 			+ "from EMP_PRVC "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
-			+ "join ATDC_HIST on EMP_PRVC.emp_id = ATDC_HIST.emp_id "
-			+ "where EMP_PRVC.dept_id = #{dept} and ATDC_HIST.WRK_YMD = #{date}")
+			+ "left join ATDC_HIST on EMP_PRVC.emp_id = ATDC_HIST.emp_id and ATDC_HIST.WRK_YMD = #{date} "
+			+ "where EMP_PRVC.dept_id = #{dept} and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' ")
 	List<DashDTO> dashTeamEmpList(@Param("dept") int dept, @Param("date") String date);
 	
 	// 대시보드 팀 스케쥴

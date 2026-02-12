@@ -44,7 +44,6 @@ function DashboardMain(props) {
 
     return (
         <div>
-            대시보드
             {renderContent()}
         </div>
     );
