@@ -69,7 +69,7 @@ function ScheduleView(props) {
             const created = await fetcher('/gw/schedule/todo/add', {
             method: 'POST',
             body: { 
-                schedStartDate: newTodo.schedStartDate.split(' ')[0],
+                schedStartDate: newTodo.schedStartDate.split('T')[0],
                 schedTitle: newTodo.schedTitle,
                 schedDetail: newTodo.schedDetail,
                 schedState: newTodo.schedState,
