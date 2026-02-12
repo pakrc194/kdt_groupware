@@ -47,34 +47,21 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
       const updatedInptList = inputRes.map((v) => {
         if (v.docInptNm === "docDuty") {
           return { ...v, docInptVl: dutyId };
-        } else if (v.docInptNm == "docTxtArea") {
-          return content ? { ...v, docInptVl: content } : v;
+        } else if (v.docInptNm === "docTxtArea") {
+          return { ...v, docInptVl: content || "" };
         }
         return v;
       });
 
-      //console.log("fetcher InptList :", content, updated);
+      // 상태 업데이트 (UI 반영용)
+      setInputList(updatedInptList);
 
-      setInputList(updated);
-    });
+      // 2. 가공된 변수(updatedInptList)를 직접 사용하여 PENDING 처리
+      const dutyIdValue = updatedInptList.find(
+        (v) => v.docInptNm === "docDuty",
+      )?.docInptVl;
 
-    // setInputList([
-    //     {
-    //       docInptNo: 1 ,
-    //       docInptId: 71 ,
-    //       docInptNm:"docDuty",
-    //       docInptType:"DUTY",
-    //       docInptVl: content
-    //     },
-    //   ],
-    // );
-
-    console.log("drftDocReq: ", drftDoc);
-    console.log("drftLineReq: ", docLine);
-    console.log("drftInptReq: ", inputList);
-
-    try {
-      const res = await fetcher(`/gw/duty/pending`, {
+      const pendingRes = await fetcher(`/gw/duty/pending`, {
         method: "POST",
         body: {
           dutyId: dutyIdValue, // 상태값 대신 가공된 변수 사용
