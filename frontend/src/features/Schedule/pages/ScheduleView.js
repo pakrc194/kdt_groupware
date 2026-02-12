@@ -69,7 +69,7 @@ function ScheduleView(props) {
             const created = await fetcher('/gw/schedule/todo/add', {
             method: 'POST',
             body: { 
-                schedStartDate: newTodo.schedStartDate.split(' ')[0],
+                schedStartDate: newTodo.schedStartDate?.split(' ')[0],
                 schedTitle: newTodo.schedTitle,
                 schedDetail: newTodo.schedDetail,
                 schedState: newTodo.schedState,
@@ -117,7 +117,7 @@ function ScheduleView(props) {
             await fetcher(`/gw/schedule/todo/toggle`, {
             method: 'POST',
             body: { 
-                schedStartDate: cktodo.schedStartDate.split(' ')[0],
+                schedStartDate: cktodo.schedStartDate?.split(' ')[0],
                 schedTitle: cktodo.schedTitle,
                 schedDetail: cktodo.schedDetail,
                 schedId: cktodo.schedId,
@@ -205,7 +205,7 @@ function ScheduleView(props) {
                                         <div style={styles.todoForm}>
                                             <input
                                                 type="date"
-                                                value={editTodo.schedStartDate.split(' ')[0]}
+                                                value={editTodo.schedStartDate?.split(' ')[0]}
                                                 onChange={e =>
                                                     setEditTodo({ ...editTodo, schedStartDate: e.target.value })
                                                 }
@@ -242,7 +242,7 @@ function ScheduleView(props) {
                                         ) : (
                                         <>
                                             <span style={{ textDecoration: todo.schedState != 0 ? 'line-through' : 'none', flex: 1, marginLeft: '8px' }}>
-                                                {todo.schedStartDate.split(' ')[0]} {todo.schedTitle}
+                                                {todo.schedStartDate?.split(' ')[0]} {todo.schedTitle}
                                             </span>
 
                                             <button 
