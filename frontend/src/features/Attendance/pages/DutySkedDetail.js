@@ -5,6 +5,7 @@ import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌
 import DutySkedAprvReqModal from "../component/DutySkedAprvReqModal";
 import "../css/DutySkedDetail.css";
 import DutySkedAprvReqModal2 from "../component/DutySkedAprvReqModal2";
+import { getStatusLabel } from "../../../shared/func/formatStatus";
 
 function DutySkedDetail() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -218,7 +219,7 @@ function DutySkedDetail() {
           />
           {isReadOnly && (
             <span className={`status-badge ${status}`}>
-              {status === "CONFIRMED" ? "결재 완료" : "결재 중"}
+              {getStatusLabel(status)}
             </span>
           )}
         </div>

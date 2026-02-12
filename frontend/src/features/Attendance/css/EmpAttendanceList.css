@@ -6,7 +6,10 @@
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 12px;
-  font-family: 'Pretendard', -apple-system, sans-serif;
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
 }
 
 .stats-header {
@@ -27,7 +30,7 @@
   background: #ffffff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin-bottom: 20px;
 }
 
@@ -79,7 +82,7 @@
   background: #ffffff;
   padding: 24px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .history-table {
@@ -122,6 +125,35 @@
   font-weight: 600;
   text-align: center;
   min-width: 65px;
+  border: 1px solid transparent;
+}
+
+/* 출근 (Present) */
+.PRESENT {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border-color: #91d5ff;
+}
+
+/* 결근 (Absent) */
+.ABSENT {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+  border-color: #ffa39e;
+}
+
+/* 연차 (Leave) */
+.LEAVE {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border-color: #b7eb8f;
+}
+
+/* 출장 (Business) */
+.BUSINESS_TRIP {
+  background-color: #f9f0ff;
+  color: #722ed1;
+  border-color: #d3adf7;
 }
 
 .text-danger {
@@ -148,8 +180,10 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
-  .filter-group input, .filter-group select, .search-btn {
+
+  .filter-group input,
+  .filter-group select,
+  .search-btn {
     width: 100%;
   }
 }
