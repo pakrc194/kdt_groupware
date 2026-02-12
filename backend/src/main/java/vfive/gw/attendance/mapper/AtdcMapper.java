@@ -3,6 +3,7 @@ package vfive.gw.attendance.mapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -121,5 +122,18 @@ public interface AtdcMapper {
     "ORDER BY E.EMP_NM ASC"
 	})
 	List<Map<String, Object>> selectMyDeptEmpStatus(EmpAtdcRequestDTO req);
+  
+  @Insert({
+  	"INSERT INTO ATDC_HIST "
+  	+ "(EMP_ID, WRK_YMD, ATDC_STTS_CD) "
+  	+ "SELECT E.EMP_ID, CURDATE(), 'ABSENT' "
+  	+ "FROM EMP_PRVC E "
+  	+ "WHERE E.EMP_ACNT_STTS = 'ACTIVE' "
+  	+ "AND NOT EXISTS "
+  	+ "(SELECT 1 FROM ATDC_HIST A "
+  	+ "WHERE A.EMP_ID = E.EMP_ID "
+  	+ "AND A.WRK_YMD = CURDATE())"
+  })
+  int insertAtdcHistData();
   
 }
