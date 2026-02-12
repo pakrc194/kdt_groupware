@@ -82,5 +82,31 @@ public interface SchedMapper {
 				+ "or #{schedEndDate} between sched_start_date and sched_end_date"
 				+ ")")
 		List<String> schedTeamList(Sched sc);
+		
+		// 스케쥴이 있는 장소 리스트
+		@Select("select sched_loc from SCHED "
+				+ "where "
+				+ "sched_type != 'TODO' "
+				+ "and ("
+				+ "sched_start_date between #{schedStartDate} and #{schedEndDate} "		// 선택된 일정 중에 시작 날짜가 있음
+				+ "or sched_end_date between #{schedStartDate} and #{schedEndDate} "	// 선택된 일정 중에 종료 날짜가 있음
+				+ "or #{schedStartDate} between sched_start_date and sched_end_date "
+				+ "or #{schedEndDate} between sched_start_date and sched_end_date"
+				+ ")")
+		List<Integer> sechedLocList(Sched sc);
+		
+		// 알림용 일정 상세 id
+		@Select("select max(sched_Id) from SCHED")
+		int maxId();
+		
+		// 회사 알림용 전체 사원
+		@Select("SELECT EMP_ID FROM EMP_PRVC WHERE EMP_ACNT_STTS='ACTIVE'") 
+	    List<Integer> selectAllEmpIds();
+		//FIND_IN_SET(#{schedDeptId}, sched_dept_id) > 0
+		// 팀 알림용 팀 사원
+		@Select("SELECT EMP_ID FROM EMP_PRVC "
+				+ "WHERE EMP_ACNT_STTS='ACTIVE' "
+				+ "AND FIND_IN_SET(DEPT_ID, #{schedDeptId}) > 0")
+		List<Integer> selectTeamEmpIds(Sched sc);
 	
 }

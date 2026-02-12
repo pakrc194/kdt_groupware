@@ -7,16 +7,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.SelectKey;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import vfive.gw.home.dto.EmpPrvc;
+import vfive.gw.ntf.dto.NtfRequest;
+import vfive.gw.ntf.mapper.NtfMapper;
 import vfive.gw.orgchart.dto.DeptInfo;
 import vfive.gw.schedule.dto.LocInfo;
 import vfive.gw.schedule.dto.Sched;
@@ -32,6 +37,9 @@ public class ScheduleController {
 	
 	@Resource
 	SchedMapper schedMapper;
+	
+	@Autowired
+    private NtfMapper ntfMapper;
 	
 	@GetMapping("empinfo/{id}")
 	Map<EmpPrvc, DeptInfo> loginInfo(@PathVariable("id") int id) {
@@ -148,5 +156,66 @@ public class ScheduleController {
 		sc.setSchedEndDate(edate);
 		return schedMapper.schedTeamList(sc);
 	}
+	
+	// 업무지시 중 일정이 있는 장소 조회
+	@GetMapping("instruction/schedLocs/{sdate}/{edate}")
+	List<Integer> sechedLocList(
+			@PathVariable("sdate") String sdate,
+			@PathVariable("edate") String edate) {
+		System.out.println("장소 일정");
+		Sched sc = new Sched();
+		sc.setSchedStartDate(sdate);
+		sc.setSchedEndDate(edate);
+		return schedMapper.sechedLocList(sc);
+	}
+	
+	// 알림 전송용
+	@PostMapping("/instruction/alert")
+    public ResponseEntity<?> createBoard(
+    		@RequestBody Sched sc) {
+        System.out.println("알림전송 "+ sc.getSchedType());
+        String now = java.time.LocalDateTime.now()
+        		.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        
+         int id = schedMapper.maxId();
+        // A. NTF 테이블 (알림 마스터) 생성
+        NtfRequest ntfReq = new NtfRequest();
+        ntfReq.setNtfType("SCHED_APPLIED");
+        ntfReq.setTitle("📅 새로운 일정");
+        ntfReq.setBody(sc.getSchedTitle());      // 글 제목을 알림 본문으로
+        ntfReq.setLinkUrl("/schedule/check/calendar/detail/"+id);     // 클릭 시 이동할 리액트 경로
+        ntfReq.setSrcType("SCHED");
+        ntfReq.setSrcId(id);
+        ntfReq.setCreatedBy(sc.getSchedAuthorId());
+        ntfReq.setCreatedAt(now);
+        
+        // ntfId가 auto_increment로 생성되어 ntfReq에 주입됨
+        ntfMapper.insertNtf(ntfReq); 
+        
+        // B. NTF_RCP 테이블 (수신자 목록) 생성
+        if (sc.getSchedType().equals("COMPANY")) {
+        	System.out.println("회사 일정");
+        	List<Integer> allEmpIds = schedMapper.selectAllEmpIds(); 
+        	
+        	if (allEmpIds != null && !allEmpIds.isEmpty()) {
+        		System.out.println("전체 사원 알림");
+        		// NtfMapper의 insertReceivers 호출
+        		ntfMapper.insertReceivers(ntfReq.getNtfId(), allEmpIds, now);
+        	}
+        }
+        else if (sc.getSchedType().equals("DEPT")) {
+        	System.out.println("팀 일정");
+        	List<Integer> teamEmpIds = schedMapper.selectTeamEmpIds(sc);
+        	
+        	if (teamEmpIds != null && !teamEmpIds.isEmpty()) {
+        		System.out.println("팀에게 알림");
+        		// NtfMapper의 insertReceivers 호출
+        		ntfMapper.insertReceivers(ntfReq.getNtfId(), teamEmpIds, now);
+        	}
+        }
+        return ResponseEntity.ok(Map.of("success", true,"schedId", id));
+        
+        
+    }
 
 }
