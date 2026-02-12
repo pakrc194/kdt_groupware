@@ -32,7 +32,8 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
   ];
 
   const fn_drftConfirm = async () => {
-    console.log("fn_drftConfirm");
+    console.log("fn_drftConfirm 시작");
+
     const drftDoc = {
       drftEmpId: myInfo.empId,
       docFormId: 9,
@@ -40,8 +41,10 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
       aprvDocTtl: title,
     };
 
-    await fetcher(`/gw/aprv/AprvDocInpt/9`).then((res) => {
-      const updated = res.map((v) => {
+    try {
+      // 1. 데이터 가져오기 및 가공
+      const inputRes = await fetcher(`/gw/aprv/AprvDocInpt/9`);
+      const updatedInptList = inputRes.map((v) => {
         if (v.docInptNm === "docDuty") {
           return { ...v, docInptVl: dutyId };
         } else if (v.docInptNm == "docTxtArea") {
@@ -74,26 +77,28 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
       const res = await fetcher(`/gw/duty/pending`, {
         method: "POST",
         body: {
-          dutyId: inputList[0].docInptVl,
+          dutyId: dutyIdValue, // 상태값 대신 가공된 변수 사용
         },
       });
-      alert(res.message);
+      // alert(pendingRes.message); // 필요 시 주석 해제
+
+      // 3. 최종 기안 업로드
+      await fetcher("/gw/aprv/AprvDrftUpload", {
+        method: "POST",
+        body: {
+          drftDocReq: drftDoc,
+          drftLineReq: docLine,
+          drftInptReq: updatedInptList, // 상태값 대신 가공된 변수 사용
+        },
+      });
+
+      alert("기안 작성 완료");
+      onClose();
+      navigate("/approval/draftBox");
     } catch (error) {
+      console.error(error);
       alert(`요청 실패: ${error.message}`);
     }
-
-    await fetcher("/gw/aprv/AprvDrftUpload", {
-      method: "POST",
-      body: {
-        drftDocReq: drftDoc,
-        drftLineReq: docLine,
-        drftInptReq: inputList,
-      },
-    }).then((res) => {
-      alert("기안 작성 완료");
-      onClose(); // 모달 닫기
-      navigate("/approval/draftBox");
-    });
   };
 
   useEffect(() => {
