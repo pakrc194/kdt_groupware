@@ -1,9 +1,11 @@
 import React from 'react';
 
 function TeamSchdule({sched}) {
+    const cnt = sched.length;
+
     return (
         <div>
-            <h3>팀 일정</h3>
+            <h3>팀 일정 {cnt}개</h3>
             <table>
                 <tbody>
                     <tr>
