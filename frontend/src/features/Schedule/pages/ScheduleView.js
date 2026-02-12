@@ -46,21 +46,19 @@ function ScheduleView(props) {
         }
     }
     
-
-    // 특정 날짜로 일정 받아와서 화면에 출력
     useEffect(() => {
+        // 특정 날짜로 일정 받아와서 화면에 출력
         fetcher(`/gw/schedule/view/${formatted}/${formatted}/${dept_id}/${emp_id}`)
         .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
         })
         .catch(e => console.log(e))
-    }, [defaultDate, showTodoForm]);
 
-    // TODO 가져오기
-    useEffect(() => {
+        // TODO 가져오기
         fetcher(`/gw/schedule/todo/view/${formatted}/${myInfo.empId}`) // 날짜별 TODO API
-            .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
-            })
-            .catch(e => console.log(e));
+        .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
+            console.log("todo 가져오기 fetch")
+        })
+        .catch(e => console.log(e));
     }, [defaultDate, showTodoForm, editTodo]);
 
     // TODO 추가

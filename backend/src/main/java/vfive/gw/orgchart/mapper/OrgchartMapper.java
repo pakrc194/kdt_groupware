@@ -69,16 +69,16 @@ public interface OrgchartMapper {
 	
 	// 사원 추가
 	@SelectKey(
-			keyProperty = "empId",
+			keyProperty = "empSnCnt",
 			resultType = Integer.class,
 			before = true,
-			statement = "select count(*)+1 from EMP_PRVC where dept_id = #{deptId}"
+			statement = "select IFNULL(MAX(CAST(SUBSTRING(emp_sn, -4) AS UNSIGNED)), 0) + 1 from EMP_PRVC where dept_id = #{deptId}"
 			)
 	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_JNCMP_YMD, EMP_SN, EMP_PSWD) "
 			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, #{empJncmpYmd}, "
 			+ "concat("
 			+ "(select dept_code from DEPT_INFO where dept_id = #{deptId}), "
-			+ "(LPAD(#{empId}, 4, '0'))"
+			+ "(LPAD(#{empSnCnt}, 4, '0'))"
 			+ "),"
 			+ "concat((select dept_code from DEPT_INFO where dept_id = #{deptId}), '0000')"
 			+ ")")

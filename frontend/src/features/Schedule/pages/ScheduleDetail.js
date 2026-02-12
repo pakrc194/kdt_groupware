@@ -58,10 +58,10 @@ function ScheduleDetail(props) {
                     <td>{vv.schedDetail}</td>
                 </tr><tr>    
                     <td>시작일</td>
-                    <td>{vv.schedStartDate.split('T')[0]}</td>
+                    <td>{vv.schedStartDate.split(' ')[0]}</td>
                 </tr><tr>    
                     <td>종료일</td>
-                    <td>{vv.schedEndDate.split('T')[0]}</td>
+                    <td>{vv.schedEndDate.split(' ')[0]}</td>
                 </tr>
                 </tbody>
             ))}
