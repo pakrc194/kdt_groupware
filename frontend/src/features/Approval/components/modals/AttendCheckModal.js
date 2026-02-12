@@ -21,7 +21,7 @@ const AttendCheckModal = ({onClose, onOk, drftDate}) => {
         })
         console.log("check 날짜 ㅣ ",drftDate)
 
-        console.log(drftDate.docStart.replaceAll("-", ""), drftDate.docEnd.replaceAll("-", ""))
+        console.log(drftDate?.docStart?.replaceAll("-", ""), drftDate?.docEnd?.replaceAll("-", ""))
 
         fetcher("/gw/aprv/AprvDutyScheDtl",{
                 method:"POST",

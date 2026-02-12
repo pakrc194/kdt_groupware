@@ -28,6 +28,7 @@ const ApprovalDetail = () => {
     const sideTitleMap = {
         approvalBox: "결재함",
         drftBox: "기안함",
+        draftBox: "기안함",
         refBox: "참조함",
         tempBox: "임시저장함",
         rejectBox: "반려함",
@@ -287,10 +288,10 @@ const ApprovalDetail = () => {
                         }
                     )}
                 </div>
-                <div>
+                {docFile && <div>
                     <h4>첨부파일</h4>
                     <a href={`http://192.168.0.117:8080/board/download/${docFile.fileId}`}>{docFile.originName}</a>
-                </div>
+                </div>}
 
                 {rejectData?.aprvPrcsEmpId && <div>
                     <h3>반려사유</h3>
