@@ -8,10 +8,10 @@ function DashApproval({ drft, aprv }) {
     <table className="dash-table" style={{ marginBottom: "20px" }}>
       <thead>
         <tr>
-          <th>결재코드</th>
+          <th>문서번호</th>
           <th>문서제목</th>
-          <th>기안일</th>
-          <th>결재상태</th>
+          <th>기안일자</th>
+          <th>진행상태</th>
         </tr>
       </thead>
       <tbody>
@@ -24,7 +24,7 @@ function DashApproval({ drft, aprv }) {
                   {v.aprvDocTtl}
                 </Link>
               </td>
-              <td>{v.aprvDocDrftDt}</td>
+              <td>{v.aprvDocDrftDt.substring(0,8)}</td>
               <td>{getStatusLabel(v.aprvDocStts)}</td>
             </tr>
           ))}

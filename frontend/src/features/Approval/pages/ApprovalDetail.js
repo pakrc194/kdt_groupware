@@ -56,31 +56,31 @@ const ApprovalDetail = () => {
                     docEnd : drftEnd.docInptVl
                 })
             }
-            const role = res.find(v=>v.docInptNm=="docRole");
-            if(role!=null) {
-                const ids = res.find(v=>v.docInptNm=="docSchedType")
-                let idsVl = ""
-                fetcher(`/gw/aprv/AprvRoleVl`, {
-                    method:"POST",
-                    body:{
-                        role: role?.docInptVl,
-                        ids : ids?.docInptVl
-                    }
-                }).then(vv => {
-                    console.log("fetch AprvRoleVl : ",vv);
-                    if(role.docInptVl=="PERSONAL") {
-                        vv.map(v=>{
-                            idsVl+=v.empNm+" "
-                        })
-                    } else if(role.docInptVl=="DEPT") {
-                        vv.map(v=>{
-                            idsVl+=v.deptName+" "
-                        })
-                    }
-                    console.log("idsVl", idsVl)
-                    ids.docInptVl = idsVl;
-                })
-            }
+            // const role = res.find(v=>v.docInptNm=="docRole");
+            // if(role!=null) {
+            //     const ids = res.find(v=>v.docInptNm=="docSchedType")
+            //     let idsVl = ""
+            //     fetcher(`/gw/aprv/AprvRoleVl`, {
+            //         method:"POST",
+            //         body:{
+            //             role: role?.docInptVl,
+            //             ids : ids?.docInptVl
+            //         }
+            //     }).then(vv => {
+            //         console.log("fetch AprvRoleVl : ",vv);
+            //         if(role.docInptVl=="PERSONAL") {
+            //             vv.map(v=>{
+            //                 idsVl+=v.empNm+" "
+            //             })
+            //         } else if(role.docInptVl=="DEPT") {
+            //             vv.map(v=>{
+            //                 idsVl+=v.deptName+" "
+            //             })
+            //         }
+            //         console.log("idsVl", idsVl)
+            //         ids.docInptVl = idsVl;
+            //     })
+            // }
 
             
 
@@ -120,6 +120,7 @@ const ApprovalDetail = () => {
         })
 
     },[aprvDocDetail])
+
 
     const fn_warnAttend = () => {
         const docRole = "duty"

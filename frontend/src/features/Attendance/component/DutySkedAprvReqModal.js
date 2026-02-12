@@ -45,14 +45,12 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
         if (v.docInptNm === "docDuty") {
           return { ...v, docInptVl: dutyId };
         } else if (v.docInptNm == "docTxtArea") {
-          if (content != null || content != "") {
-            return { ...v, docInptVl: content };
-          }
+          return content ? { ...v, docInptVl: content } : v;
         }
         return v;
       });
 
-      console.log("fetcher InptList :", content, updated);
+      //console.log("fetcher InptList :", content, updated);
 
       setInputList(updated);
     });

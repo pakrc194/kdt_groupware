@@ -2,6 +2,9 @@ import React from 'react';
 
 import './DetailForm.css'
 const DetailForm = ({inputForm}) => {
+    
+
+
     return (
         <>
             <div className='formDiv'>

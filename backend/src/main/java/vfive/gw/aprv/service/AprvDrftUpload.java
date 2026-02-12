@@ -3,8 +3,11 @@ package vfive.gw.aprv.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Service;
@@ -121,41 +124,43 @@ public class AprvDrftUpload {
 		
 		String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-		// 1) 알림 내용 생성
+		// 1) 알림 마스터 정보 생성
 		NtfRequest n = new NtfRequest();
 		n.setNtfType("APRV_REQ");
 		n.setTitle("결재 요청");
-		n.setBody(drftDoc.getAprvDocTtl()); // 예: 문서 제목/요약
+		n.setBody(drftDoc.getAprvDocTtl());
 		n.setLinkUrl("/approval/approvalBox/detail/" + aprvDocId);
 		n.setSrcType("APRV_DOC");
 		n.setSrcId(aprvDocId);
 		n.setCreatedBy(drftDoc.getDrftEmpId());
 		n.setCreatedAt(now);
 
-		ntfMapper.insertNtf(n); // n.ntfId 생성됨
+		ntfMapper.insertNtf(n); // 여기서 n.getNtfId()가 생성됨
 
-		// 2) 수신자 조회(PENDING인 다음 결재자 + 참조자)
-		List<Integer> empIds = ntfMapper.selectDraftReceivers(aprvDocId);
+		// 2) 모든 수신자 ID를 담을 하나의 Set 생성 (Set은 자동으로 중복을 방지함)
+		Set<Integer> allReceiverIds = new HashSet<>();
 
-		// 3) 수신자 insert
-		if (!empIds.isEmpty()) {
-		    // 혹시 모를 중복 제거
-		    empIds = empIds.stream().distinct().toList();
-		    ntfMapper.insertReceivers(n.getNtfId(), empIds, now);
+		// 2-1) 기안 수신자(결재자+참조자) 추가
+		List<Integer> draftReceivers = ntfMapper.selectDraftReceivers(aprvDocId);
+		if (draftReceivers != null) {
+		    allReceiverIds.addAll(draftReceivers);
 		}
-		
-		List<Integer> receivers =
-			    ntfMapper.selectNextApprovers(aprvDocId);
 
-		if (receivers != null && !receivers.isEmpty()) {
+		// 2-2) 다음 결재자 추가
+		List<Integer> nextApprovers = ntfMapper.selectNextApprovers(aprvDocId);
+		if (nextApprovers != null) {
+		    allReceiverIds.addAll(nextApprovers);
+		}
 
-		    // 혹시 모를 중복 제거
-		    receivers = receivers.stream().distinct().toList();
-
-		  
+		// 3) 최종 수신자가 있다면 단 한 번만 insert 실행
+		if (!allReceiverIds.isEmpty()) {
+		    // Set을 다시 List로 변환
+		    List<Integer> finalReceivers = new ArrayList<>(allReceiverIds);
+		    
+		    // ntfMapper.insertNtfReceivers 하나만 사용 (기존 insertReceivers는 중복이므로 제거 권장)
 		    ntfMapper.insertNtfReceivers(
 		        n.getNtfId(),
-		        receivers,
+		        finalReceivers,
 		        now
 		    );
 		}
