@@ -22,7 +22,7 @@ public interface EmailMapper {
   int checkAuthCode(AuthEmailDTO req);
   
   // 비밀번호 가져오기
-  @Select("SELECT EMP_PSWD FROM EMP_PRVC WHERE EMP_EML_ADDR = #{email}")
+  @Select("SELECT EMP_PSWD FROM EMP_PRVC WHERE EMP_EML_ADDR = #{email} and EMP_SN = #{empSn}")
   String selectPswdByEmail(AuthEmailDTO req);
 
   // 인증 완료 후 삭제
