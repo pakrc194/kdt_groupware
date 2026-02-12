@@ -50,7 +50,7 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
         return v;
       });
 
-      //console.log("fetcher InptList :", content, updated);
+      console.log("fetcher InptList :", content, updated);
 
       setInputList(updated);
     });

@@ -291,7 +291,7 @@ const ApprovalDetail = () => {
                 </div>
                 {docFile && <div>
                     <h4>첨부파일</h4>
-                    <a href={`http://192.168.0.117:8080/board/download/${docFile.fileId}`}>{docFile.originName}</a>
+                    <a href={`http://192.168.0.36:8080/board/download/${docFile.fileId}`}>{docFile.originName}</a>
                 </div>}
 
                 {rejectData?.aprvPrcsEmpId && <div>
