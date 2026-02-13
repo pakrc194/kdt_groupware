@@ -1,16 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
+import Select from "react-select";
 import "../css/MyAttendanceRecodePage.css";
 
 function MyAttendanceRecodePage() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [stats, setStats] = useState(null);
-  const [currentYear, setCurrentYear] = useState("2026");
+  const thisYear = new Date().getFullYear();
+  const [currentYear, setCurrentYear] = useState(String(thisYear));
+
+  const yearOptions = useMemo(() => {
+    const startYear = 1950;
+    const years = [];
+    for (let y = thisYear; y >= startYear; y--) {
+      years.push(String(y));
+    }
+    return years;
+  }, [thisYear]);
+
+  const options = yearOptions.map((year) => ({
+    value: year,
+    label: `${year}년`,
+  }));
 
   useEffect(() => {
     // 백엔드에서 가공된 전체 데이터를 한 번에 호출
     const loadStats = async () => {
       try {
+        setStats(null);
         const data = await fetcher(
           `/gw/atdc/myAtSt?year=${currentYear}&empId=${myInfo.empId}`,
         );
@@ -32,13 +49,12 @@ function MyAttendanceRecodePage() {
     <div className="stats-container">
       <header className="stats-header">
         <h1>개인 근태 통계</h1>
-        <select
-          value={currentYear}
-          onChange={(e) => setCurrentYear(e.target.value)}
-        >
-          <option value="2026">2026년</option>
-          <option value="2025">2025년</option>
-        </select>
+        <Select
+          options={options}
+          defaultValue={options[0]}
+          onChange={(opt) => setCurrentYear(opt.value)}
+          // 내부적으로 max-height와 스크롤이 이미 구현되어 있음
+        />
       </header>
 
       {/* 1. 상단 요약 카드 섹션 */}
