@@ -37,7 +37,7 @@ public class BoardService {
     public BoardPrvc getBoardDetail(int boardId) {
         BoardPrvc board = boardMapper.detail(boardId);
         if (board != null) {
-            boardMapper.incrementViews(boardId);
+//            boardMapper.incrementViews(boardId);
         }
         return board;
     }
