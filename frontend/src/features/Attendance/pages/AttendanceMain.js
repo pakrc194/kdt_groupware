@@ -39,7 +39,6 @@ function AttendanceMain(props) {
 
   return (
     <div className="approval-container">
-      <h2>근태관리</h2>
       <div className="content-area">
         {renderContent()} {/* 여기서 선택된 화면이 렌더링됨 */}
       </div>

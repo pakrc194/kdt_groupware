@@ -43,7 +43,7 @@ function ScheduleDetail(props) {
                     <td>{vv.schedId}</td>
                 </tr><tr>
                     <td>담당팀</td>
-                    <td>{vv.schedDeptId}</td>
+                    <td>{vv.schedDept}</td>
                 </tr><tr>
                     <td>위치</td>
                     <td>{vv.schedLoc}</td>

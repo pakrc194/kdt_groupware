@@ -88,8 +88,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 : item
             )
         );
-        
-        if(prcsRes.prcs!=="rjct") {
+       
+        if(prcsRes.prcs!="rjct") {
             if(roleCd==="LAST_ATRZ") {
                 if(docDetail.docFormType==="근태") {
                     fn_attendCheck();
@@ -98,6 +98,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 } else if(docDetail.docFormType==="근무") {
                     fn_dutyCheck();
                 }
+            } else {
+                alert(`결재 완료`)
             }
         } else {
             alert(`반려처리 : ${rjctRsn} `)

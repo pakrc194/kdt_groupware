@@ -53,7 +53,7 @@ function ScheduleCalendar(props) {
         // fetcher(`/gw/schedule/view/${dept_id}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-    }, [date, props.todo[0], currentDate]);
+    }, [date, props.todo, currentDate]);
 
     // const eventStyleGetter = (event) => {
     //     let backgroundColor = '#3174ad'; // 기본
