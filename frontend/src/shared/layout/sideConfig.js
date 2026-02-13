@@ -51,7 +51,7 @@ export const SIDE_CONFIG = {
     sideMenus: [
       { id: "allorg", name: "전체 사원 보기" },
       {
-        id: "teamorg",
+        id: "CP",
         name: "팀별 사원 보기",
         subMenus: [
           { id: "CP", name: "지점장" },

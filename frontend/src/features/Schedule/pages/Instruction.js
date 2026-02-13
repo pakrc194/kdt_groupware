@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 import TeamSelectPopup from './TeamSelectPopup';
 import NoAccess from '../../../shared/components/NoAccess';
+import { chkToday } from '../../../shared/api/chkToday';
 
 function Instruction(props) {
 
@@ -113,6 +114,10 @@ function Instruction(props) {
         }
         if (startDate > endDate) {
             alert('종료일은 시작일보다 같거나 이후여야 합니다');
+            return;
+        }
+        if (!chkToday(startDate)) {
+            alert('시작일은 오늘 이후여야 합니다.')
             return;
         }
 

@@ -19,4 +19,7 @@ public class DashDTO {
 	
 	// JBTTL_INFO
 	private String jbttlNm;
+	
+	//DEPT_INFO
+	private String deptName;
 }

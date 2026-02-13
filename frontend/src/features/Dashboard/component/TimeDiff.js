@@ -20,5 +20,5 @@ export function TimeDiff(startStr, endStr) {
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
     const diffMinutes = Math.floor(diffMs / (1000 * 60)) % 60;
 
-    return `${diffDays}일 ${diffHours}시간 ${diffMinutes}분`;
+    return `${diffDays}일 ${diffHours}시간 ${diffMinutes}분 ${Math.floor(diffMs / (1000) % 60)}초`;
 }

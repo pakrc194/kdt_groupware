@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import NoAccess from '../../../shared/components/NoAccess';
+import Modal from '../../../shared/components/Modal';
+import { chkToday } from '../../../shared/api/chkToday';
 
 const MemberRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +17,27 @@ const MemberRegistrationForm = () => {
   const [jbttlList, setJbttlList] = useState([]);
   const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
   const [accessCk, setAccessCk] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 만나이 계산 함수
+  const isOver18 = (birthDateString) => {
+    if (!birthDateString) return false;
+
+    const today = new Date();
+    const birthDate = new Date(birthDateString);
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    // 생일이 아직 안 지났으면 나이 -1
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+
+    return age >= 18;
+  };
 
   useEffect(() => {
     // 권한 확인용
@@ -40,8 +63,20 @@ const MemberRegistrationForm = () => {
 
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
+    if (!formData.EMP_NM || !formData.EMP_BIRTH || !formData.DEPT_ID || !formData.JBTTL_ID || !formData.EMP_JNCMP_YMD) {
+      alert('정보를 모두 입력해 주세요.')
+      return;
+    }
+    if (!chkToday(formData.EMP_JNCMP_YMD)) {
+      alert('입사일을 확인하세요.')
+      return;
+    }
+    if (!isOver18(formData.EMP_BIRTH)) {
+      console.log(!formData.EMP_NM)
+      alert('생년월일을 확인하세요.')
+      return;
+    }
     alert(`${formData.EMP_NM} 계정 생성 완료`);
-
     try {
       await fetcher('/gw/orgChart/register', {
         method: 'POST',
@@ -53,6 +88,7 @@ const MemberRegistrationForm = () => {
           empJncmpYmd: formData.EMP_JNCMP_YMD 
         }
       });
+      setIsOpen(false)
 
     } catch (err) {
         console.error('계정 생성 실패:', err.message);
@@ -62,7 +98,8 @@ const MemberRegistrationForm = () => {
       EMP_NM: '',
       EMP_BIRTH: '',
       DEPT_ID: '',
-      JBTTL_ID: ''
+      JBTTL_ID: '',
+      EMP_JNCMP_YMD: ''
     })
 
   };
@@ -72,7 +109,8 @@ const MemberRegistrationForm = () => {
       EMP_NM: '',
       EMP_BIRTH: '',
       DEPT_ID: '',
-      JBTTL_ID: ''
+      JBTTL_ID: '',
+      EMP_JNCMP_YMD: ''
     })
   }
 
@@ -139,7 +177,16 @@ const MemberRegistrationForm = () => {
 
       <div style={styles.buttonGroup}>
         <button style={styles.cancelBtn} onClick={handleCancle}>취소</button>
-        <button style={styles.submitBtn} onClick={handleSubmit}>완료</button>
+        <button style={styles.submitBtn} onClick={() => setIsOpen(true)}>완료</button>
+        {isOpen && (
+          <Modal 
+            title="사원 등록 확인" 
+            message="사원을 등록합니다." 
+            onClose={() => setIsOpen(false)} 
+            onOk={handleSubmit} 
+            okMsg="확인" 
+          />
+        )}
       </div>
     </div>
   );

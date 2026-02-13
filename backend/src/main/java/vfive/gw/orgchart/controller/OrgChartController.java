@@ -3,6 +3,7 @@ package vfive.gw.orgchart.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,9 +82,32 @@ public class OrgChartController {
 	@PostMapping("/register")
 	int registerEmp(@RequestBody EmpPrvc emp) {
 		System.out.println("계정 생성 시도 "+emp);
+//		emp.setEmpSnCnt(orgchartMapper.empSnCnt(emp));
 		return orgchartMapper.registerEmp(emp);
 //		return 1;
 	}
+	
+//	@Transactional
+//	public void insertEmployee(EmpDTO dto) {
+//
+//	    int retry = 0;
+//	    while (retry < 5) {
+//	        try {
+//	            // 다음 번호 조회 (MAX 기반 추천)
+//	            Integer nextNo = empMapper.selectNextEmpNo(dto.getDeptId());
+//	            dto.setEmpId(nextNo);
+//
+//	            empMapper.insertEmployee(dto);
+//	            return; // 성공하면 종료
+//
+//	        } catch (DuplicateKeyException e) {
+//	            retry++; // 중복이면 다시 시도
+//	        }
+//	    }
+//
+//	    throw new RuntimeException("사번 생성 실패 (중복 과다)");
+//	}
+
 	
 	// 계정 정보 수정
 	@PostMapping("/modifyInfo")

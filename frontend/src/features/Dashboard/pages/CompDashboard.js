@@ -7,7 +7,8 @@ import OrganizationStatistics from '../compDasComponent/OrganizationStatistics';
 import AccessDeletionHistory from '../compDasComponent/AccessDeletionHistory';
 import ScheduleDeletionHistory from '../compDasComponent/ScheduleDeletionHistory';
 import ApprovalProcessHistory from '../compDasComponent/ApprovalProcessHistory';
-import AttendanceRate from '../component/AttendanceRate';
+import CompAttendanceRate from '../component/CompAttendanceRate';
+import CompanyDashboardGraph from '../component/CompanyDashboardGraph';
 
 function CompDashboard(props) {
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));   // 로그인 정보
@@ -27,6 +28,7 @@ function CompDashboard(props) {
 
     
     const formatted = `${yyyy}-${mm}-${dd}`;
+
 
     useEffect(() => {
         // 권한 확인용
@@ -70,7 +72,8 @@ function CompDashboard(props) {
     return (
         <div>
             <h1>회사 대시보드</h1>
-            <AttendanceRate emp={emp} />
+            <CompanyDashboardGraph inOut={inOut} emp={emp} />
+            <CompAttendanceRate emp={emp} />
             <PersonnelChangeStats inOut={inOut} changeEmpData={changeEmpData} />
             <OrganizationStatistics inOut={inOut} />
             <AccessDeletionHistory accessDeleteList={accessDeleteList} />
