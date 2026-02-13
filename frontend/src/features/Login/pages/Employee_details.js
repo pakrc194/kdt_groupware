@@ -7,6 +7,7 @@ function Employee_details(props) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const empSn = searchParams.get("empSn");
+  const [previewUrl, setPreviewUrl] = useState(null); // 미리보기 이미지 경로
 
   // 1. 상태 관리: DB 컬럼명과 매핑되는 DTO 필드명(Camel Case) 적용
   const [formData, setFormData] = useState({
@@ -40,7 +41,12 @@ function Employee_details(props) {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, empPhoto: e.target.files[0] }));
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, empPhoto: file }));
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
   };
 
   // 이메일 인증번호 발송
@@ -78,22 +84,25 @@ function Employee_details(props) {
   // 5. 가입 완료 제출
   const handleCompleteRegistration = async (e) => {
     e.preventDefault();
-    if (!window.confirm("계정 등록을 완료하시겠습니까?")) return;
 
+    if (!window.confirm("계정 등록을 완료하시겠습니까?")) return;
+    URL.createObjectURL(formData.empPhoto);
     try {
+      const uploadData = new FormData();
+      uploadData.append("empSn", empSn);
+      uploadData.append("empAddr", formData.empAddr);
+      uploadData.append("empTelno", formData.empTelno);
+      uploadData.append("empActno", formData.empActno);
+      uploadData.append("empPswd", formData.empPswd);
+      uploadData.append("empEmlAddr", formData.empEmlAddr);
+      if (formData.empPhoto) {
+        uploadData.append("file", formData.empPhoto);
+      }
+
       // fetcher가 JSON.stringify를 자동으로 수행하므로 객체 그대로 전달
       const res = await fetcher(`/gw/login/newEmp`, {
         method: "POST",
-        body: {
-          empSn: empSn,
-          empAddr: formData.empAddr,
-          empTelno: formData.empTelno,
-          empActno: formData.empActno,
-          empPswd: formData.empPswd,
-          empEmlAddr: formData.empEmlAddr,
-          // 사진을 String으로 보낼 경우 (파일 경로 등)
-          empPhoto: formData.empPhoto ? formData.empPhoto.name : null,
-        },
+        body: uploadData,
       });
 
       if (res) {
@@ -124,6 +133,37 @@ function Employee_details(props) {
             <tr>
               <td>사진</td>
               <td>
+                <div style={{ marginBottom: "10px" }}>
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt="사원 사진 미리보기"
+                      style={{
+                        width: "120px",
+                        height: "150px",
+                        objectFit: "cover",
+                        border: "1px solid #ddd",
+                      }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: "120px",
+                        height: "150px",
+                        backgroundColor: "#f5f5f5",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#999",
+                        border: "1px solid #ddd",
+                      }}
+                    >
+                      <span style={{ fontSize: "15px" }}>
+                        사진을 선택하세요
+                      </span>
+                    </div>
+                  )}
+                </div>
                 <input
                   type="file"
                   name="empPhoto"

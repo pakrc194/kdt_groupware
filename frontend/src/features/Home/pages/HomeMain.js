@@ -36,19 +36,19 @@ function HomeMain(props) {
     setIsOpen(true);
   };
 
-  const fn_testCancel = () => {
-    setIsOpen(false);
-    setTestData("테스트 취소");
-  };
-  const fn_testOk = async () => {
-    setIsOpen(false);
-    setTestData("테스트 확인");
+  // const fn_testCancel = () => {
+  //   setIsOpen(false);
+  //   setTestData("테스트 취소");
+  // };
+  // const fn_testOk = async () => {
+  //   setIsOpen(false);
+  //   setTestData("테스트 확인");
 
-    fetcher("/gw/home/test", {
-      method: "POST",
-      body: { test: "ok" },
-    }).then(setEmpData);
-  };
+  //   fetcher("/gw/home/test", {
+  //     method: "POST",
+  //     body: { test: "ok" },
+  //   }).then(setEmpData);
+  // };
 
   return (
     <>

@@ -3,6 +3,7 @@ package vfive.gw.home.controller;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +58,7 @@ public class HomeController {
 	}
 	
 	@PostMapping("updateProf")
-	void updateProf(@RequestBody EmpPrvc req) {
+	void updateProf(@ModelAttribute EmpPrvc req) {
 		updateEmpProfService.updateProfile(req);
 	}
 	

@@ -86,6 +86,7 @@ public interface HomeMapper {
       "  <if test='empAddr != null'>EMP_ADDR = #{empAddr},</if>" +
       "  <if test='empEmlAddr != null'>EMP_EML_ADDR = #{empEmlAddr},</if>" +
       "  <if test='newPassword != null and newPassword != \"\"'>EMP_PSWD = #{newPassword},</if>" +
+      "  <if test='empPhoto != null'>EMP_PHOTO = #{empPhoto},</if>" +
       "</set>" +
       "WHERE EMP_ID = #{empId}" +
       "</script>")
