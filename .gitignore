@@ -15,3 +15,5 @@ Thumbs.db
 # React
 frontend/node_modules/
 frontend/build/
+
+node_modules/

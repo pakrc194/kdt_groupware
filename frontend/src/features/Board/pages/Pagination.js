@@ -1,4 +1,5 @@
 import React from "react";
+import boardst from '../../Home/css/Board.module.css';
 
 function Pagination({pInfo, onPageChange}) {
 
@@ -23,26 +24,49 @@ function Pagination({pInfo, onPageChange}) {
         }
 
     return(
-    <>
-        {prevBut && (<span  onClick ={()=>onPageChange(startPage-1)} >이전</span>)}
+        <div className={boardst.paginationContainer}>
+            <nav className={boardst.paginationNav}>
+                {/* 처음으로 버튼 (선택사항) */}
+                <button onClick={() => onPageChange(1)} disabled={curPage === 1} className={boardst.pageBtn}>
+                    «
+                </button>
 
-        {pageNums.map((num)=>(
-            <span
-                key={num}
-                onClick={() => onPageChange(num)}
-            >
+                {/* 이전 버튼 */}
+                <button 
+                    onClick={() => prevBut && onPageChange(startPage - 1)} 
+                    disabled={!prevBut} 
+                    className={boardst.pageBtn}
+                >
+                    ‹
+                </button>
 
-                {curPage === num ? (
-                    <b>[{num}]</b>
-                ) : (
-                    num
-            )}
-            </span>
-        ))}
+                {/* 페이지 번호 */}
+                {pageNums.map((num) => (
+                    <button
+                        key={num}
+                        onClick={() => onPageChange(num)}
+                        className={`${boardst.pageBtn} ${curPage === num ? boardst.active : ""}`}
+                    >
+                        {num}
+                    </button>
+                ))}
 
-        {nextBut && (<span  onClick = {()=>onPageChange(endPage+1)} >다음</span>)}
-    </>    
-    );    
+                {/* 다음 버튼 */}
+                <button 
+                    onClick={() => nextBut && onPageChange(endPage + 1)} 
+                    disabled={!nextBut} 
+                    className={boardst.pageBtn}
+                >
+                    ›
+                </button>
+
+                {/* 마지막으로 버튼 (선택사항) */}
+                <button onClick={() => onPageChange(totalPage)} disabled={curPage === totalPage} className={boardst.pageBtn}>
+                    »
+                </button>
+            </nav>
+        </div>
+    );
         
 
 

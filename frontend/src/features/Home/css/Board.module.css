@@ -1,14 +1,19 @@
 /* 기존 클래스 */
 .input {
     width: 300px;
-    height: 25px;
-    margin: 10px;
+    height: 35px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 0 10px;
+    box-sizing: border-box;
 }
 
 .selectBox {
     width: 100px;
-    height: 30px;
-    margin-bottom: 90px; 
+    height: 35px; /* input과 높이 통일 */
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 0 5px;
 }
 
 
@@ -69,7 +74,15 @@
 .paginationContainer{
    display: flex;
    justify-content: center;
-   margin-top: 20px;
+   align-items: center;
+   margin-top: 30px;
+   padding-bottom: 20px;
+}
+
+/* 네비게이션 가로 정렬 */
+.paginationNav {
+    display: flex;
+    gap: 4px; /* 버튼 사이 간격 */
 }
 
 .footerArea {
@@ -105,8 +118,6 @@
     
 }
 
-
-
 /* 컨텐츠 영역 */
 .detail-content {
     background-color: #eee;
@@ -117,4 +128,45 @@
 }
 
 
+
+/* 기본 버튼 스타일 (사각 테두리) */
+.pageBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 35px;
+    height: 35px;
+    padding: 0 5px;
+    border: 1px solid #d1d5db; /* 회색 테두리 */
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+    background-color: #004792;
+    color: #ffffff;
+    border-color: #9ca3af;
+}
+
+/* 활성화된 페이지 스타일 (파란색 배경) */
+.pageBtn.active {
+    background-color: #004792; /* 이미지와 유사한 진한 파란색 */
+    color: #ffffff;
+    border-color: #004792;
+    font-weight: bold;
+}
+
+/* 비활성화된 버튼 스타일 */
+.pageBtn:disabled {
+    color: #d1d5db;
+    cursor: not-allowed;
+    background-color: #f9fafb;
+}
+
+.board-list-container{
+    display: flex;
+}
 
