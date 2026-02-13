@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ApprovalLine from './ApprovalLine';
 import Button from '../../../shared/components/Button';
 import AttendCheckModal from './modals/AttendCheckModal';
@@ -20,6 +20,8 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
     const [isAttendCheckOpen, setIsAttendCheckOpen] = useState(false);
     const [drftDate, setDrftDate] = useState({})
     const [docRole, setDocRole] = useState();
+
+    const initDocLineRef = useRef(null);
 
     const fn_attendCheck = () => {
         if(drftDate.docStart!=null && drftDate.docEnd!=null) {
@@ -77,6 +79,10 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
             return resequenced;
         });
     };
+    useEffect(() => {
+        // 최초 1번만 초기값 저장
+        
+    }, [docLine]);
 
     useEffect(()=>{
         console.log("child inputList", inputList);
@@ -91,19 +97,27 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                 fetcher(`/gw/aprv/AprvDocInpt/${docFormId}`).then(setInputList)
             }
         }
+
+        if (docLine?.length > 0) {
+            initDocLineRef.current = docLine;
+        }
+
     },[docFormId])
 
+    const fn_resetLine = () => {
+        setDocLine(initDocLineRef.current)
+    }
 
     return (
         <>
             <div> 
                 결재선 <Button onClick={fn_editLine}>결재선 추가</Button>
+                <Button onClick={fn_resetLine}>결재선 초기화</Button>
                 <ApprovalLine docLine={docLine}/>
                 {isEditLineOpen && <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk}/>}
             </div>
             <div>
                 {docFormType === "근태" && <Button type="primary" onClick={fn_attendCheck}>근태 확인</Button>}
-                
             </div>
             <div>
                 {inputList.map((v,k)=>(

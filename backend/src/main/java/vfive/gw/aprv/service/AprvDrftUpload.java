@@ -42,20 +42,20 @@ public class AprvDrftUpload {
 		AprvDocVerListRequest docVer = new AprvDocVerListRequest();
 		docVer.setDocNo(drftDoc.getAprvDocNo());
 		drftDoc.setAprvDocStts("PENDING");
-		String nextVersion = "1.0";
+		String nextVersion = "1";
 		List<AprvDocVerListResponse> docVerList = mapper.aprvDocVerList(docVer);
 		
 		System.out.println("docVerList "+ docVerList);
 		if (docVerList != null && !docVerList.isEmpty()) {
 		    String lastVer = docVerList.get(0).getAprvDocVer(); // ex) 1.2
 		    double ver = Double.parseDouble(lastVer);
-		    ver += 0.1;
+		    ver += 1;
 		    nextVersion = String.format("%.1f", ver);
 		}
 		drftDoc.setAprvDocVer(nextVersion);
 		System.out.println("nextVersion "+ nextVersion);
 		
-		if(nextVersion.equals("1.0")) {
+		if(nextVersion.equals("1")) {
 			drftDoc.setAprvDocNo(generateDocNo(drftDoc.getAprvDocNo()));
 		}
 		

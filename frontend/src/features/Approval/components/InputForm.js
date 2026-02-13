@@ -17,28 +17,34 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
     const [schedList, setSchedList] = useState([]);
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
     useEffect(()=>{
+        fetcher("/gw/aprv/AprvLocFilterList",{
+            method:"POST",
+            body:{
+                docStart:drftDate.docStart,
+                docEnd:drftDate.docEnd
+            }
+        }).then(res=>{
+            console.log("fetch AprvLocList : ", res)
+            setLocList(res)
+        })
+
+        setInputList(prev=> 
+            prev.map(v=>{
+                if(v.docInptNm == "docLoc") {
+                    return {...v, docInptVl: v.docInptRmrk};
+                }
+                return v;
+            })
+        )
 
     },[])
 
     const fn_locClick = () => {
-         if(drftDate.docStart!=null && drftDate.docEnd!=null) {
-            fetcher("/gw/aprv/AprvLocFilterList",{
-                method:"POST",
-                body:{
-                    docStart:drftDate.docStart,
-                    docEnd:drftDate.docEnd
-                }
-            }).then(res=>{
-                console.log("fetch AprvLocList : ", res)
-                setLocList(res)
-
-                setIsLocOpen(true);
-            })
+        if(drftDate.docStart!=null && drftDate.docEnd!=null) {
+            setIsLocOpen(true);
         } else {
             alert("기간 선택하세요")
         }
-        
-
     }
     const fn_locClose = () => {
         setIsLocOpen(false);
@@ -68,6 +74,17 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
         
         if(name == "docRole") {
             setDocRole(value);
+            let schedType = ""
+            setInputList(prev=> 
+                prev.map(v=>{
+                    if(v.docInptNm == "docSchedType") {
+                        let deptVal = ""
+                        schedType = deptVal;
+                        return {...v, docInptVl: deptVal};
+                    }
+                    return v;
+                })
+            )
         }
 
         setInputList(prev=> 
@@ -205,7 +222,7 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
         case 'CHECKBOX' :
             return (
                 <>
-                    <div>담당 지정
+                    {docRole && docRole!="COMPANY" && <div>{inputForm.docInptLbl}
                         <input type="text" name={inputForm.docInptNm} value={inputForm.docInptVl || ""} readOnly/>
                         <Button variant="primary" onClick={fn_selectDeptClick}>담당자 선택</Button>
                         {isSelectDeptOpen && 
@@ -218,13 +235,11 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
                                         <h4>{attend.empNm} {attend.baseYy} 연차 개수</h4>
                                         {attend.remLv}/{attend.occrrLv}
                                         <hr/>
-                                        {"2026-02-06"}~{"2026-02-08"}<br/>
                                         {dutyList.map((v,k)=>(
                                             <div key={k}>
                                                 {v.scheId}/{v.dutyYmd}/{v.wrkCd}
                                             </div>
                                         ))}
-                                        <hr/>
                                     </div>
                                 ))}
                                 
@@ -239,7 +254,7 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
                                 ))}
                             </div>}
 
-                    </div>
+                    </div>}
                 </>
             )
         case 'DATE' :
@@ -256,11 +271,19 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
                 </>
             )
         case 'LOCATION' :
+            let locId = inputForm.docInptRmrk
+            if(locId!=null && locList.length>0)  {
+                let locInfo = locList.find(v=>v.locId==locId)
+                console.log("locRmrk",locId,locInfo, locList)
+                setDocLoc(locInfo)
+                
+            }
+
             return (
                 <>
-                    <div>장소
+                    <div>{inputForm.docInptLbl}
                         <input type="text" name="docTitle" value={docLoc.locNm} readOnly/>
-                        <Button variant="primary" onClick={fn_locClick}>장소 선택</Button>
+                        {!locId && <Button variant="primary" onClick={fn_locClick}>장소 선택</Button>}
                         {isLocOpen && 
                             <CompListModal onClose={fn_locClose} onOk={fn_locOk} itemList={locList} 
                                 itemNm={"locNm"} title={"선택"} okMsg={"불러오기"}/>}

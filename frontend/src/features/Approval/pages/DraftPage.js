@@ -67,7 +67,49 @@ const DraftPage = () => {
     }
 
     const fn_drftConfirm = () => {
-        
+        if(myInfo?.empId==null) {
+            alert("회원정보가 없습니다")
+            return;
+        }
+        if(docTitle==null || docTitle.trim()=="") {
+            alert("문서 제목을 입력하세요")
+            return;
+        }
+        if(docForm?.docFormId==null) {
+            alert("양식을 선택해주세요")
+            return;
+        }
+        const docRole = inputList.find(v => v.docInptNm === "docRole");
+        const docSchedType = inputList.find(v => v.docInptNm === "docSchedType");
+        const docStart = inputList.find(v=>v.docInptNm=="docStart")
+        const docEnd = inputList.find(v=>v.docInptNm=="docEnd")
+        const docLoc = inputList.find(v=>v.docInptNm=="docLoc")
+
+        if (docRole && docRole.docInptVl == null) {
+            alert("담당을 선택해주세요");
+            return;
+        }
+        if (docSchedType && docSchedType.docInptVl == null) {
+            alert("담당을 지정해주세요");
+            return;
+        }
+        if(docStart && docStart.docInptVl == null) {
+            alert("시작날짜를 선택해주세요")
+            return;
+        }
+        if(docEnd && docEnd.docInptVl == null) {
+            alert("종료날짜를 선택해주세요")
+            return;
+        }
+        if(docLoc && docLoc.docInptVl == null) {
+            alert("장소를 선택해주세요")
+            return;
+        }
+
+    
+
+
+
         const drftDoc = {
             drftEmpId:myInfo.empId,
             docFormId:docForm.docFormId,

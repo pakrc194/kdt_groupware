@@ -21,6 +21,7 @@ const RejectBox = () => {
                 <thead>
                     <tr>
                         <th>문서번호</th>
+                        <th>버전</th>
                         <th>문서제목</th>
                         <th>기안자</th>
                         <th>기안일자</th>
@@ -31,6 +32,7 @@ const RejectBox = () => {
                     {aprvDocList.length > 0 ? (
                     aprvDocList.map((aprvDoc, k)=> (<tr key={k}>
                         <td>{aprvDoc.aprvDocNo}</td>
+                        <td>{aprvDoc.aprvDocVer}</td>
                         <td><Link to={`/approval/${sideId}/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
                         <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>

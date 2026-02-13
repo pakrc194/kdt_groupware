@@ -116,10 +116,12 @@ const RedraftPage = () => {
                     docLoc={docLoc} setDocLoc={setDocLoc}
                     docEmp={docEmp} setDocEmp={setDocEmp}/>
                 
-                {rejectData.aprvPrcsEmpId && <div>
+                {rejectData?.aprvPrcsEmpId && <div>
                     <h3>반려사유</h3>
-                    {rejectData.empNm}/{rejectData.rjctRsn}
+                    {rejectData.aprvPrcsEmpNm}/{rejectData.rjctRsn}
                 </div>}
+
+                
 
                 {docVerList.length>0 && 
                     <select name="docVer" value={docVer || ""} onChange={fn_verChange}>

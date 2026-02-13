@@ -19,7 +19,7 @@ public class AprvDeptEmpList implements AprvAction {
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.aprvDeptEmpList(pInfo.getPNo());
+		return mapper.aprvDeptEmpList();
 	}
 
 }
