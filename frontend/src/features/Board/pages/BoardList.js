@@ -11,6 +11,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [boardId , setBoardId] = useState();
 
     // 검색 상태
     const [searchInput , setSearchInput] = useState('');
@@ -59,6 +60,8 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                 setPInfo(dd.pInfo);
                 setIsLoading(false);
                 console.log("sideId값 : ",dd)
+                console.log("pInfo값 : ",pInfo)
+               
             })
             .catch(err => {
                 console.error("데이터 로드 실패", err);
@@ -112,7 +115,8 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
             <table  className ={boardst.boardTable}>
                 <thead>
                     <tr>
-                        <th >문서번호</th>
+                        
+                        <th>번호</th>
                         <th>제목</th>
                         <th>작성일</th>
                         <th>조회수</th>
@@ -129,6 +133,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                             const rowClass = isTopItem ? boardst.topNotice : "";
                             return <tr key={st.boardId} className={rowClass}>
 
+                                
                                 <td>{st.boardId}</td>
                                 <td onClick={() => goDetail(st.boardId)} >{st.title}</td>
                                 <td onClick={() => goDetail(st.boardId)}>{formatDate(st.createdAt)}</td>

@@ -82,19 +82,18 @@ public class BoardController {
     
     
     
-    /* 게시물 상세 조회*/
+    /* 게시물 상세 조회 (조회수)*/
     @GetMapping("/detail/{boardId}")
-    public ResponseEntity<BoardPrvc> getBoard(@PathVariable("boardId") int boardId) {
-        BoardPrvc board = boardMapper.detail(boardId);
-        
-        System.out.println("board 정보 확인" +board);
-        if (board != null) {
-            // 조회수 증가
-            boardMapper.incrementViews(boardId);
-            return ResponseEntity.ok(board);
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<BoardPrvc> getBoard(@PathVariable("boardId") int boardId, @RequestParam ("empSn") String empSn){
+    	
+        int isNewView = boardMapper.insertBoardView(boardId, empSn);
+        if (isNewView > 0) {
+            boardMapper.updateViewCount(boardId);
         }
+
+        // 2. 게시물 데이터 가져오기
+        BoardPrvc board = boardMapper.detail(boardId);
+        return board != null ? ResponseEntity.ok(board) : ResponseEntity.notFound().build();
     }
     
     

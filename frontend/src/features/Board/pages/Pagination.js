@@ -7,6 +7,7 @@ function Pagination({pInfo, onPageChange}) {
     }
     
     const {
+        start,
         curPage, 
         totalPage, 
         startPage, 

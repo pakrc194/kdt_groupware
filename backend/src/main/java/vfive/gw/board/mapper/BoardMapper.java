@@ -47,9 +47,27 @@ public interface BoardMapper {
     @Select("SELECT * FROM Board WHERE BoardId = #{boardId}")
     BoardPrvc detail(@Param("boardId") int boardId);
     
-    /* 조회수 증가 */
-    @Update("UPDATE Board SET Views = Views + 1 WHERE BoardId = #{boardId}")
-    int incrementViews(@Param("boardId") int boardId);
+//    /* 조회수 증가 */
+//    @Update("UPDATE Board SET Views = Views + 1 WHERE BoardId = #{boardId}")
+//    int incrementViews(@Param("boardId") int boardId);
+    
+    //1. 조회 기록 넣기(이미 읽은 글은 DB에서 무시한다) , 성공하면 1 , 중복데이터로 무시하면 0을 반환한다
+    @Insert("INSERT IGNORE INTO Board_Views(BoardId,EMP_SN,ViewedAt)"+
+    		"VALUES (#{boardId},#{empSn},NOW())")
+    int insertBoardView(@Param("boardId")int boardId, @Param("empSn") String empSn);
+    
+    //해당하는 게시글 전체 조회수(읽은 사람 수) 업데이트
+    @Update("UPDATE Board SET Views = " +
+    "(SELECT COUNT(*) FROM Board_Views WHERE BoardId = #{boardId})" +
+    		"WHERE BoardId = #{boardId}")
+    int updateViewCount(@Param("boardId")int boardId);
+    
+    
+    
+    
+    
+    
+    
     
     /* 게시물 등록 (자동 증가 ID)*/
     @SelectKey(

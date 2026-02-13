@@ -25,7 +25,7 @@ function BoardDetail(props) {
 
     const fetchBoardDetail = () => {
         setIsLoading(true);
-        fetcher(`/board/detail/${props.boardId}`)
+        fetcher(`/board/detail/${props.boardId}?empSn=${loginUserSn}`)
             .then(data => {
                 setBoard(data);
                 setIsLoading(false);
