@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class AtdcDTO {
-	private int atdcId, empId, wrkCd;
-	private String atdcSttsCd;
+	private int atdcId, empId;
+	private String atdcSttsCd, wrkCd;
 	private Date wrkYmd, clkInDtm, clkOutDtm;
 	
 	

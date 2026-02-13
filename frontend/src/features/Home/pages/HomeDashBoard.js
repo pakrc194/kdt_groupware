@@ -42,7 +42,7 @@ function HomeDashBoard(props) {
         </section>
 
         <section className="dash-section">
-          <h3>핵심공지</h3>
+          <h3>공지사항</h3>
           <DashNotice notice={myDash.notice} />
         </section>
 

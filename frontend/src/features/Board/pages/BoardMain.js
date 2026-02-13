@@ -15,8 +15,13 @@ function BoardMain(props) {
     //sideId가 바뀌는지 확인 하고 Service로 바꿔준다
     useEffect(() => {
            console.log("사이드메뉴가 바꼇어",sideId)
+            if(searchParams.get("id")){
+                setService('detail');
+                setBoardId(searchParams.get("id"));
+            }else{
+                setService('list');
+            }
 
-           setService('list');
 
         //    if (sideId === 'MyPosts') {
         //     setService('MyPosts');

@@ -6,7 +6,7 @@ function DashLeave({ leave }) {
   return (
     <div className="leave-flex">
       <div className="leave-box">
-        <label>부여</label>
+        <label>총계</label>
         <span>{leave.totalDays}</span>
       </div>
       <div className="leave-box">

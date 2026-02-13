@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 import "../css/DutySkedListPage.css"; // 아래 CSS 코드 참고
-import { getStatusLabel } from "../../../shared/func/formatStatus";
+import { getStatusLabel } from "../../../shared/func/formatLabel";
 
 function DutySkedListPage() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));

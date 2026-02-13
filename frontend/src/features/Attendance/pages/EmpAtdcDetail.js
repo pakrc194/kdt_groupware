@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
 import "../css/EmpAttendanceList.css";
-import { getStatusLabel } from "../../../shared/func/formatStatus";
+import { getStatusLabel } from "../../../shared/func/formatLabel";
 
 function EmpAtdcDetail() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));

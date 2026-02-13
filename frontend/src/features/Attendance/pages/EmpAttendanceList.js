@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { fetcher } from "../../../shared/api/fetcher";
 import "../css/EmpAttendanceList.css"; // CSS 파일은 별도로 생성 필요
 import { Link } from "react-router-dom";
+import { getDeptLabel } from "../../../shared/func/formatLabel";
 
 function EmpAttendanceList() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -104,7 +105,7 @@ function EmpAttendanceList() {
               <tr>
                 <th>사번</th>
                 <th>이름</th>
-                <th>팀</th>
+                <th>부서</th>
                 <th>총 근무일</th>
                 <th>정상근무율</th>
                 <th>결근 횟수</th>
@@ -127,7 +128,7 @@ function EmpAttendanceList() {
                         {emp.empNm}
                       </Link>
                     </td>
-                    <td>팀 {emp.deptId}</td>
+                    <td>{getDeptLabel(emp.deptId)}</td>
                     <td>{emp.totWrkDays}일</td>
                     <td>
                       <div
