@@ -65,7 +65,7 @@ function MyAttendanceRecodePage() {
         <h3>연차 현황</h3>
         <div className="leave-stats">
           <div className="leave-item">
-            부여: <strong>{leaveInfo.totalDays}</strong>
+            총계: <strong>{leaveInfo.totalDays}</strong>
           </div>
           <div className="leave-item">
             사용: <strong>{leaveInfo.usedDays}</strong>

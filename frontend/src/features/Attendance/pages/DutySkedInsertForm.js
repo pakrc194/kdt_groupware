@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
 import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌트 임포트
 import "../css/DutySkedDetail.css";
+import { getDeptLabel } from "../../../shared/func/formatLabel";
 
 function DutySkedInsertForm() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -15,7 +16,6 @@ function DutySkedInsertForm() {
     return "사무";
   };
 
-  const [title, setTitle] = useState("");
   const today = new Date();
   const initialMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
   const [selectedMonth, setSelectedMonth] = useState(initialMonth);
@@ -23,6 +23,7 @@ function DutySkedInsertForm() {
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [title, setTitle] = useState();
 
   const dutyOptions = {
     사무: ["WO", "OD", "O"],
@@ -47,6 +48,13 @@ function DutySkedInsertForm() {
   }, [selectedMonth]);
 
   const days = getDaysInMonth();
+
+  useEffect(() => {
+    if (selectedMonth) {
+      const [year, month] = selectedMonth.split("-").map(Number);
+      setTitle(`${year}년 ${month}월 ${getDeptLabel(myInfo?.deptId)}팀 근무표`);
+    }
+  }, [selectedMonth]); // selectedMonth가 바뀔 때만 실행됨
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -201,6 +209,7 @@ function DutySkedInsertForm() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="제목을 입력하세요"
+            readOnly
           />
         </div>
         <div className="header-right" />
