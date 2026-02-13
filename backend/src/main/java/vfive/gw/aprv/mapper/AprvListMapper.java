@@ -139,5 +139,6 @@ public interface AprvListMapper {
 	@Select("select * from DEPT_INFO")
 	List<AprvDeptListResponse> aprvDeptList();
 	
-	
+	@Select("select * from EMP_PRVC where emp_acnt_stts = 'ACTIVE'")
+	List<AprvDeptListResponse> aprvDepEmptList();
 }

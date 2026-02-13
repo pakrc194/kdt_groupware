@@ -89,17 +89,17 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             )
         );
         
-        if(prcsRes.prcs!="rjct") {
-            if(docDetail.docFormType==="근태") {
-                fn_attendCheck();
-            } else if(docDetail.docFormType==="일정") {
-                fn_schedCheck();
-            } else if(docDetail.docFormType==="근무") {
-                fn_dutyCheck();
+        if(prcsRes.prcs!=="rjct") {
+            if(roleCd==="LAST_ATRZ") {
+                if(docDetail.docFormType==="근태") {
+                    fn_attendCheck();
+                } else if(docDetail.docFormType==="일정") {
+                    fn_schedCheck();
+                } else if(docDetail.docFormType==="근무") {
+                    fn_dutyCheck();
+                }
             }
         } else {
-            
-
             alert(`반려처리 : ${rjctRsn} `)
         }
 

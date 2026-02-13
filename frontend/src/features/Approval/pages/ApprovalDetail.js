@@ -263,8 +263,11 @@ const ApprovalDetail = () => {
         })
     }
 
-    const fn_download = () => {
+    const [deptList, setDeptList] = useState([]);
+    const [deptEmpList, setDeptEmpList] = useState([]);
+    const fn_detpList = () => {
         
+        fetcher(`/gw/aprv/AprvDeptList`).then(setDeptList);
     }
 
     return (
