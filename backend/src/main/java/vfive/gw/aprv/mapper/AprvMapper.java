@@ -63,10 +63,23 @@ public interface AprvMapper {
 			""")
 	AprvDocFormLineResponse docFormLine(int docId);
 	
-	@Select("select DUTY_SCHE_DTL.*, D.DEPT_NAME, D.DEPT_CODE, E.EMP_NM from DUTY_SCHE_DTL "
-			+ "JOIN EMP_PRVC E on E.EMP_ID = #{empId} "
-			+ "JOIN DEPT_INFO D on D.DEPT_ID = E.DEPT_ID "
-			+ "where DUTY_SCHE_DTL.EMP_ID = #{empId} and DUTY_YMD between #{docStart} and #{docEnd}")
+	@Select("""
+		SELECT 
+		    DSD.*, 
+		    D.DEPT_NAME, 
+		    D.DEPT_CODE, 
+		    E.EMP_NM
+		FROM DUTY_SCHE_DTL DSD
+		JOIN DUTY_SCHE_MST DSM 
+		    ON DSD.DUTY_ID = DSM.DUTY_ID
+		JOIN EMP_PRVC E 
+		    ON E.EMP_ID = #{empId}
+		JOIN DEPT_INFO D 
+		    ON D.DEPT_ID = E.DEPT_ID
+		WHERE DSD.EMP_ID = #{empId}
+		  AND DSM.PRGR_STTS = 'CONFIRMED'
+		  AND DSD.DUTY_YMD BETWEEN #{docStart} AND #{docEnd}
+			""")
 	List<AprvDutyScheDtlResponse> dutyScheDtl(@Param("empId") int empId, @Param("docStart")String docStart, @Param("docEnd")String docEnd);
 	
 	@Select("SELECT SCHED.*, D.DEPT_NAME, D.DEPT_CODE, E.EMP_NM FROM SCHED "

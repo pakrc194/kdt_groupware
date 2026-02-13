@@ -10,7 +10,9 @@ const Layout = () => {
   const pathParts = location.pathname.split("/");
   const currentMain = pathParts[1] || "main"; // 현재 메인 메뉴 (예: approval)
   const currentSide = pathParts[2]; // 현재 사이드 메뉴 (예: draft)
-  const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
+  const [myInfo, setMyInfo] = useState(() =>
+    JSON.parse(localStorage.getItem("MyInfo") || "null")
+  );
   const navigate = useNavigate();
 
   const [notis, setNotis] = useState([]);
@@ -21,6 +23,31 @@ const Layout = () => {
   const fn_ntf = () => {
     setOpenNoti((prev) => !prev);
   };
+
+  const canAccessMenu = (menu, myAccessList = []) => {
+    // access 없으면 기본 공개
+    if (!menu.access) return true;
+
+    return myAccessList.includes(menu.access);
+  };
+  const [myAccessList, setMyAccessList] = useState([]);
+  
+  useEffect(() => {
+
+    const fetchAccess = async () => {
+      const res =
+        await fetcher(`/gw/dashboard/accessFilterList?jbttl=${myInfo.jbttlId}&dept=${myInfo.deptId}`);
+
+      const accessList = res.map(v => v.accessDetail);
+
+      setMyAccessList(accessList);
+    };
+
+    if (myInfo?.jbttlId && myInfo?.deptId) {
+      fetchAccess();
+    }
+
+  }, [myInfo?.jbttlId, myInfo?.deptId]);
 
   // 바깥 클릭하면 닫기
   // useEffect(() => {
@@ -43,6 +70,16 @@ const Layout = () => {
   // }, [openNoti]);
 
   useEffect(() => {
+
+    fetcher(`/gw/ntf/list`,{
+        method:"POST",
+        body:{
+          empId : myInfo.empId
+        }
+      }).then(res=>{
+        setNotis(res)
+      })
+
     const intervalId = setInterval(() => {
       fetcher(`/gw/ntf/list`,{
         method:"POST",
@@ -58,7 +95,12 @@ const Layout = () => {
     return () => {
       clearInterval(intervalId);
     };
+
+
   }, []);
+
+
+
 
   const fn_clkOut = () => {
     // fetcher를 사용하여 백엔드 퇴근 로직 호출
@@ -240,7 +282,9 @@ const Layout = () => {
           {currentMain === "home" && <UserProfile />}
           {/* <h3 className="sidebar-title">{SIDE_CONFIG[currentMain]?.title}</h3> */}
           <ul className="sidebar-list">
-            {SIDE_CONFIG[currentMain]?.sideMenus.map((menu) => {
+            {SIDE_CONFIG[currentMain]?.sideMenus
+              .filter(menu => canAccessMenu(menu, myAccessList))
+              .map((menu) => {
               // 하위 메뉴 존재 여부 확인
               const hasSubMenus = menu.subMenus && menu.subMenus.length > 0;
 
@@ -257,29 +301,13 @@ const Layout = () => {
                   >
                     {menu.name}
                   </Link>
-                  {/* {hasSubMenus && (
-                    <Link
-                      to={`/${currentMain}/${menu.id}`}
-                      onClick={(e) => e.preventDefault()}
-                      style={{ pointerEvents: "none" }}
-                      className={`side-item ${isParentActive ? "active" : ""}`}
-                    >
-                      {menu.name}
-                    </Link>
-                  )}
-                  {!hasSubMenus && (
-                    <Link
-                      to={`/${currentMain}/${menu.id}`}
-                      className={`side-item ${isParentActive ? "active" : ""}`}
-                    >
-                      {menu.name}
-                    </Link>
-                  )} */}
 
                   {/* subMenus가 있을 때 */}
                   {isParentActive && hasSubMenus && (
                     <ul className="sub-menu-list">
-                      {menu.subMenus.map((sub) => (
+                      {menu.subMenus
+                        .filter(sub => canAccessMenu(sub, myAccessList))
+                        .map((sub) => (
                         <li key={sub.id}>
                           <Link
                             to={`/${currentMain}/${sub.id}`}

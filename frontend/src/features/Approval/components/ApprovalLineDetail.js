@@ -102,8 +102,6 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 alert(`결재 완료`)
             }
         } else {
-            
-
             alert(`반려처리 : ${rjctRsn} `)
         }
 

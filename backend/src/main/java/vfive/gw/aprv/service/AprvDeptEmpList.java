@@ -11,7 +11,7 @@ import vfive.gw.aprv.mapper.AprvListMapper;
 import vfive.gw.aprv.mapper.AprvMapper;
 
 @Service
-public class AprvLocList implements AprvAction {
+public class AprvDeptEmpList implements AprvAction {
 	@Resource
 	AprvListMapper mapper;
 	
@@ -19,7 +19,7 @@ public class AprvLocList implements AprvAction {
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.aprvLocList();
+		return mapper.aprvDeptEmpList(pInfo.getPNo());
 	}
 
 }

@@ -11,6 +11,7 @@ import vfive.gw.aprv.dto.response.AprvDeptListResponse;
 import vfive.gw.aprv.dto.response.AprvDocFormListResponse;
 import vfive.gw.aprv.dto.response.AprvDocListResponse;
 import vfive.gw.aprv.dto.response.AprvEmpListResponse;
+import vfive.gw.aprv.dto.response.AprvLocListResponse;
 
 @Mapper
 public interface AprvListMapper {
@@ -139,5 +140,12 @@ public interface AprvListMapper {
 	@Select("select * from DEPT_INFO")
 	List<AprvDeptListResponse> aprvDeptList();
 	
+	@Select("select * from LOC_INFO")
+	List<AprvLocListResponse> aprvLocList();
 	
+	@Select("""
+		SELECT *
+		FROM EMP_PRVC 
+			""")
+	List<AprvEmpListResponse> aprvDeptEmpList(@Param("empId") int empId);
 }

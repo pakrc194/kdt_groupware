@@ -5,6 +5,7 @@ import { fetcher } from '../../../../shared/api/fetcher';
 const SelectDeptModal = ({onClose, onOk, schedType}) => {
     const [deptList, setDeptList] = useState([]);
     const [checkedDepts, setCheckedDepts] = useState([]);
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
     useEffect(()=>{    
         if(schedType=='DEPT') {
@@ -14,7 +15,7 @@ const SelectDeptModal = ({onClose, onOk, schedType}) => {
                 setDeptList(res)
             }) 
         } else if(schedType=='PERSONAL') {
-            fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=2`)
+            fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=${myInfo.deptId}`)
             .then(res=>{
                 console.log("fetch AprvEmpListFilter", res)
                 setDeptList(res)
