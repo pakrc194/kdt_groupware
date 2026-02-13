@@ -125,7 +125,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                 </thead>
                 <tbody>
                     {boards && boards.length > 0 ? (
-                        boards.map((st) => {
+                        boards.map((st, k) => {
                             // 1. 조건을 아주 엄격하게 체크 (문자열 "true" 혹은 불리언 true일 때만)
                             const isTopItem = String(st.isTop) === "true";
 
@@ -134,7 +134,7 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                             return <tr key={st.boardId} className={rowClass}>
 
                                 
-                                <td>{st.boardId}</td>
+                                <td>{pInfo.start+k+1}</td>
                                 <td onClick={() => goDetail(st.boardId)} >{st.title}</td>
                                 <td onClick={() => goDetail(st.boardId)}>{formatDate(st.createdAt)}</td>
                                 <td>{st.views}</td>

@@ -119,7 +119,7 @@ public class BoardController {
             ntfReq.setNtfType("IMPORTANT");
             ntfReq.setTitle("📢 새로운 공지사항");
             ntfReq.setBody(board.getTitle());      // 글 제목을 알림 본문으로
-            ntfReq.setLinkUrl("/board/important");     // 클릭 시 이동할 리액트 경로
+            ntfReq.setLinkUrl("/board/important?id="+board.getBoardId());     // 클릭 시 이동할 리액트 경로
             ntfReq.setSrcType("BOARD");
             ntfReq.setSrcId(board.getBoardId());
             ntfReq.setCreatedBy(board.getEmpId());
