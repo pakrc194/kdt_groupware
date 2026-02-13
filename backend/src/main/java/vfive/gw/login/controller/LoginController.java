@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import vfive.gw.login.dto.LoginResponse;
 import vfive.gw.login.mapper.LoginMapper;
 import vfive.gw.login.service.ClkInService;
 import vfive.gw.login.service.FindPasswordService;
+import vfive.gw.login.service.RegisterNewEmployeeService;
 
 @RestController
 @RequestMapping("/gw/login")
@@ -32,6 +34,9 @@ public class LoginController {
 	
 	@Resource
 	private ClkInService clkInService;
+	
+	@Resource
+	private RegisterNewEmployeeService registerNewEmployeeService;
 	
 	@Resource
 	LoginMapper mapper;
@@ -64,10 +69,11 @@ public class LoginController {
 		return res;
 	}
 	
+	// 파일 받아야해서 @ModelAttribute 사용
 	@PostMapping("newEmp")
-	Map<String, Object> newEmp(@RequestBody LoginRequest req) {
+	Map<String, Object> newEmp(@ModelAttribute LoginRequest req) {
 		
-		int result = mapper.updateNewEmp(req);
+		int result = registerNewEmployeeService.registerNewEmployee(req);
 		
 		Map<String, Object> response = new HashMap<>();
     response.put("success", result > 0);

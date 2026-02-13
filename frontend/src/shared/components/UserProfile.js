@@ -38,7 +38,7 @@ const UserProfile = () => {
     <div className="profile-section">
       <div className="profile-img-box">
         <img
-          src="https://img.seoul.co.kr/img/upload/2026/01/06/SSC_20260106161051_O2.jpg"
+          src={`http://192.168.0.49:8080/uploads/${user.empPhoto}`}
           alt="프로필"
         />
       </div>
@@ -47,9 +47,9 @@ const UserProfile = () => {
           <span className="user-name">{user.empNm}</span>
           <span className="user-rank">{user.jbttlNm}</span>
         </div>
-        <p className="user-team">{user.deptName}</p>
-        <p className="user-detail">{user.empEmlAddr}</p>
-        <p className="user-detail">사번: {user.empSn}</p>
+        <p className="user-team">{user.deptName}팀</p>
+        {/* <p className="user-detail">{user.empEmlAddr}</p> */}
+        {/* <p className="user-detail">사번: {user.empSn}</p> */}
       </div>
     </div>
   );

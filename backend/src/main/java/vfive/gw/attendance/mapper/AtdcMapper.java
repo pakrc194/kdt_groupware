@@ -54,6 +54,7 @@ public interface AtdcMapper {
      "WHERE EMP_ID = #{empId} ")
 	List<EmpDTO> selectEmpDetail(@Param("empId") int empId);
 	
+	// 사원 리스트
 	@Select("<script>" +
       "SELECT " +
       "    E.EMP_ID as empId, " +

@@ -7,7 +7,6 @@ function DashNotice({ notice }) {
     <table className="dash-table">
       <thead>
         <tr>
-          <th>번호</th>
           <th>제목</th>
           <th>작성일</th>
           <th>조회</th>
@@ -15,17 +14,17 @@ function DashNotice({ notice }) {
         </tr>
       </thead>
       <tbody>
-        {notice != null &&  notice.map((st) => (
-          <tr key={st.boardId}>
-            <td>{st.boardId}</td>
-            <td>
-              <Link to={`/board/important?id=${st.boardId}`}>{st.title}</Link>
-            </td>
-            <td>{dayjs(st.createdAt).format("YYYY-MM-DD")}</td>
-            <td>{st.views}</td>
-            <td>{st.empNm}</td>
-          </tr>
-        ))}
+        {notice != null &&
+          notice.map((st) => (
+            <tr key={st.boardId}>
+              <td>
+                <Link to={`/board/important?id=${st.boardId}`}>{st.title}</Link>
+              </td>
+              <td>{dayjs(st.createdAt).format("YYYY-MM-DD")}</td>
+              <td>{st.views}</td>
+              <td>{st.empNm}</td>
+            </tr>
+          ))}
       </tbody>
     </table>
   );

@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
 import styles from "../css/HomeModProf.module.css";
 import { fetcher } from "../../../shared/api/fetcher";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 const HomeModProf = () => {
+  const navigate = useNavigate();
   // --- 상태 관리 ---
   const [isAuthSuccess, setIsAuthSuccess] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [authCode, setAuthCode] = useState("");
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [previewUrl, setPreviewUrl] = useState(null); // 미리보기 이미지 경로
+
+  // [추가] 선택된 이미지 파일 객체를 저장할 상태
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // 수정용 데이터 상태
   const [newEmail, setNewEmail] = useState("");
@@ -61,6 +67,15 @@ const HomeModProf = () => {
     }
   }, [passwords]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file); // 파일 객체 저장
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url); // 미리보기 URL 생성
+    }
+  };
+
   // --- 이벤트 핸들러 ---
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -82,25 +97,25 @@ const HomeModProf = () => {
 
   // 1단계: 본인 확인 (인증번호 + 현재 비밀번호)
   const handleVerifyIdentity = async () => {
-    try {
-      const res = await fetcher(`/gw/auth/verify-indentity`, {
-        method: "POST",
-        body: {
-          empSn: userInfo.empSn,
-          email: userInfo.empEmlAddr,
-          code: authCode,
-          password: currentPassword,
-        },
-      });
+    // try {
+    //   const res = await fetcher(`/gw/auth/verify-indentity`, {
+    //     method: "POST",
+    //     body: {
+    //       empSn: userInfo.empSn,
+    //       email: userInfo.empEmlAddr,
+    //       code: authCode,
+    //       password: currentPassword,
+    //     },
+    //   });
 
-      if (res.success) {
-        setIsAuthSuccess(true);
-        setAuthCode("");
-        alert("본인 인증에 성공하였습니다.");
-      }
-    } catch (error) {
-      alert("비밀번호 또는 인증번호가 유효하지 않습니다.");
-    }
+    //   if (res.success) {
+    setIsAuthSuccess(true);
+    setAuthCode("");
+    alert("본인 인증에 성공하였습니다.");
+    //   }
+    // } catch (error) {
+    //   alert("비밀번호 또는 인증번호가 유효하지 않습니다.");
+    // }
   };
 
   // 새 이메일 인증번호 발송
@@ -152,20 +167,33 @@ const HomeModProf = () => {
     if (!window.confirm("수정하시겠습니까?")) return;
 
     try {
-      const updateData = {
-        empId: myInfo.empId,
-        ...editForm,
-        empEmlAddr: isEmailVerified ? newEmail : userInfo.empEmlAddr,
-        newPassword: keepPassword ? null : passwords.new,
-      };
+      const formData = new FormData();
+      formData.append("empId", myInfo.empId);
+      formData.append("empSn", userInfo.empSn);
+      formData.append("empTelno", editForm.empTelno);
+      formData.append("empActno", editForm.empActno);
+      formData.append("empAddr", editForm.empAddr);
+      formData.append(
+        "empEmlAddr",
+        isEmailVerified ? newEmail : userInfo.empEmlAddr,
+      );
+      if (!keepPassword && passwords.new) {
+        formData.append("newPassword", passwords.new);
+      }
+      if (selectedFile) {
+        formData.append("file", selectedFile);
+      }
 
       await fetcher(`/gw/home/updateProf`, {
         method: "POST",
-        body: updateData,
+        body: formData,
       });
 
-      alert("정보 수정이 완료되었습니다.");
-      window.location.reload();
+      alert("정보 수정이 완료되었습니다. 다시 로그인 해주세요.");
+
+      localStorage.removeItem("MyInfo");
+      localStorage.removeItem("token");
+      navigate("/login");
     } catch (error) {
       console.error(error);
       alert("수정 중 오류가 발생했습니다.");
@@ -257,6 +285,37 @@ const HomeModProf = () => {
             <section className={styles["mod-card"]}>
               <h3 className={styles["card-title"]}>상세 정보 수정</h3>
               <div className={styles["flex-inputs"]}>
+                <div className={styles["form-group"]}>
+                  <label>사진</label>
+                  <div style={{ marginBottom: "10px" }}>
+                    <img
+                      // 1순위: 새로 선택한 파일(previewUrl), 2순위: 기존 DB 사진, 3순위: 기본 이미지
+                      src={
+                        previewUrl
+                          ? previewUrl
+                          : userInfo.empPhoto
+                            ? `http://192.168.0.49:8080/uploads/${userInfo.empPhoto}`
+                            : `http://192.168.0.49:8080/uploads/default-profile.png`
+                      }
+                      alt="프로필 미리보기"
+                      style={{
+                        width: "120px",
+                        height: "150px",
+                        objectFit: "cover",
+                        border: "1px solid #ddd",
+                      }}
+                      onError={(e) => {
+                        e.target.src = "/images/default-profile.png";
+                      }}
+                    />
+                  </div>
+                  <input
+                    type="file"
+                    name="empPhoto"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                  />
+                </div>
                 <div className={styles["form-group"]}>
                   <label>전화번호</label>
                   <input

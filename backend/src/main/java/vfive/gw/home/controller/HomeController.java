@@ -3,6 +3,7 @@ package vfive.gw.home.controller;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import vfive.gw.home.dto.request.MyDashResDTO;
 import vfive.gw.home.service.GetModFormService;
 import vfive.gw.home.service.GetMyDashService;
 import vfive.gw.home.service.GetUserProfileService;
+import vfive.gw.home.service.UpdateEmpProfService;
 
 @RestController
 @RequestMapping("/gw/home")
@@ -27,6 +29,9 @@ public class HomeController {
 	
 	@Resource
 	GetMyDashService getMyDashService;
+	
+	@Resource
+	UpdateEmpProfService updateEmpProfService;
 
 	
 	@PostMapping("test")
@@ -52,5 +57,9 @@ public class HomeController {
 		return getMyDashService.execute(req);
 	}
 	
-
+	@PostMapping("updateProf")
+	void updateProf(@ModelAttribute EmpPrvc req) {
+		updateEmpProfService.updateProfile(req);
+	}
+	
 }
