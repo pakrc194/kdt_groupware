@@ -1,0 +1,11 @@
+/* 현재 문서 행 */
+.current-doc-row {
+  background-color: #f0f6ff;   /* 연한 파랑 */
+}
+
+/* 현재 문서 제목 */
+.current-doc-title {
+  font-weight: 700;
+  color: #2563eb;
+  cursor: default;
+}

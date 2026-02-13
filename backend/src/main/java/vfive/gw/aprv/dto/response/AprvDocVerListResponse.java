@@ -6,4 +6,6 @@ import lombok.Data;
 public class AprvDocVerListResponse {
 	int aprvDocId, drftEmpId, docFormId;
 	String aprvDocTtl, aprvDocAtrzDt, aprvDocVer;
+	String aprvDocDrftDt;
+	String rjctRsn;
 }

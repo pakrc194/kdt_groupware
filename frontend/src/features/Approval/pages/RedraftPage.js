@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../../shared/components/Button';
 import { fetcher } from '../../../shared/api/fetcher';
 import RedrftContent from '../components/RedrftContent';
-
+import './VerTable.css'
 const RedraftPage = () => {
     const {sideId, draft, docId} = useParams();
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -123,11 +123,55 @@ const RedraftPage = () => {
 
                 
 
-                {docVerList.length>0 && 
-                    <select name="docVer" value={docVer || ""} onChange={fn_verChange}>
-                        {docVerList.map((v, k)=><option key={k} value={v.aprvDocId}>{v.aprvDocVer}</option>)}
-                    </select>
-                }
+                <div className="section history-section">
+                    <table className="history-table">
+                    <thead>
+                        <tr>
+                            <th>버전</th>
+                            <th>문서제목</th>
+                            <th>기안일자</th>
+                            <th>반려일자</th>
+                            <th>반려사유</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {docVerList.length > 0 ? (
+                        docVerList.map((aprvDoc, k) => {
+                        const isCurrent = String(aprvDoc.aprvDocId) === String(docId);
+
+                        return (
+                            <tr
+                            key={k}
+                            className={isCurrent ? "current-doc-row" : ""}
+                            >
+                            <td>{aprvDoc.aprvDocVer}</td>
+
+                            <td>
+                                {isCurrent ? (
+                                <span className="current-doc-title">
+                                    {aprvDoc.aprvDocTtl}
+                                </span>
+                                ) : (
+                                <Link to={`/approval/${sideId}/redrft/${aprvDoc.aprvDocId}`}>
+                                    {aprvDoc.aprvDocTtl}
+                                </Link>
+                                )}
+                            </td>
+
+                            <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
+                            <td>{aprvDoc.aprvDocAtrzDt?.substring(0,8)}</td>
+                            <td>{aprvDoc.rjctRsn}</td>
+                            </tr>
+                        );
+                        })
+                    ) : (
+                        <tr>
+                        <td colSpan="7" className="no-data">데이터가 없습니다.</td>
+                        </tr>
+                    )}
+                    </tbody>
+                    </table>
+                </div>
             </div>
 
             
