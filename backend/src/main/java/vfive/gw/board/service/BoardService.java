@@ -30,18 +30,7 @@ public class BoardService {
 //        return boardMapper.totalByType(boardType, keyword);
 //    }
     
-    /**
-     * 게시물 상세 조회 (조회수 증가 포함)
-     */
-    @Transactional
-    public BoardPrvc getBoardDetail(int boardId) {
-        BoardPrvc board = boardMapper.detail(boardId);
-        if (board != null) {
-            boardMapper.incrementViews(boardId);
-        }
-        return board;
-    }
-    
+
     /**
      * 게시물 등록
      */

@@ -7,7 +7,7 @@ function TeamSchdule({sched}) {
     const now = new Date();
 
     // 최근 12개월 배열 생성 (오늘 기준)
-    const recentMonths = Array.from({ length: 12 }, (_, i) => {
+    const recentMonths = Array.from({ length: 15 }, (_, i) => {
         const date = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
         return {
             year: date.getFullYear(),
