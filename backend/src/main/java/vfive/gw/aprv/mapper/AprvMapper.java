@@ -42,7 +42,7 @@ public interface AprvMapper {
 			+ "where aprv_doc_id = #{docId}")
 	AprvDocDetailResponse detail(int docId);
 	
-	@Select("select * from DOC_INPT where doc_form_id = #{formId}")
+	@Select("select * from DOC_INPT where doc_form_id = #{formId} order by doc_inpt_no")
 	List<AprvDocInptResponse> docInpt(int formId);
 	
 	

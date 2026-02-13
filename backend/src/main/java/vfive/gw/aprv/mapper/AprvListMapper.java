@@ -75,10 +75,23 @@ public interface AprvListMapper {
 			//+ "and aprv_prcs_stts != 'WAIT'")
 	List<AprvDocListResponse> referList(int pNo); 
 	
-	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC "
-			+ "join EMP_PRVC on drft_emp_id = emp_id "
-			+ "where drft_emp_id = #{pNo} and aprv_doc_stts='REJECTED' "
-			+ "ORDER BY APRV_DOC_DRFT_DT DESC")
+	@Select("""
+			SELECT *
+			FROM (
+			    SELECT A.*, E.EMP_NM,
+			           ROW_NUMBER() OVER(
+			             PARTITION BY A.APRV_DOC_NO 
+			             ORDER BY A.APRV_DOC_VER DESC 
+			           ) AS RN 
+			    FROM APRV_DOC A 
+			    JOIN EMP_PRVC E 
+			      ON A.DRFT_EMP_ID = E.EMP_ID 
+			    WHERE A.DRFT_EMP_ID = #{pNo} 
+			      AND A.APRV_DOC_STTS = 'REJECTED'
+			) T
+			WHERE RN = 1 
+			ORDER BY APRV_DOC_DRFT_DT DESC;
+			""")
 	List<AprvDocListResponse> rejectList(int pNo); 
 	
 	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM from APRV_DOC "
@@ -147,5 +160,5 @@ public interface AprvListMapper {
 		SELECT *
 		FROM EMP_PRVC 
 			""")
-	List<AprvEmpListResponse> aprvDeptEmpList(@Param("empId") int empId);
+	List<AprvEmpListResponse> aprvDeptEmpList();
 }

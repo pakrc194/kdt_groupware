@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ApprovalLine from '../components/ApprovalLine';
 import Button from '../../../shared/components/Button';
 import EditAprvLine from '../components/modals/EditAprvLine';
@@ -21,13 +21,20 @@ const DocFormInsert = () => {
     const [docFormNm, setDocFormNm] = useState("");
     const [docFormCd, setDocFormCd] = useState("");
     const [docFormType, setDocFormType] = useState("");
+    const [docAtrzType, setDocAtrzType] = useState("");
+    const [docAtrzStts, setDocAtrzStts] = useState("");
     const [docDept, setDocDept] = useState();
     const [isSelectDeptOpen, setIsSelectDeptOpen] = useState(false);
-
+    const [locList, setLocList] = useState([]);
 
     const [docLine, setDocLine] = useState([])
     
     const [isEditLineOpen, setIsEditLineOpen] = useState(false);
+
+    useEffect(()=>{
+        fetcher(`/gw/aprv/AprvLocList`).then(setLocList)
+    },[])
+
 
     const fn_editLine = () => {
         
@@ -109,16 +116,46 @@ const DocFormInsert = () => {
             양식 코드<input name="docFormCd" value={docFormCd} onChange={(e)=>{setDocFormCd(e.target.value)}}/><br/>
             문서 유형
             <select name="docType" value={docFormType} onChange={(e)=>setDocFormType(e.target.value)}>
-                <option value="">선택</option>
+                <option value="" disabled>선택</option>
                 <option>근태</option>
                 <option>일정</option>
+                <option>일반</option>
             </select>
             <div> 
                 결재선 <Button onClick={fn_editLine}>결재선 추가</Button>
                 <ApprovalLine docLine={docLine}/>
                 {isEditLineOpen && <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk}/>}
             </div>
-           
+
+            {docFormType=="일정" &&<div>
+                장소 리스트
+                {locList.length>0 && 
+                    <div>
+                        {locList.map((v,k)=>(
+                            <span key={k}>
+                                <input type="checkBox" name="docLoc" value={v.locId} />{v.locNm}
+                            </span>
+                        ))}
+                        <span><input type="checkBox" name="docLoc" value="empty" />사용 안함</span>
+                    </div>}
+            </div>}
+            {docFormType=="근태" &&<div>
+                결재처리방식
+                <select name="docAtrzType" value={docAtrzType} onChange={(e)=>setDocAtrzType(e.target.value)}>
+                    <option value="" disabled>선택</option>
+                    <option>추가</option>
+                    <option>수정</option>
+                    <option>삭제</option>
+                </select>
+                <select name="docAtrzStts" value={docAtrzStts} onChange={(e)=>setDocAtrzStts(e.target.value)}>
+                    <option value="" disabled>선택</option>
+                    <option>휴가</option>
+                    <option>출장</option>
+                    <option>출근</option>
+                    <option>결근</option>
+                </select>
+            </div>}
+
             <div>
                 <Button onClick={fn_formOk}>양식 등록</Button>
             </div>

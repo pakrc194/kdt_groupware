@@ -110,7 +110,7 @@ const ApprovalDetail = () => {
                 docNo:aprvDocDetail.aprvDocNo
             }
         }).then(res=>{
-            console.log(res)
+            console.log("verList",res)
             setDocVerList(res);
         })
 
@@ -142,8 +142,8 @@ const ApprovalDetail = () => {
         const docRole = "duty"
         const ids = [aprvDocDetail.drftEmpId]
         const deptId = null
-        const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl.replaceAll('-',"");
-        const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl.replaceAll('-',"");
+        const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl?.replaceAll('-',"");
+        const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl?.replaceAll('-',"");
 
 
         console.log("warnAttend", ids, docStart, docEnd)
@@ -279,7 +279,11 @@ const ApprovalDetail = () => {
             navigate(`/approval/${sideId}`);
         })
     }
-
+    const fn_verChange = (e) => {
+        let verId = e.target.value;
+        // let verDoc = docVerList.find(v=>v.aprvDocVer.docVer == verId)
+        // navigate(`/approval/rejectBox/detail/${verDoc.aprvDocId}`)
+    }
 
     return (
         <>
@@ -339,9 +343,17 @@ const ApprovalDetail = () => {
                     {rejectData.aprvPrcsEmpNm}/{rejectData.rjctRsn}
                 </div>}
 
-                <div>
-                    <AttendContent attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}/>
-                </div>
+                {aprvDocDetail?.aprvDocStts!="COMPLETE" && <div>
+                   <AttendContent attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}/>
+                </div>}
+
+
+
+                {docVerList.length>0 && 
+                    <select name="docVer" value={aprvDocDetail.docVer || ""} onChange={fn_verChange}>
+                        {docVerList.map((v, k)=><option key={k} value={v.aprvDocId}>{v.aprvDocVer}</option>)}
+                    </select>
+                }
             </div>
             
             <br/>

@@ -90,9 +90,9 @@ function LoginMain(props) {
         <Button variant="primary" onClick={fn_login}>
           로그인
         </Button>
-        <Button variant="primary" onClick={fn_check}>
+        {/* <Button variant="primary" onClick={fn_check}>
           토큰확인
-        </Button>
+        </Button> */}
         <Button onClick={() => navigate("/FindPassword")}>비밀번호 찾기</Button>
         <br /> test계정 20240101/ 1234
         <br />("지점장") test계정 CP0001/ 1234<br/>
