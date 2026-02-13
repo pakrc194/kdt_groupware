@@ -36,7 +36,7 @@ function OrganizationStatistics({ inOut }) {
                                 <td style={{width:"120px"}}>{data.empNm}</td>
                                 <td style={{width:"120px"}}>{data.deptName}</td>
                                 <td style={{width:"120px"}}>{data.jbttlNm}</td>
-                                <td style={{width:"120px"}}>{data.empJncmpYmd.split(" ")[0]}</td>
+                                <td style={{width:"120px"}}>{data.empJncmpYmd?.split(" ")[0]}</td>
                                 </tr>
                             ))}
                         </React.Fragment>

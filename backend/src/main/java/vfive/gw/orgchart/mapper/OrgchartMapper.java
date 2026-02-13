@@ -23,7 +23,7 @@ public interface OrgchartMapper {
 			+ "from EMP_PRVC "
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
-			+ "where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
+//			+ "where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
 			+ "order by EMP_NM")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empList();
 	
@@ -40,7 +40,7 @@ public interface OrgchartMapper {
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
 			+ "where EMP_PRVC.dept_id = (select dept_id from DEPT_INFO "
 			+ "where dept_code = #{deptCode}) "
-			+ "and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
+//			+ "and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
 			+ "order by EMP_NM "
 			+ "")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empTeamList(DeptInfo dInfo);

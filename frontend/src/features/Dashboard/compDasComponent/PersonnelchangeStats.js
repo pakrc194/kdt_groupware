@@ -32,7 +32,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.deptName}</td>
                     <td style={styles.td}>{data.jbttlNm}</td>
                     <td style={styles.td}>
-                      {data.empJncmpYmd.split(" ")[0]}
+                      {data.empJncmpYmd?.split(" ")[0]}
                     </td>
                   </tr>
                 ))
@@ -72,7 +72,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.empNm}</td>
                     <td style={styles.td}>{data.deptName}</td>
                     <td style={styles.td}>{data.jbttlNm}</td>
-                    <td style={styles.td}>{data.empRsgntnYmd.split(" ")[0]}</td>
+                    <td style={styles.td}>{data.empRsgntnYmd?.split(" ")[0]}</td>
                   </tr>
                 ))
             ) : (
@@ -115,7 +115,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.bJbttlNm}</td>
                     <td style={styles.td}>{data.aJbttlNm}</td>
                     <td style={styles.td}>
-                      {data.changeDate.split(" ")[0]}
+                      {data.changeDate?.split(" ")[0]}
                     </td>
                   </tr>
                 ))
@@ -161,7 +161,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.aDeptName}</td>
                     <td style={styles.td}>{data.aJbttlNm}</td>
                     <td style={styles.td}>
-                      {data.changeDate.split(" ")[0]}
+                      {data.changeDate?.split(" ")[0]}
                     </td>
                   </tr>
                 ))
@@ -204,7 +204,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.bDeptName}</td>
                     <td style={styles.td}>{data.aJbttlNm}</td>
                     <td style={styles.td}>
-                        {data.changeDate.split(" ")[0]}
+                        {data.changeDate?.split(" ")[0]}
                     </td>
                     </tr>
                 ))

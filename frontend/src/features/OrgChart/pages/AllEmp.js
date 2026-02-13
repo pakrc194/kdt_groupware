@@ -4,18 +4,84 @@ import { fetcher } from '../../../shared/api/fetcher';
 
 function AllEmp() {
     const [data, setData] = useState([]);
-
+    const [selectedValue, setSelectedValue] = useState("ACTIVE");
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+    const [newTAccessCk, setNewTAccessCk] = useState(0);  // 입사예정자
+    const [newAccessCk, setNewAccessCk] = useState(0);  // 입사예정자
+    const [reTAccessCk, setReTAccessCk] = useState(0);    // 퇴사자
+    const [reAccessCk, setReAccessCk] = useState(0);    // 퇴사자
+    
     useEffect(() => {
+        console.log(myInfo)
         fetcher('/gw/orgChart/list')
             .then(dd => {
                 setData(Array.isArray(dd) ? dd : [dd]);
             })
             .catch(e => console.log(e))
+
+        // // 권한 확인용 - 팀 단위 입사예정자
+        // fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=15`)
+        // .then(dd => {
+        //     setNewTAccessCk(dd)
+        //     // console.log(dd)
+        // })
+        // .catch(e => console.log(e))
+        // 권한 확인용 - 팀 단위 퇴사자
+        fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=16`)
+        .then(dd => {
+            setReTAccessCk(dd)
+            // console.log(dd)
+        })
+        // 권한 확인용 - 직책 단위 입사예정자
+        fetcher(`/gw/orgChart/access?id=${myInfo.jbttlId}&type=JBTTL&section=ORGCHART&accessId=15`)
+        .then(dd => {
+            setNewAccessCk(dd)
+            // console.log(newAccessCk)
+        })
+        .catch(e => console.log(e))
+        // 권한 확인용 - 직책 단위 퇴사자
+        fetcher(`/gw/orgChart/access?id=${myInfo.jbttlId}&type=JBTTL&section=ORGCHART&accessId=16`)
+        .then(dd => {
+            setReAccessCk(dd)
+            // console.log(reAccessCk)
+        })
+        .catch(e => console.log(e))
+
     }, []);
+        console.log(newAccessCk+", "+newTAccessCk)
+
+    const filterChange = (e) => {
+        console.log(e.target.value); // 선택된 value
+        setSelectedValue(e.target.value);
+    };
+
+    const getTitle = () => {
+        switch (selectedValue) {
+        case "ACTIVE":
+            return "재직자 리스트";
+        case "초기":
+            return "입사예정자 리스트";
+        case "RETIRED":
+            return "퇴사자 리스트";
+        default:
+            return "전체 사원 리스트";
+        }
+    };
 
     return (
+        <>
         <div style={styles.container}>
-            <h2 style={styles.title}>전체 사원 리스트</h2>
+            <h2 style={styles.title}>{getTitle()}</h2>
+            {(myInfo.deptCode == "HR" || newAccessCk) ? (
+            <div style={styles.filter}>
+                    <select name="empFt" onChange={filterChange} style={styles.select}>
+                        <option value="ACTIVE">재직자</option>
+                        <option value="초기">입사예정자</option>
+                        {(reTAccessCk && reAccessCk) ?
+                            <option value="RETIRED">퇴사자</option> : null}
+                    </select>
+            </div>
+            ) : null}
             <table style={styles.table}>
                 <thead>
                     <tr>
@@ -25,7 +91,9 @@ function AllEmp() {
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((vv, idx) => (
+                    {data.filter(dd => dd.EMP_ACNT_STTS == selectedValue).length > 0 ? (
+                    data.filter(dd => dd.EMP_ACNT_STTS == selectedValue)
+                    .map((vv, idx) => (
                         <tr key={idx} style={styles.tr}>
                             <td style={styles.td}>
                                 <Link to={`detail/${vv.EMP_ID}`} style={styles.link}>{vv.EMP_NM}</Link>
@@ -33,11 +101,18 @@ function AllEmp() {
                             <td style={styles.td}>{vv.DEPT_NAME}</td>
                             <td style={styles.td}>{vv.JBTTL_NM}</td>
                         </tr>
-                    ))}
+                    ))
+                    ) : (
+                        <tr>
+                            <td colSpan="3" style={styles.noData}>데이터가 없습니다.</td>
+                        </tr>
+                    )
+                }
                 </tbody>
             </table>
-            <Outlet />
+            {/* <Outlet /> */}
         </div>
+        </>
     );
 }
 
@@ -45,7 +120,7 @@ function AllEmp() {
 const styles = {
     container: {
         maxWidth: '800px',
-        margin: '40px auto',
+        margin: 'auto',
         padding: '20px',
         fontFamily: 'Arial, sans-serif',
         border: '1px solid #ddd',
@@ -58,6 +133,7 @@ const styles = {
         fontWeight: 'bold',
         marginBottom: '20px',
         color: '#333',
+        float: 'left'
     },
     table: {
         width: '100%',
@@ -83,7 +159,23 @@ const styles = {
     link: {
         color: '#007bff',
         textDecoration: 'none',
-    }
+    },
+    select: {
+        padding: '8px 10px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        fontSize: '14px',
+        width: '200px',
+    },
+    filter: {
+        marginTop: '20px',
+        float: 'right',
+    },
+    noData: {
+    textAlign: "center",
+    padding: 16,
+    color: "#bfbfbf",
+  },
 };
 
 // tr hover 효과
