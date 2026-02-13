@@ -20,14 +20,16 @@ function ScheduleDeletionHistory({deleteSchedLog}) {
                         </tr>
                     </thead>
                     <tbody>
-                        {deleteSchedLog.map(data => (
+                        {deleteSchedLog.sort((a, b) =>
+                        new Date(b.schedDeleteDate) - new Date(a.schedDeleteDate))
+                        .map(data => (
                             <tr>
                                 <td>{data.schedType == "COMPANY" ? "회사" : data.schedType == "DEPT" ? "팀" : "개인"}</td>
                                 <td>{data.schedTitle}</td>
                                 <td>{data.schedDetail}</td>
-                                <td>{data.schedStartDate.split(" ")[0]}</td>
-                                <td>{data.schedEndDate.split(" ")[0]}</td>
-                                <td>{data.schedDeleteDate.split(" ")[0]}</td>
+                                <td>{data.schedStartDate?.split(" ")[0]}</td>
+                                <td>{data.schedEndDate?.split(" ")[0]}</td>
+                                <td>{data.schedDeleteDate?.split(" ")[0]}</td>
                                 <td>{data.schedEmpNm}</td>
                                 <td>{data.schedDeptNm}</td>
                                 <td>{data.schedLocNm}</td>

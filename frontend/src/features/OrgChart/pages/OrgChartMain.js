@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import AllEmp from './AllEmp';
 import NewEmp from './NewEmp';
@@ -9,6 +9,7 @@ import ModifyEmp from './ModifyEmp';
 
 function OrgChartMain() {
     const { sideId } = useParams();
+    const [selectedValue, setSelectedValue] = useState("EMP_NM");
 
     const renderContent = () => {
         switch(sideId) {
@@ -27,16 +28,28 @@ function OrgChartMain() {
         }
     }
 
+    const filterChange = (e) => {
+        console.log(e.target.value); // 선택된 value
+        setSelectedValue(e.target.value);
+    };
+
     return (
         <div style={styles.container}>
             {/* 검색 박스 */}
             <div style={styles.searchBox}>
                 <form style={styles.form} action="empSch">
-                    <select name="schFilter" style={styles.select}>
+                    <select name="schFilter" onChange={filterChange} style={styles.select}>
                         <option value="EMP_NM">이름</option>
                         <option value="JBTTL_NM">직책</option>
                     </select>
-                    <input type="text" name="schValue" placeholder="검색어를 입력하세요" style={styles.input} />
+                    {selectedValue == "EMP_NM" && <input type="text" name="schValue" placeholder="검색어를 입력하세요" style={styles.input} />}
+                    {selectedValue == "JBTTL_NM" && 
+                        <select name="schValue" style={styles.select2}>
+                        <option value="대표이사">대표이사</option>
+                        <option value="팀장">팀장</option>
+                        <option value="팀원">팀원</option>
+                    </select>}
+                    
                     <button type="submit" style={styles.submitBtn}>검색</button>
                 </form>
             </div>
@@ -73,6 +86,13 @@ const styles = {
         border: '1px solid #ccc',
         borderRadius: '4px',
         fontSize: '14px',
+    },
+    select2: {
+        padding: '8px 10px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        fontSize: '14px',
+        width: '200px',
     },
     input: {
         padding: '8px 10px',

@@ -23,7 +23,7 @@ public interface OrgchartMapper {
 			+ "from EMP_PRVC "
 			+ "join DEPT_INFO on EMP_PRVC.dept_id = DEPT_INFO.dept_id "
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
-			+ "where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
+//			+ "where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
 			+ "order by EMP_NM")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empList();
 	
@@ -40,7 +40,7 @@ public interface OrgchartMapper {
 			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
 			+ "where EMP_PRVC.dept_id = (select dept_id from DEPT_INFO "
 			+ "where dept_code = #{deptCode}) "
-			+ "and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
+//			+ "and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' "
 			+ "order by EMP_NM "
 			+ "")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> empTeamList(DeptInfo dInfo);
@@ -69,16 +69,17 @@ public interface OrgchartMapper {
 	
 	// 사원 추가
 	@SelectKey(
-			keyProperty = "empId",
+			keyProperty = "empSnCnt",
 			resultType = Integer.class,
 			before = true,
-			statement = "select count(*)+1 from EMP_PRVC where dept_id = #{deptId}"
+			statement = "select IFNULL(MAX(CAST(SUBSTRING(emp_sn, -4) AS UNSIGNED)), 0) + 1 "
+					+ "from EMP_PRVC where dept_id = #{deptId}"
 			)
 	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_JNCMP_YMD, EMP_SN, EMP_PSWD) "
 			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, #{empJncmpYmd}, "
 			+ "concat("
 			+ "(select dept_code from DEPT_INFO where dept_id = #{deptId}), "
-			+ "(LPAD(#{empId}, 4, '0'))"
+			+ "(LPAD(#{empSnCnt}, 4, '0'))"
 			+ "),"
 			+ "concat((select dept_code from DEPT_INFO where dept_id = #{deptId}), '0000')"
 			+ ")")

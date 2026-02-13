@@ -1,8 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function PersonnelChangeStats({ inOut, changeEmpData }) {
-    const active = inOut.filter((d) => d.empAcntStts != "RETIRED");
-    const retired = inOut.filter((d) => d.empAcntStts == "RETIRED")
+  const active = inOut.filter((d) => d.empAcntStts != "RETIRED");
+  const retired = inOut.filter((d) => d.empAcntStts == "RETIRED");
+
+    
+
   return (
     <div>
       <h2 style={styles.title}>인사 변동 통계</h2>
@@ -32,7 +36,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.deptName}</td>
                     <td style={styles.td}>{data.jbttlNm}</td>
                     <td style={styles.td}>
-                      {data.empJncmpYmd.split(" ")[0]}
+                      {data.empJncmpYmd?.split(" ")[0]}
                     </td>
                   </tr>
                 ))
@@ -72,7 +76,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                     <td style={styles.td}>{data.empNm}</td>
                     <td style={styles.td}>{data.deptName}</td>
                     <td style={styles.td}>{data.jbttlNm}</td>
-                    <td style={styles.td}>{data.empRsgntnYmd.split(" ")[0]}</td>
+                    <td style={styles.td}>{data.empRsgntnYmd?.split(" ")[0]}</td>
                   </tr>
                 ))
             ) : (
@@ -110,12 +114,14 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                 )
                 .map((data) => (
                   <tr key={data.historyId}>
-                    <td style={styles.td}>{data.histEmpNm}</td>
+                    <td style={styles.td}>
+                      <Link to={`detail/${data.histEmpId}`} style={styles.link}>{data.histEmpNm}</Link>
+                    </td>
                     <td style={styles.td}>{data.bDeptName}</td>
                     <td style={styles.td}>{data.bJbttlNm}</td>
                     <td style={styles.td}>{data.aJbttlNm}</td>
                     <td style={styles.td}>
-                      {data.changeDate.split(" ")[0]}
+                      {data.changeDate?.split(" ")[0]}
                     </td>
                   </tr>
                 ))
@@ -156,12 +162,14 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                 )
                 .map((data) => (
                   <tr key={data.historyId}>
-                    <td style={styles.td}>{data.histEmpNm}</td>
+                    <td style={styles.td}>
+                      <Link to={`detail/${data.histEmpId}`} style={styles.link}>{data.histEmpNm}</Link>
+                    </td>
                     <td style={styles.td}>{data.bDeptName}</td>
                     <td style={styles.td}>{data.aDeptName}</td>
                     <td style={styles.td}>{data.aJbttlNm}</td>
                     <td style={styles.td}>
-                      {data.changeDate.split(" ")[0]}
+                      {data.changeDate?.split(" ")[0]}
                     </td>
                   </tr>
                 ))
@@ -181,8 +189,8 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
         <table style={styles.table}>
             <thead>
             <tr>
-                <th style={styles.th}>기존 이름</th>
-                <th style={styles.th}>변경 후 이름</th>
+                <th style={styles.th}>이름</th>
+                <th style={styles.th}>변경 전 이름</th>
                 <th style={styles.th}>팀</th>
                 <th style={styles.th}>직책</th>
                 <th style={styles.th}>변경날짜</th>
@@ -199,12 +207,14 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                 )
                 .map(data => (
                     <tr key={data.historyId}>
+                    <td style={styles.td}>
+                      <Link to={`detail/${data.histEmpId}`} style={styles.link}>{data.afterNm}</Link>
+                    </td>
                     <td style={styles.td}>{data.beforeNm}</td>
-                    <td style={styles.td}>{data.afterNm}</td>
                     <td style={styles.td}>{data.bDeptName}</td>
                     <td style={styles.td}>{data.aJbttlNm}</td>
                     <td style={styles.td}>
-                        {data.changeDate.split(" ")[0]}
+                        {data.changeDate?.split(" ")[0]}
                     </td>
                     </tr>
                 ))
@@ -258,6 +268,10 @@ const styles = {
     padding: 40,
     color: "#bfbfbf",
   },
+  link: {
+    color: '#007bff',
+    textDecoration: 'none',
+},
 };
 
 export default PersonnelChangeStats;

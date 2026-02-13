@@ -2,17 +2,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../../shared/components/Button";
 import { fetcher } from "../../../shared/api/fetcher";
+import DaumPostcode from "react-daum-postcode"; // 주소 api
 
 function Employee_details(props) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const empSn = searchParams.get("empSn");
   const [previewUrl, setPreviewUrl] = useState(null); // 미리보기 이미지 경로
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
 
   // 1. 상태 관리: DB 컬럼명과 매핑되는 DTO 필드명(Camel Case) 적용
   const [formData, setFormData] = useState({
     empPhoto: null, // 사진 파일
     empAddr: "", // 주소
+    empAddrDetail: "", // 상세 주소 (사용자 입력)
     empTelno: "", // 연락처
     empActno: "", // 계좌번호
     empPswd: "", // 비밀번호
@@ -33,6 +36,28 @@ function Employee_details(props) {
       setIsPasswordMatch(false);
     }
   }, [formData.empPswd, formData.confirmPswd]);
+
+  const handleAdressComplete = (data) => {
+    let fullAddress = data.address;
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") extraAddress += data.bname;
+      if (data.buildingName !== "") {
+        extraAddress +=
+          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+    }
+
+    // 기본 주소는 empAddr에, 상세 주소 칸은 비워줌
+    setFormData((prev) => ({
+      ...prev,
+      empAddr: fullAddress,
+      empAddrDetail: "",
+    }));
+    setIsPostcodeOpen(false); // 선택 후 팝업 닫기
+  };
 
   // 3. 입력 핸들러
   const handleInputChange = (e) => {
@@ -86,11 +111,15 @@ function Employee_details(props) {
     e.preventDefault();
 
     if (!window.confirm("계정 등록을 완료하시겠습니까?")) return;
-    URL.createObjectURL(formData.empPhoto);
+
+    const combinedAddr = formData.empAddrDetail
+      ? `${formData.empAddr}|${formData.empAddrDetail}`
+      : formData.empAddr;
+
     try {
       const uploadData = new FormData();
       uploadData.append("empSn", empSn);
-      uploadData.append("empAddr", formData.empAddr);
+      uploadData.append("empAddr", combinedAddr);
       uploadData.append("empTelno", formData.empTelno);
       uploadData.append("empActno", formData.empActno);
       uploadData.append("empPswd", formData.empPswd);
@@ -175,12 +204,51 @@ function Employee_details(props) {
             <tr>
               <td>주소</td>
               <td>
+                <div
+                  style={{ display: "flex", gap: "10px", marginBottom: "8px" }}
+                >
+                  <input
+                    name="empAddr"
+                    value={formData.empAddr}
+                    readOnly // API로만 입력받기 위해 읽기전용
+                    placeholder="주소 검색을 클릭하세요"
+                    style={{ flex: 1, backgroundColor: "#f9f9f9" }}
+                    onClick={() => setIsPostcodeOpen(true)}
+                  />
+                  <Button type="button" onClick={() => setIsPostcodeOpen(true)}>
+                    주소 검색
+                  </Button>
+                </div>
                 <input
-                  name="empAddr"
-                  value={formData.empAddr}
+                  name="empAddrDetail"
+                  value={formData.empAddrDetail}
                   onChange={handleInputChange}
-                  placeholder="상세 주소를 입력하세요"
+                  placeholder="상세 주소를 입력하세요 (동, 호수 등)"
                 />
+
+                {/* 주소 검색 모달 */}
+                {isPostcodeOpen && (
+                  <div style={modalOverlayStyle}>
+                    <div style={modalContentStyle}>
+                      <div style={modalHeaderStyle}>
+                        <strong style={{ fontSize: "18px" }}>주소 검색</strong>
+                        <button
+                          type="button"
+                          onClick={() => setIsPostcodeOpen(false)}
+                          style={{
+                            border: "none",
+                            background: "none",
+                            cursor: "pointer",
+                            fontSize: "20px",
+                          }}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                      <DaumPostcode onComplete={handleAdressComplete} />
+                    </div>
+                  </div>
+                )}
               </td>
             </tr>
             <tr>
@@ -305,3 +373,34 @@ function Employee_details(props) {
 }
 
 export default Employee_details;
+
+const modalOverlayStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100vw",
+  height: "100vh",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  zIndex: 1000,
+};
+
+const modalContentStyle = {
+  width: "500px",
+  height: "500px",
+  backgroundColor: "#fff",
+  borderRadius: "8px",
+  display: "flex",
+  flexDirection: "column",
+  boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
+};
+
+const modalHeaderStyle = {
+  padding: "15px",
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  borderBottom: "1px solid #eee",
+};

@@ -19,9 +19,13 @@ public interface SchedMapper {
 
 	// 한달 일정 불러오기
 		// 작성자가 본인인 TODO, 본인 팀, 본인 개인 일정
-		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept "
+		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept, "
+				+ "GROUP_CONCAT(EMP_PRVC.emp_nm) as sched_emp_nm, "
+				+ "ANY_VALUE(LOC_INFO.loc_nm) as sched_loc_nm "
 				+ "from SCHED "
 				+ "left join DEPT_INFO on FIND_IN_SET(DEPT_INFO.dept_id, IFNULL(SCHED.sched_dept_id, '')) > 0 "
+				+ "left join EMP_PRVC on FIND_IN_SET(EMP_PRVC.emp_id, IFNULL(SCHED.sched_emp_id, '')) > 0 "
+				+ "left join LOC_INFO on IFNULL(SCHED.sched_loc, 0) = LOC_INFO.loc_id "
 				+ "where "
 				+ "sched_end_date >= #{schedStartDate} and sched_start_date <= #{schedEndDate} "
 				+ "and sched_state = 0 "
@@ -59,9 +63,13 @@ public interface SchedMapper {
 				+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDeptId})")
 		int instructionUpload(Sched sc);
 		
-		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept "
+		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept, "
+				+ "GROUP_CONCAT(EMP_PRVC.emp_nm) as sched_emp_nm, "
+				+ "ANY_VALUE(LOC_INFO.loc_nm) as sched_loc_nm "
 				+ "from SCHED "
 				+ "left join DEPT_INFO on FIND_IN_SET(DEPT_INFO.dept_id, IFNULL(SCHED.sched_dept_id, '')) > 0 "
+				+ "left join EMP_PRVC on FIND_IN_SET(EMP_PRVC.emp_id, IFNULL(SCHED.sched_emp_id, '')) > 0 "
+				+ "left join LOC_INFO on IFNULL(SCHED.sched_loc, 0) = LOC_INFO.loc_id "
 				+ "where sched_id = #{schedId} "
 				+ "group by SCHED.sched_id")
 		Sched schedDetail(Sched sc);
@@ -115,5 +123,11 @@ public interface SchedMapper {
 				+ "WHERE EMP_ACNT_STTS='ACTIVE' "
 				+ "AND FIND_IN_SET(DEPT_ID, #{schedDeptId}) > 0")
 		List<Integer> selectTeamEmpIds(Sched sc);
+		
+		// 개인 알림용 개인 사원
+		@Select("SELECT EMP_ID FROM EMP_PRVC "
+				+ "WHERE EMP_ACNT_STTS='ACTIVE' "
+				+ "AND FIND_IN_SET(EMP_ID, #{schedEmpId}) > 0")
+		List<Integer> selectPersEmpIds(Sched sc);
 	
 }

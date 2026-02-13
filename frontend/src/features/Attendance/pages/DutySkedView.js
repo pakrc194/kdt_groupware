@@ -45,10 +45,26 @@ function DutySkedView() {
       );
 
       if (data) {
-        // 백엔드 서비스에서 res.put("master", master), res.put("details", details) 한 구조 그대로 매핑
+        // --- 정렬 로직 시작 ---
+        const sortedDetails = [...data.details].sort((a, b) => {
+          const groupOrder = { A: 1, B: 2, C: 3, D: 4 };
+
+          // grpNm이 null이면 아주 큰 숫자를 주어 후순위로 보냄
+          const orderA = groupOrder[a.grpNm] || 99;
+          const orderB = groupOrder[b.grpNm] || 99;
+
+          if (orderA !== orderB) {
+            return orderA - orderB; // 조별 정렬 (A -> B -> C -> D -> null)
+          }
+
+          // 같은 조 내에서는 이름순으로 정렬 (선택 사항)
+          return a.empNm.localeCompare(b.empNm);
+        });
+        // --- 정렬 로직 끝 ---
+
         setDutyData({
           master: data.master,
-          details: data.details,
+          details: sortedDetails,
         });
       } else {
         // 데이터가 없는 경우 (Service에서 null 리턴 시)
@@ -66,29 +82,37 @@ function DutySkedView() {
     loadDutyView();
   }, [selectedMonth]);
 
-  // 4. 데이터 가공 (Details 리스트를 사원별로 묶기)
+  // 데이터 가공 (정렬된 순서를 유지하며 사원별로 묶기)
   const renderRows = () => {
     const { details } = dutyData;
     if (!details || details.length === 0) return null;
 
-    // 사원별로 그룹화
-    const empMap = details.reduce((acc, curr) => {
-      if (!acc[curr.empId]) {
-        acc[curr.empId] = {
-          name: curr.empNm,
-          group: curr.grpNm,
-          pattern: curr.rotPtnCd,
-          duties: {},
-        };
+    // 정렬된 details에서 중복 없는 사원 정보 리스트 추출 (순서 보장)
+    const sortedEmployees = [];
+    const seenEmpIds = new Set();
+
+    details.forEach((item) => {
+      if (!seenEmpIds.has(item.empId)) {
+        seenEmpIds.add(item.empId);
+        sortedEmployees.push({
+          id: item.empId,
+          name: item.empNm,
+          group: item.grpNm,
+          pattern: item.rotPtnCd,
+        });
       }
-      // 날짜(YYYYMMDD)에서 뒤의 2자리를 추출하여 키값으로 사용
-      const dayKey = parseInt(curr.dutyYmd.slice(-2));
-      acc[curr.empId].duties[dayKey] = curr.wrkCd;
+    });
+
+    // 모든 근무 데이터를 맵에 저장 (빠른 조회를 위함)
+    const dutyMap = details.reduce((acc, curr) => {
+      const key = `${curr.empId}-${parseInt(curr.dutyYmd.slice(-2))}`;
+      acc[key] = curr.wrkCd;
       return acc;
     }, {});
 
-    return Object.entries(empMap).map(([empId, emp]) => (
-      <div key={empId} className="employee-row">
+    // 정렬된 사원 리스트를 기준으로 렌더링
+    return sortedEmployees.map((emp) => (
+      <div key={emp.id} className="employee-row">
         <div className="employee-info-cell">
           <span className="emp-name">{emp.name}</span>
           <span className={`emp-group-tag ${emp.group || "none"}`}>
@@ -96,7 +120,8 @@ function DutySkedView() {
           </span>
         </div>
         {days.map((d) => {
-          const code = emp.duties[d] || "-";
+          // 사원ID와 일자(d)를 조합해 근무 코드 조회
+          const code = dutyMap[`${emp.id}-${d}`] || "-";
           const style = dutyStyles[code] || {
             color: "#fff",
             textColor: "#ccc",

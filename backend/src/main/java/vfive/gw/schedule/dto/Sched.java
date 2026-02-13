@@ -10,4 +10,5 @@ public class Sched {
 	private Integer schedId, schedLoc, schedAuthorId, schedFinalApprover;
 	private String schedTitle, schedType, schedDetail, schedDept, schedState, schedDeptId, schedEmpId;
 	private String schedStartDate, schedEndDate, schedDeleteDate;
+	private String schedEmpNm, schedLocNm;
 }

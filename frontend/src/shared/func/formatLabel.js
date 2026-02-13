@@ -11,4 +11,17 @@ export const STATUS_MAP = {
   // 치환시킬 단어 추가해서 사용
 };
 
+export const DEPT_MAP = {
+  1: { label: "지점장" },
+  2: { label: "식품" },
+  3: { label: "뷰티·패션잡화" },
+  4: { label: "여성패션" },
+  5: { label: "남성패션" },
+  6: { label: "인사관리" },
+  7: { label: "시설자재" },
+  8: { label: "안전관리" },
+  // 치환시킬 단어 추가해서 사용
+};
+
 export const getStatusLabel = (status) => STATUS_MAP[status]?.label || status;
+export const getDeptLabel = (deptId) => DEPT_MAP[deptId]?.label || deptId;

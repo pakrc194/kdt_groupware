@@ -3,6 +3,7 @@ import styles from "../css/HomeModProf.module.css";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import DaumPostcode from "react-daum-postcode"; // 주소 api
 
 const HomeModProf = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const HomeModProf = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState(null); // 미리보기 이미지 경로
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false); // 모달 열림 상태
 
   // [추가] 선택된 이미지 파일 객체를 저장할 상태
   const [selectedFile, setSelectedFile] = useState(null);
@@ -27,11 +29,10 @@ const HomeModProf = () => {
     empTelno: "",
     empActno: "",
     empAddr: "",
+    empAddrDetail: "",
   });
 
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
-  console.log(myInfo.empId);
-  console.log(myInfo.empSn);
 
   // --- 데이터 로드 ---
   const fetchUserData = async () => {
@@ -39,10 +40,15 @@ const HomeModProf = () => {
       const response = await fetcher(`/gw/home/modProf?empId=${myInfo.empId}`);
       setUserInfo(response);
       // 초기 폼 데이터 세팅
+      const fullAddr = response.empAddr || "";
+      const [base, detail] = fullAddr.includes("|")
+        ? fullAddr.split("|")
+        : [fullAddr, ""]; // 구분자 없으면 전체를 기본주소로
       setEditForm({
         empTelno: response.empTelno || "",
         empActno: response.empActno || "",
-        empAddr: response.empAddr || "",
+        empAddr: base,
+        empAddrDetail: detail,
       });
     } catch (error) {
       console.error(error);
@@ -66,6 +72,30 @@ const HomeModProf = () => {
       );
     }
   }, [passwords]);
+
+  const handleAdressComplete = (data) => {
+    let fullAddress = data.address;
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") extraAddress += data.bname;
+      if (data.buildingName !== "") {
+        extraAddress +=
+          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      }
+      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
+    }
+
+    setEditForm((prev) => ({
+      ...prev,
+      empAddr: fullAddress, // 기본 주소 입력
+      empAddrDetail: "", // 주소가 바뀌면 상세주소 초기화 (선택사항)
+    }));
+    setIsPostcodeOpen(false);
+
+    // 상세 주소 입력창으로 포커스 이동 (선택사항)
+    document.getElementsByName("empAddrDetail")[0]?.focus();
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -172,7 +202,10 @@ const HomeModProf = () => {
       formData.append("empSn", userInfo.empSn);
       formData.append("empTelno", editForm.empTelno);
       formData.append("empActno", editForm.empActno);
-      formData.append("empAddr", editForm.empAddr);
+      const combinedAddress = editForm.empAddrDetail
+        ? `${editForm.empAddr}|${editForm.empAddrDetail}`
+        : editForm.empAddr;
+      formData.append("empAddr", combinedAddress);
       formData.append(
         "empEmlAddr",
         isEmailVerified ? newEmail : userInfo.empEmlAddr,
@@ -337,13 +370,55 @@ const HomeModProf = () => {
                 </div>
                 <div className={styles["form-group"]}>
                   <label>주소</label>
+                  <div className={styles["input-with-btn"]}>
+                    <input
+                      style={{ width: "400px" }}
+                      type="text"
+                      name="empAddr"
+                      value={editForm.empAddr}
+                      placeholder="주소 검색을 이용해주세요."
+                      readOnly // 직접 입력 방지
+                      onClick={() => setIsPostcodeOpen(true)} // 클릭 시 팝업
+                    />
+                    <button
+                      type="button"
+                      className={styles["sub-btn"]}
+                      onClick={() => setIsPostcodeOpen(true)}
+                    >
+                      주소 검색
+                    </button>
+                  </div>
+                  {/* 상세 주소 입력 줄 */}
                   <input
+                    style={{ width: "500px" }}
                     type="text"
-                    name="empAddr"
-                    value={editForm.empAddr}
+                    name="empAddrDetail"
+                    value={editForm.empAddrDetail}
                     onChange={handleInputChange}
+                    placeholder="상세 주소를 입력하세요 (동, 호수 등)"
                   />
                 </div>
+
+                {/* --- 주소 검색 모달 --- */}
+                {isPostcodeOpen && (
+                  <div
+                    className={styles["modal-overlay"]}
+                    onClick={() => setIsPostcodeOpen(false)}
+                  >
+                    <div
+                      className={styles["modal-content"]}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className={styles["modal-header"]}>
+                        <h4>주소 검색</h4>
+                        <button onClick={() => setIsPostcodeOpen(false)}>
+                          X
+                        </button>
+                      </div>
+                      <DaumPostcode onComplete={handleAdressComplete} />
+                    </div>
+                  </div>
+                )}
               </div>
             </section>
 

@@ -5,7 +5,7 @@ import DutyGroupModal from "../component/DutyGroupModal"; // 분리한 컴포넌
 import DutySkedAprvReqModal from "../component/DutySkedAprvReqModal";
 import "../css/DutySkedDetail.css";
 import DutySkedAprvReqModal2 from "../component/DutySkedAprvReqModal2";
-import { getStatusLabel } from "../../../shared/func/formatStatus";
+import { getStatusLabel } from "../../../shared/func/formatLabel";
 
 function DutySkedDetail() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));

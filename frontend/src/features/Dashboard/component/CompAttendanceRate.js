@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 
 function Attendance({emp}) {
     console.log(emp)
@@ -14,45 +13,18 @@ function Attendance({emp}) {
 
     const total = emp.length;
     const present = emp.filter((dd) => dd.atdcSttsCd === "PRESENT").length;
-    const absent = emp.filter((dd) => dd.atdcSttsCd === "ABSENT" || dd.atdcSttsCd === null).length;
+    const absent = emp.filter((dd) => dd.atdcSttsCd === "ABSENT").length;
     const businessTrip = emp.filter((dd) => dd.atdcSttsCd === "BUSINESS_TRIP").length;
     const off = emp.filter((dd) => dd.atdcSttsCd === "OFF").length;
     const leave = emp.filter((dd) => dd.atdcSttsCd === "LEAVE").length;
 
     const presentRate = total === 0 ? 0 : ((present / total) * 100).toFixed(2);
 
-    const recentDays = Array.from({ length: 1 }, (_, i) => {
-        const date = new Date();
-        // date.setDate(now.getDate() - 6 + i); // 6일 전부터 오늘까지
-        return new Date(date);
-    }); 
-
-
-    const attendData = recentDays.map((date) => ({
-        name: `${date.getMonth() + 1}/${date.getDate()}`,
-        "출근": present,
-        "결근": absent,
-        "출장": businessTrip,
-        "휴무": off,
-        "연차": leave,
-    }));
+    
 
     return (
         <div>
             <h1>근태현황</h1>
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={attendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="출근" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="결근" fill="#ca8282" isAnimationActive={true} />
-                <Bar dataKey="출장" fill="#ca79c3" isAnimationActive={true} />
-                <Bar dataKey="휴무" fill="#595959" isAnimationActive={true} />
-                <Bar dataKey="연차" fill="#5a5de2" isAnimationActive={true} />
-                {/* <RechartsDevtools /> */}
-            </BarChart>
             {/* ================= 통계 카드 ================= */}
             <div style={styles.statsWrap}>
                 <div style={styles.statCard}>
@@ -93,11 +65,7 @@ function Attendance({emp}) {
 
             {/* ================= 상태별 테이블 ================= */}
             {statusList.map((status) => {
-                let list = emp.filter((dd) => dd.atdcSttsCd === status.code);
-                {status.code === "ABSENT" && (
-                    list = emp.filter((dd) => dd.atdcSttsCd === status.code || dd.atdcSttsCd === null)
-                )
-                }
+                const list = emp.filter((dd) => dd.atdcSttsCd === status.code);
 
                 return (
                     <div key={status.code} style={styles.section}>
@@ -106,9 +74,12 @@ function Attendance({emp}) {
                         <table style={styles.table}>
                             <thead>
                                 <tr>
+                                    {/* <th style={styles.th}>사원ID</th> */}
                                     <th style={styles.th}>사원번호</th>
                                     <th style={styles.th}>이름</th>
+                                    <th style={styles.th}>부서</th>
                                     <th style={styles.th}>직책</th>
+                                    {/* <th style={styles.th}>근태현황</th> */}
                                 </tr>
                             </thead>
                             <tbody>
@@ -120,6 +91,7 @@ function Attendance({emp}) {
                                             <td style={styles.td}>
                                                 <Link to={`detail/${dd.empId}`} style={styles.link}>{dd.empNm}</Link>
                                             </td>
+                                            <td style={styles.td}>{dd.deptName}</td>
                                             <td style={styles.td}>{dd.jbttlNm}</td>
                                             {/* <td style={styles.td}>{dd.atdcSttsCd}</td> */}
                                         </tr>
