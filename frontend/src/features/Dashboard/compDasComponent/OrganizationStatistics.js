@@ -1,8 +1,10 @@
 import React from 'react';
 
+
 function OrganizationStatistics({ inOut }) {
     const deptOrder = ["지점장", "식품", "뷰티·패션잡화", "여성패션", "남성패션", "인사관리", "시설자재", "안전관리"];
     const activeList = inOut.filter( data => data.empAcntStts === "ACTIVE" );
+    
     // 부서별 그룹
     const deptGroup = activeList.reduce((acc, cur) => {
         if (!acc[cur.deptName]) acc[cur.deptName] = [];

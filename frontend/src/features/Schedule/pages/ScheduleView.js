@@ -4,6 +4,7 @@ import { Link, Outlet, useParams, Navigate } from 'react-router-dom';
 import ScheduleCalendar from './ScheduleCalendar';
 import ScheduleList from './ScheduleList';
 import { fetcher } from '../../../shared/api/fetcher';
+import { chkToday } from '../../../shared/api/chkToday';
 import ScheduleDetail from './ScheduleDetail';
 
 function ScheduleView(props) {   
@@ -63,6 +64,11 @@ function ScheduleView(props) {
 
     // TODO 추가
     const addTodo = async () => {
+        console.log(chkToday(newTodo.schedStartDate))
+        if (!chkToday(newTodo.schedStartDate)) {
+            alert('이전 날짜에 등록할 수 없습니다.')
+            return;
+        }
         try {
             const created = await fetcher('/gw/schedule/todo/add', {
             method: 'POST',
@@ -170,10 +176,10 @@ function ScheduleView(props) {
                             {sched.filter(s => s.schedType === type).map(s => (
                                 <div key={s.schedId} style={styles.schedItem}>
                                     <div><strong>제목:</strong> {s.schedTitle}</div>
-                                    {s.schedLoc && <div><strong>위치:</strong> {s.schedLoc}</div>}
-                                    {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept} ({s.schedDeptId})</div>}
-                                    {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpId}</div>}
-                                    <div><strong>상세:</strong> {s.schedDetail}</div>
+                                    {s.schedLoc && <div><strong>위치:</strong> {s.schedLocNm}</div>}
+                                    {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept}</div>}
+                                    {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpNm}</div>}
+                                    {s.schedDetail && <div><strong>상세 내용 확인 필요</strong></div>}
                                     <div><strong>기간:</strong> {s.schedStartDate?.split(" ")[0]} ~ {s.schedEndDate?.split(" ")[0]}</div>
                                 </div>
                             ))}
@@ -188,7 +194,8 @@ function ScheduleView(props) {
                     <div style={styles.scrollArea}>
                     <ul style={styles.todoList}>
                         {sortedTodos
-                        .filter(dd => dd.schedState != 1 && dd.schedStartDate?.split(' ')[0] <= formatted)
+                        // .filter(dd => dd.schedState != 1 && dd.schedStartDate?.split(' ')[0] <= formatted)
+                        .filter(dd => dd.schedStartDate?.split(' ')[0] == formatted)
                         .map(todo => (
                             <li key={todo.schedId} style={styles.todoItem}>
                                     <input
@@ -265,7 +272,7 @@ function ScheduleView(props) {
                             ))}
 
                             {/* 완료된 TODO - 당일에서만 보임 */}
-                            {sortedTodos
+                            {/* {sortedTodos
                             .filter(dd => dd.schedState == 1 && dd.schedStartDate?.split(' ')[0] == formatted)
                             .map(todo => (
                                 <li key={todo.schedId} style={styles.todoItem}>
@@ -340,7 +347,7 @@ function ScheduleView(props) {
                                             </>
                                         )}
                                     </li>
-                                ))}
+                                ))} */}
                             </ul>
 
                             {showTodoForm ? (

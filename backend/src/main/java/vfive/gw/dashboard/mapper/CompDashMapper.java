@@ -101,10 +101,13 @@ public interface CompDashMapper {
 			       JBTTL_INFO.JBTTL_NM,
 			       ATDC_HIST.EMP_ID,
 			       ATDC_HIST.WRK_YMD,
-			       ATDC_HIST.ATDC_STTS_CD
+			       ATDC_HIST.ATDC_STTS_CD,
+			       DEPT_INFO.DEPT_NAME
 			from EMP_PRVC
 			join JBTTL_INFO
 			  on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id
+			join DEPT_INFO
+			  on EMP_PRVC.dept_id = DEPT_INFO.dept_id
 			left join ATDC_HIST
 			  on EMP_PRVC.emp_id = ATDC_HIST.emp_id
 			 and ATDC_HIST.WRK_YMD = #{date}
@@ -137,6 +140,7 @@ public interface CompDashMapper {
     APRV_DOC.APRV_DOC_DRFT_DT,
     APRV_DOC.APRV_DOC_VER,
     DOC_FORM.DOC_FORM_NM,
+    DOC_FORM.DOC_FORM_ID,
     APRV_PRCS.APRV_PRCS_ID,
     APRV_PRCS.ROLE_CD,
     APRV_PRCS.ROLE_SEQ,

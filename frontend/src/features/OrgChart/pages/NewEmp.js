@@ -67,7 +67,7 @@ const MemberRegistrationForm = () => {
       alert('정보를 모두 입력해 주세요.')
       return;
     }
-    if (chkToday(formData.EMP_JNCMP_YMD)) {
+    if (!chkToday(formData.EMP_JNCMP_YMD)) {
       alert('입사일을 확인하세요.')
       return;
     }
@@ -88,6 +88,7 @@ const MemberRegistrationForm = () => {
           empJncmpYmd: formData.EMP_JNCMP_YMD 
         }
       });
+      setIsOpen(false)
 
     } catch (err) {
         console.error('계정 생성 실패:', err.message);
@@ -178,9 +179,13 @@ const MemberRegistrationForm = () => {
         <button style={styles.cancelBtn} onClick={handleCancle}>취소</button>
         <button style={styles.submitBtn} onClick={() => setIsOpen(true)}>완료</button>
         {isOpen && (
-          <Modal title="사원 등록 확인" message="사원을 등록합니다." onClose={() => setIsOpen(false)} onOk={handleSubmit} okMsg="확인">
-            
-          </Modal>
+          <Modal 
+            title="사원 등록 확인" 
+            message="사원을 등록합니다." 
+            onClose={() => setIsOpen(false)} 
+            onOk={handleSubmit} 
+            okMsg="확인" 
+          />
         )}
       </div>
     </div>

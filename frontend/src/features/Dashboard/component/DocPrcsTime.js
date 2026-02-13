@@ -1,16 +1,68 @@
 import React, { useState } from 'react';
+import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 import { TimeDiff } from './TimeDiff';
 
 function DocPrcsTime({docPrc}) {
-  const [aprvTime, setAprvTime] = useState('');
   const comp = docPrc.filter(dd => dd.aprvDocStts !== "PENDING" && dd.roleCd === "DRFT").length;
   const reje = docPrc.filter(dd => dd.aprvDocStts === "REJECTED" && dd.roleCd === "DRFT").length;
 
   const presentRate = comp === 0 ? 0 : ((reje / comp) * 100).toFixed(2);
 
+  const parseDateTime = (str) => {
+        const year = str.substring(0, 4);
+        const month = str.substring(4, 6) - 1; // JS는 month가 0부터 시작
+        const day = str.substring(6, 8);
+        const hour = str.substring(8, 10);
+        const minute = str.substring(10, 12);
+        const second = str.substring(12, 14);
+
+        return new Date(year, month, day, hour, minute, second);
+    }
+
+    const now = new Date();
+    // 최근 12개월 배열 생성 (오늘 기준)
+    const recentMonths = Array.from({ length: 12 }, (_, i) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
+      return {
+        year: date.getFullYear(),
+        month: date.getMonth() + 1, // 0~11 이라서 +1
+      };
+    });
+
+    const data = recentMonths.map(({ year, month }) => ({
+      name: `${year}.${String(month).padStart(2, "0")}`,
+      "완료": docPrc.filter(dd => 
+        dd.aprvDocStts === "COMPLETED" && dd.roleCd === "DRFT" 
+        && parseDateTime(dd.aprvDocDrftDt).getMonth() + 1 == month
+        && parseDateTime(dd.aprvDocDrftDt).getFullYear() == year).length,
+      "대기": docPrc.filter(dd => 
+        dd.aprvDocStts === "PENDING" && dd.roleCd === "DRFT" 
+        && parseDateTime(dd.aprvDocDrftDt).getMonth() + 1 == month
+        && parseDateTime(dd.aprvDocDrftDt).getFullYear() == year).length,
+      "반려": docPrc.filter(dd => 
+        dd.aprvDocStts === "REJECTED" && dd.roleCd === "DRFT" 
+        && parseDateTime(dd.aprvDocDrftDt).getMonth() + 1 == month
+        && parseDateTime(dd.aprvDocDrftDt).getFullYear() == year).length,
+    }));
+
+    
+
     return (
         <div>
             <h3>반려비율  {reje}/{comp} : {presentRate}%</h3>
+
+            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis width="auto" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="완료" fill="#82ca9d" isAnimationActive={true} />
+                <Bar dataKey="대기" fill="#ca8282" isAnimationActive={true} />
+                <Bar dataKey="반려" fill="#595959" isAnimationActive={true} />
+                {/* <RechartsDevtools /> */}
+            </BarChart>
+
             <h3>결재 속도</h3>
             <div style={styles.container}>
             <h2>문서 정보</h2>
