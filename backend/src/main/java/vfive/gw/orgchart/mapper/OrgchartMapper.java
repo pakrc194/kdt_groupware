@@ -72,7 +72,8 @@ public interface OrgchartMapper {
 			keyProperty = "empSnCnt",
 			resultType = Integer.class,
 			before = true,
-			statement = "select IFNULL(MAX(CAST(SUBSTRING(emp_sn, -4) AS UNSIGNED)), 0) + 1 from EMP_PRVC where dept_id = #{deptId}"
+			statement = "select IFNULL(MAX(CAST(SUBSTRING(emp_sn, -4) AS UNSIGNED)), 0) + 1 "
+					+ "from EMP_PRVC where dept_id = #{deptId}"
 			)
 	@Insert("insert into EMP_PRVC (DEPT_ID, JBTTL_ID, EMP_BIRTH, EMP_NM, EMP_JNCMP_YMD, EMP_SN, EMP_PSWD) "
 			+ "values (#{deptId}, #{jbttlId}, #{empBirth}, #{empNm}, #{empJncmpYmd}, "
