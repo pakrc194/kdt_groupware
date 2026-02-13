@@ -2,120 +2,138 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import Pagination from './Pagination';
 import { fetcher } from '../../../shared/api/fetcher';
-import boardst from '../../Home/css/Board.module.css'
+import boardst from '../../Home/css/Board.module.css';
 
-function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
-    const {sideId} = useParams();
-    const [boards, setBoards] = useState([]); // 데이터만 관리
-    const [pInfo, setPInfo] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-    const [boardId , setBoardId] = useState();
+/**
+ * BoardList 컴포넌트
+ * @param {Object} props - goBoardId: 상세 조회를 위한 ID 전달 함수, goService: 화면 전환 함수
+ */
+function BoardList(props) {
+    const { sideId } = useParams();
+    const navigate = useNavigate();
 
-    // 검색 상태
-    const [searchInput , setSearchInput] = useState('');
-    const [keyword , setKeyword] = useState('');
-    const [searchType , setSearchType] = useState('title');
-
+    // 상태 관리
+    const [boards, setBoards] = useState([]); // 게시글 목록
+    const [pInfo, setPInfo] = useState(null); // 페이지네이션 정보
+    const [isLoading, setIsLoading] = useState(true); // 로딩 상태
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const [pageSize, setPageSize] = useState(10); // 페이지당 게시글 수
+    
+    // 검색 상태 관리
+    const [searchInput, setSearchInput] = useState(''); // 검색 입력값
+    const [keyword, setKeyword] = useState(''); // 실제 검색에 사용될 키워드
+    const [searchType, setSearchType] = useState('title'); // 검색 타입 (제목, 작성자 등)
+    
+    // 로컬스토리지에서 사용자 정보 가져오기
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
-    const empSn = myInfo?.empSn;
+    const empSn = myInfo?.empSn; // 사원 번호
+    const myDept = myInfo?.deptName; // 사원 부서명
 
+  
+    // 1. 화면(sideId)이 변경되면 무조건 1페이지로 리셋
+    useEffect(() => {
+        setCurrentPage(1);
+        setSearchInput('');
+        setKeyword('');
+    }, [sideId]);
 
     useEffect(() => {
-        
         fetchBoards();
-    }, [sideId, currentPage, pageSize,keyword,searchType]);
+    }, [sideId, currentPage, pageSize, keyword, searchType]);
 
-    // 화면이동을 하면 1페이지로 이동하도록 한다
-    useEffect(()=>{
-         setCurrentPage(1);
-    },[sideId])
-
-
-    /*** 날짜 포맷팅 함수
-     * @param {string} dateString : '2026-02-09T15:00:00.000Z'
-     * @returns {string} : '2026-02-09 15:00'*/
-        const formatDate = (dateString) => {
-        if (!dateString) return "-";
-        
-        const date = new Date(dateString);
-        
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
-        const day = String(date.getDate()).padStart(2, '0');
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-
-        return `${year}-${month}-${day} ${hours}:${minutes}`;
-    };
-
-
+    /**
+     * 서버에서 게시글 데이터를 가져오는 함수
+     */
     const fetchBoards = () => {
         setIsLoading(true);
+        // API 경로 예시: /board/인사관리?pNo=1&pageSize=10...
         fetcher(`/board/${sideId}?pNo=${currentPage}&pageSize=${pageSize}&keyword=${keyword}&searchType=${searchType}&empSn=${empSn}`)
-            /// `/board/MyPosts/${empSn}?pNo=${currentPage}&pageSize=10`
-            .then(dd => {  // 데이터와 페이지 정보만 상태에 저장
+            .then(dd => {
+                // API 응답 구조에 따라 데이터 저장
                 setBoards(dd.boards || dd); 
                 setPInfo(dd.pInfo);
                 setIsLoading(false);
-                console.log("sideId값 : ",dd)
-                console.log("pInfo값 : ",pInfo)
-               
             })
             .catch(err => {
-                console.error("데이터 로드 실패", err);
+                console.error("데이터 로드 실패:", err);
                 setIsLoading(false);
             });
     };
 
+    /**
+     * 날짜 포맷팅 함수
+     * @param {string} dateString - '2026-02-09T15:00:00.000Z'
+     * @returns {string} - '2026-02-09 15:00'
+     */
+    const formatDate = (dateString) => {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}`;
+    };
 
+    // 검색 실행 함수
     const handleSearch = () => {
         setKeyword(searchInput);
         setCurrentPage(1);
     };
 
-    const pageSizeChange = (e) =>{
+    // 페이지 크기(개수) 변경 함수
+    const pageSizeChange = (e) => {
         setPageSize(Number(e.target.value));
         setCurrentPage(1);
     };
 
+    // 상세 페이지 이동 함수
     const goDetail = (id) => {
         props.goBoardId(id);
         props.goService('detail');
     };
 
-   
+    
 
+    // 2. 데이터 로딩 중인 경우
+    if (isLoading) {
+        return <div style={{ padding: '20px', textAlign: 'center' }}>데이터를 불러오는 중입니다...</div>;
+    }
 
-    if (isLoading) return <div>데이터를 불러오는 중입니다...</div>;
+    // 3. 정상 권한인 경우: 게시판 목록 출력
     return (
         <div className="board-list-container">
-            <div >
-                <select  className ={boardst['selectBox']} value={pageSize} onChange={pageSizeChange}>
-                    <option value="5"> 5개</option>
-                    <option value="10"> 10개</option>
-                    <option value="20"> 20개</option>
-                    <option value="30"> 30개</option>
+            {/* 상단 컨트롤러 (페이지 크기 선택 및 검색) */}
+            <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <select className={boardst['selectBox']} value={pageSize} onChange={pageSizeChange}>
+                    <option value="5">5개씩</option>
+                    <option value="10">10개씩</option>
+                    <option value="20">20개씩</option>
+                    <option value="30">30개씩</option>
                 </select>
-
-                <select className ={boardst['selectBox']}
+                <select className={boardst['selectBox']}
                     value={searchType}
-                    onChange={(e)=>setSearchType(e.target.value)}
+                    onChange={(e) => setSearchType(e.target.value)}
                 >
                     <option value="title">제목</option>
                     <option value="creator">작성자</option>
-                    <option value="boardId">문서번호</option>
                 </select>
-
-                <input className ={boardst.input} type='text' placeholder="검색어를 입력하세요" value={searchInput} onChange={(e)=>setSearchInput(e.target.value)}/>
-                <button className ={boardst.button} onClick={handleSearch}>검색</button>
+                <input 
+                    className={boardst.button} 
+                    type='text' 
+                    placeholder="검색어를 입력하세요" 
+                    value={searchInput} 
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
+                <button className={boardst.button} onClick={handleSearch}>검색</button>
             </div>
 
-            <table  className ={boardst.boardTable}>
+            {/* 게시판 테이블 */}
+            <table className={boardst.boardTable}>
                 <thead>
                     <tr>
-                        
                         <th>번호</th>
                         <th>제목</th>
                         <th>작성일</th>
@@ -126,40 +144,48 @@ function BoardList(props) { //({goBoardId, goBoardId}) props.goBoardId
                 <tbody>
                     {boards && boards.length > 0 ? (
                         boards.map((st, k) => {
-                            // 1. 조건을 아주 엄격하게 체크 (문자열 "true" 혹은 불리언 true일 때만)
+                            // 공지사항(상단 고정) 여부 체크
                             const isTopItem = String(st.isTop) === "true";
-
-                            // 2. 조건에 맞지 않으면 명시적으로 빈 문자열("")을 할당
                             const rowClass = isTopItem ? boardst.topNotice : "";
-                            return <tr key={st.boardId} className={rowClass}>
-
-                                
-                                <td>{pInfo.start+k+1}</td>
-                                <td onClick={() => goDetail(st.boardId)} >{st.title}</td>
-                                <td onClick={() => goDetail(st.boardId)}>{formatDate(st.createdAt)}</td>
-                                <td>{st.views}</td>
-                                <td>{st.empNm}</td>
-                            </tr>
+                            
+                            return (
+                                <tr key={st.boardId} className={rowClass}>
+                                    {/* 번호 계산: 전체 개수 기반 또는 페이지 정보 기반 */}
+                                    <td>{pInfo ? pInfo.start + k + 1 : k + 1}</td>
+                                    <td 
+                                        onClick={() => goDetail(st.boardId)} 
+                                        style={{ cursor: 'pointer', textAlign: 'left', paddingLeft: '20px' }}
+                                    >
+                                        {st.title}
+                                    </td>
+                                    <td>{formatDate(st.createdAt)}</td>
+                                    <td>{st.views}</td>
+                                    <td>{st.empNm}</td>
+                                </tr>
+                            );
                         })
                     ) : (
                         <tr>
-                            <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
-                                게시글이 없습니다.
+                            <td colSpan="5" style={{ textAlign: 'center', padding: '50px', color: '#999' }}>
+                                등록된 게시글이 없습니다.
                             </td>
                         </tr>
                     )}
                 </tbody>
             </table>
 
-            {/* 3. 하단 컨트롤 영역 */}
-            <div className ={boardst.footerArea}>
-                    {(sideId !== 'important' || myInfo?.deptName ==='지점장') && (
-                        <button className ={boardst.button} onClick={() => props.goService('Insert')}>글쓰기</button>
-                    )}
+            {/* 하단 버튼 영역 (글쓰기 권한 제어) */}
+            <div className={boardst.footerArea} style={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
+                {(sideId !== 'important' || myDept === '지점장') && (
+                    <button className={boardst.pageBtn } onClick={() => props.goService('Insert')}>
+                        글쓰기
+                    </button>
+                )}
             </div>
 
+            {/* 페이지네이션 컴포넌트 */}
             {pInfo && (
-                <div className ={boardst.paginationContainer}>
+                <div className={boardst.paginationContainer} style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
                     <Pagination pInfo={pInfo} onPageChange={setCurrentPage} />
                 </div>
             )}

@@ -10,6 +10,7 @@ import WfDashboard from './WfDashboard';
 import MfDashboard from './MfDashboard';
 import FmDashboard from './FmDashboard';
 import SoDashboard from './SoDashboard';
+import BoardDash from './BoardDashboard';
 
 function DashboardMain(props) {
     const { sideId } = useParams();
@@ -36,7 +37,7 @@ function DashboardMain(props) {
             case 'AD':
                 return <AccessList />
             case 'BO':
-                return <h1>"공지게시판"</h1>
+                return <BoardDash/>
             default :
                 return <CompDashboard dept={sideId} />
         }
