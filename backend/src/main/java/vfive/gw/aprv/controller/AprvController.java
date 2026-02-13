@@ -48,7 +48,7 @@ import vfive.gw.aprv.service.AprvDrftUpload;
 import vfive.gw.aprv.service.AprvDutyScheDtl;
 import vfive.gw.aprv.service.AprvEmpAnnlLv;
 import vfive.gw.aprv.service.AprvFormCreate;
-import vfive.gw.aprv.service.AprvLocList;
+import vfive.gw.aprv.service.AprvLocFilterList;
 import vfive.gw.aprv.service.AprvPrcs;
 import vfive.gw.aprv.service.AprvRoleVl;
 import vfive.gw.aprv.service.AprvSchedList;
@@ -107,7 +107,7 @@ public class AprvController {
 	@PostMapping("/AprvLocList")
 	Object aprvSchedList(@RequestBody AprvLocListRequest req) {
 		System.out.println(req);
-		return provider.getContext().getBean(AprvLocList.class).load(req);
+		return provider.getContext().getBean(AprvLocFilterList.class).load(req);
 	}
 	
 	@PostMapping("/AprvSchedUpload")

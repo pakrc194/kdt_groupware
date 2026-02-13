@@ -22,7 +22,7 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
 
     const fn_locClick = () => {
          if(drftDate.docStart!=null && drftDate.docEnd!=null) {
-            fetcher("/gw/aprv/AprvLocList",{
+            fetcher("/gw/aprv/AprvLocFilterList",{
                 method:"POST",
                 body:{
                     docStart:drftDate.docStart,

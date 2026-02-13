@@ -10,7 +10,7 @@ import vfive.gw.aprv.dto.response.AprvLocListResponse;
 import vfive.gw.aprv.mapper.AprvMapper;
 
 @Service
-public class AprvLocList {
+public class AprvLocFilterList {
 	
 	@Resource
 	AprvMapper mapper;

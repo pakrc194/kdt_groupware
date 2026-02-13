@@ -76,4 +76,6 @@ public interface HomeMapper {
 			+ "order by D.APRV_DOC_ID desc "
 			+ "limit 5")
 	List<AprvDocListResponse> selectAprvLimitFive(MyDashResDTO req); 
+	
+	
 }

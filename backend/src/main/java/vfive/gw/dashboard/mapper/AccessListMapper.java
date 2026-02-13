@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
@@ -16,6 +17,13 @@ import vfive.gw.dashboard.dto.response.AddAccessEmpower;
 public interface AccessListMapper {
 	@Select("SELECT * FROM ACCESS_LIST WHERE ACCESS_SECTION = #{type}")
 	List<AccessListDTO> accessList(String type);
+	
+	@Select("SELECT L.* FROM ACCESS_EMPOWER A "
+			+ "JOIN ACCESS_LIST L on A.ACCESS_DETAIL = L.ACCESS_LIST_ID "
+			+ "WHERE (A.ACCESS_TYPE = 'JBTTL' and A.EMPOWER_ID = #{jbttl}) "
+			+ "OR (A.ACCESS_TYPE = 'DEPT' and A.EMPOWER_ID = #{dept}) ")
+	List<AccessListDTO> accessFilterList(@Param("jbttl") int jbttl, @Param("dept")int dept);
+	
 	
 	@Delete("delete from ACCESS_EMPOWER where access_empower_id = #{accessDeleteId}")
 	int accessEmpowerDelete(AccessDeleteDTO dto);

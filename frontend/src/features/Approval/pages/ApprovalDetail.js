@@ -25,6 +25,13 @@ const ApprovalDetail = () => {
 
     const [docFile, setDocFile] = useState({});
 
+
+    const schedFilter = useState({});
+
+    const [vlFilter, setVlFilter] = useState();
+    const [locFilter, setLocFilter] = useState();
+
+
     const sideTitleMap = {
         approvalBox: "결재함",
         drftBox: "기안함",
@@ -33,6 +40,12 @@ const ApprovalDetail = () => {
         tempBox: "임시저장함",
         rejectBox: "반려함",
     };
+    const docRoleMap = {
+        PERSONAL : "팀원",
+        DEPT:"팀",
+        COMPANY:"회사"
+    }
+    
 
     const navigate = useNavigate();
 
@@ -55,34 +68,7 @@ const ApprovalDetail = () => {
                     docStart : drftStart.docInptVl,
                     docEnd : drftEnd.docInptVl
                 })
-            }
-            // const role = res.find(v=>v.docInptNm=="docRole");
-            // if(role!=null) {
-            //     const ids = res.find(v=>v.docInptNm=="docSchedType")
-            //     let idsVl = ""
-            //     fetcher(`/gw/aprv/AprvRoleVl`, {
-            //         method:"POST",
-            //         body:{
-            //             role: role?.docInptVl,
-            //             ids : ids?.docInptVl
-            //         }
-            //     }).then(vv => {
-            //         console.log("fetch AprvRoleVl : ",vv);
-            //         if(role.docInptVl=="PERSONAL") {
-            //             vv.map(v=>{
-            //                 idsVl+=v.empNm+" "
-            //             })
-            //         } else if(role.docInptVl=="DEPT") {
-            //             vv.map(v=>{
-            //                 idsVl+=v.deptName+" "
-            //             })
-            //         }
-            //         console.log("idsVl", idsVl)
-            //         ids.docInptVl = idsVl;
-            //     })
-            // }
-
-            
+            }        
 
             setInputList(res)
             console.log("inptList ",res)
@@ -96,6 +82,15 @@ const ApprovalDetail = () => {
         fetcher(`/gw/aprv/AprvDocFile/${docId}`).then(res=>{
             console.log("file ", res)
             setDocFile(res)
+        })
+
+        fetcher(`/gw/aprv/AprvLocList`).then(res=>{
+            console.log("AprvLocList", res)
+            let resFilter={}
+            res.map((v)=> {
+                resFilter[v.locId] = v.locNm
+            })
+            setLocFilter(resFilter)
         })
     },[docId])
 
@@ -119,6 +114,27 @@ const ApprovalDetail = () => {
             setDocVerList(res);
         })
 
+        const docRole = inputList.find(v=>v.docInptNm==="docRole")
+        console.log("docRole", docRole)
+        if(docRole!=null) {
+            if(docRole.docInptVl=="PERSONAL") {
+                fetcher(`/gw/aprv/AprvDeptEmpList`).then(res=>{
+                        res.map(v=>{
+                            schedFilter[v.empId] = v.empNm
+                        })
+                        console.log("personal", schedFilter)
+                        setVlFilter(schedFilter)
+                    });
+            } else if(docRole.docInptVl=="DEPT") {
+                fetcher(`/gw/aprv/AprvDeptList`).then(res=>{
+                    res.map(v=>{
+                        schedFilter[v.deptId] = v.deptName
+                    })
+                    console.log("dept", schedFilter)
+                    setVlFilter(schedFilter)
+                });        
+            }
+        }
     },[aprvDocDetail])
 
 
@@ -264,12 +280,6 @@ const ApprovalDetail = () => {
         })
     }
 
-    const [deptList, setDeptList] = useState([]);
-    const [deptEmpList, setDeptEmpList] = useState([]);
-    const fn_detpList = () => {
-        
-        fetcher(`/gw/aprv/AprvDeptList`).then(setDeptList);
-    }
 
     return (
         <>
@@ -282,15 +292,42 @@ const ApprovalDetail = () => {
                 <div>결재선 <ApprovalLineDetail aprvLine={aprvLine} setRejectData={setRejectData} inptList={inputList} docDetail={aprvDocDetail}/></div>
                 <div>
                     {inputList.map((v, k)=> {
-                        if(v.docInptNm=="docDuty") {
-                            return <DutyForm dutyId={v.docInptVl}/>
-                        }
+                        switch(v.docInptNm) {
+                            case "docRole":
+                                return <div key={k}>
+                                    <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:docRoleMap[v.docInptVl], name:v.docInptNm, option:v.docInptRmrk}}/>
+                                </div>
+                            case "docDuty":
+                                return <div key={k}>
+                                    <DutyForm dutyId={v.docInptVl}/>
+                                </div>
+                            case "docSchedType":
+                                let values = v.docInptVl
+                                console.log("return inptList ", values, vlFilter)
+                                let tt = ""
+                                if(values==null || vlFilter==null) {
+                                    return <></>
+                                }
 
-                        return <div key={k}>
-                            <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl, name:v.docInptNm, option:v.docInptRmrk}}/>
-                        </div>
+                                for(const sc of values.split(',')) {
+                                    tt=="" ? tt=vlFilter[sc] : tt+=","+vlFilter[sc]
+                                }
+                                return <div key={k}>
+                                    <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:tt, name:v.docInptNm, option:v.docInptRmrk}}/>
+                                </div>
+                            case "docLoc":
+                                if(locFilter==null)
+                                    return <></>    
+
+                                return <div key={k}>
+                                    <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:locFilter[v.docInptVl], name:v.docInptNm, option:v.docInptRmrk}}/>
+                                </div>
+                            default:
+                                return <div key={k}>
+                                    <DetailForm inputForm={{label:v.docInptLbl, type:v.docInptType, value:v.docInptVl, name:v.docInptNm, option:v.docInptRmrk}}/>
+                                </div>
                         }
-                    )}
+                    })}
                 </div>
                 {docFile && <div>
                     <h4>첨부파일</h4>

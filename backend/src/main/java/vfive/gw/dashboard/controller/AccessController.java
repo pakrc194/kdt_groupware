@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
 import vfive.gw.dashboard.di.AccessEmpowerList;
+import vfive.gw.dashboard.di.AccessFilterList;
 import vfive.gw.dashboard.di.AccessList;
 import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.dashboard.dto.response.AccessDeleteDTO;
@@ -34,6 +35,15 @@ public class AccessController {
 			) {
 		System.out.println("권한 리스트");
 		return provider.getContext().getBean(AccessList.class).execute(type);
+	}
+	
+	@GetMapping("accessFilterList")
+	Object accessFilterList(
+			@RequestParam(value = "jbttl") int jbttl,
+			@RequestParam(value = "dept") int dept
+			) {
+		System.out.println("유저 권한 리스트");
+		return provider.getContext().getBean(AccessFilterList.class).execute(jbttl, dept);
 	}
 	
 	@Resource
