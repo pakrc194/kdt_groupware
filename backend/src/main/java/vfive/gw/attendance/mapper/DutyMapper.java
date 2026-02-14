@@ -83,9 +83,8 @@ public interface DutyMapper {
   List<EmpDTO> selectDeptEmpList(EmpAtdcRequestDTO req);
   
   // 마스터 정보 저장 (DUTY_SCHE_MST)
-  // EMP_ID는 작성자 사번, TRGT_YMD는 8자리(YYYYMMDD) 기준
-  @Insert("INSERT INTO DUTY_SCHE_MST (EMP_ID, DEPT_ID, SCHE_TTL, TRGT_YMD) " +
-          "VALUES (#{empId}, #{deptId}, #{scheTtl}, #{trgtYmd})")
+  @Insert("INSERT INTO DUTY_SCHE_MST (EMP_ID, DEPT_ID, SCHE_TTL, TRGT_YMD, LST_PTN_IDX) " +
+          "VALUES (#{empId}, #{deptId}, #{scheTtl}, #{trgtYmd}, #{lstPtnIdx})")
   @Options(useGeneratedKeys = true, keyProperty = "dutyId")
   int insertDutyMaster(DutyRequestDTO req);
   
@@ -154,6 +153,19 @@ public interface DutyMapper {
           "WHERE DUTY_ID = #{dutyId} AND PRGR_STTS = 'DRAFT'")
   int updateDutyToPending(DutyRequestDTO req);
   
-  
+  @Select("SELECT d.EMP_ID as empId, d.WRK_CD as wrkCd, m.LST_PTN_IDX as lstPtnIdx " +
+      "FROM DUTY_SCHE_DTL d " +
+      "JOIN DUTY_SCHE_MST m ON d.DUTY_ID = m.DUTY_ID " +
+      "WHERE m.DEPT_ID = #{deptId} " +
+      "  AND m.PRGR_STTS = 'CONFIRMED' " +
+      "  AND d.DUTY_YMD = (" +
+      "      SELECT MAX(sd.DUTY_YMD) " +
+      "      FROM DUTY_SCHE_DTL sd " +
+      "      JOIN DUTY_SCHE_MST sm ON sd.DUTY_ID = sm.DUTY_ID " +
+      "      WHERE sm.DEPT_ID = #{deptId} " +
+      "        AND sm.PRGR_STTS = 'CONFIRMED' " +
+      "        AND sd.DUTY_YMD LIKE CONCAT(#{trgtYmd}, '%')" +
+      "  )")
+	List<Map<String, Object>> getLastMonthLastDayDuty(DutyRequestDTO req);
   
 }

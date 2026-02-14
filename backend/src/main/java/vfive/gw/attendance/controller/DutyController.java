@@ -27,6 +27,7 @@ import vfive.gw.attendance.service.DutySkedInsertService;
 import vfive.gw.attendance.service.DutySkedListService;
 import vfive.gw.attendance.service.DutySkedUpdateService;
 import vfive.gw.attendance.service.DutySkedViewService;
+import vfive.gw.attendance.service.GetLastMonthDutyService;
 import vfive.gw.home.controller.HomeController;
 
 @RestController
@@ -56,6 +57,9 @@ public class DutyController {
 	
 	@Resource
 	DutySkedUpdateService dutySkedUpdateService;
+	
+	@Resource
+	GetLastMonthDutyService getLastMonthDutyService;
 	
 	// 근무표 리스트
 	@GetMapping("list")
@@ -129,8 +133,6 @@ public class DutyController {
 	@PostMapping("insert")
 	ResponseEntity<?> insert(@RequestBody DutyRequestDTO req) {
 		
-		System.out.println(req);
-		
 		dutySkedInsertService.execute(req);
 		
 		Map<String, String> res = new HashMap<>();
@@ -176,6 +178,17 @@ public class DutyController {
 	                             .body(Map.of("message", "처리 중 오류가 발생했습니다."));
 	    }
 	}
+	
+	@GetMapping("/lastMonthDuty")
+  public ResponseEntity<List<Map<String, Object>>> getLastMonthDuty(DutyRequestDTO req) {
+      
+      // targetMonth는 "YYYYMM" 형식으로 들어옴 (예: 202601)
+      List<Map<String, Object>> result = getLastMonthDutyService.getLastMonthDuty(req);
+      
+      return ResponseEntity.ok(result);
+  }
+	
+	
 	
 	
 	

@@ -96,10 +96,12 @@ function LoginMain(props) {
         <Button onClick={() => navigate("/FindPassword")}>비밀번호 찾기</Button>
         <br /> test계정 20240101/ 1234
         <br />("지점장") test계정 CP0001/ 1234<br/>
-        인사 팀장 - HR0003 / Qw#9Zx12<br/>
-        인사 팀원 - HR0005 / 1234<br/>
-        뷰티 팀장 - BU0001 / 1111<br/>
-        패션 팀원 - WF0001 / hashed_pwd_03<br/>
+        인사 팀장 - HR0003/ Qw#9Zx12<br/>
+        인사 팀원 - HR0005/ 1234<br/>
+        뷰티 팀장 - BU0001/ 1111<br/>
+        패션 팀원 - WF0001/ hashed_pwd_03<br/>
+        안전관리 팀장 - SO0001/ hashed_pwd_09<br/>
+        시설자재 팀장 - FM0001/ hashed_pwd_07<br/>
 
       </div>
     </>

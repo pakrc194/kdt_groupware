@@ -8,7 +8,7 @@ import vfive.gw.attendance.dto.response.DutySkedDetailDTO;
 @Data
 public class DutyRequestDTO {
 
-	private int dutyId, deptId, empId;
+	private int dutyId, deptId, empId, lstPtnIdx;
 	private String scheTtl;
 	private String trgtYmd;
 	
