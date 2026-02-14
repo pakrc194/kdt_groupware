@@ -48,6 +48,13 @@
     margin-left: 5px;
 }
 
+.meta-left{
+    display: flex;
+    align-items: center;
+
+}
+
+
 /* 본문 내용 */
 .detail-content {
     min-height: 600px;
@@ -57,8 +64,12 @@
     font-size: 16px;
     border-bottom: 1px solid #eee;
     margin-bottom: 20px;
-    
 }
+
+.views{
+    margin-left: 550px;
+}
+
 
 /* 수정 페이지 폼 스타일 */
 .board-modify-container h1 {

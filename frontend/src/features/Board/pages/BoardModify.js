@@ -1,6 +1,7 @@
 import React, { useEffect,useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
+import boardst from '../../Home/css/Board.module.css';
 
 function BoardModify(props){
     const { sideId } = useParams();
@@ -10,12 +11,17 @@ function BoardModify(props){
     const [oldFiles, setOldFiles] = useState([]);
     const [isTop , setIsTop ] = useState(false);
 
+    // 1. 사원 정보 가져오기 (에러 방지를 위해 필수)
+    const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
+    const empSn = myInfo?.empSn;
+
     useEffect(() => {
         console.log("수정할 게시글 ID :", props.boardId);
-             fetcher(`/board/detail/${props.boardId}`)
+             fetcher(`/board/detail/${props.boardId}?empSn=${empSn}`)
              .then(data => {
                 setTitle(data.title || '');
                 setContent(data.content || '');
+                setIsTop(String(data.isTop) === "true");
              })
 
             fetcher(`/board/selectFile/${props.boardId}`)
@@ -74,48 +80,95 @@ function BoardModify(props){
 
     }    
 
-        return(
-            <>
-                <h1>게시글 수정</h1>
-                <div>제목
-                    <input type="text" value={title || ''} onChange={(e)=>setTitle(e.target.value)}/>
+        return (
+        <div style={{ padding: '40px', maxWidth: '900px', margin: '0 auto', backgroundColor: '#fff' }}>
+            <h2 style={{ fontSize: '24px', borderBottom: '2px solid #333', paddingBottom: '15px', marginBottom: '30px' }}>
+                📝 게시글 수정
+            </h2>
 
-                    {sideId ==='important' && <div>상단공지등록<input type='checkbox'
-                        checked={isTop}
-                        onChange={(e) => setIsTop(e.target.checked)}
-                     /></div>}
-                </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 
-                <div>내용
-                    <textarea type="text" value={content || ''} onChange={(e)=>setContent(e.target.value)}/>
+                {/* 제목 섹션 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <label style={{ width: '80px', fontWeight: 'bold' }}>제목</label>
+                    <input 
+                        type="text" 
+                        value={title || ''} 
+                        onChange={(e) => setTitle(e.target.value)}
+                        style={{ flex: 1, padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
+                        placeholder="제목을 입력하세요"
+                    />
+                    {sideId === 'important' && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '14px', color: '#e74c3c' }}>
+                            <input 
+                                type='checkbox' 
+                                id="topCheck"
+                                checked={isTop} 
+                                onChange={(e) => setIsTop(e.target.checked)} 
+                            />
+                            <label htmlFor="topCheck" style={{ fontWeight: 'bold', cursor: 'pointer' }}>중요 공지</label>
+                        </div>
+                    )}
                 </div>
 
-                <div>
-                    <label>파일수정</label>
+                {/* 내용 섹션 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <label style={{ fontWeight: 'bold' }}>내용</label>
+                    <textarea 
+                        value={content || ''} 
+                        onChange={(e) => setContent(e.target.value)}
+                        style={{ height: '350px', padding: '15px', border: '1px solid #ddd', borderRadius: '4px', resize: 'none', lineHeight: '1.6' }}
+                    />
+                </div>
+
+                {/* 파일 관리 섹션 */}
+                <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', border: '1px solid #eee' }}>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '10px' }}>📂 기존 첨부파일</label>
+                        <ul style={{ listStyle: 'none', padding: 0 }}>
+                            {oldFiles.length > 0 ? oldFiles.map(file => (
+                                <li key={file.fileId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#fff', border: '1px solid #eee', marginBottom: '5px', borderRadius: '4px' }}>
+                                    <span style={{ fontSize: '14px' }}>{file.originName}</span>
+                                    <button 
+                                        onClick={() => deletedFile(file.fileId)}
+                                        style={{ padding: '2px 8px', backgroundColor: '#ffeded', color: '#e74c3c', border: '1px solid #ffcfcf', borderRadius: '3px', cursor: 'pointer', fontSize: '12px' }}
+                                    >
+                                        삭제
+                                    </button>
+                                </li>
+                            )) : <span style={{ color: '#999', fontSize: '14px' }}>첨부된 파일이 없습니다.</span>}
+                        </ul>
+                    </div>
+
                     <div>
-                <label>기존 파일 목록 (삭제 가능)</label>
-                <ul>
-                    {oldFiles.map(file => (
-                        <li key={file.fileId}>
-                            {file.originName} 
-                            <button onClick={() => deletedFile(file.fileId)} style={{marginLeft:'10px'}}>삭제</button>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            <div>
-                <label>새 파일 추가</label>
-                <input type="file" multiple onChange={(e) => setNewFiles(Array.from(e.target.files))} />
-            </div>
-
+                        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '10px' }}>➕ 새 파일 추가</label>
+                        <input 
+                            type="file" 
+                            multiple 
+                            onChange={(e) => setNewFiles(Array.from(e.target.files))}
+                            style={{ fontSize: '14px' }}
+                        />
+                    </div>
                 </div>
-            
 
-                <button onClick={ModifyBut}>수정완료</button>
-                <button onClick={()=>props.goService('detail')}>취소</button>
-            </>
-        );
+                {/* 하단 버튼 그룹 */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
+                    <button 
+                        onClick={ModifyBut}
+                        style={{ padding: '12px 30px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                        수정 완료
+                    </button>
+                    <button 
+                        onClick={() => props.goService('detail')}
+                        style={{ padding: '12px 30px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                        취소
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 
 }
 

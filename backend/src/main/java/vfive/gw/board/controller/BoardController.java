@@ -374,7 +374,15 @@ public class BoardController {
    public ResponseEntity<List<BoardPrvc>> selectFiles (@PathVariable("boardId")int boardId) {
     	List<BoardPrvc> selFile = boardMapper.selectFilesByBoardId(boardId);
     	return  ResponseEntity.ok(selFile);
-}
+   }
+    
+    
+    /**모든 게시글을 조회한다**/
+    @GetMapping("/all-statistics")
+    public ResponseEntity<List<BoardPrvc>> getAllStatistics(){
+    	List<BoardPrvc> allBoards = boardMapper.selectAllBoards(); 
+        return ResponseEntity.ok(allBoards);
+    }
     
     
     
