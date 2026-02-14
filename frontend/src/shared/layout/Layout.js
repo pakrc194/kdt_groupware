@@ -25,29 +25,28 @@ const Layout = () => {
   };
 
   const canAccessMenu = (menu, myAccessList = []) => {
-    // access 없으면 기본 공개
-    if (!menu.access) return true;
+      // access 없으면 기본 공개
+      if (!menu.access) return true;
 
-    return myAccessList.includes(menu.access);
+      return myAccessList.includes(menu.access);
   };
   const [myAccessList, setMyAccessList] = useState([]);
   
   useEffect(() => {
+      const fetchAccess = async () => {
+        const res =
+          await fetcher(`/gw/dashboard/accessFilterList?jbttl=${myInfo.jbttlId}&dept=${myInfo.deptId}`);
 
-    const fetchAccess = async () => {
-      const res =
-        await fetcher(`/gw/dashboard/accessFilterList?jbttl=${myInfo.jbttlId}&dept=${myInfo.deptId}`);
+        const accessList = res.map(v => v.accessDetail);
 
-      const accessList = res.map(v => v.accessDetail);
+        setMyAccessList(accessList);
+      };
 
-      setMyAccessList(accessList);
-    };
+      if (myInfo?.jbttlId && myInfo?.deptId) {
+        fetchAccess();
+      }
 
-    if (myInfo?.jbttlId && myInfo?.deptId) {
-      fetchAccess();
-    }
-
-  }, [myInfo?.jbttlId, myInfo?.deptId]);
+  }, [myInfo?.jbttlId, myInfo?.deptId, location.pathname]);
 
   // 바깥 클릭하면 닫기
   // useEffect(() => {

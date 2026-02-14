@@ -3,6 +3,7 @@ import { Link, redirect, useNavigate, useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 import AprvBoxBoard from '../components/AprvBoxBoard';
 import Button from '../../../shared/components/Button';
+import { getStatusLabel } from '../../../shared/func/formatLabel';
 
 const TempBox = () => {
     const navigate = useNavigate();
@@ -54,7 +55,7 @@ const TempBox = () => {
                         <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
-                                {aprvDoc.aprvDocStts}
+                                {getStatusLabel(aprvDoc.aprvDocStts)}
                             </span>
                         </td>
                         <td><Button type="primary" onClick={()=>fn_click(aprvDoc.aprvDocId)}>삭제</Button></td>
