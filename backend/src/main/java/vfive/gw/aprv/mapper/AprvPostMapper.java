@@ -94,9 +94,9 @@ public interface AprvPostMapper {
 	int drftInpt(@Param("list")List<AprvInptVlRequest> di);
 	
 	@Insert("insert into SCHED "
-			+ "(SCHED_TITLE, SCHED_START_DATE, SCHED_END_DATE, SCHED_TYPE, SCHED_DETAIL, SCHED_LOC, SCHED_EMP_ID, SCHED_AUTHOR_ID, SCHED_DEPT_ID) "
+			+ "(SCHED_TITLE, SCHED_START_DATE, SCHED_END_DATE, SCHED_TYPE, SCHED_DETAIL, SCHED_LOC, SCHED_EMP_ID, SCHED_AUTHOR_ID, SCHED_DEPT_ID, SCHED_DOC_ID) "
 			+ "values "
-			+ "(#{schedTitle},#{schedStartDate},#{schedEndDate},#{schedType},#{schedDetail},#{schedLoc},#{schedEmpId},#{schedAuthorId},#{schedDeptId})")
+			+ "(#{schedTitle},#{schedStartDate},#{schedEndDate},#{schedType},#{schedDetail},#{schedLoc},#{schedEmpId},#{schedAuthorId},#{schedDeptId}), #{schedDocId}")
 	int aprvSchedUpload(AprvSchedUploadRequest req);
 	
 	@Select("""

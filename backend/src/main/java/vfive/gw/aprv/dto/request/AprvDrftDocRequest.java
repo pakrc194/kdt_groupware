@@ -9,5 +9,5 @@ public class AprvDrftDocRequest {
 	int docFormId, drftEmpId;
 	String aprvDocDrftDt;
 	String aprvDocStts;
-	String aprvDocVer;
+	int aprvDocVer;
 }

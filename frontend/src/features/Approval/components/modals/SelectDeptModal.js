@@ -49,7 +49,7 @@ const SelectDeptModal = ({onClose, onOk, schedType}) => {
             title="범위 지정"
             message={<div>
                 {schedType=='DEPT' && deptList.map((v, k)=>(
-                    <div key={k}><input type="checkbox" name={v.deptName} value={v.deptId} onChange={fn_checkDept} />{v.deptName}</div>
+                    <div key={k}><input type="checkbox" name={v.deptName} value={v.deptId} onChange={fn_checkDept} />{v.deptName}/{v.deptLoc}층</div>
                 ))}
                 {schedType=='PERSONAL' && deptList.map((v, k)=>(
                     <div key={k}><input type="checkbox" name={v.empNm} value={v.empId} onChange={fn_checkDept} />{v.empNm}</div>

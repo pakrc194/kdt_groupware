@@ -347,7 +347,7 @@ const ApprovalDetail = () => {
                 </div>}
 
 
-                <div className="section history-section">
+                {<div className="section history-section">
                     <table className="history-table">
                     <thead>
                         <tr>
@@ -395,7 +395,7 @@ const ApprovalDetail = () => {
                     )}
                     </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
             
             <br/>

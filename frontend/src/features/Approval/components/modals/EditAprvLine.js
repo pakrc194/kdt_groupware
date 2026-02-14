@@ -27,8 +27,8 @@ const EditAprvLine = ({onClose, onOk}) => {
         addLine[e.target.name] = e.target.value;
         if(e.target.name=="empNm") {
             setSelectedEmp(e.target.value)
-            addLine["empId"] = empList.find(v=>v.empNm==e.target.value).empId
-            addLine["empNm"] = empList.find(v=>v.empNm==e.target.value).empNm
+            addLine["empId"] = empList.find(v=>v.empId==e.target.value).empId
+            addLine["empNm"] = empList.find(v=>v.empId==e.target.value).empNm
         } else {
             setSelectedRole(e.target.value)
         }
@@ -44,12 +44,14 @@ const EditAprvLine = ({onClose, onOk}) => {
                     <option value="MID_REF">중간참조자</option>
                     <option value="LAST_ATRZ">최종결재자</option>
                 </select>
-                <select name="empNm"  value={selectedEmp || ""} onChange={fn_selectChange}>
-                    <option value="" disabled>선택</option>
-                    {empList.map((v, k)=>(
-                        <option key={k}>{v.empNm}</option>
-                    ))}
-                </select>
+                <div>
+                    <select name="empNm"  value={selectedEmp || ""} onChange={fn_selectChange}>
+                        <option value="" disabled>선택</option>
+                        {empList.map((v, k)=>(
+                            <option key={k} value={v.empId}>{v.deptName}-{v.empNm}({v.jbttlNm})</option>
+                        ))}
+                    </select>
+                </div>
             </>}
             onClose={onClose}
             onOk={fn_ok}
