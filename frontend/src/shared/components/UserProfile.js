@@ -47,9 +47,10 @@ const UserProfile = () => {
           <span className="user-name">{user.empNm}</span>
           <span className="user-rank">{user.jbttlNm}</span>
         </div>
-        <p className="user-team">{user.deptName}팀</p>
-        {/* <p className="user-detail">{user.empEmlAddr}</p> */}
-        {/* <p className="user-detail">사번: {user.empSn}</p> */}
+        <p className="user-team">
+          {user.deptName}
+          {user.deptName === "지점장" ? "" : "팀"}
+        </p>
       </div>
     </div>
   );
