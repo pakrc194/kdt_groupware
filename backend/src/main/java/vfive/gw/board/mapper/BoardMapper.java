@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectKey;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import vfive.gw.board.di.PageInfo;
 import vfive.gw.board.dto.BoardPrvc;
@@ -20,7 +22,10 @@ public interface BoardMapper {
     @Select("SELECT COUNT(*) FROM Board")
     int total();
     
-  
+    /**모든 게시글 조회 **/
+    @Select("SELECT BoardId, BoardType, CreatedAt FROM Board")
+    List<BoardPrvc> selectAllBoards();
+   
     
     /** 내가 쓴 게시물 총 숫자 **/
     @Select("<script>" +

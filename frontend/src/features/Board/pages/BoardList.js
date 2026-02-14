@@ -104,31 +104,43 @@ function BoardList(props) {
     // 3. 정상 권한인 경우: 게시판 목록 출력
     return (
         <div className="board-list-container">
-            {/* 상단 컨트롤러 (페이지 크기 선택 및 검색) */}
-            <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <select className={boardst['selectBox']} value={pageSize} onChange={pageSizeChange}>
-                    <option value="5">5개씩</option>
-                    <option value="10">10개씩</option>
-                    <option value="20">20개씩</option>
-                    <option value="30">30개씩</option>
-                </select>
-                <select className={boardst['selectBox']}
-                    value={searchType}
-                    onChange={(e) => setSearchType(e.target.value)}
-                >
-                    <option value="title">제목</option>
-                    <option value="creator">작성자</option>
-                </select>
-                <input 
-                    className={boardst.button} 
-                    type='text' 
-                    placeholder="검색어를 입력하세요" 
-                    value={searchInput} 
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-                <button className={boardst.button} onClick={handleSearch}>검색</button>
-            </div>
+           <div className={boardst.topControlArea}>
+    {/* 왼쪽: 검색 컨트롤 */}
+    <div className={boardst.searchGroup}>
+        <select className={boardst.selectBox} value={pageSize} onChange={pageSizeChange}>
+            <option value="5">5개씩</option>
+            <option value="10">10개씩</option>
+            <option value="20">20개씩</option>
+            <option value="30">30개씩</option>
+        </select>
+        <select className={boardst.selectBox}
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+        >
+            <option value="title">제목</option>
+            <option value="creator">작성자</option>
+        </select>
+        <input 
+            className={boardst.schinput} 
+            type='text' 
+            placeholder="검색어를 입력하세요" 
+            value={searchInput} 
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+        />
+        <button className={boardst.schBtn} onClick={handleSearch}>검색</button>
+    </div>
+
+    {/* 오른쪽: 글쓰기 버튼 */}
+    <div className={boardst.actionGroup}>
+        {(sideId !== 'important' || myDept === '지점장') && (
+            <button className={boardst.writBtn} onClick={() => props.goService('Insert')}>
+                글쓰기
+            </button>
+        )}
+    </div>
+</div>
+
 
             {/* 게시판 테이블 */}
             <table className={boardst.boardTable}>
@@ -175,9 +187,11 @@ function BoardList(props) {
             </table>
 
             {/* 하단 버튼 영역 (글쓰기 권한 제어) */}
+                    
+
             <div className={boardst.footerArea} style={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
                 {(sideId !== 'important' || myDept === '지점장') && (
-                    <button className={boardst.pageBtn } onClick={() => props.goService('Insert')}>
+                    <button className={boardst.writBtn } onClick={() => props.goService('Insert')}>
                         글쓰기
                     </button>
                 )}

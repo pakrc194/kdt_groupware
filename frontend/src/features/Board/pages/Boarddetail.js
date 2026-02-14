@@ -84,40 +84,57 @@ function BoardDetail(props) {
 
     return (
         <div className="board-detail-container">
+            {/* 헤더 영역: 제목 및 메타정보 */}
             <div className="detail-header">
                 <div className="title-section">
-                    {board.isTop && <span className="badge-top">상단공지</span>}
-                    <h1 className ={boardst['ditailTitle']}>{board.title}</h1>
+                    {board.isTop && <span className="badge-top" style={{backgroundColor:'#e74c3c', color:'#fff', padding:'2px 8px', borderRadius:'4px', fontSize:'12px', marginRight:'10px', verticalAlign:'middle'}}>중요</span>}
+                    <h1 className="ditailTitle" style={{display:'inline-block'}}>{board.title}</h1>
                 </div>
+                
                 <div className="meta-info">
-                    <span className="author">작성자: {board.empNm}</span>
-                    <span className="date">
-                        등록일: {new Date(board.createdAt).toLocaleString()}
-                    </span>
-                    <span className="views">조회수: {board.views}</span>
-                    <span>첨부파일
-                        {files.map(file=>(
-                            <div key={file.fileId}>
-                                <a href={`http://192.168.0.36:8080/board/download/${file.fileId}`}>{file.originName}</a>
-                            </div>
-                        ))}
-                    </span>
-
+                    <div className="meta-left">
+                        <span className="author">👤 <b>{board.empNm}</b></span>
+                        <span className="date">📅 {new Date(board.createdAt).toLocaleString()}</span>
+                        <span className="views">👁‍🗨 조회수 {board.views}</span>
+                    </div>
                 </div>
+
+                {/* 첨부파일 영역 */}
+                {files.length > 0 && (
+                    <div className="file-section" style={{marginTop:'15px', padding:'10px', background:'#f1f3f5', borderRadius:'4px'}}>
+                        <span style={{fontSize:'13px', fontWeight:'bold', marginRight:'10px'}}>첨부파일 ({files.length})</span>
+                        {files.map(file => (
+                            <a key={file.fileId} 
+                               href={`http://192.168.0.36:8080/board/download/${file.fileId}`}
+                               style={{marginRight:'15px', fontSize:'13px', color:'#007bff', textDecoration:'none'}}
+                            >
+                                📎 {file.originName}
+                            </a>
+                        ))}
+                    </div>
+                )}
             </div>
 
-            <div className={boardst['detail-content']}>
+            {/* 본문 영역 */}
+            <div className="detail-content" style={{padding:'30px 10px', minHeight:'400px'}}>
                 <div dangerouslySetInnerHTML={{ __html: board.content }} />
             </div>
 
-            <div >
-                <button className={boardst['detail_button']} onClick={handleList} >목록</button>
+            {/* 하단 버튼 영역 */}
+            <div className="button-group" style={{display:'flex', justifyContent:'center', gap:'10px', marginTop:'40px'}}>
+                <button className="detail_button list" onClick={() => props.goService('list')} style={{backgroundColor:'#6c757d', color:'#fff', border:'none', padding:'10px 25px', borderRadius:'4px', cursor:'pointer'}}>
+                    목록으로
+                </button>
+                
                 {isOwner && (
                     <>
-                        <button className={boardst['detail_button']} onClick={handleList} onClick= {handleDelete}>삭제</button>
-                        <button className={boardst['detail_button']} onClick={handleList} onClick={() => props.goService('Modify')}>수정</button> 
+                        <button className="detail_button modify" onClick={() => props.goService('Modify')} style={{backgroundColor:'#007bff', color:'#fff', border:'none', padding:'10px 25px', borderRadius:'4px', cursor:'pointer'}}>
+                            수정하기
+                        </button>
+                        <button className="detail_button delete" onClick={handleDelete} style={{backgroundColor:'#dc3545', color:'#fff', border:'none', padding:'10px 25px', borderRadius:'4px', cursor:'pointer'}}>
+                            삭제하기
+                        </button>
                     </>
-
                 )}
             </div>
         </div>
