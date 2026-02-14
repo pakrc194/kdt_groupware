@@ -178,6 +178,19 @@ WHERE
 			""")
 	List<DocPrcsTimeDTO> docPrcsTime(String dept);
 	
-	
 	// aprvDocStts
+	
+	// 시설 보수 통계
+	@Select("SELECT "
+      + "    SCHED.*, "
+      + "    IFNULL(LOC_INFO.LOC_NM, '장소 미정') AS LOC_NM, "
+      + "    IFNULL(EMP.EMP_NM, '미지정') AS EMP_NM " // 사원 이름 추가
+      + "FROM SCHED "
+      + "LEFT JOIN LOC_INFO ON SCHED.SCHED_LOC = LOC_INFO.LOC_ID "
+      + "LEFT JOIN EMP_PRVC EMP ON SCHED.SCHED_EMP_ID = EMP.EMP_ID " // 사원 정보 조인
+      + "WHERE FIND_IN_SET(#{dept}, SCHED_DEPT_ID) > 0 "
+      + "AND (SCHED_TITLE LIKE '%보수%' OR SCHED_TITLE LIKE '%수리%' "
+      + "     OR SCHED_DETAIL LIKE '%보수%' OR SCHED_DETAIL LIKE '%수리%') "
+      + "AND SCHED_DELETE_DATE IS NULL")
+	List<DashSchedDashDTO> dashFacilityRepairList(String dept);
 }

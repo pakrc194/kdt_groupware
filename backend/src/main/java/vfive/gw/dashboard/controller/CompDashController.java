@@ -88,4 +88,11 @@ public class CompDashController {
 		return res;
 	}
 	
+	// 시설 보수 요청 통계
+	@GetMapping("dashFacilityRepairList")
+	List<DashSchedDashDTO> dashFacilityRepairList(@RequestParam("dept") String dept) {
+		List<DashSchedDashDTO> res = mapper.dashFacilityRepairList(dept);
+		return res;
+	}
+	
 }

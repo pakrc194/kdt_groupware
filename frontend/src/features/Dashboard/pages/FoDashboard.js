@@ -28,7 +28,7 @@ function FoDashboard(props) {
         fetcher(`/gw/dashboard/dashTeamSchedList?dept=2`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
             console.log(dd)
-         })
+        })
 
         // 결재 속도
         fetcher('/gw/dashboard/docPrcsTime?dept=2')
