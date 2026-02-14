@@ -105,7 +105,7 @@ function ScheduleList(props) {
                                 <div><b>위치</b> {vv.schedLoc || '-'}</div>
                                 <div><b>상세</b> {vv.schedDetail || '-'}</div>
                                 <div style={styles.dateRange}>
-                                    {vv.schedStartDate.split('T')[0]} ~ {vv.schedEndDate.split('T')[0]}
+                                    {vv.schedStartDate?.split(' ')[0]} ~ {vv.schedEndDate?.split(' ')[0]}
                                 </div>
                             </div>
                         ))}

@@ -46,36 +46,37 @@ function ScheduleDetail(props) {
     }
     
     return (
-        <div>
+        <div style={styles.container}>
             {sched.map((vv, kk) => (
+                <table key={kk} style={styles.table}>
                 <tbody key={kk}>
                 <tr>
-                    <td>구분</td>
-                    <td>{vv.schedType}</td>
+                    <th style={styles.th}>구분</th>
+                    <td style={styles.td}>{vv.schedType}</td>
                 </tr>
                 <tr>
-                    <td>제목</td>
-                    <td>{vv.schedTitle}</td>
+                    <th style={styles.th}>제목</th>
+                    <td style={styles.td}>{vv.schedTitle}</td>
                 </tr>
                 <tr>    
-                    <td>상세내용</td>
-                    <td>{vv.schedDetail}</td>
+                    <th style={styles.th}>상세내용</th>
+                    <td style={styles.td}>{vv.schedDetail}</td>
                 </tr>
                 {vv.schedType == "DEPT" &&
                     <tr>
-                        <td>담당팀</td>
-                        <td>{vv.schedDept}</td>
+                        <th style={styles.th}>담당팀</th>
+                        <td style={styles.td}>{vv.schedDept}</td>
                     </tr>
                 }
                 {vv.schedType == "PERSONAL" &&
                     <tr>
-                        <td>담당자</td>
-                        <td>{vv.schedEmpNm}</td>
+                        <th style={styles.th}>담당자</th>
+                        <td style={styles.td}>{vv.schedEmpNm}</td>
                     </tr>
                 }
                 <tr>
-                    <td>위치</td>
-                    <td>{vv.schedLocNm}</td>
+                    <th style={styles.th}>위치</th>
+                    <td style={styles.td}>{vv.schedLocNm}</td>
                 </tr>
                 
                 <tr>    
@@ -84,19 +85,21 @@ function ScheduleDetail(props) {
                 </tr>
                 
                 <tr>    
-                    <td>시작일</td>
-                    <td>{vv.schedStartDate.split(' ')[0]}</td>
+                    <th style={styles.th}>시작일</th>
+                    <td style={styles.td}>{vv.schedStartDate.split(' ')[0]}</td>
                 </tr><tr>    
-                    <td>종료일</td>
-                    <td>{vv.schedEndDate.split(' ')[0]}</td>
+                    <th style={styles.th}>종료일</th>
+                    <td style={styles.td}>{vv.schedEndDate.split(' ')[0]}</td>
                 </tr>
                 </tbody>
+                </table>
             ))}
+                    <div style={styles.buttonGroup}>
             {sched.map(dedate => (
                 <>
                 {(dedate.schedStartDate.split(' ')[0] != formatted) && chkToday(dedate.schedStartDate) && chkToday(dedate.schedEndDate) && myInfo.empId == schedA && schedType != 'TODO' &&
                 <>
-                    <button onClick={() => setIsOpen(true)}>일정 삭제</button>
+                    <button style={styles.deleteBtn} onClick={() => setIsOpen(true)}>일정 삭제</button>
                     {isOpen && (
                         <Modal 
                         title={dedate.schedTitle}
@@ -110,9 +113,108 @@ function ScheduleDetail(props) {
                 }
                 </>
             ))}
-            <button onClick={() => navigate(-1)}>뒤로</button>
+                <button style={styles.backBtn} onClick={() => navigate(-1)}>뒤로</button>
+            </div>
         </div>
     );
 }
+
+// const styles = {
+//     container: { maxWidth: '400px', margin: '40px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '8px', fontFamily: 'Arial, sans-serif', backgroundColor: '#fff', },
+//     backBtn: {
+//         padding: '10px 15px',
+//         backgroundColor: '#f5f5f5',
+//         border: '1px solid #ddd',
+//         borderRadius: '4px',
+//         cursor: 'pointer',
+//     },
+//     buttonGroup: {
+//         display: 'flex',
+//         gap: '10px',
+//         justifyContent: 'flex-end',
+//     },
+//     deleteBtn: {
+//         padding: '10px 15px',
+//         backgroundColor: '#dc3545',
+//         color: '#fff',
+//         border: 'none',
+//         borderRadius: '4px',
+//         cursor: 'pointer',
+//     }
+// }
+
+const styles = {
+    container: {
+        maxWidth: '480px',
+        margin: '40px auto',
+        padding: '20px',
+        fontFamily: 'Pretendard, Arial, sans-serif',
+        backgroundColor: '#f4f6f9',
+    },
+
+    table: {
+        width: '100%',
+        borderCollapse: 'collapse',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        overflow: 'hidden',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+        marginBottom: '20px',
+    },
+
+    th: {
+        width: '30%',
+        textAlign: 'left',
+        padding: '14px',
+        backgroundColor: '#f9fafb',
+        fontWeight: '600',
+        fontSize: '14px',
+        color: '#6b7280',
+        borderBottom: '1px solid #eee',
+    },
+
+    td: {
+        padding: '14px',
+        fontSize: '14px',
+        color: '#111827',
+        borderBottom: '1px solid #eee',
+        wordBreak: 'break-word',
+    },
+
+    titleRow: {
+        backgroundColor: '#f1f5f9',
+        fontWeight: '700',
+        fontSize: '16px',
+    },
+
+    buttonGroup: {
+        display: 'flex',
+        // justifyContent: 'space-between',
+        marginTop: '10px',
+        justifyContent: 'flex-end',
+    },
+
+    backBtn: {
+        padding: '10px 18px',
+        backgroundColor: '#e5e7eb',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontWeight: '600',
+        marginLeft: '10px'
+    },
+
+    deleteBtn: {
+        padding: '10px 18px',
+        backgroundColor: '#ef4444',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        fontWeight: '600',
+        transition: '0.2s',
+    },
+};
+
 
 export default ScheduleDetail;

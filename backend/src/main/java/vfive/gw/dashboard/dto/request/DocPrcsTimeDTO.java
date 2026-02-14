@@ -15,4 +15,5 @@ public class DocPrcsTimeDTO {
 	private String drftEmpNm;		// 기안자 이름
 	private String aprvPrcsEmpNm;	// 결재자 이름
 	private Integer docFormId;
+	private Integer aprvDocId;
 }
