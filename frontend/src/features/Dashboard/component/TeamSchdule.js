@@ -3,6 +3,7 @@ import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'rec
 
 function TeamSchdule({sched}) {
     const cnt = sched.length;
+    // console.log(sched)
 
     const now = new Date();
 

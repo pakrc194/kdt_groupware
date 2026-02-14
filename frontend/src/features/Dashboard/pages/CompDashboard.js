@@ -58,7 +58,9 @@ function CompDashboard(props) {
 
         // 결재 처리 이력
         fetcher(`/gw/dashboard/aprvPrcs`)
-        .then(dd => { setApproval(Array.isArray(dd) ? dd : [dd]) })
+        .then(dd => { setApproval(Array.isArray(dd) ? dd : [dd]) 
+            console.log(dd)
+        })
         .catch(e => console.log(e))
 
         // 전체 근태
@@ -72,7 +74,7 @@ function CompDashboard(props) {
     return (
         <div>
             <h1>회사 대시보드</h1>
-            <CompanyDashboardGraph inOut={inOut} emp={emp} />
+            <CompanyDashboardGraph inOut={inOut} emp={emp} approval={approval} />
             <CompAttendanceRate emp={emp} />
             <PersonnelChangeStats inOut={inOut} changeEmpData={changeEmpData} />
             <OrganizationStatistics inOut={inOut} />

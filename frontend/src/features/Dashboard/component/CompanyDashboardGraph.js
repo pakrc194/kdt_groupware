@@ -2,7 +2,7 @@ import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'rec
 
 import React from 'react';
 
-function CompanyDashboardGraph({inOut, emp}) {
+function CompanyDashboardGraph({inOut, emp, approval}) {
     const active = inOut.filter((d) => d.empAcntStts != "RETIRED");
     const retired = inOut.filter((d) => d.empAcntStts == "RETIRED");
 
@@ -55,6 +55,29 @@ function CompanyDashboardGraph({inOut, emp}) {
         "신규": newList.filter(dd => deptOrder[dd.deptId - 1] == data).length,
     }));
 
+    const parseDateTime = (str) => {
+        const year = str.substring(0, 4);
+        const month = str.substring(4, 6) - 1; // JS는 month가 0부터 시작
+        const day = str.substring(6, 8);
+        const hour = str.substring(8, 10);
+        const minute = str.substring(10, 12);
+        const second = str.substring(12, 14);
+
+        return new Date(year, month, day, hour, minute, second);
+        // return new Date(str)
+    }
+
+    const docPrcs = deptOrder.map((data) => ({
+        name: data,
+        "기안": approval.filter(dd => 
+            deptOrder[dd.deptId - 1] == data &&
+            parseDateTime(dd.aprvDocDrftDt).getFullYear() == new Date().getFullYear()).length,
+        "완료": approval.filter(dd => 
+            deptOrder[dd.deptId - 1] == data &&
+            parseDateTime(dd.aprvDocDrftDt).getFullYear() == new Date().getFullYear() &&
+            dd.aprvDocStts !== "PENDING").length
+    }));
+
 
     return (
         <div>
@@ -92,6 +115,17 @@ function CompanyDashboardGraph({inOut, emp}) {
                 <Legend />
                 <Bar dataKey="재직" fill="#82ca9d" isAnimationActive={true} />
                 <Bar dataKey="신규" fill="#5a5de2" isAnimationActive={true} />
+                {/* <RechartsDevtools /> */}
+            </BarChart>
+            <h1>{new Date().getFullYear()}년도 결재 현황</h1>
+            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={docPrcs}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis width="auto" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="기안" fill="#82ca9d" isAnimationActive={true} />
+                <Bar dataKey="완료" fill="#5a5de2" isAnimationActive={true} />
                 {/* <RechartsDevtools /> */}
             </BarChart>
         </div>

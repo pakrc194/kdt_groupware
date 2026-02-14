@@ -44,16 +44,16 @@ function HrDashboard(props) {
     const data = recentMonths.map(({ year, month }) => ({
         
       name: `${year}.${String(month).padStart(2, "0")}`,
-      "완료": docPrc
+      "교육": docPrc
         .filter(dd =>
-            dd.aprvDocStts !== "PENDING" &&
+            dd.aprvDocStts === "COMPLETED" &&
             dd.docFormId === 7 &&
             dd.roleCd === "LAST_ATRZ"
         )
         .flatMap(dd => 
             sched
             .filter(sc => 
-                dd.aprvDocTtl === sc.schedTitle &&
+                dd.aprvDocId === sc.schedDocId &&
                 parseDateTime(sc.schedStartDate).getFullYear() === year &&
                 parseDateTime(sc.schedStartDate).getMonth() + 1 === month
             )
@@ -121,9 +121,9 @@ console.log(schedMap);
                 <YAxis width="auto" />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="완료" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="대기" fill="#ca8282" isAnimationActive={true} />
-                <Bar dataKey="반려" fill="#595959" isAnimationActive={true} />
+                <Bar dataKey="교육" fill="#82ca9d" isAnimationActive={true} />
+                {/* <Bar dataKey="대기" fill="#ca8282" isAnimationActive={true} /> */}
+                {/* <Bar dataKey="반려" fill="#595959" isAnimationActive={true} /> */}
                 {/* <RechartsDevtools /> */}
             </BarChart>
 

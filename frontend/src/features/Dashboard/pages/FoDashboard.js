@@ -3,6 +3,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
+import EventBoothCnt from '../component/EventBoothCnt';
 
 
 function FoDashboard(props) {
@@ -40,6 +41,7 @@ function FoDashboard(props) {
             <h1>식품</h1>
             <AttendanceRate emp={emp} />
             <TeamSchdule sched={sched}/>
+            <EventBoothCnt docPrc={docPrc} sched={sched}/>
             <DocPrcsTime docPrc={docPrc}/>
         </div>
     );

@@ -3,6 +3,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
+import EventBoothCnt from '../component/EventBoothCnt';
 
 function MfDashboard(props) {
     const [emp, setEmp] = useState([]);
@@ -38,6 +39,7 @@ function MfDashboard(props) {
             <h1>남성패션</h1>
             <AttendanceRate emp={emp} />
             <TeamSchdule sched={sched}/>
+            <EventBoothCnt docPrc={docPrc} sched={sched}/>
             <DocPrcsTime docPrc={docPrc}/>
         </div>
     );

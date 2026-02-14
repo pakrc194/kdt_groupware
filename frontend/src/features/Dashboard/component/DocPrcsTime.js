@@ -58,8 +58,8 @@ function DocPrcsTime({docPrc}) {
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="완료" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="대기" fill="#ca8282" isAnimationActive={true} />
-                <Bar dataKey="반려" fill="#595959" isAnimationActive={true} />
+                <Bar dataKey="대기" fill="#aaaaaa" isAnimationActive={true} />
+                <Bar dataKey="반려" fill="#ca8282" isAnimationActive={true} />
                 {/* <RechartsDevtools /> */}
             </BarChart>
 
@@ -97,7 +97,7 @@ function DocPrcsTime({docPrc}) {
                                 <td style={styles.td}>
                                     {dd.aprvPrcsDt ? dd.aprvPrcsDt : '미승인'}
                                 </td>
-                                <td style={styles.td}>{dd.docFormNm}</td>
+                                <td style={styles.td}>{dd.docFormNm} {dd.docFormId}</td>
                                 <td style={styles.td}>{dd.roleCd}</td>
                                 <td style={styles.td}>{dd.aprvPrcsDt ? TimeDiff(dd.aprvDocDrftDt, dd.aprvPrcsDt) : '결재 전'}</td>
                             </tr>

@@ -18,4 +18,6 @@ public class AprvPrcsDTO {
 	private Integer aprvPrcsEmpId;
 	// APRV_PRCS.aprv_prcs_emp_id - EMP_PRVC.emp_id : 결재자 이름
 	private String aprvPrcsEmpNm;
+	
+	private Integer empId, deptId;
 }

@@ -3,6 +3,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
+import EventBoothCnt from '../component/EventBoothCnt';
 
 function BuDashboard(props) {
     const [emp, setEmp] = useState([]);
@@ -36,6 +37,7 @@ function BuDashboard(props) {
             <h1>뷰티·패션잡화</h1>
             <AttendanceRate emp={emp} />
             <TeamSchdule sched={sched}/>
+            <EventBoothCnt docPrc={docPrc} sched={sched}/>
             <DocPrcsTime docPrc={docPrc}/>
         </div>
     );
