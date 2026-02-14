@@ -3,11 +3,13 @@ import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
+import FacilityRepairStat from '../component/FacilityRepairStat';
 
 function FmDashboard(props) {
     const [emp, setEmp] = useState([]);
     const [sched, setSched] = useState([]);
     const [docPrc, setDocPrc] = useState([]);
+    const [facRep, setFacRep] = useState([]);
 
     const date = new Date;
     const yyyy = date.getFullYear();
@@ -27,11 +29,17 @@ function FmDashboard(props) {
         fetcher(`/gw/dashboard/dashTeamSchedList?dept=7`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
             console.log(dd)
-         })
+        })
 
          // 결재 속도
         fetcher('/gw/dashboard/docPrcsTime?dept=7')
         .then(dd => setDocPrc(Array.isArray(dd) ? dd : [dd]))
+
+        // 시설 보수 요청 통계
+        fetcher(`/gw/dashboard/dashFacilityRepairList?dept=7`)
+        .then(dd => { setFacRep(Array.isArray(dd) ? dd : [dd])
+            console.log(dd)
+        })
     }, [])
     
     return (
@@ -40,6 +48,7 @@ function FmDashboard(props) {
           <AttendanceRate emp={emp} />
           <TeamSchdule sched={sched}/>
           <DocPrcsTime docPrc={docPrc}/>
+          <FacilityRepairStat facRep={facRep}/>
         </>
     );
 }

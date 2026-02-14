@@ -7,5 +7,5 @@ public class DashSchedDashDTO {
 	private String schedTitle, schedStartDate, schedEndDate, schedDetail, schedDeptId;
 	private Integer schedLoc;
 	
-	private String locNm, schedEmpId;
+	private String locNm, schedEmpId, empNm;
 }
