@@ -347,7 +347,7 @@ const ApprovalDetail = () => {
                 </div>}
 
 
-                {<div className="section history-section">
+                {sideId=="rejectBox" && <div className="section history-section">
                     <table className="history-table">
                     <thead>
                         <tr>

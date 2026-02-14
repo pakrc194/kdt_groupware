@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import AprvBoxBoard from '../components/AprvBoxBoard';
 import { fetcher } from '../../../shared/api/fetcher';
+import { getStatusLabel } from '../../../shared/func/formatLabel';
 
 const DocStatus = () => {
     const {sideId} = useParams();
@@ -38,7 +39,7 @@ const DocStatus = () => {
                         <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
-                                {aprvDoc.aprvDocStts}
+                                {getStatusLabel(aprvDoc.aprvDocStts)}
                             </span>
                         </td>
                     </tr>))
@@ -75,7 +76,7 @@ const DocStatus = () => {
                         <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
-                                {aprvDoc.aprvDocStts}
+                                {getStatusLabel(aprvDoc.aprvDocStts)}
                             </span>
                         </td>
                     </tr>))

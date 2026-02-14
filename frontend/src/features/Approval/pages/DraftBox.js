@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import AprvBoxBoard from '../components/AprvBoxBoard';
 import { Link, useParams } from 'react-router-dom';
+import { getStatusLabel } from '../../../shared/func/formatLabel';
 
 const DraftBox = () => {
     const {sideId} = useParams();
@@ -42,10 +43,10 @@ const DraftBox = () => {
             <div className="section history-section">
                 <div>
                     <select onChange={fn_stts}>
-                        <option value="">ALL</option>
-                        <option>PENDING</option>
-                        <option>COMPLETED</option>
-                        <option>REJECTED</option>
+                        <option value="">전체</option>
+                        <option value="PENDING">결재 중</option>
+                        <option value="COMPLETED">결재 완료</option>
+                        <option value="REJECTED">반려</option>
                     </select>
                     <select onChange={fn_code}>
                         <option value="">ALL</option>
@@ -74,7 +75,7 @@ const DraftBox = () => {
                         <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
-                                {aprvDoc.aprvDocStts}
+                                {getStatusLabel(aprvDoc.aprvDocStts)}
                             </span>
                         </td>
                     </tr>))
