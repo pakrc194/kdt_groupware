@@ -128,29 +128,32 @@ public interface AprvListMapper {
 	
 	@Select("""
 			<script>
-			select * from EMP_PRVC 
+			select E.*, D.DEPT_NAME, J.JBTTL_NM from EMP_PRVC E
+			join DEPT_INFO D on E.DEPT_ID = D.DEPT_ID
+			join JBTTL_INFO J on E.JBTTL_ID = J.JBTTL_ID 
 			<where>
 				  <choose>
 				    <when test="filterNm == 'EMP_ID'">
-				      EMP_ID = #{filterVl}
+				      E.EMP_ID = #{filterVl} 
 				    </when>
 				    <when test="filterNm == 'EMP_NM'">
-				      EMP_NM = #{filterVl}
+				      E.EMP_NM = #{filterVl} 
 				    </when>
 				    <when test="filterNm == 'DEPT_ID'">
-				      DEPT_ID = #{filterVl}
+				      E.DEPT_ID = #{filterVl} 
 				    </when>
 				    <otherwise>
-				      1 = 1
+				      1 = 1 
 				    </otherwise>
 				  </choose>
 			</where>
+			order by E.JBTTL_ID
 			</script>
 			""")
 	List<AprvEmpListResponse> empListFilter(AprvParams param);
 	
 	
-	@Select("select * from DEPT_INFO")
+	@Select("select * from DEPT_INFO order by DEPT_LOC")
 	List<AprvDeptListResponse> aprvDeptList();
 	
 	@Select("select * from LOC_INFO")

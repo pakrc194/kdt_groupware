@@ -39,6 +39,13 @@ public interface AprvPostMapper {
 			""")
 	int docSttsUpdate(AprvPrcsRequest req);
 	
+	
+	@Update("""
+			UPDATE APRV_DOC SET APRV_DOC_ATRZ_DT = #{now} WHERE APRV_DOC_ID = #{docId}
+			""")
+	int docAtrzDtUpdate(@Param("docId") int docId, @Param("now") String now);
+	
+	
 	@Insert("insert into APRV_PRCS "
 			+ "(APRV_LINE_ID, APRV_DOC_ID, APRV_PRCS_EMP_ID, ROLE_CD, ROLE_SEQ, APRV_PRCS_DT, APRV_PRCS_STTS, RJCT_RSN)"
 			+ "values "
@@ -87,12 +94,32 @@ public interface AprvPostMapper {
 	int drftInpt(@Param("list")List<AprvInptVlRequest> di);
 	
 	@Insert("insert into SCHED "
-			+ "(SCHED_TITLE, SCHED_START_DATE, SCHED_END_DATE, SCHED_TYPE, SCHED_DETAIL, SCHED_LOC, SCHED_EMP_ID, SCHED_AUTHOR_ID, SCHED_DEPT_ID) "
+			+ "(SCHED_TITLE, SCHED_START_DATE, SCHED_END_DATE, SCHED_TYPE, SCHED_DETAIL, SCHED_LOC, SCHED_EMP_ID, SCHED_AUTHOR_ID, SCHED_DEPT_ID, SCHED_DOC_ID) "
 			+ "values "
-			+ "(#{schedTitle},#{schedStartDate},#{schedEndDate},#{schedType},#{schedDetail},#{schedLoc},#{schedEmpId},#{schedAuthorId},#{schedDeptId})")
+			+ "(#{schedTitle},#{schedStartDate},#{schedEndDate},#{schedType},#{schedDetail},#{schedLoc},#{schedEmpId},#{schedAuthorId},#{schedDeptId}), #{schedDocId}")
 	int aprvSchedUpload(AprvSchedUploadRequest req);
 	
-	@Select("select * from APRV_DOC where APRV_DOC_NO = #{docNo} ORDER BY APRV_DOC_VER DESC")
+	@Select("""
+			SELECT 
+			    D.*,
+			    P.RJCT_RSN
+			FROM APRV_DOC D
+			LEFT JOIN (
+			    SELECT A.APRV_DOC_ID, A.RJCT_RSN
+			    FROM APRV_PRCS A
+			    JOIN (
+			        SELECT APRV_DOC_ID, MAX(APRV_PRCS_DT) AS MAX_DT
+			        FROM APRV_PRCS
+			        WHERE APRV_PRCS_STTS = 'REJECTED'
+			        GROUP BY APRV_DOC_ID
+			    ) B
+			      ON A.APRV_DOC_ID = B.APRV_DOC_ID
+			     AND A.APRV_PRCS_DT = B.MAX_DT
+			) P
+			  ON D.APRV_DOC_ID = P.APRV_DOC_ID
+			WHERE D.APRV_DOC_NO = #{docNo}
+			ORDER BY D.APRV_DOC_VER DESC
+			""")
 	List<AprvDocVerListResponse> aprvDocVerList(AprvDocVerListRequest req);
 	
 	@Select("""

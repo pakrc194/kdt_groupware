@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class AprvSchedUploadRequest {
-	int schedLoc, schedAuthorId;
+	int schedLoc, schedAuthorId, schedDocId;
 	String schedTitle, schedStartDate, schedEndDate, schedType, schedDetail, schedDeptId, schedEmpId;
 }

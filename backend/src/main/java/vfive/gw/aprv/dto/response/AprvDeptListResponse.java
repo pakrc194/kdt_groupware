@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class AprvDeptListResponse {
 	int deptId;
-	String deptName, deptCode;
+	String deptName, deptCode, deptLoc;
 }

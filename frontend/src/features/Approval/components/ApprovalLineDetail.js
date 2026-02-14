@@ -99,7 +99,12 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                     fn_dutyCheck();
                 }
             } else {
-                alert(`결재 완료`)
+                if(roleCd.includes("REF")) {
+                    alert(`참조 완료`)
+                } else {
+                    alert(`결재 완료`)
+                }
+                
             }
         } else {
             alert(`반려처리 : ${rjctRsn} `)
@@ -156,31 +161,32 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         }
         console.log(inptList)
 
-        console.log(`body--
-            schedTitle : ${docDetail.aprvDocTtl},
-            schedStartDate : ${inptList.filter(v=>v.docInptNm=="docStart")[0].docInptVl},
-            schedEndDate : ${inptList.filter(v=>v.docInptNm=="docEnd")[0].docInptVl},
-            schedType : ${docRole},
-            schedDetail : ${inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl},
-            schedLoc : ${inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl},
-            schedEmpId : ${schedEmpId},
-            schedAuthorId : ${myInfo.empId},
-            schedDeptId : ${deptId}
-        `)
+        // console.log(`body--
+        //     schedTitle : ${docDetail.aprvDocTtl},
+        //     schedStartDate : ${inptList.filter(v=>v.docInptNm=="docStart")[0].docInptVl},
+        //     schedEndDate : ${inptList.filter(v=>v.docInptNm=="docEnd")[0].docInptVl},
+        //     schedType : ${docRole},
+        //     schedDetail : ${inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl},
+        //     schedLoc : ${inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl},
+        //     schedEmpId : ${schedEmpId},
+        //     schedAuthorId : ${myInfo.empId},
+        //     schedDeptId : ${deptId}
+        // `)
 
 
         fetcher("/gw/aprv/AprvSchedUpload", {
             method:"POST",
             body:{
                 schedTitle : docDetail.aprvDocTtl,
-                schedStartDate : inptList.filter(v=>v.docInptNm=="docStart")[0].docInptVl,
-                schedEndDate : inptList.filter(v=>v.docInptNm=="docEnd")[0].docInptVl,
+                schedStartDate : inptList.find(v=>v.docInptNm=="docStart")?.docInptVl,
+                schedEndDate : inptList.find(v=>v.docInptNm=="docEnd")?.docInptVl,
                 schedType : docRole,
-                schedDetail : inptList.filter(v=>v.docInptNm=="docTxtArea")[0].docInptVl,
-                schedLoc : inptList.filter(v=>v.docInptNm=="docLoc")[0].docInptVl,
+                schedDetail : inptList.find(v=>v.docInptNm=="docTxtArea")?.docInptVl,
+                schedLoc : inptList.find(v=>v.docInptNm=="docLoc")?.docInptVl,
                 schedEmpId : schedEmpId,
                 schedAuthorId : myInfo.empId,
-                schedDeptId : deptId
+                schedDeptId : deptId,
+                schedDocId : docId
             }
         }).then(res => {
             alert("일정 등록 완료")
@@ -234,8 +240,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
     return (
         <>  
-            {/* <button onClick={fn_schedCheck}>일정 등록</button>
-            <button onClick={fn_attendCheck}>근태 등록</button> */}
+            <button onClick={fn_schedCheck}>일정 등록</button>
+            <button onClick={fn_attendCheck}>근태 등록</button>
             <div className='approvalLine'>
                 {lineData.map((v, k)=> {
                     return (

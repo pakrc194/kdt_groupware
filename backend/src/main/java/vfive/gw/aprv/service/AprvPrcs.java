@@ -34,6 +34,12 @@ public class AprvPrcs {
         if (!ap.getRoleCd().contains("REF")) {
             postMapper.docSttsUpdate(ap);
         }
+        
+        if(ap.getAprvPrcsStts().equals("REJECTED")||ap.getRoleCd().equals("LAST_ATRZ")) {
+        	postMapper.docAtrzDtUpdate(ap.getAprvDocId(), now);
+        }
+        
+        
 
         // 2) 현재 결재선 업데이트
         postMapper.uAprvPrcs(ap);
