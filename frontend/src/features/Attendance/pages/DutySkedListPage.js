@@ -39,7 +39,12 @@ function DutySkedListPage() {
   // 전체 선택 체크박스
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedIds(schedules.map((item) => item.dutyId));
+      // 삭제 가능한 항목(PENDING, CONFIRMED가 아닌 것)만 필터링해서 ID 추출
+      const deletableIds = schedules
+        .filter((item) => item.prgrStts !== "DRAFT")
+        .map((item) => item.dutyId);
+
+      setSelectedIds(deletableIds);
     } else {
       setSelectedIds([]);
     }
@@ -119,39 +124,55 @@ function DutySkedListPage() {
           </thead>
           <tbody>
             {schedules.length > 0 ? (
-              schedules.map((item) => (
-                <tr
-                  key={item.dutyId}
-                  className={
-                    selectedIds.includes(item.dutyId) ? "selected-row" : ""
-                  }
-                >
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(item.dutyId)}
-                      onChange={() => handleSelect(item.dutyId)}
-                    />
-                  </td>
-                  <td>{item.dutyId}</td>
-                  <td
-                    className="title-link"
-                    onClick={() =>
-                      navigate(`/attendance/dtskdDet?dutyId=${item.dutyId}`)
-                    }
+              schedules.map((item) => {
+                // 1. 삭제 불가 조건 정의 (PENDING 또는 CONFIRMED)
+                const isDisableDelete =
+                  item.prgrStts === "PENDING" || item.prgrStts === "CONFIRMED";
+
+                return (
+                  <tr
+                    key={item.dutyId}
+                    className={`${selectedIds.includes(item.dutyId) ? "selected-row" : ""} ${isDisableDelete ? "disabled-row" : ""}`}
                   >
-                    {item.scheTtl}
-                  </td>
-                  <td>{item.trgtYmd?.substring(0, 6)}</td>
-                  <td>{item.empNm}</td>
-                  <td>{item.regDtm?.split("T")[0]}</td>
-                  <td>
-                    <span className={`badge-status ${item.prgrStts}`}>
-                      {getStatusLabel(item.prgrStts)}
-                    </span>
-                  </td>
-                </tr>
-              ))
+                    <td
+                      title={
+                        isDisableDelete
+                          ? "결재 중이거나 완료된 근무표는 삭제할 수 없습니다."
+                          : ""
+                      }
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(item.dutyId)}
+                        onChange={() => handleSelect(item.dutyId)}
+                        // 3. 비활성화 속성 적용
+                        disabled={isDisableDelete}
+                        style={{
+                          cursor: isDisableDelete ? "not-allowed" : "pointer",
+                          opacity: isDisableDelete ? 0.5 : 1,
+                        }}
+                      />
+                    </td>
+                    <td>{item.dutyId}</td>
+                    <td
+                      className="title-link"
+                      onClick={() =>
+                        navigate(`/attendance/dtskdDet?dutyId=${item.dutyId}`)
+                      }
+                    >
+                      {item.scheTtl}
+                    </td>
+                    <td>{item.trgtYmd?.substring(0, 6)}</td>
+                    <td>{item.empNm}</td>
+                    <td>{item.regDtm?.split("T")[0]}</td>
+                    <td>
+                      <span className={`badge-status ${item.prgrStts}`}>
+                        {getStatusLabel(item.prgrStts)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="7" className="no-data">

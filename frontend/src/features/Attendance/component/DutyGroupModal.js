@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { fetcher } from "../../../shared/api/fetcher";
 
 function DutyGroupModal({ isOpen, onClose, initialEmployees, onApply }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +20,27 @@ function DutyGroupModal({ isOpen, onClose, initialEmployees, onApply }) {
     setTempEmps((prev) =>
       prev.map((emp) => (emp.id === id ? { ...emp, group: newGroup } : emp)),
     );
+  };
+
+  const handleApply = async () => {
+    try {
+      const updateData = tempEmps.map((emp) => ({
+        empId: emp.id,
+        grpNm: emp.group === "미배정" || !emp.group ? null : emp.group,
+        rotPtnCd: emp.rotPtnCd,
+      }));
+
+      await fetcher("/gw/duty/updateGroups", {
+        method: "PUT",
+        body: updateData,
+      });
+
+      onApply(tempEmps);
+      alert("조 편성 정보가 성공적으로 저장되었습니다.");
+    } catch (error) {
+      console.error("조 저장 실패:", error);
+      alert("데이터 저장 중 오류가 발생했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -92,7 +114,7 @@ function DutyGroupModal({ isOpen, onClose, initialEmployees, onApply }) {
           <button className="btn-cancel" onClick={onClose}>
             취소
           </button>
-          <button className="btn-save" onClick={() => onApply(tempEmps)}>
+          <button className="btn-save" onClick={handleApply}>
             적용하기
           </button>
         </div>

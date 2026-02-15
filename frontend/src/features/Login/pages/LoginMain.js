@@ -100,8 +100,10 @@ function LoginMain(props) {
         인사 팀원 - HR0005/ 1234<br/>
         뷰티 팀장 - BU0001/ 1111<br/>
         패션 팀원 - WF0001/ hashed_pwd_03<br/>
-        안전관리 팀장 - SO0001/ hashed_pwd_09<br/>
+        여성패션 팀장 - WF0002/ Abc!1234<br/>
+        남성패션 팀장 - MF0003/ Pw@2026A<br/>
         시설자재 팀장 - FM0001/ hashed_pwd_07<br/>
+        안전관리 팀장 - SO0001/ hashed_pwd_09<br/>
 
       </div>
     </>

@@ -55,16 +55,43 @@ function DutySkedDetail() {
   const validateDutyFlow = (empId, empName, duties, days, lastDuty) => {
     const errors = [];
     if (lastDuty === "N" && duties[1] === "D") {
-      errors.push(`${empName} 사원: 전달 마지막 근무(N)와 1일(D) 사이 휴게 부족`);
+      errors.push(
+        `${empName} 사원: 전달 마지막 근무(N)와 1일(D) 사이 휴게 부족`,
+      );
     }
     for (let i = 0; i < days.length - 1; i++) {
       const curDay = days[i];
       const nextDay = days[i + 1];
       if (duties[curDay] === "N" && duties[nextDay] === "D") {
-        errors.push(`${empName} 사원: ${curDay}일(N) → ${nextDay}일(D) 연속 근무 위반`);
+        errors.push(
+          `${empName} 사원: ${curDay}일(N) → ${nextDay}일(D) 연속 근무 위반`,
+        );
       }
     }
     return errors;
+  };
+
+  // 중복 결재 완료 건이 있는지 확인하는 함수
+  const checkDuplicateApproval = async () => {
+    try {
+      const trgtYmd = selectedMonth.replace("-", ""); // 예: 202602
+      // 백엔드에서 해당 달, 해당 부서의 'COMPLETED' 상태인 마스터가 있는지 조회
+      const res = await fetcher(
+        `/gw/duty/checkConfirmed?deptId=${myInfo.deptId}&trgtYmd=${trgtYmd}`,
+      );
+
+      // 이미 존재한다면(res.exists가 true라면) 알림
+      if (res > 0) {
+        alert(
+          "해당 월에 이미 결재 완료된 근무표가 존재하여 결재 요청이 불가능합니다.",
+        );
+        return true; // 중복 있음
+      }
+      return false; // 중복 없음
+    } catch (error) {
+      console.error("중복 체크 실패:", error);
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -82,13 +109,13 @@ function DutySkedDetail() {
         const [year, month] = currentMonthStr.split("-").map(Number);
         const lastMonthObj = new Date(year, month - 1, 0);
         const lastMonthStr = `${lastMonthObj.getFullYear()}${String(lastMonthObj.getMonth() + 1).padStart(2, "0")}`;
-        
+
         const lastMonthData = await fetcher(
-          `/gw/duty/lastMonthDuty?deptId=${myInfo.deptId}&trgtYmd=${lastMonthStr}`
+          `/gw/duty/lastMonthDuty?deptId=${myInfo.deptId}&trgtYmd=${lastMonthStr}`,
         ).catch(() => []);
 
         const lMap = {};
-        lastMonthData.forEach(item => {
+        lastMonthData.forEach((item) => {
           lMap[item.empId] = item.wrkCd;
         });
         setLastMonthDataMap(lMap);
@@ -112,7 +139,9 @@ function DutySkedDetail() {
           const groupOrder = { A: 1, B: 2, C: 3, D: 4, 미배정: 5 };
           const orderA = groupOrder[a.group] || 99;
           const orderB = groupOrder[b.group] || 99;
-          return orderA !== orderB ? orderA - orderB : a.name.localeCompare(b.name);
+          return orderA !== orderB
+            ? orderA - orderB
+            : a.name.localeCompare(b.name);
         });
 
         setEmployees(sortedEmpList);
@@ -141,7 +170,7 @@ function DutySkedDetail() {
             dutyYmd: `${selectedMonth.replace("-", "")}${day.toString().padStart(2, "0")}`,
             wrkCd: emp.duties[day] || (emp.rotPtnCd === "사무" ? "WO" : "O"),
             grpNm: emp.rotPtnCd === "사무" ? null : emp.group || null,
-          }))
+          })),
         ),
       };
       await fetcher(`/gw/duty/updateDuty`, { method: "PUT", body: payload });
@@ -157,7 +186,13 @@ function DutySkedDetail() {
     if (isReadOnly) return;
     let allErrors = [];
     employees.forEach((emp) => {
-      const empErrors = validateDutyFlow(emp.id, emp.name, emp.duties, days, lastMonthDataMap[emp.id]);
+      const empErrors = validateDutyFlow(
+        emp.id,
+        emp.name,
+        emp.duties,
+        days,
+        lastMonthDataMap[emp.id],
+      );
       allErrors = [...allErrors, ...empErrors];
     });
 
@@ -173,20 +208,33 @@ function DutySkedDetail() {
 
   // 결재 요청 핸들러 (저장 후 모달 오픈)
   const handleAprvRequestClick = async () => {
-    if (isReadOnly) return;
+    if (isReadOnly) return; // 결재 중이거나 결재 완료면
+    const isDuplicate = await checkDuplicateApproval();
+    if (isDuplicate) return; // 이미 중복으로 결재된 근무표가 있으면
 
     let allErrors = [];
     employees.forEach((emp) => {
-      const empErrors = validateDutyFlow(emp.id, emp.name, emp.duties, days, lastMonthDataMap[emp.id]);
+      const empErrors = validateDutyFlow(
+        emp.id,
+        emp.name,
+        emp.duties,
+        days,
+        lastMonthDataMap[emp.id],
+      );
       allErrors = [...allErrors, ...empErrors];
     });
 
     if (allErrors.length > 0) {
-      alert("오류가 있는 근무표는 결재 요청을 할 수 없습니다:\n\n" + allErrors.join("\n"));
+      alert(
+        "오류가 있는 근무표는 결재 요청을 할 수 없습니다:\n\n" +
+          allErrors.join("\n"),
+      );
       return;
     }
 
-    if (window.confirm("결재 요청을 위해 현재 변경사항을 먼저 저장하시겠습니까?")) {
+    if (
+      window.confirm("결재 요청을 위해 현재 변경사항을 먼저 저장하시겠습니까?")
+    ) {
       const success = await submitUpdate(false); // 메시지 없이 저장만
       if (!success) return;
       setIsAprvModalOpen(true);
@@ -200,7 +248,10 @@ function DutySkedDetail() {
         title: approvData.title,
         content: approvData.content,
       };
-      await fetcher("/gw/duty/requestApproval", { method: "POST", body: payload });
+      await fetcher("/gw/duty/requestApproval", {
+        method: "POST",
+        body: payload,
+      });
       alert("결재 기안이 완료되었습니다.");
       setIsAprvModalOpen(false);
       navigate("/attendance/dtskdlst");
@@ -215,7 +266,9 @@ function DutySkedDetail() {
     <div className={`duty-detail-page ${isReadOnly ? "mode-readonly" : ""}`}>
       <div className="page-header">
         <div className="header-left">
-          <button className="btn-list" onClick={() => navigate(-1)}>← 목록으로</button>
+          <button className="btn-list" onClick={() => navigate(-1)}>
+            ← 목록으로
+          </button>
         </div>
         <div className="header-center">
           <input
@@ -236,10 +289,19 @@ function DutySkedDetail() {
 
       <div className="page-controls">
         <div className="controls-left">
-          <input type="month" className="control-select readonly-input" value={selectedMonth} disabled />
+          <input
+            type="month"
+            className="control-select readonly-input"
+            value={selectedMonth}
+            disabled
+          />
           <div className="work-type-group">
             <span className="label-text">기준 근무:</span>
-            <select className="control-select highlight readonly-input" value={workType} disabled>
+            <select
+              className="control-select highlight readonly-input"
+              value={workType}
+              disabled
+            >
               <option value="사무">사무</option>
               <option value="4조2교대">4조 2교대</option>
               <option value="4조3교대">4조 3교대</option>
@@ -254,7 +316,9 @@ function DutySkedDetail() {
             <div className="timeline-header">
               <div className="employee-info-cell header-cell">사원명 / 조</div>
               {days.map((d) => (
-                <div key={d} className="day-cell">{d}</div>
+                <div key={d} className="day-cell">
+                  {d}
+                </div>
               ))}
             </div>
             {employees.map((emp) => (
@@ -263,16 +327,22 @@ function DutySkedDetail() {
                   <span className="emp-name">{emp.name}</span>
                   {emp.rotPtnCd !== "사무" && (
                     <span className={`emp-group-tag ${emp.group || "none"}`}>
-                      {emp.group && emp.group !== "미배정" ? `${emp.group}조` : "미배정"}
+                      {emp.group && emp.group !== "미배정"
+                        ? `${emp.group}조`
+                        : "미배정"}
                     </span>
                   )}
                 </div>
                 {days.map((day) => {
-                  const type = emp.duties[day] || (emp.rotPtnCd === "사무" ? "WO" : "O");
-                  const prevType = day === 1 ? lastMonthDataMap[emp.id] : emp.duties[day - 1];
+                  const type =
+                    emp.duties[day] || (emp.rotPtnCd === "사무" ? "WO" : "O");
+                  const prevType =
+                    day === 1 ? lastMonthDataMap[emp.id] : emp.duties[day - 1];
                   const isError = prevType === "N" && type === "D";
                   const baseStyle = dutyStyles[type] || dutyStyles["O"];
-                  const finalStyle = isError ? { ...baseStyle, ...dutyStyles.ERROR } : baseStyle;
+                  const finalStyle = isError
+                    ? { ...baseStyle, ...dutyStyles.ERROR }
+                    : baseStyle;
                   const opts = dutyOptions[emp.rotPtnCd] || ["O"];
 
                   return (
@@ -284,7 +354,9 @@ function DutySkedDetail() {
                           color: finalStyle.textColor,
                           boxShadow: finalStyle.boxShadow,
                           fontWeight: finalStyle.fontWeight,
-                          border: isError ? "2px solid #ef5350" : "1px solid #ddd"
+                          border: isError
+                            ? "2px solid #ef5350"
+                            : "1px solid #ddd",
                         }}
                         value={type}
                         disabled={isReadOnly}
@@ -292,12 +364,21 @@ function DutySkedDetail() {
                           const val = e.target.value;
                           setEmployees((prev) =>
                             prev.map((ev) =>
-                              ev.id === emp.id ? { ...ev, duties: { ...ev.duties, [day]: val } } : ev
-                            )
+                              ev.id === emp.id
+                                ? {
+                                    ...ev,
+                                    duties: { ...ev.duties, [day]: val },
+                                  }
+                                : ev,
+                            ),
                           );
                         }}
                       >
-                        {opts.map((o) => (<option key={o} value={o}>{o}</option>))}
+                        {opts.map((o) => (
+                          <option key={o} value={o}>
+                            {o}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   );
@@ -311,10 +392,17 @@ function DutySkedDetail() {
       {!isReadOnly && (
         <div className="page-footer">
           <div className="footer-left">
-            <button className="btn-approval-request" onClick={handleAprvRequestClick}>결재 요청</button>
+            <button
+              className="btn-approval-request"
+              onClick={handleAprvRequestClick}
+            >
+              결재 요청
+            </button>
           </div>
           <div className="footer-right">
-            <button className="btn-save-final" onClick={handleSave}>저장하기</button>
+            <button className="btn-save-final" onClick={handleSave}>
+              저장하기
+            </button>
           </div>
         </div>
       )}
@@ -323,7 +411,10 @@ function DutySkedDetail() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialEmployees={employees}
-        onApply={(updated) => { setEmployees(updated); setIsModalOpen(false); }}
+        onApply={(updated) => {
+          setEmployees(updated);
+          setIsModalOpen(false);
+        }}
       />
       <DutySkedAprvReqModal
         dutyId={dutyId}

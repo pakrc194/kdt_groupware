@@ -19,6 +19,7 @@ import vfive.gw.attendance.dto.domain.EmpDTO;
 import vfive.gw.attendance.dto.request.DutyRequestDTO;
 import vfive.gw.attendance.dto.request.EmpAtdcRequestDTO;
 import vfive.gw.attendance.dto.response.DutySkedListDTO;
+import vfive.gw.attendance.mapper.DutyMapper;
 import vfive.gw.attendance.service.DutyGroupUpdateService;
 import vfive.gw.attendance.service.DutySkedDeleteService;
 import vfive.gw.attendance.service.DutySkedDetailService;
@@ -60,6 +61,9 @@ public class DutyController {
 	
 	@Resource
 	GetLastMonthDutyService getLastMonthDutyService;
+	
+	@Resource
+	DutyMapper mapper;
 	
 	// 근무표 리스트
 	@GetMapping("list")
@@ -188,8 +192,9 @@ public class DutyController {
       return ResponseEntity.ok(result);
   }
 	
-	
-	
-	
+	@GetMapping("checkConfirmed")
+	public int isConfirmed(DutySkedListDTO req) {
+		return mapper.countConfirmedDuty(req);
+	}
 	
 }

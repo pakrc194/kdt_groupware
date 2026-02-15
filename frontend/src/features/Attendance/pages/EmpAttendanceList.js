@@ -9,11 +9,11 @@ function EmpAttendanceList() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. 검색 및 필터 상태 관리
+  const currentYear = new Date().getFullYear();
   const [filter, setFilter] = useState({
-    startDate: "2026-01-01",
-    endDate: "2026-12-31",
-    deptId: 0,
+    startDate: `${currentYear}-01-01`,
+    endDate: `${currentYear}-12-31`,
+    deptId: myInfo.deptId === 1 ? 0 : myInfo.deptId,
     empNm: "",
   });
 
@@ -70,6 +70,7 @@ function EmpAttendanceList() {
             name="deptId"
             value={filter.deptId}
             onChange={handleFilterChange}
+            disabled={myInfo.deptId !== 0}
           >
             <option value="0">전체 부서</option>
             <option value="2">식품</option>

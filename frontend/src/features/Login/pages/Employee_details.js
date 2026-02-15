@@ -30,29 +30,48 @@ function Employee_details(props) {
     empAddr: "",
     empAddrDetail: "",
     empTelno: "",
-    empActno: "", // 순수 계좌 숫자만 관리
+    empActno: "", 
     empPswd: "",
     confirmPswd: "",
     empEmlAddr: "",
   });
 
-  const [selectedBank, setSelectedBank] = useState(""); // 선택된 은행
-  const [accountError, setAccountError] = useState(""); // 계좌 에러 메시지
-  const [telError, setTelError] = useState(""); // 전화번호 에러 메시지
-  
+  const [selectedBank, setSelectedBank] = useState("");
+  const [accountError, setAccountError] = useState("");
+  const [telError, setTelError] = useState("");
+  const [pwError, setPwError] = useState(""); // 비밀번호 복잡성 에러
+
   const [emailAuthCode, setEmailAuthCode] = useState("");
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
 
-  // 비밀번호 일치 체크
+  // --- 유효성 검사 함수들 ---
+
+  // 1. 비밀번호 복잡성 검사 (8자 이상, 영문, 숫자, 특수문자 조합)
+  const validatePasswordComplexity = (pw) => {
+    const pwReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    if (pw && !pwReg.test(pw)) {
+      setPwError("8자 이상, 영문, 숫자, 특수문자를 조합해주세요.");
+      return false;
+    }
+    setPwError("");
+    return true;
+  };
+
+  // 2. 이메일 형식 검사
+  const validateEmailFormat = (email) => {
+    const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailReg.test(email);
+  };
+
   useEffect(() => {
     setIsPasswordMatch(
       formData.empPswd !== "" && formData.empPswd === formData.confirmPswd
     );
+    validatePasswordComplexity(formData.empPswd);
   }, [formData.empPswd, formData.confirmPswd]);
 
-  // --- 유효성 검사 로직 ---
   const validateAccount = (bank, account) => {
     if (!bank) {
       setAccountError("먼저 은행을 선택해주세요.");
@@ -81,14 +100,14 @@ function Employee_details(props) {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "empActno") {
+    if (name === "empActno" || name === "empTelno") {
+      // 하이픈 및 문자 제거 로직
       const onlyNums = value.replace(/[^0-9]/g, "");
-      setFormData((prev) => ({ ...prev, [name]: onlyNums }));
-      validateAccount(selectedBank, onlyNums);
-    } else if (name === "empTelno") {
-      const onlyNums = value.replace(/[^0-9]/g, "").slice(0, 11);
-      setFormData((prev) => ({ ...prev, [name]: onlyNums }));
-      validateTel(onlyNums);
+      const limitedValue = name === "empTelno" ? onlyNums.slice(0, 11) : onlyNums;
+      
+      setFormData((prev) => ({ ...prev, [name]: limitedValue }));
+      if (name === "empActno") validateAccount(selectedBank, limitedValue);
+      if (name === "empTelno") validateTel(limitedValue);
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -124,6 +143,8 @@ function Employee_details(props) {
 
   const handleSendAuthCode = async () => {
     if (!formData.empEmlAddr) return alert("이메일을 입력해주세요.");
+    if (!validateEmailFormat(formData.empEmlAddr)) return alert("올바른 이메일 형식이 아닙니다.");
+
     try {
       await fetcher(`/gw/auth/send-code`, {
         method: "POST",
@@ -154,9 +175,11 @@ function Employee_details(props) {
   const handleCompleteRegistration = async (e) => {
     e.preventDefault();
 
+    if (!formData.empPhoto) return alert("사원 사진은 필수 등록 항목입니다.");
     if (!validateTel(formData.empTelno)) return alert("전화번호 형식을 확인하세요.");
     if (!selectedBank) return alert("은행을 선택하세요.");
     if (!BANK_SPEC[selectedBank].reg.test(formData.empActno)) return alert("계좌번호 형식을 확인하세요.");
+    if (pwError || !formData.empPswd) return alert("비밀번호 보안 규칙을 확인하세요.");
 
     if (!window.confirm("계정 등록을 완료하시겠습니까?")) return;
 
@@ -169,7 +192,6 @@ function Employee_details(props) {
       uploadData.append("empSn", empSn);
       uploadData.append("empAddr", combinedAddr);
       uploadData.append("empTelno", formData.empTelno);
-      // 은행명과 계좌번호 조합하여 전송
       uploadData.append("empActno", `${selectedBank} ${formData.empActno}`);
       uploadData.append("empPswd", formData.empPswd);
       uploadData.append("empEmlAddr", formData.empEmlAddr);
@@ -191,12 +213,15 @@ function Employee_details(props) {
     }
   };
 
+  // --- 최종 유효성 검사 로직 (사진 필수 추가) ---
   const isFormValid =
+    formData.empPhoto !== null &&
     formData.empAddr &&
     formData.empTelno.length === 11 &&
     formData.empActno &&
     selectedBank &&
     formData.empPswd &&
+    !pwError &&
     isPasswordMatch &&
     isEmailVerified &&
     !accountError &&
@@ -209,14 +234,14 @@ function Employee_details(props) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <tbody>
             <tr>
-              <td>사진</td>
+              <td>사진 <span style={{color: "red"}}>*</span></td>
               <td>
                 <div style={{ marginBottom: "10px" }}>
                   {previewUrl ? (
                     <img src={previewUrl} alt="미리보기" style={{ width: "120px", height: "150px", objectFit: "cover", border: "1px solid #ddd" }} />
                   ) : (
                     <div style={{ width: "120px", height: "150px", backgroundColor: "#f5f5f5", display: "flex", alignItems: "center", justifyContent: "center", color: "#999", border: "1px solid #ddd" }}>
-                      사진 선택
+                      사진 선택 필수
                     </div>
                   )}
                 </div>
@@ -230,7 +255,7 @@ function Employee_details(props) {
                   <input value={formData.empAddr} readOnly placeholder="주소 검색을 클릭하세요" style={{ flex: 1, backgroundColor: "#f9f9f9" }} onClick={() => setIsPostcodeOpen(true)} />
                   <Button type="button" onClick={() => setIsPostcodeOpen(true)}>주소 검색</Button>
                 </div>
-                <input name="empAddrDetail" value={formData.empAddrDetail} onChange={handleInputChange} placeholder="상세 주소 입력" />
+                <input name="empAddrDetail" value={formData.empAddrDetail} onChange={handleInputChange} placeholder="상세 주소 입력(선택)" />
                 {isPostcodeOpen && (
                   <div style={modalOverlayStyle}>
                     <div style={modalContentStyle}>
@@ -247,7 +272,7 @@ function Employee_details(props) {
             <tr>
               <td>연락처</td>
               <td>
-                <input name="empTelno" value={formData.empTelno} onChange={handleInputChange} placeholder="01012345678" />
+                <input name="empTelno" value={formData.empTelno} onChange={handleInputChange} placeholder="숫자만 입력 (01012345678)" />
                 {telError && <p style={{ color: "red", fontSize: "12px", margin: "4px 0" }}>{telError}</p>}
               </td>
             </tr>
@@ -266,7 +291,10 @@ function Employee_details(props) {
             </tr>
             <tr>
               <td>비밀번호</td>
-              <td><input type="password" name="empPswd" value={formData.empPswd} onChange={handleInputChange} placeholder="새 비밀번호" /></td>
+              <td>
+                <input type="password" name="empPswd" value={formData.empPswd} onChange={handleInputChange} placeholder="8자 이상, 영문+숫자+특수문자 조합" />
+                {pwError && <p style={{ color: "red", fontSize: "12px", margin: "4px 0" }}>{pwError}</p>}
+              </td>
             </tr>
             <tr>
               <td>비밀번호 확인</td>
@@ -328,7 +356,7 @@ function Employee_details(props) {
 
 export default Employee_details;
 
-// 스타일 객체는 기존 유지
+// 스타일 객체
 const modalOverlayStyle = { position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", backgroundColor: "rgba(0, 0, 0, 0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 };
 const modalContentStyle = { width: "500px", height: "500px", backgroundColor: "#fff", borderRadius: "8px", display: "flex", flexDirection: "column", boxShadow: "0 4px 15px rgba(0,0,0,0.2)" };
 const modalHeaderStyle = { padding: "15px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #eee" };
