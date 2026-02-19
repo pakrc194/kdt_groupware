@@ -14,7 +14,6 @@ import ScheduleCalendar from "../features/Schedule/pages/ScheduleCalendar";
 import ScheduleList from "../features/Schedule/pages/ScheduleList";
 import ScheduleDetail from "../features/Schedule/pages/ScheduleDetail";
 import ScheduleView from "../features/Schedule/pages/ScheduleView";
-import Employee_details from "../features/Login/pages/Employee_details";
 import FindPassword from "../features/Login/pages/FindPassword";
 
 import ApprovalDetail from "../features/Approval/pages/ApprovalDetail";
@@ -22,6 +21,7 @@ import RedraftPage from "../features/Approval/pages/RedraftPage";
 import { useState } from "react";
 import RequireAuth from "./RequireAuth";
 import TempPage from "../features/Approval/pages/TempPage";
+import EmployeeDetails from "../features/Login/pages/EmployeeDetails";
 
 export default function AppRouter() {
 
@@ -29,7 +29,7 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginMain />} />
-      <Route path="/EmpDetails" element={<Employee_details />} />
+      <Route path="/EmpDetails" element={<EmployeeDetails />} />
       <Route path="/FindPassword" element={<FindPassword />} />
       
       <Route element={<RequireAuth />}>
