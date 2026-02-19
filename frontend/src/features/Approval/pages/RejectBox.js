@@ -3,6 +3,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 import AprvBoxBoard from '../components/AprvBoxBoard';
 import { Link, useParams } from 'react-router-dom';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
+import { formatForList } from '../../../shared/func/formatToDate';
 
 const RejectBox = () => {
     const [aprvDocList, setAprvDocList] = useState([]);
@@ -34,7 +35,7 @@ const RejectBox = () => {
                         <td>{aprvDoc.aprvDocVer}</td>
                         <td><Link to={`/approval/${sideId}/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
-                        <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
+                        <td>{formatForList(aprvDoc.aprvDocDrftDt)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
                                 {getStatusLabel(aprvDoc.aprvDocStts)}

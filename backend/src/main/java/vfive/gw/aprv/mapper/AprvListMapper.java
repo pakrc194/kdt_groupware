@@ -123,8 +123,20 @@ public interface AprvListMapper {
 			""")
 	List<AprvDocFormListResponse> docDetailFormList();
 	
-	@Select("Select * from DOC_FORM where DOC_FORM_YN = 'Y'")
-	List<AprvDocFormListResponse> docFormList();
+	@Select("""
+			<script>
+			    SELECT * FROM DOC_FORM 
+			    <where>
+			        DOC_FORM_YN = 'Y'
+			        <if test="deptId != null and deptId != ''">
+			        	AND DEPT_ID = 0 
+			            OR FIND_IN_SET(#{deptId}, DEPT_ID) 
+			        </if>
+			    </where>
+			</script>
+			""")
+	List<AprvDocFormListResponse> docFormList(@Param("deptId") Integer deptId);
+
 	
 	@Select("""
 			<script>

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import AprvBoxBoard from '../components/AprvBoxBoard';
 import { fetcher } from '../../../shared/api/fetcher';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
+import { formatForList } from '../../../shared/func/formatToDate';
 
 const DocStatus = () => {
     const {sideId} = useParams();
@@ -36,7 +37,7 @@ const DocStatus = () => {
                         <td>{aprvDoc.aprvDocNo}</td>
                         <td><Link to={`/approval/drftBox/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
-                        <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
+                        <td>{formatForList(aprvDoc.aprvDocDrftDt)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
                                 {getStatusLabel(aprvDoc.aprvDocStts)}
@@ -73,7 +74,7 @@ const DocStatus = () => {
                         <td>{aprvDoc.aprvDocNo}</td>
                         <td><Link to={`/approval/approvalBox/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
-                        <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
+                        <td>{formatForList(aprvDoc.aprvDocDrftDt)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
                                 {getStatusLabel(aprvDoc.aprvDocStts)}
