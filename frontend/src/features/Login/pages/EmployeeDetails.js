@@ -156,12 +156,18 @@ function EmployeeDetails(props) {
 
   return (
     <div className="reg-page-bg">
+      <button 
+        type="button" 
+        className="back-nav-btn" 
+        onClick={() => navigate("/login")}
+      >
+        <span className="back-icon">←</span> 로그인으로 돌아가기
+      </button>
       <div className="reg-card">
         <div className="reg-header">
           <h2>신규 사원 계정 등록</h2>
           <p>회원님의 소중한 정보를 안전하게 입력해주세요.</p>
         </div>
-
         <form onSubmit={handleCompleteRegistration} className="reg-form">
           <div className="photo-section">
             <div className="photo-preview-container">

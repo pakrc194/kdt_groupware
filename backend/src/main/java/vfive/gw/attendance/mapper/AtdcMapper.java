@@ -137,4 +137,42 @@ public interface AtdcMapper {
   })
   int insertAtdcHistData();
   
+  @Insert({
+    "INSERT INTO ANNL_LV_STTS (EMP_ID, BASE_YY, OCCRR_LV, USED_LV) ",
+    "SELECT ",
+    "    E.EMP_ID, ",
+    "    YEAR(CURDATE()) AS BASE_YY, ",
+    "    CASE ", 	// 1년 미만 사원 (입사일 ~ 올해 1월 1일 기준 월차 계산)
+    "        WHEN TIMESTAMPDIFF(YEAR, E.EMP_JNCMP_YMD, STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01'), '%Y-%m-%d')) < 1 ",
+    							// 입사일부터 올해 1월 1일까지의 '개월 수'를 계산하여 최대 11개까지 부여
+    "        THEN FLOOR(LEAST(TIMESTAMPDIFF(MONTH, E.EMP_JNCMP_YMD, STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01'), '%Y-%m-%d')), 11)) ",
+    							// 1년 이상 사원 (15일 + 가산 연차 -> 2년당 1일, 최대 25일)
+    "        ELSE FLOOR(LEAST(15 + FLOOR((TIMESTAMPDIFF(YEAR, E.EMP_JNCMP_YMD, STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-01-01'), '%Y-%m-%d')) - 1) / 2), 25)) ",
+    "    END AS OCCRR_LV, ",
+    "    0 AS USED_LV ",
+    "FROM EMP_PRVC E ",
+    "WHERE E.EMP_ACNT_STTS = 'ACTIVE' ",
+    "AND NOT EXISTS ( ",
+    "    SELECT 1 FROM ANNL_LV_STTS A ",
+    "    WHERE A.EMP_ID = E.EMP_ID ",
+    "    AND A.BASE_YY = YEAR(CURDATE()) ",
+    ")"
+	})
+	int insertYearlyLeaveData();
+  
+  @Update({
+    "UPDATE ANNL_LV_STTS A ",
+    "JOIN EMP_PRVC E ON A.EMP_ID = E.EMP_ID ",
+    "SET A.OCCRR_LV = FLOOR( ",	// 전년도 근속에 따른 회계연도 비례분 재계산 (작년 입사자만 해당, 올해 입사자는 0)
+    "    (CASE WHEN YEAR(E.EMP_JNCMP_YMD) < YEAR(CURDATE()) ",
+    "          THEN (15 * (DATEDIFF(STR_TO_DATE(CONCAT(YEAR(CURDATE())-1, '-12-31'), '%Y-%m-%d'), E.EMP_JNCMP_YMD) + 1) / 365) ",
+    "          ELSE 0 END) ",
+    "    + ",	// 입사 후 현재까지 쌓인 월차 (최대 11개)
+    "    LEAST(TIMESTAMPDIFF(MONTH, E.EMP_JNCMP_YMD, CURDATE()), 11) ",
+    ") ",
+    "WHERE A.BASE_YY = YEAR(CURDATE()) ",
+    "AND E.EMP_ACNT_STTS = 'ACTIVE' ",
+    "AND TIMESTAMPDIFF(MONTH, E.EMP_JNCMP_YMD, CURDATE()) < 12"
+	})
+	int updateNewEmpLeave();
 }

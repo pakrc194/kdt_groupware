@@ -226,3 +226,66 @@
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+.back-nav-btn {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #666; /* 기본 색상 */
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 8px 12px;
+  border-radius: 6px;
+  z-index: 10;
+}
+
+.back-nav-btn:hover {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.05); /* 살짝 배경색 추가 */
+  transform: translateX(-4px); /* 왼쪽으로 살짝 이동하는 애니메이션 */
+}
+
+.back-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .back-nav-btn {
+    top: 15px;
+    left: 15px;
+    font-size: 14px;
+  }
+}
+.small-btn, .verify-btn {
+    white-space: nowrap;    /* 글자 줄바꿈 절대 방지 */
+    flex-shrink: 0;         /* 공간이 부족해도 버튼 크기를 줄이지 않음 */
+    min-width: fit-content; /* 글자 길이에 딱 맞게 너비 설정 */
+    padding: 0 16px;        /* 버튼 좌우 여백 확보 */
+    height: 42px;           /* input과 높이 통일 */
+    background: #4a5568;    /* 버튼 색상 (예시) */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.small-btn:hover {
+    background: #2d3748;
+}
+
+/* flex-row 내부의 input 설정 */
+.flex-row .reg-input {
+    flex: 1;      /* input이 남은 공간을 다 차지함 */
+    min-width: 0; /* flex 환경에서 input이 부모를 뚫고 나가는 현상 방지 */
+}
