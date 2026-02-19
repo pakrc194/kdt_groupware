@@ -1,8 +1,6 @@
 .formDiv {
     display: flex;
 }
-
-
 .formLabel {
     width: 30vw;
     border: 1px solid #333;
@@ -11,7 +9,6 @@
     text-align: center;
     padding: 10px;
 }
-
 .formValue {
     width: 70vw;
     border: 1px solid #333;

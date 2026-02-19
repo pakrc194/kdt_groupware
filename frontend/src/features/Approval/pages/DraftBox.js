@@ -46,7 +46,7 @@ const DraftBox = () => {
                         <option value="">전체</option>
                         <option value="PENDING">결재 중</option>
                         <option value="COMPLETED">결재 완료</option>
-                        <option value="REJECTED">반려</option>
+                        {/* <option value="REJECTED">반려</option> */}
                     </select>
                     <select onChange={fn_code}>
                         <option value="">ALL</option>

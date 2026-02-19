@@ -12,21 +12,18 @@ const TempBox = () => {
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(() => {
         
-        console.log("TempBox useEffect");
         fetcher(`/gw/aprv/AprvTempList/${myInfo.empId}`).then(setAprvDocList)
 
         
     }, [])
 
     const fn_click = (id) => {
-        console.log(id)
         fetcher(`/gw/aprv/AprvTempDelete`,{
             method:"POST",
             body:{
                 docId : id
             }
         }).then(res => {
-            console.log(`fetch AprvTempDelete ${res.res}`)
             navigate(0);
         })
     }

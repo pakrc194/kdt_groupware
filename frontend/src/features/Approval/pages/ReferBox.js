@@ -10,7 +10,6 @@ const ReferBox = () => {
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(() => {
        
-        console.log("ReferBox useEffect");
         fetcher(`/gw/aprv/ReferDocList/${myInfo.empId}`).then(setAprvDocList)
     }, [])
 

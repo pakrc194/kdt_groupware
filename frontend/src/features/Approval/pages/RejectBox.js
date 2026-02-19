@@ -9,8 +9,6 @@ const RejectBox = () => {
     const {sideId} = useParams();
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     useEffect(() => {
-        
-        console.log("RejectBox useEffect");
         fetcher(`/gw/aprv/RejectDocList/${myInfo.empId}`).then(setAprvDocList)
     }, [])
 

@@ -40,7 +40,7 @@ const ApprovalBox = () => {
     
     return (
         <>
-            <h4>전자결재 > 결재함 </h4>
+            <h4>전자결재 &gt; 결재함 </h4>
             <div className="section history-section">
                 <div>
                     <select onChange={fn_stts}>
@@ -81,7 +81,7 @@ const ApprovalBox = () => {
                     </tr>))
                     ) : (
                     <tr>
-                        <td colSpan="7" className="no-data">
+                        <td colSpan="5" className="no-data">
                         데이터가 없습니다.
                         </td>
                     </tr>

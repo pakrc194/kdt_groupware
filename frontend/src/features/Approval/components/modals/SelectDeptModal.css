@@ -1,0 +1,95 @@
+/* 모달 내부 컨테이너 */
+.mdl-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 500px;
+}
+
+/* 검색바 */
+.mdl-search-box .drft-input {
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+/* 선택된 아이템 영역 */
+.mdl-selected-area {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.mdl-sub-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.mdl-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mdl-tag {
+    display: inline-flex;
+    align-items: center;
+    background: #3b82f6;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 13px;
+}
+
+.mdl-tag-del {
+    background: none;
+    border: none;
+    color: white;
+    margin-left: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.mdl-empty-text {
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+/* 리스트 스크롤 영역 */
+.mdl-list-scroll {
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+    flex: 1;
+}
+
+.mdl-list-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.mdl-list-item:hover {
+    background-color: #f1f5f9;
+}
+
+.mdl-list-item input {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+}
+
+.mdl-item-text {
+    font-size: 14px;
+    color: #1e293b;
+}
+
+.mdl-item-info {
+    color: #94a3b8;
+}

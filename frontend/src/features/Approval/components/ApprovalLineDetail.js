@@ -6,6 +6,7 @@ import ReferModal from './modals/ReferModal';
 import AtrzModal from './modals/AtrzModal';
 import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 import { useNavigate, useParams } from 'react-router-dom';
+import Button from '../../../shared/components/Button';
 
 const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
     const {docId} = useParams();
@@ -17,20 +18,18 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
     const [lineData, setLineData] = useState([]);
 
-    console.log("inptList: ", inptList);
-    console.log("docDetail: ", docDetail);
+    // console.log("inptList: ", inptList);
+    // console.log("docDetail: ", docDetail);
 
     useEffect(()=>{
-        console.log(aprvLine);
         setLineData(aprvLine);
-
     },[aprvLine]) 
 
     const fn_close = () => setOpenModal("");
 
     const fn_ok = (aprvEmpId, roleCd, prcsRes="") => {
         setOpenModal("")
-        console.log(docId, aprvEmpId, roleCd)
+        //console.log(docId, aprvEmpId, roleCd)
         
         let stts= "APPROVED"
         if(roleCd.includes("REF")) {
@@ -55,16 +54,16 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         }
 
 
-        console.log("fn_ok --")
-        console.log(prcsRes.prcs+", "+prcsRes.rjctRsn)
-        console.log(`
-                aprvDocId : ${docId},
-                aprvPrcsEmpId : ${aprvEmpId},
-                aprvPrcsStts : ${stts},
-                nextEmpId: ${nextId},
-                nextEmpNm: ${nextNm},
-                rjctRsn: ${rjctRsn}
-            `)
+        // console.log("fn_ok --")
+        // console.log(prcsRes.prcs+", "+prcsRes.rjctRsn)
+        // console.log(`
+        //         aprvDocId : ${docId},
+        //         aprvPrcsEmpId : ${aprvEmpId},
+        //         aprvPrcsStts : ${stts},
+        //         nextEmpId: ${nextId},
+        //         nextEmpNm: ${nextNm},
+        //         rjctRsn: ${rjctRsn}
+        //     `)
 
         fetcher("/gw/aprv/AprvPrcs", {
             method: "POST",
@@ -77,7 +76,8 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 nextEmpNm: nextNm,
                 rjctRsn: rjctRsn
             }
-        }).then(console.log)
+        })
+        // .then(console.log)
         
         const date = formatToYYMMDDHHMMSS(new Date());
 
@@ -137,7 +137,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
 
     const fn_schedCheck = () => {
-        console.log(inptList)
+        // console.log(inptList)
         //{inptList}
         let docSched = inptList.filter(v=>v.docInptNm=="docSchedType")[0].docInptVl
         let docRole = inptList.filter(v=>v.docInptNm=="docRole")[0].docInptVl
@@ -159,7 +159,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             default : 
                 break;
         }
-        console.log(inptList)
+        // console.log(inptList)
 
         // console.log(`body--
         //     schedTitle : ${docDetail.aprvDocTtl},
@@ -196,12 +196,12 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         let docStart = inptList.find(v=>v.docInptNm=="docStart").docInptVl
         let docEnd = inptList.find(v=>v.docInptNm=="docEnd").docInptVl
 
-        console.log(`attend check-- 
-            empId : ${docDetail.drftEmpId}
-            docStart:${docStart}    
-            docEnd:${docEnd}    
+        // console.log(`attend check-- 
+        //     empId : ${docDetail.drftEmpId}
+        //     docStart:${docStart}    
+        //     docEnd:${docEnd}    
             
-        `)
+        // `)
         fetcher(`/gw/aprv/AprvAttendUpload`,{
             method:"POST",
             body: {
@@ -237,47 +237,48 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         MID_REF : "중간 참조자",
         LAST_ATRZ : "최종 결재자"
     }
-
+    
     return (
-        <>  
-            <button onClick={fn_schedCheck}>일정 등록</button>
-            <button onClick={fn_attendCheck}>근태 등록</button>
-            <div className='approvalLine'>
-                {lineData.map((v, k)=> {
-                    return (
-                        <div className='empInfo' key={k}>
-                            <div>{roleMap[v.roleCd]}</div>
-                            <div onClick={()=>{
-                                if(v.aprvPrcsEmpId == myInfo.empId) {
-                                    if(v.aprvPrcsDt!=null && v.aprvPrcsDt!="") {
-                                        alert("이미 결재처리된 문서입니다")
-                                    } else {
-                                        setSelectedEmp(v)
-                                        setOpenModal(v.roleCd)
-                                    }
-                                    
-                                }
-                            }}>
-                                    {v.aprvPrcsEmpNm}
-                            </div>
-                            <div>
-                                {v.aprvPrcsDt && formatToYYMMDD(v.aprvPrcsDt)}
-                            </div>
+        <div className='aprv-stamp-line'>
+            {lineData && lineData.map((v, k) => {
+                const isDone = v.aprvPrcsDt != null && v.aprvPrcsDt !== "";
+                
+                // 타입 판별 (DRFT: 기안, ATRZ: 결재, REF: 참조)
+                let typeClass = "";
+                if (v.roleCd.includes("DRFT")) typeClass = "type-drft";
+                else if (v.roleCd.includes("REF")) typeClass = "type-ref";
+                else typeClass = "type-atrz";
+
+                return (
+                    <div className={`aprv-stamp-item ${typeClass} ${isDone ? 'is-done' : ''}`} key={k}>
+                        {/* 1. 직책 */}
+                        <div className="aprv-stamp-role">
+                            {roleMap[v.roleCd]}
                         </div>
-                    )
-                })}
-                {openModal.includes("REF") &&
-                    <ReferModal onClose={fn_close} onOk={()=>fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, "")}/> }
-                {openModal.includes("ATRZ") &&
-                    <AtrzModal onClose={fn_close} onOk={(prcsRes)=>fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, prcsRes)}/> }
+                        
+                        {/* 2. 성명 (도장 영역) */}
+                        <div className="aprv-stamp-name" onClick={() => {
+                            if(v.aprvPrcsEmpId == myInfo.empId && !isDone) {
+                                setSelectedEmp(v);
+                                setOpenModal(v.roleCd);
+                            }
+                        }}>
+                            {v.aprvPrcsEmpNm}
+                        </div>
 
-            </div>
-        </>
+                        {/* 3. 날짜 */}
+                        <div className="aprv-stamp-date">
+                            {v.aprvPrcsDt ? formatToYYMMDD(v.aprvPrcsDt) : ""}
+                        </div>
+                    </div>
+                )
+            })}
+
+            {/* 모달 로직 (기존과 동일) */}
+            {openModal.includes("REF") && <ReferModal onClose={fn_close} onOk={() => fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, "")} />}
+            {openModal.includes("ATRZ") && <AtrzModal onClose={fn_close} onOk={(prcsRes) => fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, prcsRes)} />}
+        </div>
     );
-
-
-
-   
 };
 
 export default ApprovalLineDetail;

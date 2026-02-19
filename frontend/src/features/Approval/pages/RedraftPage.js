@@ -56,7 +56,6 @@ const RedraftPage = () => {
                 docNo:aprvDocDetail.aprvDocNo
             }
         }).then(res=>{
-            console.log(res)
             setDocVerList(res);
         })
     },[aprvDocDetail])
@@ -75,9 +74,9 @@ const RedraftPage = () => {
             aprvDocNo:aprvDocDetail.aprvDocNo,
             aprvDocTtl:docTitle
         }
-        console.log("basic : ",drftDoc);
-        console.log("line : ",docLine);
-        console.log("form inpt", inputList);
+        // console.log("basic : ",drftDoc);
+        // console.log("line : ",docLine);
+        // console.log("form inpt", inputList);
 
         fetcher("/gw/aprv/AprvDrftUpload", 
             {
@@ -89,13 +88,12 @@ const RedraftPage = () => {
                 }        
             }
         ).then(res=>{
-            console.log(res)
             alert("기안 작성 완료")
             navigate(`/approval/${sideId}`)
         })
     }
     const fn_verChange = (e) => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         let drftId = e.target.value;
         setDocVer(drftId)
         navigate(`/approval/${sideId}/${draft}/${drftId}`)

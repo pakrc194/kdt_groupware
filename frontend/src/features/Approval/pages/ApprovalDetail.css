@@ -1,0 +1,249 @@
+/* 전체 배경 (회색빛 바탕에 흰색 문서가 떠 있는 느낌) */
+.aprv-detail-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 기존 배경색/패딩 삭제 */
+}
+
+/* 상단 경로 (Breadcrumbs) */
+.aprv-detail-path {
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* 종이 문서 영역 */
+.aprv-detail-paper {
+    width: 100%;
+    max-width: 900px;
+    background: #ffffff;
+    padding: 60px 50px;
+    border: 1px solid #333; /* 실제 문서처럼 외곽선을 진하게 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 문서 제목 */
+.aprv-detail-title {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-position: under;
+    margin-bottom: 50px;
+    color: #1e293b;
+}
+
+/* 상단 기본정보 & 결재선 배치 (Flex) */
+.aprv-detail-top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+/* 기본 정보 테이블 스타일 */
+.aprv-detail-meta-table {
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.aprv-detail-meta-table th {
+    width: 100px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    padding: 10px;
+    text-align: left;
+    color: #475569;
+}
+
+.aprv-detail-meta-table td {
+    border: 1px solid #cbd5e1;
+    padding: 10px 15px;
+    min-width: 200px;
+    color: #1e293b;
+}
+
+/* 본문 영역 */
+.aprv-detail-content {
+    margin-top: 70px;
+    border: 1px solid #334155;
+    
+}
+
+/* 첨부파일 영역 */
+.aprv-detail-file-section {
+    margin-top: 40px;
+    padding: 20px;
+    background: #f1f5f9;
+    border-radius: 8px;
+}
+
+.aprv-detail-file-section h4 {
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+/* 하단 액션 버튼 바 */
+.aprv-detail-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* 반려 사유 박스 */
+.aprv-reject-box {
+    margin-top: 20px;
+    padding: 20px;
+    border: 2px solid #fecdd3;
+    background: #fff1f2;
+    border-radius: 8px;
+}
+
+
+
+.aprv-stamp-line {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* 결재와 참조 사이 간격 */
+    margin-bottom: 30px;
+}
+
+/* 결재/참조 그룹 구분 */
+.aprv-stamp-group {
+    display: flex;
+}
+
+/* [공통] 결재 칸 */
+.aprv-stamp-item {
+    width: 90px;
+    border: 1px solid #333;
+    background-color: #fff;
+    margin-left: -1px;
+    display: flex;
+    flex-direction: column;
+    position: relative; /* 도장 위치 잡기 위함 */
+}
+
+/* 상단 직책 */
+.aprv-stamp-role {
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #333;
+    padding: 4px 0;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* 중단 성명 (도장이 찍히는 곳) */
+.aprv-stamp-name {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #000;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+}
+
+/* 하단 날짜 */
+.aprv-stamp-date {
+    border-top: 1px dashed #ccc;
+    height: 20px;
+    line-height: 20px;
+    font-size: 10px;
+    text-align: center;
+    color: #333;
+}
+
+/* ------------------------------------------------
+   도장 UI (Stamp) 
+------------------------------------------------ */
+.is-done .aprv-stamp-name::after {
+    content: "인";
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border: 2px solid #059669; /* 초록색 도장 */
+    color: #059669;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    transform: rotate(-15deg); /* 도장 특유의 비스듬함 */
+    opacity: 0.8;
+    z-index: 2;
+}
+
+/* ------------------------------------------------
+   타입별 차별화 (결재 vs 참조 vs 기안)
+------------------------------------------------ */
+
+/* 1. 기안자 (도장 없음, 검정 유지) */
+.type-drft.is-done .aprv-stamp-name::after {
+    display: none; /* 기안자는 도장 안찍음 */
+}
+
+/* 2. 참조 (참조는 선을 점선으로 하거나 배경색을 다르게) */
+.type-ref {
+    border: 1px dashed #999; /* 참조는 점선 테두리 */
+}
+.type-ref .aprv-stamp-role {
+    background-color: #eef2ff; /* 참조는 약간 푸른빛 배경 */
+}
+.type-ref.is-done .aprv-stamp-name::after {
+    content: "확인"; /* 참조는 '인' 대신 '확인' */
+    border-color: #64748b; /* 참조 확인 도장은 차분한 색 */
+    color: #64748b;
+    border-radius: 4px; /* 참조 도장은 사각형 */
+}
+
+
+/* 본문 세부 항목 줄 */
+.aprv-content-row {
+    display: flex;
+    width: 100%;
+    margin-top: -1px; /* 테두리 겹침 처리 */
+}
+
+/* 항목 레이블 (왼쪽) */
+.aprv-content-label {
+    width: 150px; /* 고정 너비로 정돈된 느낌 */
+    background-color: #f8fafc; /* 연한 그레이/블루 톤 */
+    border: 1px solid #333;
+    padding: 12px 15px;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    text-align: center;
+}
+
+/* 항목 값 (오른쪽) */
+.aprv-content-value {
+    flex: 1; /* 남은 너비를 모두 차지 */
+    border: 1px solid #333;
+    padding: 12px 15px;
+    font-size: 14px;
+    color: #000;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    word-break: break-all; /* 긴 텍스트 줄바꿈 */
+}
+
+/* 첫 번째 항목 상단 테두리 강조 (선택 사항) */
+.aprv-content-row:first-child {
+    border-top: 1px solid #333;
+}

@@ -3,6 +3,7 @@ import Button from '../../../shared/components/Button';
 import CompListModal from './modals/CompListModal';
 import { fetcher } from '../../../shared/api/fetcher';
 import SelectDeptModal from './modals/SelectDeptModal';
+import { getSchedTypeLabel } from '../../../shared/func/formatLabel';
 
 const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, docLoc, setDocLoc, docRole, setDocRole}) => {
     const [isLocOpen, setIsLocOpen] = useState(false);
@@ -16,7 +17,31 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+
+    const [selectDeptList, setSelectDeptList] = useState([]);
+
+
+    const getDeptNamesByIds = (list, ids) => {
+        console.log("list :",list)
+        console.log("ids : ",ids)
+
+        if (!ids) return "";
+
+        const idArray = String(ids).split(',').map(id => id.trim());
+
+        const names = idArray.map(id => {
+            const found = list.find(item => String(item.deptId) === id);
+            return found ? found.deptName : null;
+        });
+
+        return names.filter(name => name !== null).join(', ');
+    };
+
+
     useEffect(()=>{
+        if (!drftDate?.docStart || !drftDate?.docEnd) return;
+
+
         fetcher("/gw/aprv/AprvLocFilterList",{
             method:"POST",
             body:{
@@ -37,7 +62,20 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
             })
         )
 
-    },[])
+    },[drftDate?.docStart, drftDate?.docEnd])
+
+    useEffect(() => {
+        if (!docRole) return;
+
+        setSelectDeptList([]);
+        setInputList(prev =>
+            prev.map(v => (
+            v.docInptNm === "docSchedType"
+                ? { ...v, docInptVl: "" }
+                : v
+            ))
+        );
+    }, [docRole]);
 
     const fn_locClick = () => {
         if(drftDate.docStart!=null && drftDate.docEnd!=null) {
@@ -72,19 +110,8 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
         const {type, name, value, checked} = e.currentTarget;
         console.log(type, name, value, checked)
         
-        if(name == "docRole") {
+        if (name === "docRole") {
             setDocRole(value);
-            let schedType = ""
-            setInputList(prev=> 
-                prev.map(v=>{
-                    if(v.docInptNm == "docSchedType") {
-                        let deptVal = ""
-                        schedType = deptVal;
-                        return {...v, docInptVl: deptVal};
-                    }
-                    return v;
-                })
-            )
         }
 
         setInputList(prev=> 
@@ -97,7 +124,6 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
         )
 
         if(type=="date") {
-            console.log("dd")
             setDrftDate(prev=>{ 
                 return {...prev, [`${name}`]: value} ;
             })
@@ -112,6 +138,7 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
     }
     const fn_selectDeptOk = (selectDept) => {
         console.log("fn_selectDeptOk", selectDept)
+        setSelectDeptList(selectDept);
         let schedType = ""
         setInputList(prev=> 
             prev.map(v=>{
@@ -209,94 +236,163 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
         })
     }
 
-    switch(inputForm.docInptType) {
-        case 'SELECT' :
+    const FieldWrapper = ({ title, action, children, extra }) => (
+        <div className="drft-unit">
+            <div className="drft-unit-top">
+                <div className="drft-label">{title}</div>
+                {action && <div className="drft-unit-action">{action}</div>}
+            </div>
+            <div className="drft-control">{children}</div>
+            {extra && <div className="drft-unit-extra">{extra}</div>}
+        </div>
+    );
+
+    const label = inputForm?.docInptLbl || "";
+    const type = inputForm?.docInptType;
+
+    switch (type) {
+        case "TEXTAREA":
             return (
-                <>
-                    {inputForm.docInptLbl}<select name={inputForm.docInptNm} value={inputForm.docInptVl ||""} onChange={fn_change}>
+                <FieldWrapper title={label}>
+                    <textarea
+                        className="drft-textarea"
+                        name={inputForm.docInptNm}
+                        value={inputForm.docInptVl || ""}
+                        onChange={fn_change}
+                        rows={4}
+                    />
+                </FieldWrapper>
+            );
+
+        case "SELECT":
+            const options = (inputForm?.docInptRmrk ? String(inputForm.docInptRmrk) : "")
+                .split(",")
+                .map((v) => v.trim())
+                .filter(Boolean);
+
+            return (
+                <FieldWrapper title={label}>
+                    <select
+                        className="drft-select"
+                        name={inputForm.docInptNm}
+                        value={inputForm.docInptVl || ""}
+                        onChange={fn_change}
+                    >
                         <option value="" disabled>선택</option>
-                        {inputForm.docInptRmrk.split(',').map((v, k)=><option key={k} value={v}>{v}</option>)}
+                        {options.map((v, k) => (
+                            <option key={k} value={v}>{getSchedTypeLabel(v)}</option>
+                        ))}
                     </select>
-                </>
-            )
-        case 'CHECKBOX' :
-            return (
-                <>
-                    {docRole && docRole!="COMPANY" && <div>{inputForm.docInptLbl}
-                        <input type="text" name={inputForm.docInptNm} value={inputForm.docInptVl || ""} readOnly/>
-                        <Button variant="primary" onClick={fn_selectDeptClick}>담당자 선택</Button>
-                        {isSelectDeptOpen && 
-                            <SelectDeptModal onClose={fn_selectDeptClose} onOk={fn_selectDeptOk} schedType={docRole}
-                                title={"선택"} okMsg={"불러오기"}/>}
-                        {(attendList.length>0 || schedList.length>0) &&<div>
-                            <h3>경고</h3>
-                                {attendList.length>0 && attendList.map((attend, k)=>(
-                                    <div key={k}>
-                                        <h4>{attend.empNm} {attend.baseYy} 연차 개수</h4>
-                                        {attend.remLv}/{attend.occrrLv}
-                                        <hr/>
-                                        {dutyList.map((v,k)=>(
-                                            <div key={k}>
-                                                {v.scheId}/{v.dutyYmd}/{v.wrkCd}
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
-                                
-                                
-                                <h4>일정</h4>
-                                {schedList.map((v,k)=>(
-                                    <div key={k}>
-                                        {v.map((vv, kk)=>(
-                                            <div key={kk}>{vv.empNm}/{vv.schedTitle}/{vv.schedStartDate.substring(0, 10)}/{vv.schedEndDate.substring(0, 10)}/{vv.schedType}</div>
-                                        ))} 
-                                    </div>
-                                ))}
-                            </div>}
+                </FieldWrapper>
+            );
 
-                    </div>}
-                </>
-            )
-        case 'DATE' :
+        case "DATE":
             return (
-                <>
-                    {inputForm.docInptLbl}<input name={inputForm.docInptNm} type={inputForm.docInptType} value={inputForm.docInptVl||""} onChange={fn_change}/>
-                </>
-            )
-        case 'TEXTAREA' :
+                <FieldWrapper title={label}>
+                    <input
+                        className="drft-input"
+                        type="date"
+                        name={inputForm.docInptNm}
+                        value={inputForm.docInptVl || ""}
+                        onChange={fn_change}
+                    />
+                </FieldWrapper>
+            );
+
+        case "LOCATION": {
+            const locId = inputForm?.docInptRmrk;
             return (
-                <>
-                    {inputForm.docInptLbl}<br/>
-                    <textarea name={inputForm.docInptNm} type={inputForm.docInptType} value={inputForm.docInptVl||""} onChange={fn_change}/>
-                </>
-            )
-        case 'LOCATION' :
-            let locId = inputForm.docInptRmrk
-            if(locId!=null && locList.length>0)  {
-                let locInfo = locList.find(v=>v.locId==locId)
-                console.log("locRmrk",locId,locInfo, locList)
-                setDocLoc(locInfo)
-                
-            }
+                <FieldWrapper
+                    title={label}
+                    action={!locId && <Button variant="primary" onClick={fn_locClick}>장소 선택</Button>}
+                    extra={isLocOpen && (
+                        <CompListModal
+                            onClose={fn_locClose}
+                            onOk={fn_locOk}
+                            itemList={locList}
+                            itemNm={"locNm"}
+                            title={"선택"}
+                            okMsg={"불러오기"}
+                        />
+                    )}
+                >
+                    <input className="drft-input" value={docLoc?.locNm || ""} readOnly />
+                </FieldWrapper>
+            );
+        }
+
+        case "CHECKBOX": {
+            if (!docRole || docRole === "COMPANY") return null;
+            
+            const hasWarn = (attendList?.length > 0) || (schedList?.length > 0);
 
             return (
-                <>
-                    <div>{inputForm.docInptLbl}
-                        <input type="text" name="docTitle" value={docLoc.locNm} readOnly/>
-                        {!locId && <Button variant="primary" onClick={fn_locClick}>장소 선택</Button>}
-                        {isLocOpen && 
-                            <CompListModal onClose={fn_locClose} onOk={fn_locOk} itemList={locList} 
-                                itemNm={"locNm"} title={"선택"} okMsg={"불러오기"}/>}
-                    </div>
-                </>
-            )
-        default : 
+                <FieldWrapper
+                    title={label}
+                    action={<Button variant="primary" onClick={fn_selectDeptClick}>담당자 선택</Button>}
+                    extra={
+                        <>
+                            {isSelectDeptOpen && (
+                                <SelectDeptModal
+                                    onClose={fn_selectDeptClose}
+                                    onOk={fn_selectDeptOk}
+                                    schedType={docRole}
+                                    selectDeptList = {selectDeptList}
+                                    title={"선택"}
+                                    okMsg={"불러오기"}
+                                />
+                            )}
+                            {hasWarn && (
+                                <div className="warnBox">
+                                    <div className="warnTitle">경고</div>
+                                    {attendList?.length > 0 && (
+                                        <div className="warnSection">
+                                            <div className="warnSectionTitle">근태</div>
+                                            {attendList.map((att, k) => (
+                                                <div className="warnItem" key={k}>
+                                                    <div className="warnItemTitle">{att.empNm} 연차</div>
+                                                    <div className="warnItemBody">{att.remLv}/{att.occrrLv}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {schedList?.length > 0 && (
+                                        <div className="warnSection">
+                                            <div className="warnSectionTitle">일정</div>
+                                            {schedList.map((group, k) => (
+                                                <div key={k} className="warnGroup">
+                                                    {Array.isArray(group) && group.map((s, kk) => (
+                                                        <div className="warnItem" key={kk}>
+                                                            {s.empNm} / {s.schedTitle} / {s.schedStartDate?.substring(0, 10)}~{s.schedEndDate?.substring(0, 10)}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </>
+                    }
+                >
+                <input className="drft-input" name={inputForm.docInptNm} value={
+                    getDeptNamesByIds(selectDeptList, inputForm.docInptVl) || ""} readOnly />
+                </FieldWrapper>
+            );
+        }
+
+        default: // 일반 TEXT
             return (
-                <>
-                    {inputForm.docInptLbl}<input name={inputForm.docInptNm} type={inputForm.docInptType} value={inputForm.docInptVl||""} onChange={fn_change}/>
-                </>
-            )
+                <FieldWrapper title={label}>
+                    <input
+                        className="drft-input"
+                        type="text"
+                        name={inputForm.docInptNm}
+                        value={inputForm.docInptVl || ""}
+                        onChange={fn_change}
+                    />
+                </FieldWrapper>
+            );
     }
-};
-
+}
 export default InputForm;
