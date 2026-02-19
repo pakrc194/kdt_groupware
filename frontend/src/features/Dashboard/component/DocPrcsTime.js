@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 import { TimeDiff } from './TimeDiff';
-import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
+import { formatToYYMMDD } from '../../../shared/func/formatToDate';
 
 function DocPrcsTime({docPrc}) {
   const comp = docPrc.filter(dd => dd.aprvDocStts !== "PENDING" && dd.roleCd === "DRFT").length;

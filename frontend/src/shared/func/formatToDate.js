@@ -1,6 +1,6 @@
 import React from 'react';
 
-const formatToYYMMDD = (input) => {
+export const formatToYYMMDD = (input) => {
 
   if (typeof input === 'string' && input.length >= 8) {
     const yy = input.slice(2, 4);
@@ -22,4 +22,13 @@ const formatToYYMMDD = (input) => {
 };
 
 
-export default formatToYYMMDD;
+export const formatToYYMMDDHHMMSS = (date) => {
+        const yy = String(date.getFullYear());
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        const hh = String(date.getHours()).padStart(2, '0');
+        const mi = String(date.getMinutes()).padStart(2, '0');
+        const ss = String(date.getSeconds()).padStart(2, '0');
+
+        return `${yy}${mm}${dd}${hh}${mi}${ss}`;
+    };

@@ -4,9 +4,9 @@ import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
-import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
+import { formatToYYMMDD } from '../../../shared/func/formatToDate';
 
 function SoDashboard(props) {
     const [emp, setEmp] = useState([]);
