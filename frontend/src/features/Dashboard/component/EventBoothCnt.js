@@ -142,7 +142,9 @@ function EventBoothCnt({ docPrc, sched }) {
     return (
         <div>
             <h1>이벤트 부스 계약 통계</h1>
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
+            <div style={{ width: '100%', height: '400px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+
+            <BarChart style={{ width: '100%', height: '100%', aspectRatio: 1.618 }} responsive data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis width="auto" />
@@ -150,6 +152,7 @@ function EventBoothCnt({ docPrc, sched }) {
                 <Legend />
                 <Bar dataKey="계약" fill="#82ca9d" isAnimationActive={true} />
             </BarChart>
+            </div>
             <h1>계약 기간</h1>
             <h3>전체 평균 계약기간: {average} 일</h3>
 
@@ -164,7 +167,6 @@ function EventBoothCnt({ docPrc, sched }) {
                     onChange={e => setSelectedYear(e.target.value)}
                     style={styles.select}
                 >
-                    <option value="">연도 선택</option>
                     {years.map(year => (
                         <option key={year} value={year}>{year}년</option>
                     ))}
@@ -176,7 +178,6 @@ function EventBoothCnt({ docPrc, sched }) {
                     style={styles.select}
                     disabled={!selectedYear}
                 >
-                    <option value="">월 선택</option>
                     {months.map(month => (
                         <option key={month} value={month}>{month}월</option>
                     ))}

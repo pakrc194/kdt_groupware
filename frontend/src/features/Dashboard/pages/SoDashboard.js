@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
@@ -6,6 +6,7 @@ import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
+import { useParams } from 'react-router-dom';
 import { formatToYYMMDD } from '../../../shared/func/formatToDate';
 
 function SoDashboard(props) {
@@ -20,6 +21,19 @@ function SoDashboard(props) {
 
     
     const formatted = `${yyyy}-${mm}-${dd}`;
+
+    const { refId } = useParams();
+    const sectionRefs = useRef({});
+
+    const moveTo = (key) => {
+        sectionRefs.current[key]?.scrollIntoView({
+        behavior: "smooth"
+        });
+    };
+
+    useEffect(() => {
+            moveTo(refId)
+        }, [refId])
 
     useEffect(() => {
         // 팀 근태
@@ -69,24 +83,26 @@ function SoDashboard(props) {
     
     return (
         <div>
+            <div ref={(el) => (sectionRefs.current["att"] = el)}></div>
            <h1>안전관리</h1>
            <AttendanceRate emp={emp} />
+            <div ref={(el) => (sectionRefs.current["teamsched"] = el)}></div>
             <TeamSchdule sched={sched}/>
+            <div ref={(el) => (sectionRefs.current["aprvlog"] = el)}></div>
             <DocPrcsTime docPrc={docPrc}/>
 
+            <div ref={(el) => (sectionRefs.current["patrol"] = el)}></div>
             <h2>순찰</h2>
-
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
+            <div style={{ width: '100%', height: '400px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            <BarChart style={{ width: "100%", height: "100%", aspectRatio: 1.618 }} responsive data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis width="auto" />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="순찰" fill="#82ca9d" isAnimationActive={true} />
-                {/* <Bar dataKey="대기" fill="#ca8282" isAnimationActive={true} /> */}
-                {/* <Bar dataKey="반려" fill="#595959" isAnimationActive={true} /> */}
-                {/* <RechartsDevtools /> */}
             </BarChart>
+            </div>
 
             <table style={styles.table}>
                 <thead>

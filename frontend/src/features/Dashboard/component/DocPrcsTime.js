@@ -121,9 +121,10 @@ function DocPrcsTime({docPrc}) {
 
     return (
         <div>
+            <h1>전자결재 정보</h1>
             <h3>반려비율  {reje}/{comp} : {presentRate}%</h3>
-
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
+            <div style={{ width: '100%', height: '400px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            <BarChart style={{ width: '100%', height: '100%', aspectRatio: 1.618 }} responsive data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis width="auto" />
@@ -134,9 +135,10 @@ function DocPrcsTime({docPrc}) {
                 <Bar dataKey="반려" fill="#ca8282" isAnimationActive={true} />
                 {/* <RechartsDevtools /> */}
             </BarChart>
+            </div>
 
             <div style={styles.container}>
-            <h2>전자결재 정보</h2>
+            <h2>전자결재 문서</h2>
 
 <div>
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -148,7 +150,6 @@ function DocPrcsTime({docPrc}) {
                     onChange={(e) => setSelectedYear(e.target.value)}
                     style={styles.select}
                 >
-                    <option value="">연도 선택</option>
                     {years.map(year => (
                         <option key={year} value={year}>
                             {year}년
@@ -162,7 +163,6 @@ function DocPrcsTime({docPrc}) {
                     style={styles.select}
                     disabled={!selectedYear}
                 >
-                    <option value="">월 선택</option>
                     {months.map(month => (
                         <option key={month} value={month}>
                             {Number(month)}월
@@ -249,40 +249,6 @@ function DocPrcsTime({docPrc}) {
 }
 
 const styles = {
-  statsWrap: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 16,
-    marginBottom: 24,
-  },
-  statCard: {
-    background: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    minWidth: 140,
-    flex: "1 1 140px",
-  },
-  statTitle: {
-    fontSize: 14,
-    color: "#888",
-    marginBottom: 8,
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-
-  section: {
-    background: "#fff",
-    padding: 24,
-    borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    marginBottom: 30,
-  },
-  subTitle: {
-    marginBottom: 16,
-  },
   table: {
     width: "100%",
     borderCollapse: "collapse",

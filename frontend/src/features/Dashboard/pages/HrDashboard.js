@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
@@ -6,7 +6,8 @@ import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
-import { formatToYYMMDD } from '../../../shared/func/formatToDate';
+import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
+import { useParams } from 'react-router-dom';
 
 function HrDashboard(props) {
     const [emp, setEmp] = useState([]);
@@ -27,57 +28,55 @@ function HrDashboard(props) {
     
     const formatted = `${yyyy}-${mm}-${dd}`;
 
-    const parseDateTime = (str) => {
-        const year = str.substring(0, 4);
-        const month = str.substring(4, 6) - 1; // JS는 month가 0부터 시작
-        const day = str.substring(6, 8);
-        const hour = str.substring(8, 10);
-        const minute = str.substring(10, 12);
-        const second = str.substring(12, 14);
+    const { refId } = useParams();
+    const sectionRefs = useRef({});
 
-        // return new Date(year, month, day, hour, minute, second);
-        return new Date(str)
-    }
+    const moveTo = (key) => {
+        sectionRefs.current[key]?.scrollIntoView({
+        behavior: "smooth"
+        });
+    };
+
+    useEffect(() => {
+            moveTo(refId)
+        }, [refId])
 
     const now = new Date();
     // 최근 12개월 배열 생성 (오늘 기준)
     const recentMonths = Array.from({ length: 15 }, (_, i) => {
-      const date = new Date(now.getFullYear(), now.getMonth() - 13 + i, 1);
-      return {
-        year: date.getFullYear(),
-        month: date.getMonth() + 1, // 0~11 이라서 +1
-      };
+        const date = new Date(now.getFullYear(), now.getMonth() - 13 + i, 1);
+        return {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1, // 0~11 이라서 +1
+        };
     });
 
     const data = recentMonths.map(({ year, month }) => ({
         
       name: `${year}.${String(month).padStart(2, "0")}`,
-      "교육": docPrc
-        .filter(dd =>
+      "교육": docPrc.filter(dd =>
             dd.aprvDocStts === "COMPLETED" &&
             dd.docFormId === 7 &&
             dd.roleCd === "LAST_ATRZ"
         )
         .flatMap(dd => 
-            sched
-            .filter(sc => 
+            sched.filter(sc => 
                 dd.aprvDocId === sc.schedDocId &&
-                parseDateTime(sc.schedStartDate).getFullYear() === year &&
-                parseDateTime(sc.schedStartDate).getMonth() + 1 === month
+                new Date(sc.schedStartDate).getFullYear() === year &&
+                new Date(sc.schedStartDate).getMonth() + 1 === month
             )
-            // .map(sc => sc.schedStartDate) // 여기서 날짜만 뽑음
         ).length,
     }));
 
-// sched를 월/연도/타이틀 기준으로 그룹핑
-const schedMap = {};
-sched.forEach(sc => {
-  const d = parseDateTime(sc.schedStartDate);
-  if (!d) return;
-  const key = `${d.getFullYear()}-${d.getMonth() + 1}-${sc.schedTitle}`;
-  if (!schedMap[key]) schedMap[key] = [];
-  schedMap[key].push(sc);
-});
+    // sched를 월/연도/타이틀 기준으로 그룹핑
+    const schedMap = {};
+    sched.forEach(sc => {
+    const d = new Date(sc.schedStartDate);
+    if (!d) return;
+    const key = `${d.getFullYear()}-${d.getMonth() + 1}-${sc.schedTitle}`;
+    if (!schedMap[key]) schedMap[key] = [];
+    schedMap[key].push(sc);
+    });
 
 
     useEffect(() => {
@@ -100,9 +99,7 @@ sched.forEach(sc => {
     // ✅ 연도 목록
     const years = useMemo(() => {
         const yearSet = new Set(
-            docPrc
-                .filter(dd => dd.aprvDocDrftDt)
-                .map(dd => getYear(dd.aprvDocDrftDt))
+            docPrc.filter(dd => dd.aprvDocDrftDt).map(dd => getYear(dd.aprvDocDrftDt))
         );
         return Array.from(yearSet).sort((a, b) => b.localeCompare(a));
     }, [docPrc]);
@@ -112,11 +109,9 @@ sched.forEach(sc => {
         if (!selectedYear) return [];
 
         const monthSet = new Set(
-            docPrc
-                .filter(
-                    dd =>
-                        dd.aprvDocDrftDt &&
-                        getYear(dd.aprvDocDrftDt) === selectedYear
+            docPrc.filter(dd =>
+                    dd.aprvDocDrftDt &&
+                    getYear(dd.aprvDocDrftDt) === selectedYear
                 )
                 .map(dd => getMonth(dd.aprvDocDrftDt))
         );
@@ -167,63 +162,65 @@ sched.forEach(sc => {
     
     return (
         <div>
+            <div ref={(el) => (sectionRefs.current["att"] = el)}></div>
             <h1>인사관리</h1>
             <AttendanceRate emp={emp} />
+            <div ref={(el) => (sectionRefs.current["teamsched"] = el)}></div>
             <TeamSchdule sched={sched}/>
+            <div ref={(el) => (sectionRefs.current["aprvlog"] = el)}></div>
             <DocPrcsTime docPrc={docPrc}/>
+            <div ref={(el) => (sectionRefs.current["lectst"] = el)}></div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2>교육 통계</h2>
-              <span style={{ fontWeight: 'bold' }}>총 {docPrc
-            .filter(dd =>
-                dd.aprvDocStts !== "PENDING" &&
-                dd.docFormId == 7 &&
-                dd.roleCd === "LAST_ATRZ"
-            ).length}건</span>
+                <h2>교육 통계</h2>
+                <span style={{ fontWeight: 'bold' }}>
+                    총 {docPrc
+                        .filter(dd =>
+                            dd.aprvDocStts !== "PENDING" &&
+                            dd.docFormId == 7 &&
+                            dd.roleCd === "LAST_ATRZ"
+                        ).length}건
+                </span>
+            </div>
+            <div style={{ width: '100%', height: '400px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+                <BarChart style={{ width: '100%', height: '100%', aspectRatio: 1.618 }} responsive data={data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis width="auto" />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="교육" fill="#82ca9d" isAnimationActive={true} />
+                </BarChart>
             </div>
 
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="교육" fill="#82ca9d" isAnimationActive={true} />
-            </BarChart>
+            <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {/* ✅ 연도 / 월 드롭다운 */}
+                    <div style={{ marginBottom: "15px", display: "flex", gap: "10px" }}>
+                        <select
+                            value={selectedYear}
+                            onChange={(e) => setSelectedYear(e.target.value)}
+                            style={styles.select}
+                        >
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}년</option>
+                            ))}
+                        </select>
 
-
-<div>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {/* ✅ 연도 / 월 드롭다운 */}
-            <div style={{ marginBottom: "15px", display: "flex", gap: "10px" }}>
-                <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    style={styles.select}
-                >
-                    <option value="">연도 선택</option>
-                    {years.map(year => (
-                        <option key={year} value={year}>
-                            {year}년
-                        </option>
-                    ))}
-                </select>
-
-                <select
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                    style={styles.select}
-                    disabled={!selectedYear}
-                >
-                    <option value="">월 선택</option>
-                    {months.map(month => (
-                        <option key={month} value={month}>
-                            {Number(month)}월
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <span style={{ fontWeight: 'bold' }}>총 {filteredDocs.length}건</span>
-            </div>
+                        <select
+                            value={selectedMonth}
+                            onChange={(e) => setSelectedMonth(e.target.value)}
+                            style={styles.select}
+                            disabled={!selectedYear}
+                        >
+                            {months.map(month => (
+                                <option key={month} value={month}>
+                                    {Number(month)}월
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <span style={{ fontWeight: 'bold' }}>총 {filteredDocs.length}건</span>
+                </div>
 
             {/* ✅ 스크롤 영역 */}
             <div
@@ -300,40 +297,6 @@ sched.forEach(sc => {
 }
 
 const styles = {
-  statsWrap: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 16,
-    marginBottom: 24,
-  },
-  statCard: {
-    background: "#fff",
-    padding: 16,
-    borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    minWidth: 140,
-    flex: "1 1 140px",
-  },
-  statTitle: {
-    fontSize: 14,
-    color: "#888",
-    marginBottom: 8,
-  },
-  statValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-
-  section: {
-    background: "#fff",
-    padding: 24,
-    borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    marginBottom: 30,
-  },
-  subTitle: {
-    marginBottom: 16,
-  },
   table: {
     width: "100%",
     borderCollapse: "collapse",

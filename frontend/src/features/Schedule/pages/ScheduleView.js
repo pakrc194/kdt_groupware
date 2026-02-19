@@ -326,7 +326,6 @@ const styles = {
     modifyBtn: { marginLeft: '8px', padding: '4px 8px', backgroundColor: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' },
     todoForm: { display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' },
     addBtn: { marginTop: '6px', padding: '6px 10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' },
-    // cancelBtn: { padding: '5px 10px', backgroundColor: '#f5f5f5', color: '#333', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer' },
     editBox: {
         width: '100%',
         padding: '10px',
