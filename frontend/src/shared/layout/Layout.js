@@ -218,6 +218,7 @@ const Layout = () => {
           )}
         </nav>
         <nav className="nav-right">
+          <div><b>{myInfo.empNm}&nbsp;{myInfo.deptName}</b></div>
           <div className="nav-noti-wrap">
             <button className="nav-icon" onClick={fn_ntf}>
               🔔
