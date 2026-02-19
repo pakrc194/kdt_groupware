@@ -4,9 +4,9 @@ import Modal from '../../../shared/components/Modal';
 import { fetcher } from '../../../shared/api/fetcher';
 import ReferModal from './modals/ReferModal';
 import AtrzModal from './modals/AtrzModal';
-import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../../../shared/components/Button';
+import { formatToYYMMDD, formatToYYMMDDHHMMSS } from '../../../shared/func/formatToDate';
 
 const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
     const {docId} = useParams();
@@ -209,19 +209,6 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
             alert("근태 등록 완료")
         })
     }
-
-
-    const formatToYYMMDDHHMMSS = (date) => {
-        const yy = String(date.getFullYear());
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        const hh = String(date.getHours()).padStart(2, '0');
-        const mi = String(date.getMinutes()).padStart(2, '0');
-        const ss = String(date.getSeconds()).padStart(2, '0');
-
-        return `${yy}${mm}${dd}${hh}${mi}${ss}`;
-    };
-
 
     if (!aprvLine) {
         return <div>결재선 정보를 불러오는 중...</div>;

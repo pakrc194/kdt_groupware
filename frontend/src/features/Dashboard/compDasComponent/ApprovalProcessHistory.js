@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
-import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
+import { formatToYYMMDD } from "../../../shared/func/formatToDate";
 
 function ApprovalProcessHistory({approval}) {
     
