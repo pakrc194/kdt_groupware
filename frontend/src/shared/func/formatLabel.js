@@ -30,7 +30,17 @@ export const SCHED_TYPE_MAP = {
   TODO: { label: "TODO" },
 }
 
+export const APRV_LINE_MAP = {
+    DRFT : { label: "기안자" },
+    DRFT_REF : { label: "참조자" },
+    MID_ATRZ : { label: "중간 결재자" },
+    MID_REF : { label: "중간 참조자" },
+    LAST_ATRZ : { label: "최종 결재자" }
+}
+
+
 
 export const getStatusLabel = (status) => STATUS_MAP[status]?.label || status;
 export const getDeptLabel = (deptId) => DEPT_MAP[deptId]?.label || deptId;
 export const getSchedTypeLabel = (type) => SCHED_TYPE_MAP[type]?.label || type;
+export const getAprvLineMap = (line) => APRV_LINE_MAP[line]?.label || line;

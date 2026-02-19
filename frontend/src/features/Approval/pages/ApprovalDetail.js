@@ -8,6 +8,7 @@ import DetailForm from '../components/DetailForm';
 import AttendContent from '../components/AttendContent';
 import DutyForm from './DutyForm';
 import './ApprovalDetail.css'
+import { formatToKor } from '../../../shared/func/formatToDate';
 
 const ApprovalDetail = () => {
     const {sideId, docId} = useParams();
@@ -310,7 +311,7 @@ const ApprovalDetail = () => {
                             </tr>
                             <tr>
                                 <th>기안일시</th>
-                                <td>{aprvDocDetail.aprvDocDrftDt}</td>
+                                <td>{formatToKor(aprvDocDetail.aprvDocDrftDt)}</td>
                             </tr>
                         </tbody>
                     </table>

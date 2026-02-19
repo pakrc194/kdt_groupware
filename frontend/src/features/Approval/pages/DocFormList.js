@@ -46,7 +46,7 @@ const DocFormList = () => {
                                 <td>{v.docFormCd}</td>
                                 <td>{v.docFormNm}</td>
                                 <td>{v.docFormType}</td>
-                                <td>{v.deptNames}</td>
+                                <td>{v.deptNames || "공통"}</td>
                                 <td>{v.docFormYn}</td>
                                 <td><Button onClick={()=>fn_visible(v)}>숨김</Button></td>
                             </tr>

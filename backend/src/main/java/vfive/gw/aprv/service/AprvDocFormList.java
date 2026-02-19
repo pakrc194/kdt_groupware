@@ -19,7 +19,7 @@ public class AprvDocFormList implements AprvAction {
 	public Object execute(AprvParams service, AprvPageInfo pInfo, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		return mapper.docFormList();
+		return mapper.docFormList(pInfo.getPNo());
 	}
 
 }
