@@ -1,0 +1,131 @@
+.user-attend-group {
+    padding: 15px 0;
+}
+
+.user-name-title {
+    font-size: 16px;
+    color: #1e293b;
+    margin-bottom: 15px;
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.user-divider {
+    border: 0;
+    border-top: 2px dashed #cbd5e1;
+    margin: 30px 0;
+}
+
+
+
+.attend-modal-container {
+    padding: 10px 5px;
+    color: #1e293b;
+}
+
+.attend-section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #334155;
+    border-left: 4px solid #3b82f6; /* 섹션 강조 선 */
+    padding-left: 10px;
+}
+
+/* 연차 개수 스타일 */
+.leave-count {
+    font-size: 20px;
+    font-weight: 600;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.leave-count .current { color: #3b82f6; } /* 남은 연차 강조 */
+.leave-count .total { color: #94a3b8; }
+
+/* 데이터 리스트 공통 스타일 */
+.data-list {
+    background-color: #f8fafc;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.data-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    align-items: center;
+}
+
+.data-item:last-child { border-bottom: none; }
+
+/* 배지 스타일 */
+.type-badge {
+    background: #e2e8f0;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.type-badge.blue {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* 텍스트 줄임 처리나 너비 조절 */
+.data-item span.name { font-weight: 600; width: 50px; }
+.data-item span.dept { color: #64748b; width: 70px; }
+.data-item span.title { flex: 1; }
+
+
+.user-selector-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.user-tab-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.user-tab-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+    font-weight: bold;
+}
+
+.user-tab-btn:hover:not(.active) {
+    background: #e9ecef;
+}
+
+.tab-divider {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin-bottom: 20px;
+}
+
+/* 페이드 인 효과 */
+.animated-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

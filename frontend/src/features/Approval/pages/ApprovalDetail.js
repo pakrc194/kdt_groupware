@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 import Button from '../../../shared/components/Button';
@@ -42,6 +42,7 @@ const ApprovalDetail = () => {
         tempBox: "임시저장함",
         rejectBox: "반려함",
     };
+
     const docRoleMap = {
         PERSONAL : "팀원",
         DEPT:"팀",
@@ -50,6 +51,33 @@ const ApprovalDetail = () => {
     
 
     const navigate = useNavigate();
+
+
+    const idList = useMemo(() => {
+        if (!aprvDocDetail || !inputList.length) return [];
+
+        // 1. 근태(연차 등) 문서인 경우: 기안자 본인의 ID만 추출
+        if (aprvDocDetail.docFormType === "근태") {
+            return aprvDocDetail.drftEmpId ? [String(aprvDocDetail.drftEmpId)] : [];
+        }
+
+        // 2. 일정 문서인 경우: docSchedType에 저장된 대상자 ID들 추출
+        if (aprvDocDetail.docFormType === "일정") {
+            const schedTargetValue = inputList.find(v => v.docInptNm === "docSchedType")?.docInptVl;
+            
+            if (schedTargetValue) {
+                // 콤마(,)로 구분된 ID 문자열을 배열로 변환
+                return schedTargetValue.split(',').map(id => String(id.trim()));
+            }
+            
+            // 대상자가 지정되지 않았다면 기안자 ID를 기본값으로 사용
+            return aprvDocDetail.drftEmpId ? [String(aprvDocDetail.drftEmpId)] : [];
+        }
+
+        return [];
+    }, [aprvDocDetail, inputList]);
+
+
 
     useEffect(()=>{
         fetcher(`/gw/aprv/AprvLine/${docId}`).then(res=>{
@@ -195,14 +223,16 @@ const ApprovalDetail = () => {
     const fn_warnSched = () => {
         const docRole = inputList.find(v=>v.docInptNm==="docRole")?.docInptVl;
         const schedType = inputList.find(v=>v.docInptNm==="docSchedType")?.docInptVl;
-        const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl;
-        const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl;
+        const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl.replaceAll("-","");
+        const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl.replaceAll("-","");
         
         
         let drftEmpId=0;
         let deptId = 0;
 
         let ids = schedType?.includes(',')? schedType.split(',') : [schedType];
+
+       
 
 
         if(docRole==="DEPT") {
@@ -213,7 +243,10 @@ const ApprovalDetail = () => {
             ids = [aprvDocDetail.drftEmpId]
         }
 
-        // console.log("일정확인 ",docRole, schedType, drftEmpId, ids)
+        console.log("fn_warnSched-----")
+        console.log(docStart,"~",docEnd)
+
+        console.log("일정확인 ",docRole, schedType, drftEmpId, ids)
 
         if(drftEmpId==null)
             return;
@@ -242,6 +275,7 @@ const ApprovalDetail = () => {
                         docEnd:docEnd
                     }
             }).then(res=>{
+                console.log("fetch AprvDutyScheDtl",ids,res)
                 setDutyList(res)
             })
             
@@ -376,7 +410,7 @@ const ApprovalDetail = () => {
                 {/* 근태 정보 (필요시) */}
                 {aprvDocDetail?.aprvDocStts !== "COMPLETE" && (
                     <div className="aprv-detail-extra">
-                        <AttendContent attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate} />
+                        <AttendContent idList={idList} attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate} />
                     </div>
                 )}
 
@@ -426,7 +460,7 @@ const ApprovalDetail = () => {
             {/* 하단 고정 버튼 바 */}
             <div className="aprv-detail-actions">
                 <Button variant='secondary' onClick={fn_list}>목록으로</Button>
-                {sideId === "rejectBox" && <Button variant='primary' onClick={fn_redraft}>재기안 작성</Button>}
+                {sideId === "rejectBox" || sideId === "tempBox" && <Button variant='primary' onClick={fn_redraft}>재기안 작성</Button>}
                 {(!isApproved && aprvDocDetail.drftEmpId == myInfo.empId) && <Button variant='danger' onClick={fn_drftCancel}>기안 취소</Button>}
             </div>
         </div>

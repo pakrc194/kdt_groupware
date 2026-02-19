@@ -3,58 +3,79 @@ import Modal from '../../../../shared/components/Modal';
 import { fetcher } from '../../../../shared/api/fetcher';
 import AttendContent from '../AttendContent';
 
-const AttendCheckModal = ({onClose, onOk, drftDate}) => {
+
+const AttendCheckModal = ({ onClose, onOk, drftDate, ids }) => {
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
-
+    
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
-    useEffect(()=>{
-        fetcher("/gw/aprv/AprvEmpAnnlLv", {
-            method:"POST",
-            body: {
-                ids:[myInfo.empId],
-                year:2026
+
+    // 1. 초기값 설정 시 props로 받은 ids를 우선 사용
+    const [idList, setIdList] = useState(ids && ids.length > 0 ? ids : [myInfo?.empId]);
+
+    // 2. 무한 루프 방지: ids의 내용물이 실제로 변했을 때만 업데이트
+    useEffect(() => {
+        if (ids && ids.length > 0) {
+            // 현재 idList와 새로 들어온 ids를 문자열로 비교 (참조값 비교 방지)
+            if (JSON.stringify(ids) !== JSON.stringify(idList)) {
+                setIdList(ids);
             }
-        }).then(res => {
-            setAttendList(res)
-        })
-        console.log("check 날짜 ㅣ ",drftDate)
+        }
+    }, [ids, idList]); 
 
-        console.log(drftDate?.docStart?.replaceAll("-", ""), drftDate?.docEnd?.replaceAll("-", ""))
+    // 3. API 호출 로직
+    useEffect(() => {
+        if (!idList || idList.length === 0 || !drftDate?.docStart) return;
 
-        fetcher("/gw/aprv/AprvDutyScheDtl",{
-                method:"POST",
-                body:{
-                    ids:[myInfo.empId],
-                    docStart:drftDate.docStart.replaceAll("-", ""),
-                    docEnd:drftDate.docEnd.replaceAll("-", "")
-                }
-        }).then(res=>{
-            console.log("dutySched : ", res)
-            setDutyList(res)
-        })
+        const start = drftDate.docStart.replaceAll("-", "");
+        const end = drftDate.docEnd.replaceAll("-", "");
+        const year = drftDate.docStart.substring(0, 4) || "2026";
 
-        fetcher("/gw/aprv/AprvSchedList",{
-                method:"POST",
-                body:{
-                    ids:[myInfo.empId],
-                    docStart:drftDate.docStart.replaceAll("-", ""),
-                    docEnd:drftDate.docEnd.replaceAll("-", "")
-                }
-        }).then(res=>{
-            console.log("fetch AprvSchedList",res)
-            setSchedList(res)
-        })
+        // API 호출들을 변수에 담아 관리 (가독성)
+        const fetchAllData = async () => {
+            try {
+                // 연차
+                const annlRes = await fetcher("/gw/aprv/AprvEmpAnnlLv", {
+                    method: "POST",
+                    body: { ids: idList, year: year }
+                });
+                setAttendList(annlRes || []);
 
-    },[])
+                // 근태
+                const dutyRes = await fetcher("/gw/aprv/AprvDutyScheDtl", {
+                    method: "POST",
+                    body: { ids: idList, docStart: start, docEnd: end }
+                });
+                setDutyList(dutyRes || []);
+
+                // 일정
+                const schedRes = await fetcher("/gw/aprv/AprvSchedList", {
+                    method: "POST",
+                    body: { ids: idList, docStart: start, docEnd: end }
+                });
+                setSchedList(schedRes || []);
+            } catch (error) {
+                console.error("데이터 로드 실패:", error);
+            }
+        };
+
+        fetchAllData();
+
+    }, [idList, drftDate.docStart, drftDate.docEnd]); // 날짜 객체 전체 대신 특정 값만 감시
 
     return (
         <Modal
-            title={`기간 확인 ${myInfo.empNm}`}
-            message={<>
-                <AttendContent attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}/>
-            </>}
+            title={`기간 확인`}
+            message={
+                <AttendContent 
+                    idList={idList} 
+                    attendList={attendList} 
+                    dutyList={dutyList} 
+                    schedList={schedList} 
+                    drftDate={drftDate}
+                />
+            }
             onClose={onClose}
             onOk={onOk}
             okMsg={"확인"}

@@ -4,8 +4,6 @@ import EmpListModal from './EmpListModal';
 import { fetcher } from '../../../../shared/api/fetcher';
 
 const EditAprvLine = ({docLine, onClose, onOk}) => {
-    const [selectedRole, setSelectedRole] = useState();
-    const [selectedEmp, setSelectedEmp] = useState();
     const [empList, setEmpList] = useState([]);
     const [addLine, setAddLine] = useState({
         roleCd:"",
@@ -75,78 +73,86 @@ const EditAprvLine = ({docLine, onClose, onOk}) => {
     }, [addLine.roleCd, empList, myInfo?.jbttlId, myInfo?.deptId]);
 
     const fn_ok = () => {
-        console.log("edit",addLine);
-        onOk(addLine);
+        if(addLine?.roleCd && addLine?.empId) {
+            console.log("edit",addLine);
+            onOk(addLine);
+        } else {
+            alert("내용을 입력해주세요")
+        }
     }
 
-  const fn_selectChange = (e) => {
-    const { name, value } = e.target;
+    const fn_selectChange = (e) => {
+        const { name, value } = e.target;
 
-    // ✅ roleCd 변경: emp 선택 초기화 + role 저장
-    if (name === "roleCd") {
-      setAddLine((prev) => ({
-        ...prev,
-        roleCd: value,
-        empId: "",
-        empNm: "",
-      }));
-      return;
-    }
+        // ✅ roleCd 변경: emp 선택 초기화 + role 저장
+        if (name === "roleCd") {
+            setAddLine((prev) => ({
+                ...prev,
+                roleCd: value,
+                empId: "",
+                empNm: "",
+            }));
+            return;
+        }
 
-    // ✅ empNm 셀렉트의 value는 empId로 두는 게 정석 (지금도 value가 empId임)
-    if (name === "empId") {
-      const picked = filteredEmpList.find((v) => String(v.empId) === String(value));
-      setAddLine((prev) => ({
-        ...prev,
-        empId: picked ? picked.empId : "",
-        empNm: picked ? picked.empNm : "",
-      }));
-      return;
-    }
-  };
+        // ✅ empNm 셀렉트의 value는 empId로 두는 게 정석 (지금도 value가 empId임)
+        if (name === "empId") {
+            const picked = filteredEmpList.find((v) => String(v.empId) === String(value));
+                setAddLine((prev) => ({
+                ...prev,
+                empId: picked ? picked.empId : "",
+                empNm: picked ? picked.empNm : "",
+                }));
+                return;
+        }
+    };
 
 
-    const empSelectDisabled = !addLine.roleCd;
+    const roleSelectDisabled = !addLine.roleCd;
+    const empSelectDisabled = !addLine.empId;
 
-  return (
-    <Modal
-      title="결재선 추가"
-      message={
-        <>
-          <select name="roleCd" value={addLine.roleCd} onChange={fn_selectChange}>
-            <option value="" disabled>선택</option>
-            <option value="DRFT_REF" disabled={isRoleDisabled("DRFT_REF")}>참조자</option>
-            {!hasMidAtrz && (
-                <option value="MID_ATRZ">중간결재자</option>
-            )}
-            <option value="MID_REF" disabled={isRoleDisabled("MID_REF")}>중간참조자</option>
-            {/* <option value="LAST_ATRZ" disabled>최종결재자</option> */}
-          </select>
 
-          <div>
-            <select
-              name="empId"
-              value={addLine.empId}
-              onChange={fn_selectChange}
-              disabled={empSelectDisabled}
-            >
-              <option value="" disabled>
-                {empSelectDisabled ? "역할 먼저 선택" : "선택"}
-              </option>
-
-              {filteredEmpList.map((v, k) => (
-                <option key={k} value={v.empId}>
-                  {v.deptName}-{v.empNm}({v.jbttlNm})
-                </option>
-              ))}
+    return (
+        <Modal
+        title="결재선 추가"
+        message={
+            <>
+            결재선 
+            <select name="roleCd" value={addLine.roleCd} onChange={fn_selectChange}>
+                <option value="" disabled>선택</option>
+                <option value="DRFT_REF" disabled={isRoleDisabled("DRFT_REF")}>참조자</option>
+                {!hasMidAtrz && (
+                    <option value="MID_ATRZ">중간결재자</option>
+                )}
+                <option value="MID_REF" disabled={isRoleDisabled("MID_REF")}>중간참조자</option>
+                {/* <option value="LAST_ATRZ" disabled>최종결재자</option> */}
             </select>
-          </div>
-        </>
-      }
-      onClose={onClose}
-      onOk={fn_ok}
-      okMsg={"추가"}
-    />
-  );
+
+            <div>
+                담당자
+                <select
+                name="empId"
+                value={addLine.empId}
+                onChange={fn_selectChange}
+                disabled={roleSelectDisabled}
+                >
+                <option value="" disabled>
+                    {roleSelectDisabled ? "역할 먼저 선택" : "선택"}
+                </option>
+
+                {filteredEmpList.map((v, k) => (
+                    <option key={k} value={v.empId}>
+                    {v.deptName}-{v.empNm}({v.jbttlNm})
+                    </option>
+                ))}
+                </select>
+            </div>
+            </>
+        }
+        onClose={onClose}
+        onOk={fn_ok}
+        okMsg={"추가"}
+        />
+    );
 };
 export default EditAprvLine;
