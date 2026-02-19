@@ -28,7 +28,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
     const initDocLineRef = useRef(null);
 
     const fn_attendCheck = () => {
-        if(drftDate.docStart!=null && drftDate.docEnd!=null) {
+        if(drftDate.docStart!="" && drftDate.docEnd!="") {
             setIsAttendCheckOpen(true)
         } else {
             alert("기간 선택하세요")

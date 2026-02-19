@@ -4,237 +4,151 @@ import CompListModal from './modals/CompListModal';
 import { fetcher } from '../../../shared/api/fetcher';
 import SelectDeptModal from './modals/SelectDeptModal';
 import { getSchedTypeLabel } from '../../../shared/func/formatLabel';
+import AttendContent from './AttendContent';
 
-const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, docLoc, setDocLoc, docRole, setDocRole}) => {
+const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, docLoc, setDocLoc, docRole, setDocRole }) => {
     const [isLocOpen, setIsLocOpen] = useState(false);
     const [locList, setLocList] = useState([]);
     
-    const [schedType, setSchedType] = useState();
-
     const [isSelectDeptOpen, setIsSelectDeptOpen] = useState(false);
-    
+    const [selectDeptList, setSelectDeptList] = useState([]);
+
+    // 🔥 1. 누락되었던 idList를 상태로 추가
+    const [idList, setIdList] = useState([]); 
+
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
-    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
-
-    const [selectDeptList, setSelectDeptList] = useState([]);
-
+    const [myInfo] = useState(() => JSON.parse(localStorage.getItem("MyInfo")));
 
     const getDeptNamesByIds = (list, ids) => {
-        console.log("list :",list)
-        console.log("ids : ",ids)
-
         if (!ids) return "";
-
         const idArray = String(ids).split(',').map(id => id.trim());
-
         const names = idArray.map(id => {
             const found = list.find(item => String(item.deptId) === id);
             return found ? found.deptName : null;
         });
-
         return names.filter(name => name !== null).join(', ');
     };
 
-
-    useEffect(()=>{
+    // 장소 필터 리스트 조회
+    useEffect(() => {
         if (!drftDate?.docStart || !drftDate?.docEnd) return;
 
+        fetcher("/gw/aprv/AprvLocFilterList", {
+            method: "POST",
+            body: { docStart: drftDate.docStart, docEnd: drftDate.docEnd }
+        }).then(res => setLocList(res || []));
 
-        fetcher("/gw/aprv/AprvLocFilterList",{
-            method:"POST",
-            body:{
-                docStart:drftDate.docStart,
-                docEnd:drftDate.docEnd
-            }
-        }).then(res=>{
-            console.log("fetch AprvLocList : ", res)
-            setLocList(res)
-        })
+        setInputList(prev => 
+            prev.map(v => v.docInptNm === "docLoc" ? { ...v, docInptVl: v.docInptRmrk } : v)
+        );
+    }, [drftDate?.docStart, drftDate?.docEnd, setInputList]);
 
-        setInputList(prev=> 
-            prev.map(v=>{
-                if(v.docInptNm == "docLoc") {
-                    return {...v, docInptVl: v.docInptRmrk};
-                }
-                return v;
-            })
-        )
-
-    },[drftDate?.docStart, drftDate?.docEnd])
-
+    // docRole(결재 역할)이 변경될 때 초기화
     useEffect(() => {
         if (!docRole) return;
-
         setSelectDeptList([]);
+        setIdList([]); // 역할이 바뀌면 idList도 초기화
+        setAttendList([]);
+        setDutyList([]);
+        setSchedList([]);
         setInputList(prev =>
-            prev.map(v => (
-            v.docInptNm === "docSchedType"
-                ? { ...v, docInptVl: "" }
-                : v
-            ))
+            prev.map(v => v.docInptNm === "docSchedType" ? { ...v, docInptVl: "" } : v)
         );
-    }, [docRole]);
+    }, [docRole, setInputList]);
 
+    // 🔥 2. API 호출 로직을 useEffect로 분리 (idList나 날짜가 바뀔 때 자동 실행)
+    useEffect(() => {
+        if (!idList || idList.length === 0 || !drftDate?.docStart || !drftDate?.docEnd) return;
+
+        const start = drftDate.docStart.replaceAll("-", "");
+        const end = drftDate.docEnd.replaceAll("-", "");
+        const deptId = 0;
+
+        // 원본 코드에 있던 docRole === "PERSONAL" 조건 유지 (필요 시 제거하여 공통으로 사용 가능)
+        if (docRole === "PERSONAL") {
+            fetcher("/gw/aprv/AprvEmpAnnlLv", {
+                method: "POST",
+                body: { role: docRole, ids: idList, deptId, year: 2026 }
+            }).then(res => setAttendList(res || []));
+            
+            fetcher("/gw/aprv/AprvDutyScheDtl", {
+                method: "POST",
+                body: { role: docRole, ids: idList, deptId, docStart: start, docEnd: end }
+            }).then(res => setDutyList(res || []));
+            
+            fetcher("/gw/aprv/AprvSchedList", {
+                method: "POST",
+                body: { role: docRole, ids: idList, deptId, docStart: start, docEnd: end }
+            }).then(res => setSchedList(res || []));
+        }
+    }, [idList, docRole, drftDate?.docStart, drftDate?.docEnd]);
+
+
+    // 장소 관련 핸들러
     const fn_locClick = () => {
-        if(drftDate.docStart!=null && drftDate.docEnd!=null) {
+        if (drftDate?.docStart && drftDate?.docEnd) {
             setIsLocOpen(true);
         } else {
-            alert("기간 선택하세요")
+            alert("기간을 선택하세요.");
         }
-    }
-    const fn_locClose = () => {
-        setIsLocOpen(false);
-    }
+    };
+    const fn_locClose = () => setIsLocOpen(false);
     const fn_locOk = (item) => {
         setIsLocOpen(false);
-        setDocLoc(prev=>{
-            return {...prev, locId:item.locId, locNm:item.locNm}
-        })
+        setDocLoc(prev => ({ ...prev, locId: item.locId, locNm: item.locNm }));
+        setInputList(prev => 
+            prev.map(v => v.docInptNm === "docLoc" ? { ...v, docInptVl: item.locId } : v)
+        );
+    };
 
-        setInputList(prev=> 
-            prev.map(v=>{
-                if(v.docInptNm == "docLoc") {
-                    return {...v, docInptVl: item.locId} ;
-                }
-                return v;
-            })
-        )
-
-        //console.log("fn_locOk ", docLoc)
-    }
-
-
-    const fn_change = (e)=>{
-        const {type, name, value, checked} = e.currentTarget;
-        console.log(type, name, value, checked)
+    // 일반 입력 변경 핸들러
+    const fn_change = (e) => {
+        const { type, name, value } = e.currentTarget;
         
         if (name === "docRole") {
             setDocRole(value);
         }
 
-        setInputList(prev=> 
-            prev.map(v=>{
-                if(v.docInptNm == name) {
-                    return {...v, docInptVl: value} ;
-                }
-                return v;
-            })
-        )
+        setInputList(prev => 
+            prev.map(v => v.docInptNm === name ? { ...v, docInptVl: value } : v)
+        );
 
-        if(type=="date") {
-            setDrftDate(prev=>{ 
-                return {...prev, [`${name}`]: value} ;
-            })
+        if (type === "date") {
+            setDrftDate(prev => ({ ...prev, [name]: value }));
         }
-    }
+    };
 
-    const fn_selectDeptClick = () => {
-        setIsSelectDeptOpen(true);
-    }
-    const fn_selectDeptClose = () => {
-        setIsSelectDeptOpen(false);
-    }
+    // 담당자/부서 선택 관련 핸들러
+    const fn_selectDeptClick = () => setIsSelectDeptOpen(true);
+    const fn_selectDeptClose = () => setIsSelectDeptOpen(false);
+    
+    // 🔥 3. 복잡했던 담당자 선택 확인 로직 단순화
     const fn_selectDeptOk = (selectDept) => {
-        console.log("fn_selectDeptOk", selectDept)
         setSelectDeptList(selectDept);
-        let schedType = ""
-        setInputList(prev=> 
-            prev.map(v=>{
-                if(v.docInptNm == "docSchedType") {
-                    let deptVal = ""
-                    for(let i=0; i<selectDept.length; i++) {
-                        deptVal=="" ? deptVal=selectDept[i].deptId : deptVal+=","+selectDept[i].deptId
-                        
-                    }
-                    schedType = deptVal;
-                    return {...v, docInptVl: deptVal};
-                }
-                return v;
-            })
-        )
-
-        
-        console.log("inpt",inputList)
-
-
-        const docRole = inputList.find(v=>v.docInptNm==="docRole")?.docInptVl;
-        const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl;
-        const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl;
-        
-        
-        let drftEmpId=0;
-        let deptId = 0;
-
-        let ids = schedType?.includes(',')? schedType.split(',') : [schedType];
-
-        if(docRole==="DEPT") {
-            ids = schedType?.includes(',')? schedType.split(',') : [schedType];
-            drftEmpId = myInfo.empId;
-        } else if(docRole=="COMPANY") {
-            drftEmpId = myInfo.drftEmpId;
-            ids = [myInfo.drftEmpId]
-        }
-
-        console.log("일정확인 ",docRole, schedType, drftEmpId, ids)
-
-        if(drftEmpId==null)
-            return;
-
-        if(docRole === "PERSONAL") {
-            fetcher("/gw/aprv/AprvEmpAnnlLv", {
-                method:"POST",
-                body: {
-                    role : docRole,
-                    ids : ids,
-                    deptId: deptId,
-                    year:2026
-                }
-            }).then(res => {
-                console.log("fetch AprvEmpAnnlLv",res)
-                setAttendList(res)
-            })
-            
-            fetcher("/gw/aprv/AprvDutyScheDtl",{
-                    method:"POST",
-                    body:{
-                        role : docRole,
-                        ids : ids,
-                        deptId: deptId,
-                        docStart:docStart,
-                        docEnd:docEnd
-                    }
-            }).then(res=>{
-                setDutyList(res)
-            })
-            
-
-            fetcher("/gw/aprv/AprvSchedList",{
-                method:"POST",
-                body:{
-                    role : docRole,
-                    ids : ids,
-                    deptId: deptId,
-                    docStart:docStart,
-                    docEnd:docEnd
-                }
-            }).then(res=>{
-                console.log("fetch AprvSchedList",res)
-                setSchedList(res)
-            })
-        }
-
-
         setIsSelectDeptOpen(false);
-    }
 
-    const fn_empClick = () => {
-        fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=2`)
-        .then(res=>{
+        // 선택된 부서/담당자 ID 추출
+        const newIds = selectDept.map(d => String(d.deptId));
+        const deptVal = newIds.join(',');
 
-        })
-    }
+        // 1. inputList 업데이트
+        setInputList(prev => 
+            prev.map(v => v.docInptNm === "docSchedType" ? { ...v, docInptVl: deptVal } : v)
+        );
+
+        // 2. idList 결정 및 상태 업데이트
+        let finalIds = [];
+        if (docRole === "COMPANY") {
+            finalIds = [myInfo?.drftEmpId];
+        } else {
+            // "DEPT" 이거나 "PERSONAL"일 경우
+            finalIds = newIds;
+        }
+
+        setIdList(finalIds); // 상태를 업데이트하면 위의 useEffect가 감지해서 API를 자동으로 호출합니다.
+    };
 
     const FieldWrapper = ({ title, action, children, extra }) => (
         <div className="drft-unit">
@@ -266,9 +180,7 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
 
         case "SELECT":
             const options = (inputForm?.docInptRmrk ? String(inputForm.docInptRmrk) : "")
-                .split(",")
-                .map((v) => v.trim())
-                .filter(Boolean);
+                .split(",").map(v => v.trim()).filter(Boolean);
 
             return (
                 <FieldWrapper title={label}>
@@ -324,7 +236,8 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
         case "CHECKBOX": {
             if (!docRole || docRole === "COMPANY") return null;
             
-            const hasWarn = (attendList?.length > 0) || (schedList?.length > 0);
+            // 기존에는 attendList로만 판단했지만, 데이터가 하나라도 있으면 렌더링하도록 조건 보완
+            const hasWarn = (attendList?.length > 0) || (schedList?.length > 0) || (dutyList?.length > 0);
 
             return (
                 <FieldWrapper
@@ -337,51 +250,35 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
                                     onClose={fn_selectDeptClose}
                                     onOk={fn_selectDeptOk}
                                     schedType={docRole}
-                                    selectDeptList = {selectDeptList}
+                                    selectDeptList={selectDeptList}
                                     title={"선택"}
                                     okMsg={"불러오기"}
                                 />
                             )}
+
                             {hasWarn && (
-                                <div className="warnBox">
-                                    <div className="warnTitle">경고</div>
-                                    {attendList?.length > 0 && (
-                                        <div className="warnSection">
-                                            <div className="warnSectionTitle">근태</div>
-                                            {attendList.map((att, k) => (
-                                                <div className="warnItem" key={k}>
-                                                    <div className="warnItemTitle">{att.empNm} 연차</div>
-                                                    <div className="warnItemBody">{att.remLv}/{att.occrrLv}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                    {schedList?.length > 0 && (
-                                        <div className="warnSection">
-                                            <div className="warnSectionTitle">일정</div>
-                                            {schedList.map((group, k) => (
-                                                <div key={k} className="warnGroup">
-                                                    {Array.isArray(group) && group.map((s, kk) => (
-                                                        <div className="warnItem" key={kk}>
-                                                            {s.empNm} / {s.schedTitle} / {s.schedStartDate?.substring(0, 10)}~{s.schedEndDate?.substring(0, 10)}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                <AttendContent 
+                                    idList={idList} 
+                                    attendList={attendList} 
+                                    dutyList={dutyList} 
+                                    schedList={schedList} 
+                                    drftDate={drftDate}
+                                />
                             )}
                         </>
                     }
                 >
-                <input className="drft-input" name={inputForm.docInptNm} value={
-                    getDeptNamesByIds(selectDeptList, inputForm.docInptVl) || ""} readOnly />
+                    <input 
+                        className="drft-input" 
+                        name={inputForm.docInptNm} 
+                        value={getDeptNamesByIds(selectDeptList, inputForm.docInptVl) || ""} 
+                        readOnly 
+                    />
                 </FieldWrapper>
             );
         }
 
-        default: // 일반 TEXT
+        default:
             return (
                 <FieldWrapper title={label}>
                     <input
@@ -394,5 +291,6 @@ const InputForm = ({drftDate, setDrftDate, inputForm, inputList, setInputList, d
                 </FieldWrapper>
             );
     }
-}
+};
+
 export default InputForm;
