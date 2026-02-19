@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../../../shared/components/Button";
-import axios from "axios";
 import { fetcher } from "../../../shared/api/fetcher";
-import FindPassword from "./FindPassword";
+import "../css/LoginMain.css";
 
 function LoginMain(props) {
-  const [empSn, setEmpSn] = useState(""); // 사번 저장
-  const [empPswd, setEmpPswd] = useState(""); // 비밀번호 저장
-  const navigate = useNavigate(); // 이동하는데 쓰는 함수
+  const [empSn, setEmpSn] = useState("");
+  const [empPswd, setEmpPswd] = useState("");
+  const navigate = useNavigate();
 
   const fn_login = async () => {
     fetcher("/gw/login", {
@@ -18,7 +17,6 @@ function LoginMain(props) {
         empPswd: empPswd,
       },
     }).then((res) => {
-      console.log(res);
       if (res.logChk === "Fail") {
         alert("로그인 실패");
       } else if (res.logChk === "NewEmp") {
@@ -28,7 +26,6 @@ function LoginMain(props) {
         localStorage.setItem("MyInfo", JSON.stringify(res));
         navigate("/home/dashboard");
       }
-      //토큰저장
     });
   };
 
@@ -42,71 +39,75 @@ function LoginMain(props) {
     const token = myInfo?.token || null;
 
     if (token) {
-      //토큰이 있을 경우에만 진입
       fetcher(`/gw/login/hello`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
-        .then((response) => {
+        .then(() => {
           navigate("/home/dashboard");
-          console.log(`logChk 결과 : `, response);
         })
         .catch((error) => {
           console.log(`logChk 에러 : `, error);
         });
-    } else {
-      console.log("토큰없음");
     }
   };
 
   return (
-    <>
-      <div>Groupware</div>
-      <table>
-        <tbody>
-          <tr>
-            <td>사번</td>
-            <td>
+    <div className="login-wrapper">
+      <div className="login-container">
+        <div className="login-card">
+          <div className="login-logo">Groupware</div>
+          
+          <div className="login-form">
+            <div className="login-input-group">
+              <label>사원번호</label>
               <input
                 type="text"
+                className="login-input"
+                placeholder="사번을 입력하세요"
                 onChange={(e) => setEmpSn(e.target.value)}
-              ></input>
-            </td>
-          </tr>
-          <tr>
-            <td>비밀번호</td>
-            <td>
+              />
+            </div>
+            
+            <div className="login-input-group">
+              <label>비밀번호</label>
               <input
                 type="password"
+                className="login-input"
+                placeholder="비밀번호를 입력하세요"
                 onChange={(e) => setEmpPswd(e.target.value)}
-              ></input>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div>
-        <Button variant="primary" onClick={fn_login}>
-          로그인
-        </Button>
-        {/* <Button variant="primary" onClick={fn_check}>
-          토큰확인
-        </Button> */}
-        <Button onClick={() => navigate("/FindPassword")}>비밀번호 찾기</Button>
-        <br /> 식품팀장 - FO0001/ 1234
-        <br />("지점장") test계정 CP0001/ 1234<br/>
-        인사 팀장 - HR0003/ Qw#9Zx12<br/>
-        인사 팀원 - HR0005/ 1234<br/>
-        뷰티 팀장 - BU0001/ 1111<br/>
-        패션 팀원 - WF0001/ hashed_pwd_03<br/>
-        여성패션 팀장 - WF0002/ Abc!1234<br/>
-        남성패션 팀장 - MF0003/ Pw@2026A<br/>
-        시설자재 팀장 - FM0001/ hashed_pwd_07<br/>
-        안전관리 팀장 - SO0001/ hashed_pwd_09<br/>
+                onKeyDown={(e) => e.key === 'Enter' && fn_login()}
+              />
+            </div>
 
+            <div className="login-btn-area">
+              <button className="login-submit-btn" onClick={fn_login}>
+                로그인
+              </button>
+              <button className="find-pw-btn" onClick={() => navigate("/FindPassword")}>
+                비밀번호를 잊으셨나요?
+              </button>
+            </div>
+          </div>
+
+          <div className="test-account-info">
+            <strong>테스트 계정 가이드</strong>
+            <br /> 식품팀장 - FO0001/ 1234
+            <br />("지점장") test계정 CP0001/ 1234<br/>
+            인사 팀장 - HR0003/ Qw#9Zx12<br/>
+            인사 팀원 - HR0005/ 1234<br/>
+            뷰티 팀장 - BU0001/ 1111<br/>
+            패션 팀원 - WF0001/ hashed_pwd_03<br/>
+            여성패션 팀장 - WF0002/ Abc!1234<br/>
+            남성패션 팀장 - MF0003/ Pw@2026A<br/>
+            시설자재 팀장 - FM0001/ hashed_pwd_07<br/>
+            안전관리 팀장 - SO0001/ hashed_pwd_09<br/>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
