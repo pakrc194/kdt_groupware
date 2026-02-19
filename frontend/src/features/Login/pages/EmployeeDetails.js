@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../../../shared/components/Button";
 import { fetcher } from "../../../shared/api/fetcher";
 import DaumPostcode from "react-daum-postcode";
-import "../css/EmployeeDetails.css"; // 아래 제공할 CSS 파일을 임포트하세요
+import "../css/EmployeeDetails.css";
 
 function EmployeeDetails(props) {
   const navigate = useNavigate();
@@ -12,7 +12,6 @@ function EmployeeDetails(props) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
 
-  // --- 상태 관리 (기존과 동일) ---
   const [formData, setFormData] = useState({
     empPhoto: null,
     empAddr: "",
@@ -33,7 +32,6 @@ function EmployeeDetails(props) {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
 
-  // --- 기존 유효성 검사/핸들러 로직 (동일하게 유지) ---
   const validatePasswordComplexity = (pw) => {
     const pwReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     if (pw && !pwReg.test(pw)) {
@@ -103,24 +101,18 @@ function EmployeeDetails(props) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    // 1. 파일 확장자 체크 (MIME type 활용)
     const allowedTypes = ["image/jpeg", "image/png"];
     if (!allowedTypes.includes(file.type)) {
       alert("이미지 파일(jpg, png)만 업로드 가능합니다.");
-      e.target.value = ""; // input 초기화
+      e.target.value = ""; 
       return;
     }
-
-    // 2. 파일 크기 체크 (10MB = 10 * 1024 * 1024 bytes)
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       alert("파일 크기는 10MB 이하만 가능합니다.");
-      e.target.value = ""; // input 초기화
+      e.target.value = ""; 
       return;
     }
-
-    // 검증 통과 시 상태 업데이트
     setFormData((prev) => ({ ...prev, empPhoto: file }));
     setPreviewUrl(URL.createObjectURL(file));
   };
@@ -171,7 +163,6 @@ function EmployeeDetails(props) {
         </div>
 
         <form onSubmit={handleCompleteRegistration} className="reg-form">
-          {/* 사진 업로드 섹션 */}
           <div className="photo-section">
             <div className="photo-preview-container">
               {previewUrl ? (
@@ -186,7 +177,7 @@ function EmployeeDetails(props) {
                 <input 
                   type="file" 
                   onChange={handleFileChange} 
-                  accept=".jpg, .jpeg, .png" // 브라우저 파일 선택창에서 이미지 외 차단
+                  accept=".jpg, .jpeg, .png" 
                   hidden 
                 />
               </label>
@@ -195,47 +186,79 @@ function EmployeeDetails(props) {
           </div>
 
           <div className="input-grid">
-            {/* 연락처 */}
             <div className="input-group">
               <label>연락처 <span className="required">*</span></label>
-              <input name="empTelno" value={formData.empTelno} onChange={handleInputChange} placeholder="01012345678" className={telError ? "input-error" : ""} />
+              <input 
+                name="empTelno" 
+                value={formData.empTelno} 
+                onChange={handleInputChange} 
+                placeholder="01012345678" 
+                className={`reg-input ${telError ? "input-error" : ""}`} 
+              />
               {telError && <span className="error-text">{telError}</span>}
             </div>
 
-            {/* 계좌번호 */}
             <div className="input-group">
               <label>급여 계좌 <span className="required">*</span></label>
               <div className="flex-row">
-                <select value={selectedBank} onChange={handleBankChange} className="bank-select">
+                <select value={selectedBank} onChange={handleBankChange} className="reg-select bank-select">
                   <option value="">은행</option>
                   {BANK_LIST.map(bank => <option key={bank} value={bank}>{bank}</option>)}
                 </select>
-                <input name="empActno" value={formData.empActno} onChange={handleInputChange} placeholder="계좌번호 (-없이)" style={{flex: 1}} />
+                <input 
+                  name="empActno" 
+                  value={formData.empActno} 
+                  onChange={handleInputChange} 
+                  placeholder="계좌번호 (-없이)" 
+                  className="reg-input"
+                  style={{flex: 1}} 
+                />
               </div>
               {accountError && <span className="error-text">{accountError}</span>}
             </div>
 
-            {/* 주소 */}
             <div className="input-group full-width">
               <label>주소 <span className="required">*</span></label>
               <div className="flex-row mb-8">
-                <input value={formData.empAddr} readOnly placeholder="주소 검색을 클릭하세요" className="readonly-input" />
+                <input 
+                  value={formData.empAddr} 
+                  readOnly 
+                  placeholder="주소 검색을 클릭하세요" 
+                  className="reg-input readonly-input" 
+                />
                 <Button type="button" onClick={() => setIsPostcodeOpen(true)} className="small-btn">검색</Button>
               </div>
-              <input name="empAddrDetail" value={formData.empAddrDetail} onChange={handleInputChange} placeholder="상세 주소를 입력하세요" />
+              <input 
+                name="empAddrDetail" 
+                value={formData.empAddrDetail} 
+                onChange={handleInputChange} 
+                placeholder="상세 주소를 입력하세요" 
+                className="reg-input"
+              />
             </div>
 
-            {/* 비밀번호 */}
             <div className="input-group">
               <label>비밀번호 <span className="required">*</span></label>
-              <input type="password" name="empPswd" value={formData.empPswd} onChange={handleInputChange} placeholder="영문, 숫자, 특수문자 조합 (8자↑)" />
+              <input 
+                type="password" 
+                name="empPswd" 
+                value={formData.empPswd} 
+                onChange={handleInputChange} 
+                placeholder="영문, 숫자, 특수문자 조합 (8자↑)" 
+                className="reg-input"
+              />
               {pwError && <span className="error-text">{pwError}</span>}
             </div>
 
-            {/* 비밀번호 확인 */}
             <div className="input-group">
               <label>비밀번호 확인 <span className="required">*</span></label>
-              <input type="password" name="confirmPswd" value={formData.confirmPswd} onChange={handleInputChange} />
+              <input 
+                type="password" 
+                name="confirmPswd" 
+                value={formData.confirmPswd} 
+                onChange={handleInputChange} 
+                className="reg-input"
+              />
               {formData.confirmPswd && (
                 <span className={`status-text ${isPasswordMatch ? "success" : "error"}`}>
                   {isPasswordMatch ? "✔ 비밀번호가 일치합니다." : "✘ 불일치"}
@@ -243,16 +266,28 @@ function EmployeeDetails(props) {
               )}
             </div>
 
-            {/* 이메일 인증 */}
             <div className="input-group full-width">
               <label>이메일 인증 <span className="required">*</span></label>
               <div className="flex-row mb-8">
-                <input type="email" name="empEmlAddr" value={formData.empEmlAddr} onChange={handleInputChange} readOnly={isEmailVerified} placeholder="company@email.com" />
+                <input 
+                  type="email" 
+                  name="empEmlAddr" 
+                  value={formData.empEmlAddr} 
+                  onChange={handleInputChange} 
+                  readOnly={isEmailVerified} 
+                  placeholder="company@email.com" 
+                  className="reg-input"
+                />
                 <Button type="button" onClick={handleSendAuthCode} disabled={isEmailVerified} className="small-btn">코드 발송</Button>
               </div>
               {isEmailSent && !isEmailVerified && (
                 <div className="flex-row animate-fade-in">
-                  <input value={emailAuthCode} onChange={(e) => setEmailAuthCode(e.target.value)} placeholder="인증코드 6자리" />
+                  <input 
+                    value={emailAuthCode} 
+                    onChange={(e) => setEmailAuthCode(e.target.value)} 
+                    placeholder="인증코드 6자리" 
+                    className="reg-input"
+                  />
                   <Button type="button" onClick={handleVerifyCode} className="small-btn verify-btn">확인</Button>
                 </div>
               )}
@@ -266,7 +301,6 @@ function EmployeeDetails(props) {
         </form>
       </div>
 
-      {/* 우편번호 모달 */}
       {isPostcodeOpen && (
         <div className="modal-overlay" onClick={() => setIsPostcodeOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -282,7 +316,6 @@ function EmployeeDetails(props) {
   );
 }
 
-// 기존 데이터 상수 (BANK_SPEC 등)은 동일하게 유지
 const BANK_SPEC = {
     "NH농협": { reg: /^[0-9]{11,14}$/, msg: "11~14자리" },
     "KB국민": { reg: /^[0-9]{12,14}$/, msg: "12~14자리" },

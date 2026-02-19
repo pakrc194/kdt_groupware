@@ -1,8 +1,8 @@
-/* HomeModProf.css - 신규 사원 등록 테마 통합 버전 */
+/* HomeModProf.css - 클래스 기반 개별 적용 버전 */
 
 /* 1. 전체 레이아웃 */
 .mod-profile-wrapper {
-  background-color: #f4f7f9; /* 연그레이 배경 */
+  background-color: #f4f7f9;
   min-height: 100vh;
   padding: 60px 20px;
   font-family: "Pretendard", -apple-system, sans-serif;
@@ -66,7 +66,7 @@
   color: #94a3b8;
 }
 
-/* 4. 사진 섹션 (신규 사원 등록 스타일) */
+/* 4. 사진 섹션 */
 .photo-section {
   display: flex;
   flex-direction: column;
@@ -87,10 +87,6 @@
   justify-content: center;
   align-items: center;
   transition: all 0.3s ease;
-}
-
-.photo-preview-container:hover {
-  border-color: #1976d2;
 }
 
 .photo-img {
@@ -115,26 +111,11 @@
   text-align: center;
   padding: 10px 0;
   cursor: pointer;
-  transition: background 0.3s;
 }
 
-.photo-upload-label:hover {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-.photo-input-hidden {
-  display: none;
-}
-
-.photo-hint {
-  margin-top: 12px;
-  font-size: 13px;
-  color: #94a3b8;
-}
-
-/* 5. 폼 요소 및 간격 */
+/* 5. 폼 요소 (클래스 기반 스타일) */
 .form-group {
-  margin-bottom: 25px; /* 기본 간격 확대 */
+  margin-bottom: 25px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -144,6 +125,31 @@
   font-size: 14px;
   font-weight: 700;
   color: #475569;
+}
+
+/* 공통 입력창 클래스 */
+.mod-input,
+.mod-select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.mod-input:focus,
+.mod-select:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+}
+
+.mod-input[readOnly] {
+  background-color: #f8fafc;
+  color: #64748b;
+  cursor: default;
 }
 
 .grid-inputs {
@@ -156,41 +162,10 @@
   grid-column: span 2;
 }
 
-/* 6. 입력창 및 셀렉트 */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-.sub-btn-select {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
-  font-size: 15px;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-}
-
-input:focus, .sub-btn-select:focus {
-  border-color: #1976d2;
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
-}
-
-input[readOnly] {
-  background-color: #f8fafc;
-  color: #64748b;
-  cursor: default;
-}
-
-/* 7. 버튼 및 이메일/인증 간격 */
+/* 6. 버튼 및 가로 배치 */
 .input-with-btn {
   display: flex;
-  gap: 12px; /* 가로 간격 확보 */
-}
-
-/* 이메일 수정 섹션 내의 입력 그룹 간격 */
-.accent-card .form-group {
-  margin-bottom: 20px;
+  gap: 12px;
 }
 
 .primary-btn {
@@ -207,10 +182,12 @@ input[readOnly] {
   background: #475569;
   color: #fff;
   padding: 0 20px;
+  border: none;
   border-radius: 10px;
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .wide-btn {
@@ -228,7 +205,7 @@ input[readOnly] {
   box-shadow: 0 8px 20px rgba(25, 118, 210, 0.2);
 }
 
-/* 8. 상태 표시 */
+/* 7. 상태 표시 */
 .error-text {
   color: #ef4444;
   font-size: 12.5px;
@@ -246,9 +223,10 @@ input[readOnly] {
   font-weight: 700;
   font-size: 13.5px;
   border: 1px solid #bbf7d0;
+  white-space: nowrap;
 }
 
-/* 9. 비밀번호 변경 영역 */
+/* 8. 비밀번호 변경 영역 */
 .custom-checkbox {
   display: flex;
   align-items: center;
@@ -269,7 +247,14 @@ input[readOnly] {
   border: 1px dashed #cbd5e1;
 }
 
-/* 10. 애니메이션 */
+.pw-hint {
+  font-size: 13px;
+  font-weight: 500;
+}
+.pw-hint.success { color: #16a34a; }
+.pw-hint.error { color: #ef4444; }
+
+/* 9. 애니메이션 */
 .fade-in {
   animation: fadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -279,31 +264,12 @@ input[readOnly] {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 주소 모달 */
+/* 모달 스타일 생략(기존 유지) */
 .modal-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);
+  display: flex; justify-content: center; align-items: center; z-index: 2000;
 }
-
-.modal-content {
-  background: white;
-  width: 520px;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.modal-header {
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
+.modal-content { background: white; width: 520px; border-radius: 20px; overflow: hidden; }
+.modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+.close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b; }

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import "../css/HomeModProf.css"; // 일반 CSS 파일 임포트
+import "../css/HomeModProf.css";
 import { fetcher } from "../../../shared/api/fetcher";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import DaumPostcode from "react-daum-postcode";
 
-// --- 은행별 정밀 검증 데이터 ---
 const BANK_SPEC = {
   "NH농협": { reg: /^[0-9]{11,14}$/, msg: "11~14자리" },
   "KB국민": { reg: /^[0-9]{12,14}$/, msg: "12~14자리" },
@@ -22,7 +21,6 @@ const HomeModProf = () => {
   const navigate = useNavigate();
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
-  // --- 상태 관리 ---
   const [isAuthSuccess, setIsAuthSuccess] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [authCode, setAuthCode] = useState("");
@@ -49,11 +47,9 @@ const HomeModProf = () => {
     empAddrDetail: "",
   });
 
-  // --- 1. 유효성 검사 로직 ---
   const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const pwReg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
-  // --- 2. 데이터 로드 ---
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -88,7 +84,6 @@ const HomeModProf = () => {
     fetchUserData();
   }, [myInfo.empId]);
 
-  // --- 3. 비밀번호 실시간 검증 ---
   useEffect(() => {
     if (keepPassword) {
       setPwMessage("");
@@ -106,48 +101,21 @@ const HomeModProf = () => {
     }
   }, [passwords, keepPassword]);
 
-  // --- 4. 핸들러 함수 ---
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const allowedTypes = ["image/jpeg", "image/png"];
     if (!allowedTypes.includes(file.type)) {
       alert("이미지 파일(jpg, png)만 업로드 가능합니다.");
-      e.target.value = "";
       return;
     }
     const maxSize = 10 * 1024 * 1024;
     if (file.size > maxSize) {
       alert("파일 크기는 10MB 이하만 가능합니다.");
-      e.target.value = "";
       return;
     }
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
-  };
-
-  const validateAccount = (bank, account) => {
-    if (!bank) {
-      setAccountError("먼저 은행을 선택해주세요.");
-      return false;
-    }
-    const spec = BANK_SPEC[bank];
-    if (account && !spec.reg.test(account)) {
-      setAccountError(`${bank} 형식 불일치 (${spec.msg})`);
-      return false;
-    }
-    setAccountError("");
-    return true;
-  };
-
-  const validateTel = (tel) => {
-    const telReg = /^010[0-9]{8}$/;
-    if (tel && !telReg.test(tel)) {
-      setTelError("010으로 시작하는 11자리 숫자를 입력하세요.");
-      return false;
-    }
-    setTelError("");
-    return true;
   };
 
   const handleInputChange = (e) => {
@@ -156,34 +124,20 @@ const HomeModProf = () => {
       const onlyNums = value.replace(/[^0-9]/g, "");
       const limitedValue = name === "empTelno" ? onlyNums.slice(0, 11) : onlyNums;
       setEditForm((prev) => ({ ...prev, [name]: limitedValue }));
-      if (name === "empActno") validateAccount(selectedBank, limitedValue);
-      if (name === "empTelno") validateTel(limitedValue);
     } else {
       setEditForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleBankChange = (e) => {
-    const bank = e.target.value;
-    setSelectedBank(bank);
-    validateAccount(bank, editForm.empActno);
+    setSelectedBank(e.target.value);
   };
 
   const handleAdressComplete = (data) => {
-    let fullAddress = data.address;
-    if (data.addressType === "R") {
-      let extraAddress = "";
-      if (data.bname !== "") extraAddress += data.bname;
-      if (data.buildingName !== "") {
-        extraAddress += extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
-      }
-      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
-    }
-    setEditForm((prev) => ({ ...prev, empAddr: fullAddress, empAddrDetail: "" }));
+    setEditForm((prev) => ({ ...prev, empAddr: data.address, empAddrDetail: "" }));
     setIsPostcodeOpen(false);
   };
 
-  // --- 5. 인증 관련 로직 ---
   const handleVerifyIdentity = async () => {
     try {
       const res = await fetcher(`/gw/auth/verify-indentity`, {
@@ -242,10 +196,9 @@ const HomeModProf = () => {
     } catch (error) { alert("인증번호가 올바르지 않거나 만료되었습니다."); }
   };
 
-  // --- 6. 최종 제출 ---
   const isFormValid = 
-    editForm.empTelno.length === 11 && telError === "" &&
-    selectedBank !== "" && accountError === "" &&
+    editForm.empTelno.length === 11 &&
+    selectedBank !== "" &&
     (newEmail === "" || isEmailVerified) &&
     (keepPassword || (passwords.new === passwords.confirm && pwReg.test(passwords.new)));
 
@@ -288,14 +241,14 @@ const HomeModProf = () => {
           <div className="auth-card fade-in">
             <h3 className="card-title">본인 확인</h3>
             <div className="input-with-btn">
-              <input type="text" value={userInfo.empEmlAddr} readOnly />
+              <input type="text" className="mod-input" value={userInfo.empEmlAddr} readOnly />
               <button className="sub-btn" onClick={handleSendAuthMail} type="button">인증번호 발송</button>
             </div>
-            <div className="form-group">
-              <input type="text" placeholder="인증번호" value={authCode} onChange={(e) => setAuthCode(e.target.value)} />
+            <div className="form-group" style={{ marginTop: '15px' }}>
+              <input type="text" className="mod-input" placeholder="인증번호" value={authCode} onChange={(e) => setAuthCode(e.target.value)} />
             </div>
             <div className="form-group">
-              <input type="password" placeholder="현재 비밀번호" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+              <input type="password" className="mod-input" placeholder="현재 비밀번호" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
             </div>
             <button className="primary-btn wide-btn" onClick={handleVerifyIdentity} type="button">인증 및 수정하기</button>
           </div>
@@ -304,19 +257,17 @@ const HomeModProf = () => {
             <section className="mod-card">
               <h3 className="card-title">기본 정보 <span>(수정 불가)</span></h3>
               <div className="grid-inputs">
-                <div className="form-group"><label>이름</label><input type="text" value={userInfo.empNm} readOnly /></div>
-                <div className="form-group"><label>사번</label><input type="text" value={userInfo.empSn} readOnly /></div>
+                <div className="form-group"><label>이름</label><input type="text" className="mod-input" value={userInfo.empNm} readOnly /></div>
+                <div className="form-group"><label>사번</label><input type="text" className="mod-input" value={userInfo.empSn} readOnly /></div>
                 <div className="form-group full-width">
                   <label>생년월일</label>
-                  <input type="text" value={dayjs(userInfo.empBirth).format("YYYY-MM-DD")} readOnly />
+                  <input type="text" className="mod-input" value={dayjs(userInfo.empBirth).format("YYYY-MM-DD")} readOnly />
                 </div>
               </div>
             </section>
 
             <section className="mod-card">
               <h3 className="card-title">상세 정보 수정</h3>
-              
-              {/* --- 사진 업로드 영역 (신규 사원 등록 스타일) --- */}
               <div className="photo-section">
                 <div className="photo-preview-container">
                   {previewUrl || userInfo.empPhoto ? (
@@ -329,91 +280,66 @@ const HomeModProf = () => {
                   ) : (
                     <div className="photo-placeholder">사진 없음</div>
                   )}
-                  
-                  {/* 사진을 덮는 오버레이 버튼 */}
-                  <label htmlFor="photo-upload" className="photo-upload-label">
-                    사진 변경
-                  </label>
-                  <input 
-                    id="photo-upload"
-                    type="file" 
-                    className="photo-input-hidden" 
-                    onChange={handleFileChange} 
-                    accept=".jpg, .jpeg, .png" 
-                  />
+                  <label htmlFor="photo-upload" className="photo-upload-label">사진 변경</label>
+                  <input id="photo-upload" type="file" style={{ display: 'none' }} onChange={handleFileChange} accept=".jpg, .jpeg, .png" />
                 </div>
                 <p className="photo-hint">* 10MB 이하의 JPG, PNG 파일</p>
               </div>
-              {/* ------------------------------------------- */}
 
-              <div className="flex-inputs">
-                <div className="form-group">
-                  <label>전화번호</label>
-                  <input type="text" name="empTelno" value={editForm.empTelno} onChange={handleInputChange} placeholder="01012345678" />
-                  {telError && <p className="error-text">{telError}</p>}
-                </div>
+              <div className="form-group">
+                <label>전화번호</label>
+                <input type="text" className="mod-input" name="empTelno" value={editForm.empTelno} onChange={handleInputChange} placeholder="01012345678" />
+                {telError && <p className="error-text">{telError}</p>}
+              </div>
 
-                <div className="form-group">
-                  <label>계좌번호</label>
-                  <div className="input-with-btn">
-                    <select value={selectedBank} onChange={handleBankChange} className="sub-btn-select">
-                      <option value="">은행 선택</option>
-                      {BANK_LIST.map((bank) => (<option key={bank} value={bank}>{bank}</option>))}
-                    </select>
-                    <input type="text" name="empActno" value={editForm.empActno} onChange={handleInputChange} placeholder="숫자만 입력" />
-                  </div>
-                  {accountError && <p className="error-text">{accountError}</p>}
+              <div className="form-group">
+                <label>계좌번호</label>
+                <div className="input-with-btn">
+                  <select value={selectedBank} onChange={handleBankChange} className="mod-select" style={{ width: '150px' }}>
+                    <option value="">은행 선택</option>
+                    {BANK_LIST.map((bank) => (<option key={bank} value={bank}>{bank}</option>))}
+                  </select>
+                  <input type="text" className="mod-input" name="empActno" value={editForm.empActno} onChange={handleInputChange} placeholder="숫자만 입력" />
                 </div>
+                {accountError && <p className="error-text">{accountError}</p>}
+              </div>
 
-                <div className="form-group">
-                  <label>주소</label>
-                  <div className="input-with-btn">
-                    <input type="text" value={editForm.empAddr} readOnly onClick={() => setIsPostcodeOpen(true)} placeholder="주소 검색" />
-                    <button type="button" className="sub-btn" onClick={() => setIsPostcodeOpen(true)}>주소 검색</button>
-                  </div>
-                  <input type="text" name="empAddrDetail" value={editForm.empAddrDetail} onChange={handleInputChange} placeholder="상세 주소(선택)" />
+              <div className="form-group">
+                <label>주소</label>
+                <div className="input-with-btn">
+                  <input type="text" className="mod-input" value={editForm.empAddr} readOnly onClick={() => setIsPostcodeOpen(true)} placeholder="주소 검색" />
+                  <button type="button" className="sub-btn" onClick={() => setIsPostcodeOpen(true)}>검색</button>
                 </div>
+                <input type="text" className="mod-input" style={{ marginTop: '10px' }} name="empAddrDetail" value={editForm.empAddrDetail} onChange={handleInputChange} placeholder="상세 주소(선택)" />
               </div>
             </section>
 
             <section className="mod-card accent-card">
               <h3 className="card-title">이메일 수정</h3>
-              
-              {/* 새 이메일 입력 그룹 */}
               <div className="form-group">
                 <label>새 이메일 주소</label>
                 <div className="input-with-btn">
                   <input 
                     type="email" 
+                    className="mod-input"
                     value={newEmail || (isEmailVerified ? "" : userInfo.empEmlAddr)} 
                     onChange={(e) => setNewEmail(e.target.value)} 
                     readOnly={isEmailVerified} 
                     placeholder="새 이메일 입력" 
                   />
                   {!isEmailVerified ? (
-                    <button type="button" className="sub-btn" onClick={handleSendNewEmailCode}>
-                      인증번호 발송
-                    </button>
+                    <button type="button" className="sub-btn" onClick={handleSendNewEmailCode}>발송</button>
                   ) : (
                     <span className="verified-badge">인증완료</span>
                   )}
                 </div>
               </div>
-
-              {/* 인증번호 입력 그룹 (인증되지 않았을 때만 표시) */}
               {!isEmailVerified && (
                 <div className="form-group" style={{ marginTop: '10px' }}>
                   <label>인증번호 확인</label>
                   <div className="input-with-btn">
-                    <input 
-                      type="text" 
-                      placeholder="인증번호 6자리 입력" 
-                      value={authCode} 
-                      onChange={(e) => setAuthCode(e.target.value)} 
-                    />
-                    <button type="button" className="sub-btn" onClick={handleVerifyNewEmail}>
-                      인증하기
-                    </button>
+                    <input type="text" className="mod-input" placeholder="6자리 입력" value={authCode} onChange={(e) => setAuthCode(e.target.value)} />
+                    <button type="button" className="sub-btn" onClick={handleVerifyNewEmail}>인증</button>
                   </div>
                 </div>
               )}
@@ -427,25 +353,14 @@ const HomeModProf = () => {
               </label>
               {!keepPassword && (
                 <div className="pw-sub-area">
-                  <input type="password" placeholder="새 비밀번호" value={passwords.new} onChange={(e) => setPasswords({ ...passwords, new: e.target.value })} />
-                  <input type="password" placeholder="새 비밀번호 확인" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} />
-                  {pwMessage && (
-                    <p className={`pw-hint ${passwords.new === passwords.confirm && !pwError ? 'success' : 'error'}`}>
-                      {pwMessage} {pwError && `(${pwError})`}
-                    </p>
-                  )}
+                  <input type="password" className="mod-input" placeholder="새 비밀번호" value={passwords.new} onChange={(e) => setPasswords({ ...passwords, new: e.target.value })} />
+                  <input type="password" className="mod-input" placeholder="새 비밀번호 확인" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} />
+                  {pwMessage && <p className={`pw-hint ${passwords.new === passwords.confirm && !pwError ? 'success' : 'error'}`}>{pwMessage}</p>}
                 </div>
               )}
             </section>
 
-            <button
-              type="submit"
-              className="primary-btn submit-btn"
-              disabled={!isFormValid}
-              style={{ backgroundColor: isFormValid ? "" : "#ccc", cursor: isFormValid ? "pointer" : "not-allowed" }}
-            >
-              최종 수정 완료
-            </button>
+            <button type="submit" className="primary-btn submit-btn" disabled={!isFormValid} style={{ backgroundColor: isFormValid ? "" : "#ccc" }}>최종 수정 완료</button>
           </form>
         )}
       </div>
