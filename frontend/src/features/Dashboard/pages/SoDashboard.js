@@ -4,6 +4,8 @@ import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
+import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
+import { getStatusLabel } from '../../../shared/func/formatLabel';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 
 function SoDashboard(props) {
@@ -27,14 +29,12 @@ function SoDashboard(props) {
         // 팀 일정
         fetcher(`/gw/dashboard/dashTeamSchedList?dept=8`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
-            console.log(dd)
          })
 
-         // 결재 속도
-                 fetcher('/gw/dashboard/docPrcsTime?dept=8')
-                 .then(dd => {setDocPrc(Array.isArray(dd) ? dd : [dd])
-                    console.log(dd)
-                 })
+        // 결재 속도
+        fetcher('/gw/dashboard/docPrcsTime?dept=8')
+        .then(dd => {setDocPrc(Array.isArray(dd) ? dd : [dd])
+        })
     }, [])
 
     const now = new Date();
@@ -91,15 +91,13 @@ function SoDashboard(props) {
             <table style={styles.table}>
                 <thead>
                     <tr>
-                        <th style={styles.th}>문서 ID</th>
                         <th style={styles.th}>문서 제목</th>
                         <th style={styles.th}>문서 상태</th>
-                        <th style={styles.th}>작성자</th>
-                        <th style={styles.th}>작성일</th>
-                        <th style={styles.th}>승인자</th>
-                        <th style={styles.th}>승인 날짜</th>
+                        <th style={styles.th}>기안자</th>
+                        <th style={styles.th}>기안일</th>
+                        <th style={styles.th}>최종결재자</th>
+                        <th style={styles.th}>결재 날짜</th>
                         <th style={styles.th}>문서 유형</th>
-                        <th style={styles.th}>역할</th>
                         <th style={styles.th}>결재시간</th>
                     </tr>
                 </thead>
@@ -110,19 +108,17 @@ function SoDashboard(props) {
                         .filter(dd => dd.roleCd == "LAST_ATRZ")
                         .map((dd, index) => (
                             <tr key={index}>
-                                <td style={styles.td}>{dd.aprvDocId}</td>
                                 <td style={styles.td}>{dd.aprvDocTtl}</td>
-                                <td style={styles.td}>{dd.aprvDocStts}</td>
+                                <td style={styles.td}>{getStatusLabel(dd.aprvDocStts)}</td>
                                 <td style={styles.td}>{dd.drftEmpNm}</td>
                                 <td style={styles.td}>
-                                    {dd.aprvDocDrftDt ? dd.aprvDocDrftDt : '미정'}
+                                    {dd.aprvDocDrftDt ? formatToYYMMDD(dd.aprvDocDrftDt) : '미정'}
                                 </td>
                                 <td style={styles.td}>{dd.aprvPrcsEmpNm}</td>
                                 <td style={styles.td}>
-                                    {dd.aprvPrcsDt ? dd.aprvPrcsDt : '미승인'}
+                                    {dd.aprvPrcsDt ? formatToYYMMDD(dd.aprvPrcsDt) : '미승인'}
                                 </td>
-                                <td style={styles.td}>{dd.docFormNm} {dd.docFormId}</td>
-                                <td style={styles.td}>{dd.roleCd}</td>
+                                <td style={styles.td}>{dd.docFormNm}</td>
                                 <td style={styles.td}>{dd.aprvPrcsDt ? TimeDiff(dd.aprvDocDrftDt, dd.aprvPrcsDt) : '결재 전'}</td>
                             </tr>
                         ))

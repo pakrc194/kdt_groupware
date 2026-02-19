@@ -23,6 +23,14 @@ export const DEPT_MAP = {
   // 치환시킬 단어 추가해서 사용
 };
 
+export const SCHED_TYPE_MAP = {
+  COMPANY: { label: "회사" },
+  DEPT: { label: "팀" },
+  PERSONAL: { label: "개인" },
+  TODO: { label: "TODO" },
+}
+
 
 export const getStatusLabel = (status) => STATUS_MAP[status]?.label || status;
 export const getDeptLabel = (deptId) => DEPT_MAP[deptId]?.label || deptId;
+export const getSchedTypeLabel = (type) => SCHED_TYPE_MAP[type]?.label || type;

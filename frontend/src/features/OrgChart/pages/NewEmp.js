@@ -44,7 +44,6 @@ const MemberRegistrationForm = () => {
     fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=10`)
     .then(dd => {
       setAccessCk(dd)
-      console.log(dd)
     })
     .catch(e => console.log(e))
 
@@ -72,11 +71,9 @@ const MemberRegistrationForm = () => {
       return;
     }
     if (!isOver18(formData.EMP_BIRTH)) {
-      console.log(!formData.EMP_NM)
       alert('생년월일을 확인하세요.')
       return;
     }
-    alert(`${formData.EMP_NM} 계정 생성 완료`);
     try {
       await fetcher('/gw/orgChart/register', {
         method: 'POST',
@@ -89,11 +86,12 @@ const MemberRegistrationForm = () => {
         }
       });
       setIsOpen(false)
-
+      alert(`${formData.EMP_NM} 계정 생성 완료`);
+      
     } catch (err) {
-        console.error('계정 생성 실패:', err.message);
+      console.error('계정 생성 실패:', err.message);
     }
-
+    
     setFormData ({
       EMP_NM: '',
       EMP_BIRTH: '',

@@ -26,7 +26,6 @@ function MfDashboard(props) {
         // 팀 일정
         fetcher(`/gw/dashboard/dashTeamSchedList?dept=5`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
-            console.log(dd)
          })
 
          // 결재 속도

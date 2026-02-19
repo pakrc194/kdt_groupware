@@ -57,14 +57,12 @@ function ScheduleView(props) {
         // TODO 가져오기
         fetcher(`/gw/schedule/todo/view/${formatted}/${myInfo.empId}`) // 날짜별 TODO API
         .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
-            console.log("todo 가져오기 fetch")
         })
         .catch(e => console.log(e));
     }, [defaultDate, showTodoForm, editTodo]);
 
     // TODO 추가
     const addTodo = async () => {
-        console.log(chkToday(newTodo.schedStartDate))
         if (!chkToday(newTodo.schedStartDate)) {
             alert('이전 날짜에 등록할 수 없습니다.')
             return;
@@ -175,7 +173,10 @@ function ScheduleView(props) {
                         <div style={styles.scrollArea}>
                             {sched.filter(s => s.schedType === type).map(s => (
                                 <div key={s.schedId} style={styles.schedItem}>
-                                    <div><strong>제목:</strong> {s.schedTitle}</div>
+                                    <div>
+                                        <strong>제목:</strong> 
+                                        <Link to={`/schedule/check/calendar/detail/${s.schedId}`} style={styles.link}>{s.schedTitle}</Link>
+                                    </div>
                                     {s.schedLoc && <div><strong>위치:</strong> {s.schedLocNm}</div>}
                                     {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept}</div>}
                                     {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpNm}</div>}
@@ -194,7 +195,6 @@ function ScheduleView(props) {
                     <div style={styles.scrollArea}>
                     <ul style={styles.todoList}>
                         {sortedTodos
-                        // .filter(dd => dd.schedState != 1 && dd.schedStartDate?.split(' ')[0] <= formatted)
                         .filter(dd => dd.schedStartDate?.split(' ')[0] == formatted)
                         .map(todo => (
                             <li key={todo.schedId} style={styles.todoItem}>
@@ -249,7 +249,7 @@ function ScheduleView(props) {
                                         ) : (
                                         <>
                                             <span style={{ textDecoration: todo.schedState != 0 ? 'line-through' : 'none', flex: 1, marginLeft: '8px' }}>
-                                                {todo.schedStartDate?.split(' ')[0]} {todo.schedTitle}
+                                                {todo.schedTitle}
                                             </span>
 
                                             <button 
@@ -270,84 +270,6 @@ function ScheduleView(props) {
                                     )}
                                 </li>
                             ))}
-
-                            {/* 완료된 TODO - 당일에서만 보임 */}
-                            {/* {sortedTodos
-                            .filter(dd => dd.schedState == 1 && dd.schedStartDate?.split(' ')[0] == formatted)
-                            .map(todo => (
-                                <li key={todo.schedId} style={styles.todoItem}>
-                                        <input
-                                            type="checkbox"
-                                            checked={todo.schedState == 1}
-                                            onChange={e => {
-                                                toggleTodoComplete(todo);
-                                                setEditTodo({ ...editTodo, schedState: e.target.value })
-                                            }}
-                                        />
-
-                                        {editTodoId === todo.schedId ? (
-                                            <>
-                                            <div style={styles.todoForm}>
-                                                <input
-                                                    type="date"
-                                                    value={editTodo.schedStartDate?.split(' ')[0]}
-                                                    onChange={e =>
-                                                        setEditTodo({ ...editTodo, schedStartDate: e.target.value })
-                                                    }
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={editTodo.schedTitle}
-                                                    onChange={e =>
-                                                        setEditTodo({ ...editTodo, schedTitle: e.target.value })
-                                                    }
-                                                />
-                                                <input
-                                                    type="text"
-                                                    value={editTodo.schedDetail}
-                                                    onChange={e =>
-                                                        setEditTodo({ ...editTodo, schedDetail: e.target.value })
-                                                    }
-                                                />
-
-                                                </div>
-                                                <button 
-                                                style={styles.modifyBtn}
-                                                onClick={() => {
-                                                    modifyTodo(todo);
-                                                    setEditTodoId(null);
-                                                }}>
-                                                    저장
-                                                </button>
-
-                                                <button style={styles.cancelBtn} onClick={() => setEditTodoId(null)}>
-                                                    취소
-                                                </button>
-                                            </>
-                                            ) : (
-                                            <>
-                                                <span style={{ textDecoration: todo.schedState != 0 ? 'line-through' : 'none', flex: 1, marginLeft: '8px' }}>
-                                                    {todo.schedStartDate?.split(' ')[0]} {todo.schedTitle}
-                                                </span>
-
-                                                <button 
-                                                style={styles.modifyBtn}
-                                                onClick={() => {
-                                                    setEditTodoId(todo.schedId);
-                                                    setEditTodo({
-                                                        schedStartDate: todo.schedStartDate,
-                                                        schedTitle: todo.schedTitle,
-                                                        schedDetail: todo.schedDetail
-                                                    });
-                                                }}>
-                                                    수정
-                                                </button>
-
-                                                <button style={styles.todoBtn} onClick={() => deleteTodo(todo.schedId)}>삭제</button>
-                                            </>
-                                        )}
-                                    </li>
-                                ))} */}
                             </ul>
 
                             {showTodoForm ? (
@@ -386,11 +308,11 @@ function ScheduleView(props) {
 }
 
 const style = {
-    dailyboardBox: {width: "300px", align: "center", float: "left", padding: "10px"}
+    dailyboardBox: {align: "center", float: "left", padding: "10px", margin: '0'}
 }
 
 const styles = {
-    container: { width: '300px', margin: '0', fontFamily: 'Arial, sans-serif' },
+    container: { width: '270px', margin: '0', fontFamily: 'Arial, sans-serif' },
     header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
     navLink: { marginLeft: '10px', textDecoration: 'none', color: '#007bff' },
     card: { backgroundColor: '#fff', padding: '5px', marginBottom: '1px', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' },
@@ -427,7 +349,11 @@ const styles = {
         justifyContent: 'flex-end',
         gap: '8px',
         marginTop: '6px'
-    }
+    },
+    link: {
+        color: '#007bff',
+        textDecoration: 'none',
+    },
 };
 
 export default ScheduleView;

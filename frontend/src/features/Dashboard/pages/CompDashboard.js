@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
-import NoAccess from '../../../shared/components/NoAccess';
 import PersonnelChangeStats from '../compDasComponent/PersonnelchangeStats';
 import OrganizationStatistics from '../compDasComponent/OrganizationStatistics';
 import AccessDeletionHistory from '../compDasComponent/AccessDeletionHistory';
@@ -59,7 +58,6 @@ function CompDashboard(props) {
         // 결재 처리 이력
         fetcher(`/gw/dashboard/aprvPrcs`)
         .then(dd => { setApproval(Array.isArray(dd) ? dd : [dd]) 
-            console.log(dd)
         })
         .catch(e => console.log(e))
 
@@ -67,9 +65,6 @@ function CompDashboard(props) {
         fetcher(`/gw/dashboard/dashTeamEmpList?dept=0&date=${formatted}`)
         .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]); })
       }, [])
-
-    // 회사 대시보드 열람 권한 (id = 14)
-    if (accessCk != 1) return <NoAccess />;
 
     return (
         <div>

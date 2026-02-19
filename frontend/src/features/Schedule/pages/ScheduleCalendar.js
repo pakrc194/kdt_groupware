@@ -50,38 +50,10 @@ function ScheduleCalendar(props) {
 
     useEffect(() => {
         fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
-        // fetcher(`/gw/schedule/view/${dept_id}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
     }, [date, props.todo, currentDate]);
 
-    // const eventStyleGetter = (event) => {
-    //     let backgroundColor = '#3174ad'; // 기본
-
-    //     switch (event.type) {
-    //         case 'COMPANY':
-    //         backgroundColor = '#e74c3c'; // 빨강
-    //         break;
-    //         case 'DEPT':
-    //         backgroundColor = '#3498db'; // 파랑
-    //         break;
-    //         case 'PERSONAL':
-    //         backgroundColor = '#2ecc71'; // 초록
-    //         break;
-    //         default:
-    //         backgroundColor = '#95a5a6'; // 회색
-    //     }
-
-    //     return {
-    //         style: {
-    //         backgroundColor,
-    //         borderRadius: '6px',
-    //         color: 'white',
-    //         border: 'none',
-    //         padding: '2px 6px',
-    //         },
-    //     };
-    // };
 
     const locales = {
         ko: ko
@@ -124,7 +96,7 @@ function ScheduleCalendar(props) {
     return (
         <div style={styles.wrapper}>
         
-        <div className='calendar' style={{ position: 'fixed', marginLeft: "350px" }}>
+        <div className='calendar' style={{ position: 'fixed', marginLeft: "270px" }}>
             <div  style={styles.header}>
                 <button style={styles.navBtn} onClick={goPrev}>◀</button>
                 <span style={styles.title}>{currentDate.getFullYear()}년 {currentDate.getMonth()+1}월</span>
@@ -144,10 +116,10 @@ function ScheduleCalendar(props) {
                     views={'month'}
                     eventPropGetter={eventStyleGetter}
                     onSelectEvent={handleSelectEvent}
-                    date={currentDate}            // 👈 현재 화면 날짜 제어
-                    onNavigate={setCurrentDate}   // 👈 직접 이동 시 상태 업데이트
+                    date={currentDate}            // 현재 화면 날짜 제어
+                    onNavigate={setCurrentDate}   // 직접 이동 시 상태 업데이트
                     toolbar={false}
-                    selectable               // 👈 꼭 필요
+                    selectable
                     onSelectSlot={(slotInfo) => {
                         props.sDate(slotInfo.start);
                         setDate(slotInfo.start);

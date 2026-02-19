@@ -28,7 +28,6 @@ function FmDashboard(props) {
         // 팀 일정
         fetcher(`/gw/dashboard/dashTeamSchedList?dept=7`)
         .then(dd => { setSched(Array.isArray(dd) ? dd : [dd])
-            console.log(dd)
         })
 
          // 결재 속도
@@ -38,7 +37,6 @@ function FmDashboard(props) {
         // 시설 보수 요청 통계
         fetcher(`/gw/dashboard/dashFacilityRepairList?dept=7`)
         .then(dd => { setFacRep(Array.isArray(dd) ? dd : [dd])
-            console.log(dd)
         })
     }, [])
     

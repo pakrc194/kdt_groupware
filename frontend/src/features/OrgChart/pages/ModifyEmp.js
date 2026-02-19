@@ -13,13 +13,11 @@ const ModifyEmp = () => {
     DEPT_ID: '',
     JBTTL_ID: ''
   });
-  const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
 
   const [deptList, setDeptList] = useState([]);
   const [jbttlList, setJbttlList] = useState([]);
 
   useEffect(() => {
-    console.log('정보수정 '+id)
     fetcher(`/gw/schedule/instruction/teams`)
     .then(dd => {
         setDeptList(Array.isArray(dd) ? dd : [dd])
@@ -34,7 +32,6 @@ const ModifyEmp = () => {
 
     fetcher(`/gw/orgChart/detail/${id}`)
     .then(dd => {
-      console.log(dd)
       setEmpData(dd)
       setFormData({
           EMP_NM: dd.EMP_NM,
@@ -49,7 +46,6 @@ const ModifyEmp = () => {
   // 저장 버튼 클릭 시
   const handleSubmit = async () => {
     alert(`${formData.EMP_NM} 정보 수정 완료`);
-    console.log(empData)
     try {
       // 사원 정보 수정
       await fetcher('/gw/orgChart/modifyInfo', {
@@ -100,18 +96,6 @@ const ModifyEmp = () => {
           onChange={e => setFormData({...formData, EMP_NM: e.target.value})}
         />
       </div>
-
-      {/* <div style={styles.formGroup}>
-        <label style={styles.label}>생년월일</label>
-        <input 
-          type="date" 
-          name="EMP_BIRTH"
-          style={styles.input}
-          value={formData.EMP_BIRTH}
-          // onChange={handleChange}
-          onChange={e => setFormData({...formData, EMP_BIRTH: e.target.value})}
-        />
-      </div> */}
 
       <div style={styles.formGroup}>
         <label style={styles.label}>팀</label>

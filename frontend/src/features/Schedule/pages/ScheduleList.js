@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
+import { getSchedTypeLabel } from '../../../shared/func/formatLabel';
+import { Link } from 'react-router-dom';
 function ScheduleList(props) {
 
     // 현재 화면 날짜 상태
@@ -35,24 +37,12 @@ function ScheduleList(props) {
     
     useEffect(() => {
         fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
-        // fetcher(`/gw/schedule/view/${dept_id}/${emp_id}`)
         .then(dd => {setSched(Array.isArray(dd) ? dd : [dd])
         })
         .catch(e => console.log(e))
 
         setDate(currentDate)
     }, [date, currentDate, props.todo]);
-
-    
-    
-
-
-    // 한 달 시작일과 마지막일
-    // let monthEnd = new Date(yyyy, date.getMonth() + 1, 0);
-
-
-    
-
     
 
     // 한 달의 날짜 배열 생성
@@ -100,8 +90,8 @@ function ScheduleList(props) {
                         })
                         .map((vv, kk) => (
                             <div key={kk} style={styles.itemBox}>
-                                <div><b>제목</b> {vv.schedTitle}</div>
-                                <div><b>구분</b> {vv.schedType}</div>
+                                <div><b>제목</b> <Link to={`/schedule/check/calendar/detail/${vv.schedId}`} style={styles.link}>{vv.schedTitle}</Link></div>
+                                <div><b>구분</b> {getSchedTypeLabel(vv.schedType)}</div>
                                 <div><b>위치</b> {vv.schedLoc || '-'}</div>
                                 <div><b>상세</b> {vv.schedDetail || '-'}</div>
                                 <div style={styles.dateRange}>
@@ -119,7 +109,7 @@ function ScheduleList(props) {
 
 const styles = {
     wrapper: {
-        marginLeft: '350px',
+        marginLeft: '270px',
         padding: '0 20px',
         // width: '800px',
         fontFamily: 'Arial, sans-serif'
@@ -164,7 +154,11 @@ const styles = {
         marginTop: '4px',
         color: '#666',
         fontSize: '13px'
-    }
+    },
+    link: {
+        color: '#007bff',
+        textDecoration: 'none',
+    },
 };
 
 export default ScheduleList;

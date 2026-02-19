@@ -6,52 +6,39 @@ function AllEmp() {
     const [data, setData] = useState([]);
     const [selectedValue, setSelectedValue] = useState("ACTIVE");
     const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
-    const [newTAccessCk, setNewTAccessCk] = useState(0);  // 입사예정자
     const [newAccessCk, setNewAccessCk] = useState(0);  // 입사예정자
     const [reTAccessCk, setReTAccessCk] = useState(0);    // 퇴사자
     const [reAccessCk, setReAccessCk] = useState(0);    // 퇴사자
     
     useEffect(() => {
-        console.log(myInfo)
         fetcher('/gw/orgChart/list')
             .then(dd => {
                 setData(Array.isArray(dd) ? dd : [dd]);
             })
             .catch(e => console.log(e))
 
-        // // 권한 확인용 - 팀 단위 입사예정자
-        // fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=15`)
-        // .then(dd => {
-        //     setNewTAccessCk(dd)
-        //     // console.log(dd)
-        // })
-        // .catch(e => console.log(e))
+        
         // 권한 확인용 - 팀 단위 퇴사자
         fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=16`)
         .then(dd => {
             setReTAccessCk(dd)
-            // console.log(dd)
         })
         // 권한 확인용 - 직책 단위 입사예정자
         fetcher(`/gw/orgChart/access?id=${myInfo.jbttlId}&type=JBTTL&section=ORGCHART&accessId=15`)
         .then(dd => {
             setNewAccessCk(dd)
-            // console.log(newAccessCk)
         })
         .catch(e => console.log(e))
         // 권한 확인용 - 직책 단위 퇴사자
         fetcher(`/gw/orgChart/access?id=${myInfo.jbttlId}&type=JBTTL&section=ORGCHART&accessId=16`)
         .then(dd => {
             setReAccessCk(dd)
-            // console.log(reAccessCk)
         })
         .catch(e => console.log(e))
 
     }, []);
-        console.log(newAccessCk+", "+newTAccessCk)
 
     const filterChange = (e) => {
-        console.log(e.target.value); // 선택된 value
         setSelectedValue(e.target.value);
     };
 

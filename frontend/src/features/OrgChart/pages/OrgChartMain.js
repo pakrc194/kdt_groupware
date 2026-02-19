@@ -29,7 +29,6 @@ function OrgChartMain() {
     }
 
     const filterChange = (e) => {
-        console.log(e.target.value); // 선택된 value
         setSelectedValue(e.target.value);
     };
 
