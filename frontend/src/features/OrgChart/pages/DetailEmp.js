@@ -57,6 +57,12 @@ function DetailEmp() {
 
             <table style={styles.table}>
                 <tbody>
+                    {myInfo.deptId == 6 && 
+                        <tr>
+                            <td style={styles.th}>사원번호</td>
+                            <td style={styles.td}>{data.EMP_SN || '-'}</td>
+                        </tr>
+                    }
                     <tr>
                         <td style={styles.th}>사진</td>
                         <td style={styles.td}>{data.EMP_PHOTO || '-'}</td>
@@ -67,7 +73,7 @@ function DetailEmp() {
                     </tr>
                     <tr>
                         <td style={styles.th}>팀</td>
-                        <td style={styles.td}>{data.DEPT_NAME || '-'} ({data.DEPT_ID || '-'})</td>
+                        <td style={styles.td}>{data.DEPT_NAME || '-'}</td>
                     </tr>
                     <tr>
                         <td style={styles.th}>직책</td>
@@ -79,7 +85,7 @@ function DetailEmp() {
                     </tr>
                     <tr>
                         <td style={styles.th}>생년월일</td>
-                        <td style={styles.td}>{data.EMP_BIRTH || '-'}</td>
+                        <td style={styles.td}>{data.EMP_BIRTH?.split('T')[0] || '-'}</td>
                     </tr>
 
                     {/* 같은 팀 팀장 권한 */}

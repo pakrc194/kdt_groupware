@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 import AccessList from './AccessList';
@@ -11,35 +11,62 @@ import MfDashboard from './MfDashboard';
 import FmDashboard from './FmDashboard';
 import SoDashboard from './SoDashboard';
 import BoardDash from './BoardDashboard';
+import NoAccess from '../../../shared/components/NoAccess';
 
 function DashboardMain(props) {
     const { sideId } = useParams();
-    console.log("sideId 정보 확인",sideId)
-
+    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
     const renderContent = () => {
-        switch(sideId) {
-            case 'CP':
-                return <CompDashboard />
-            case 'FO':
-                return <FoDashboard />
-            case 'BU':
-                return <BuDashboard />
-            case 'WF':
-                return <WfDashboard />
-            case 'MF':
-                return <MfDashboard />
-            case 'HR':
-                return <HRDashboard />
-            case 'FM':
-                return <FmDashboard />
-            case 'SO':
-                return <SoDashboard />
-            case 'AD':
-                return <AccessList />
-            case 'BO':
-                return <BoardDash/>
-            default :
-                return <CompDashboard dept={sideId} />
+        if (myInfo.deptCode === 'CP'){
+            switch(sideId) {
+                case 'CP':
+                    return <CompDashboard />
+                case 'FO':
+                    return <FoDashboard />
+                case 'BU':
+                    return <BuDashboard />
+                case 'WF':
+                    return <WfDashboard />
+                case 'MF':
+                    return <MfDashboard />
+                case 'HR':
+                    return <HRDashboard />
+                case 'FM':
+                    return <FmDashboard />
+                case 'SO':
+                    return <SoDashboard />
+                case 'AD':
+                    return <AccessList />
+                case 'BO':
+                    return <BoardDash/>
+            }
+        }
+        else if (myInfo.jbttlId === 2)  {
+            switch(myInfo.deptCode) {
+                case 'CP':
+                    return <CompDashboard />
+                case 'FO':
+                    return <FoDashboard />
+                case 'BU':
+                    return <BuDashboard />
+                case 'WF':
+                    return <WfDashboard />
+                case 'MF':
+                    return <MfDashboard />
+                case 'HR':
+                    return <HRDashboard />
+                case 'FM':
+                    return <FmDashboard />
+                case 'SO':
+                    return <SoDashboard />
+                case 'AD':
+                    return <AccessList />
+                case 'BO':
+                    return <BoardDash/>
+            }
+        }
+        else {
+            return <NoAccess />
         }
     }
 

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 import { chkToday } from '../../../shared/api/chkToday';
 import Modal from '../../../shared/components/Modal';
+import { getSchedTypeLabel } from '../../../shared/func/formatLabel';
 
 function ScheduleDetail(props) {
     const { id } = useParams();
@@ -31,7 +32,6 @@ function ScheduleDetail(props) {
             setSchedTitle(dd.schedTitle)
             setDeptId(dd.schedDeptId)
             setPersId(dd.schedEmpId)
-            console.log(dd)
         })
         .catch(e => console.log(e))
     }, []);
@@ -40,7 +40,6 @@ function ScheduleDetail(props) {
         fetcher(`/gw/schedule/sched_delete/${id}
             ?empId=${myInfo.empId}&title=${schedTitle}&type=${schedType}&dept=${deptId}&pers=${persId}`)
         .catch(e => console.log(e))
-        console.log('일정 삭제')
         alert('일정이 삭제됐습니다.')
         navigate(-1)
     }
@@ -52,7 +51,7 @@ function ScheduleDetail(props) {
                 <tbody key={kk}>
                 <tr>
                     <th style={styles.th}>구분</th>
-                    <td style={styles.td}>{vv.schedType}</td>
+                    <td style={styles.td}>{getSchedTypeLabel(vv.schedType)}</td>
                 </tr>
                 <tr>
                     <th style={styles.th}>제목</th>

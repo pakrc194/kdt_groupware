@@ -1,15 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
+import { getStatusLabel } from '../../../shared/func/formatLabel';
+import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
 
 function HrDashboard(props) {
     const [emp, setEmp] = useState([]);
     const [sched, setSched] = useState([]);
     const [docPrc, setDocPrc] = useState([]);
+    const [selectedYear, setSelectedYear] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("");
+
+    // 📌 YYYYMMDDHHmmss 문자열 파싱
+    const getYear = (dateStr) => dateStr?.substring(0, 4);
+    const getMonth = (dateStr) => dateStr?.substring(4, 6);
 
     const date = new Date;
     const yyyy = date.getFullYear();
@@ -34,7 +42,7 @@ function HrDashboard(props) {
     const now = new Date();
     // 최근 12개월 배열 생성 (오늘 기준)
     const recentMonths = Array.from({ length: 15 }, (_, i) => {
-      const date = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
+      const date = new Date(now.getFullYear(), now.getMonth() - 13 + i, 1);
       return {
         year: date.getFullYear(),
         month: date.getMonth() + 1, // 0~11 이라서 +1
@@ -61,34 +69,15 @@ function HrDashboard(props) {
         ).length,
     }));
 
-
-    console.log(data)
-
-
-    // 예: 원하는 연도/월
-const year = 2026;
-const month = 1; // 2월
-
 // sched를 월/연도/타이틀 기준으로 그룹핑
 const schedMap = {};
 sched.forEach(sc => {
   const d = parseDateTime(sc.schedStartDate);
-  console.log(sc.schedStartDate)
   if (!d) return;
   const key = `${d.getFullYear()}-${d.getMonth() + 1}-${sc.schedTitle}`;
   if (!schedMap[key]) schedMap[key] = [];
   schedMap[key].push(sc);
 });
-
-// docPrc 필터링 + schedMap 기준 개수 세기
-const count = docPrc.filter(dd => 
-  dd.aprvDocStts !== "PENDING" &&
-  dd.docFormId === 7 &&
-  dd.roleCd === "LAST_ATRZ" &&
-  schedMap[`${year}-${month}-${dd.aprvDocTtl}`] // schedMap에 존재하면 true
-).length;
-
-console.log(schedMap);
 
 
     useEffect(() => {
@@ -106,6 +95,75 @@ console.log(schedMap);
         .then(dd => {setDocPrc(Array.isArray(dd) ? dd : [dd])
         })
     }, [])
+
+
+    // ✅ 연도 목록
+    const years = useMemo(() => {
+        const yearSet = new Set(
+            docPrc
+                .filter(dd => dd.aprvDocDrftDt)
+                .map(dd => getYear(dd.aprvDocDrftDt))
+        );
+        return Array.from(yearSet).sort((a, b) => b.localeCompare(a));
+    }, [docPrc]);
+
+    // ✅ 월 목록 (선택된 연도 기준)
+    const months = useMemo(() => {
+        if (!selectedYear) return [];
+
+        const monthSet = new Set(
+            docPrc
+                .filter(
+                    dd =>
+                        dd.aprvDocDrftDt &&
+                        getYear(dd.aprvDocDrftDt) === selectedYear
+                )
+                .map(dd => getMonth(dd.aprvDocDrftDt))
+        );
+
+        return Array.from(monthSet).sort();
+    }, [docPrc, selectedYear]);
+    
+    const today = new Date();
+    const currentMonth = (today.getMonth() + 1).toString().padStart(2, "0"); // 1~12
+    
+    // ✅ 최초 연도 자동 선택
+    useEffect(() => {
+        if (years.length > 0 && !selectedYear) {
+            setSelectedYear(years[0]);
+            if (selectedYear == today.getFullYear() && months.includes(currentMonth)) {
+                setSelectedMonth(currentMonth);
+            } else {
+                setSelectedMonth(months[0] || ""); // 선택 가능한 첫 달로
+            }
+        }
+    }, [years, selectedYear]);
+
+    // ✅ 연도 변경 시 월 초기화
+    useEffect(() => {
+        if (selectedYear == today.getFullYear() && months.includes(currentMonth)) {
+            setSelectedMonth(currentMonth);
+        } else {
+            setSelectedMonth(months[0] || ""); // 선택 가능한 첫 달로
+        }
+    }, [selectedYear]);
+
+    // ✅ 필터링 (기존 조건 포함)
+    const filteredDocs = useMemo(() => {
+        if (!selectedYear || !selectedMonth) return [];
+
+        return docPrc
+            .filter(dd =>
+                dd.aprvDocStts !== "PENDING" &&
+                dd.docFormId == 7 &&
+                dd.roleCd === "LAST_ATRZ"
+            )
+            .filter(dd =>
+                dd.aprvDocDrftDt &&
+                getYear(dd.aprvDocDrftDt) === selectedYear &&
+                getMonth(dd.aprvDocDrftDt) === selectedMonth
+            );
+    }, [docPrc, selectedYear, selectedMonth]);
     
     return (
         <div>
@@ -113,7 +171,15 @@ console.log(schedMap);
             <AttendanceRate emp={emp} />
             <TeamSchdule sched={sched}/>
             <DocPrcsTime docPrc={docPrc}/>
-            <h2>교육 통계</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2>교육 통계</h2>
+              <span style={{ fontWeight: 'bold' }}>총 {docPrc
+            .filter(dd =>
+                dd.aprvDocStts !== "PENDING" &&
+                dd.docFormId == 7 &&
+                dd.roleCd === "LAST_ATRZ"
+            ).length}건</span>
+            </div>
 
             <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -122,56 +188,113 @@ console.log(schedMap);
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="교육" fill="#82ca9d" isAnimationActive={true} />
-                {/* <Bar dataKey="대기" fill="#ca8282" isAnimationActive={true} /> */}
-                {/* <Bar dataKey="반려" fill="#595959" isAnimationActive={true} /> */}
-                {/* <RechartsDevtools /> */}
             </BarChart>
 
-            <table style={styles.table}>
-                <thead>
-                    <tr>
-                        <th style={styles.th}>문서 제목</th>
-                        <th style={styles.th}>문서 상태</th>
-                        <th style={styles.th}>작성자</th>
-                        <th style={styles.th}>작성일</th>
-                        <th style={styles.th}>승인자</th>
-                        <th style={styles.th}>승인 날짜</th>
-                        <th style={styles.th}>문서 유형</th>
-                        <th style={styles.th}>역할</th>
-                        <th style={styles.th}>결재시간</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {docPrc.length > 0 ? (
-                        docPrc
-                        .filter(dd => dd.aprvDocStts != "PENDING" && dd.docFormId == 7)
-                        .filter(dd => dd.roleCd == "LAST_ATRZ")
-                        .map((dd, index) => (
-                            <tr key={index}>
-                                <td style={styles.td}>{dd.aprvDocTtl}</td>
-                                <td style={styles.td}>{dd.aprvDocStts}</td>
-                                <td style={styles.td}>{dd.drftEmpNm}</td>
-                                <td style={styles.td}>
-                                    {dd.aprvDocDrftDt ? dd.aprvDocDrftDt : '미정'}
-                                </td>
-                                <td style={styles.td}>{dd.aprvPrcsEmpNm}</td>
-                                <td style={styles.td}>
-                                    {dd.aprvPrcsDt ? dd.aprvPrcsDt : '미승인'}
-                                </td>
-                                <td style={styles.td}>{dd.docFormNm} {dd.docFormId}</td>
-                                <td style={styles.td}>{dd.roleCd}</td>
-                                <td style={styles.td}>{dd.aprvPrcsDt ? TimeDiff(dd.aprvDocDrftDt, dd.aprvPrcsDt) : '결재 전'}</td>
-                            </tr>
-                        ))
-                    ) : (
+
+<div>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* ✅ 연도 / 월 드롭다운 */}
+            <div style={{ marginBottom: "15px", display: "flex", gap: "10px" }}>
+                <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    style={styles.select}
+                >
+                    <option value="">연도 선택</option>
+                    {years.map(year => (
+                        <option key={year} value={year}>
+                            {year}년
+                        </option>
+                    ))}
+                </select>
+
+                <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    style={styles.select}
+                    disabled={!selectedYear}
+                >
+                    <option value="">월 선택</option>
+                    {months.map(month => (
+                        <option key={month} value={month}>
+                            {Number(month)}월
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <span style={{ fontWeight: 'bold' }}>총 {filteredDocs.length}건</span>
+            </div>
+
+            {/* ✅ 스크롤 영역 */}
+            <div
+                style={{
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px"
+                }}
+            >
+                <table style={styles.table}>
+                    <thead
+                        style={{
+                            position: "sticky",
+                            top: 0,
+                            backgroundColor: "#f1f3f5",
+                            zIndex: 1
+                        }}
+                    >
                         <tr>
-                            <td colSpan="9" style={styles.noData}>
-                                데이터가 없습니다.
-                            </td>
+                            <th style={styles.th}>문서 제목</th>
+                            <th style={styles.th}>문서 상태</th>
+                            <th style={styles.th}>기안자</th>
+                            <th style={styles.th}>기안일</th>
+                            <th style={styles.th}>최종결재자</th>
+                            <th style={styles.th}>결재 날짜</th>
+                            <th style={styles.th}>문서 유형</th>
+                            <th style={styles.th}>결재시간</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {filteredDocs.length > 0 ? (
+                            filteredDocs.map((dd, index) => (
+                                <tr key={index}>
+                                    <td style={styles.td}>{dd.aprvDocTtl}</td>
+                                    <td style={styles.td}>
+                                        {getStatusLabel(dd.aprvDocStts)}
+                                    </td>
+                                    <td style={styles.td}>{dd.drftEmpNm}</td>
+                                    <td style={styles.td}>
+                                        {dd.aprvDocDrftDt
+                                            ? formatToYYMMDD(dd.aprvDocDrftDt)
+                                            : "미정"}
+                                    </td>
+                                    <td style={styles.td}>{dd.aprvPrcsEmpNm}</td>
+                                    <td style={styles.td}>
+                                        {dd.aprvPrcsDt
+                                            ? formatToYYMMDD(dd.aprvPrcsDt)
+                                            : "미승인"}
+                                    </td>
+                                    <td style={styles.td}>
+                                        {dd.docFormNm}
+                                    </td>
+                                    <td style={styles.td}>
+                                        {dd.aprvPrcsDt
+                                            ? TimeDiff(dd.aprvDocDrftDt, dd.aprvPrcsDt)
+                                            : "결재 전"}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="8" style={styles.noData}>
+                                    데이터가 없습니다.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         </div>
     );
 }
@@ -231,6 +354,14 @@ const styles = {
     padding: 16,
     color: "#bfbfbf",
   },
+  select: {
+    padding: "6px 10px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    cursor: "pointer"
+}
+
 };
 
 export default HrDashboard;

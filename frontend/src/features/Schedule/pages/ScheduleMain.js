@@ -13,7 +13,6 @@ function ScheduleMain(props) {
 
     useEffect(()=>{
             localStorage.setItem("EMP_ID", myInfo.empId)
-            console.log("useEffect", myInfo) 
             // 사용자 정보 가져오기
             fetcher(`/gw/schedule/empinfo/${myInfo.empId}`)
             .then(data => {

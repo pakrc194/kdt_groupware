@@ -126,7 +126,7 @@ public interface CompDashMapper {
 			+ "FROM SCHED "
 			+ "LEFT JOIN LOC_INFO ON SCHED.SCHED_LOC = LOC_INFO.LOC_ID "
 			+ "LEFT JOIN EMP_PRVC ON SCHED.SCHED_EMP_ID = EMP_PRVC.EMP_ID "
-			+ "WHERE FIND_IN_SET(#{dept}, SCHED_DEPT_ID) > 0")
+			+ "WHERE FIND_IN_SET(#{dept}, SCHED.SCHED_DEPT_ID) > 0")
 	List<DashSchedDashDTO> dashTeamSchedList(String dept);
 	
 	// 결재 속도

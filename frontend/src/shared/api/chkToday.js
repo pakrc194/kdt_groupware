@@ -7,10 +7,8 @@ export function chkToday(inputDate) {
   today.setHours(0, 0, 0, 0);
   console.log(inputDate)
   if (new Date(inputDate) < today) {
-    console.log("오늘 이전 날짜입니다.");
     return false;
   } else {
-    console.log("오늘 또는 미래 날짜입니다.");
     return true;
   }
 }

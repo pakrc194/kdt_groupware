@@ -7,7 +7,6 @@ function CompanyDashboardGraph({inOut, emp, approval}) {
     const retired = inOut.filter((d) => d.empAcntStts == "RETIRED");
 
     const currentYear = new Date().getFullYear();
-    console.log(active.filter(dd => new Date(dd.empJncmpYmd).getFullYear() == currentYear).length)
         
     // 최근 5년 배열 생성
     const recentYears = Array.from({ length: 10 }, (_, i) => currentYear - 9 + i);

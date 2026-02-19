@@ -44,6 +44,7 @@ public class LoginController {
 	@PostMapping
 	Object login(@RequestBody LoginRequest req) {
 		System.out.println(req);
+		System.out.println("로그인 시도");
 		
 		String token = jwtUtil.createToken(req.getEmpSn());
 		LoginResponse res = mapper.login(req);

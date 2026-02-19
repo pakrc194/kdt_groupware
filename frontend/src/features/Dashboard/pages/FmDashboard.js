@@ -38,7 +38,6 @@ function FmDashboard(props) {
         // 시설 보수 요청 통계
         fetcher(`/gw/dashboard/dashFacilityRepairList?dept=7`)
         .then(dd => { setFacRep(Array.isArray(dd) ? dd : [dd])
-            console.log(dd)
         })
     }, [])
     

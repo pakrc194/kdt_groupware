@@ -1,4 +1,6 @@
-import React from 'react';
+import { useState, useMemo, useEffect } from "react";
+import formatToYYMMDD from '../../../shared/func/formatToYYMMDD';
+import { getStatusLabel } from '../../../shared/func/formatLabel';
 
 function ApprovalProcessHistory({approval}) {
     
@@ -21,40 +23,152 @@ function ApprovalProcessHistory({approval}) {
     });
 
     const groupedData = Object.values(grouped);
-    console.log(groupedData)
 
-    const parseDateTime = (str) => {
-        console.log(str)
-        const year = str.substring(0, 4);
-        const month = str.substring(4, 6) - 1; // JS는 month가 0부터 시작
-        const day = str.substring(6, 8);
-        const hour = str.substring(8, 10);
-        const minute = str.substring(10, 12);
-        const second = str.substring(12, 14);
+    const today = new Date();
+    const currentMonth = (today.getMonth() + 1).toString().padStart(2, "0");
 
-        return new Date(year, month, day, hour, minute, second);
-    }
+    const getYear = (dateStr) => dateStr?.substring(0, 4);
+    const getMonth = (dateStr) => dateStr?.substring(4, 6);
+
+    const [selectedYear, setSelectedYear] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("");
+
+    // 연도 목록
+    const years = useMemo(() => {
+        const yearSet = new Set(
+            groupedData
+                .filter(dd => dd.aprvDocDrftDt)
+                .map(dd => getYear(dd.aprvDocDrftDt))
+        );
+        return Array.from(yearSet).sort((a, b) => b.localeCompare(a));
+    }, [groupedData]);
+
+    // 월 목록 (선택된 연도 기준)
+    const months = useMemo(() => {
+        if (!selectedYear) return [];
+        const monthSet = new Set(
+            groupedData
+                .filter(dd => getYear(dd.aprvDocDrftDt) === selectedYear)
+                .map(dd => getMonth(dd.aprvDocDrftDt))
+        );
+        return Array.from(monthSet).sort();
+    }, [groupedData, selectedYear]);
+
+    // 연도 최초 선택
+    useEffect(() => {
+        if (years.length > 0 && !selectedYear) setSelectedYear(years[0]);
+
+        if (!selectedMonth) {
+            // today 기준 월이 선택 가능하면 그대로, 아니면 첫 달
+            if (months.includes(currentMonth)) {
+                setSelectedMonth(currentMonth);
+            } else {
+                setSelectedMonth(months[0] || "");
+            }
+        }
+    }, [years]);
+
+    // 연도 변경 시 월 초기화
+    useEffect(() => {
+        if (selectedYear == today.getFullYear() && months.includes(currentMonth)) {
+            setSelectedMonth(currentMonth);
+        } else {
+            setSelectedMonth(months[0] || "");
+        }
+    }, [selectedYear]);
+
+    // 필터링
+    const filteredDocs = useMemo(() => {
+        if (!selectedYear || !selectedMonth) return [];
+        return groupedData
+            .filter(dd =>
+                dd.aprvDocDrftDt &&
+                getYear(dd.aprvDocDrftDt) === selectedYear &&
+                getMonth(dd.aprvDocDrftDt) === selectedMonth
+            )
+            .sort((a, b) => parseInt(a.aprvDocDrftDt) - parseInt(b.aprvDocDrftDt));
+    }, [groupedData, selectedYear, selectedMonth]);
+
+    
+
     return (
         <div>
             <h2>결재 처리 이력</h2>
-                <table>
-                    <tbody>
-                        {groupedData
-                        .sort((a, b) => parseDateTime(a.aprvDocDrftDt) - parseDateTime(b.aprvDocDrftDt))
-                        .map(data => (
-                            <tr>
-                                <td style={styles.td}>{data.aprvDocTtl}</td>
-                                {/* <td>{data.aprvDocId}</td> */}
-                                <td style={styles.td}>{data.draftEmpNm}</td>
-                                <td style={styles.td}>{data.docFormNm}</td>
-                                <td style={styles.td}>{data.aprvDocDrftDt}</td>
-                                {/* <td style={styles.td}>{parseDateTime(data.aprvDocDrftDt)}</td> */}
-                                <td style={styles.td}>{data.aprvDocStts}</td>
-                                <td style={styles.td}>{data.aprvPrcsEmpNm}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* 연도/월 드롭다운 */}
+            <div style={{ marginBottom: "15px", display: "flex", gap: "10px" }}>
+                <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    style={styles.select}
+                >
+                    <option value="">연도 선택</option>
+                    {years.map(year => (
+                        <option key={year} value={year}>{year}년</option>
+                    ))}
+                </select>
+
+                <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    style={styles.select}
+                    disabled={!selectedYear}
+                >
+                    <option value="">월 선택</option>
+                    {months.map(month => (
+                        <option key={month} value={month}>{Number(month)}월</option>
+                    ))}
+                </select>
+            </div>
+            <span style={{ fontWeight: 'bold' }}>총 {filteredDocs.length}건</span>
+            </div>
+            
+            {/* 스크롤 영역 + 헤더 고정 */}
+
+            <div style={{
+                maxHeight: "400px",
+                overflowY: "auto",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                position: "relative"
+            }}>
+    <table style={styles.table}>
+        <thead style={{
+            position: "sticky",
+            top: 0,
+            backgroundColor: "#f1f3f5",
+            zIndex: 1,
+        }}>
+            <tr>
+                <th style={styles.th}>문서 제목</th>
+                <th style={styles.th}>기안자</th>
+                <th style={styles.th}>문서 유형</th>
+                <th style={styles.th}>기안일</th>
+                <th style={styles.th}>문서 상태</th>
+                <th style={styles.th}>최종결재자</th>
+            </tr>
+        </thead>
+        <tbody>
+            {filteredDocs.length > 0 ? (
+                filteredDocs.map((data, index) => (
+                    <tr key={index}>
+                        <td style={styles.td}>{data.aprvDocTtl}</td>
+                        <td style={styles.td}>{data.draftEmpNm}</td>
+                        <td style={styles.td}>{data.docFormNm}</td>
+                        <td style={styles.td}>{formatToYYMMDD(data.aprvDocDrftDt)}</td>
+                        <td style={styles.td}>{getStatusLabel(data.aprvDocStts)}</td>
+                        <td style={styles.td}>{data.aprvPrcsEmpNm}</td>
+                    </tr>
+                ))
+            ) : (
+                <tr>
+                    <td colSpan="6" style={styles.noData}>데이터가 없습니다.</td>
+                </tr>
+            )}
+        </tbody>
+    </table>
+</div>
+            
         </div>
     );
 }
@@ -73,13 +187,12 @@ const styles = {
         borderCollapse: 'collapse',
         backgroundColor: '#ffffff',
         borderRadius: '12px',
-        overflow: 'hidden',
         boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
         marginBottom: '20px',
     },
 
     th: {
-        width: '30%',
+        width: '10%',
         textAlign: 'left',
         padding: '14px',
         backgroundColor: '#f9fafb',
@@ -87,6 +200,7 @@ const styles = {
         fontSize: '14px',
         color: '#6b7280',
         borderBottom: '1px solid #eee',
+        
     },
 
     td: {
@@ -131,6 +245,14 @@ const styles = {
         fontWeight: '600',
         transition: '0.2s',
     },
+    select: {
+    padding: "6px 10px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    fontSize: "14px",
+    cursor: "pointer"
+}
+
 };
 
 

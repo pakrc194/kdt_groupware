@@ -57,7 +57,7 @@ function Instruction(props) {
 
         // 장소 리스트 가져오기
         fetcher('/gw/schedule/instruction/locations')
-        .then(data => { setLocationList(data); console.log(data) })
+        .then(data => { setLocationList(data); })
         .catch(err => console.error('장소 리스트 로딩 실패', err))
 
     }, []);
@@ -79,7 +79,6 @@ function Instruction(props) {
         // 장소 일정 확인
         fetcher(`/gw/schedule/instruction/schedLocs/${startDate}/${endDate}`)
         .then(data => {
-            console.log(data)
             setResLoc(locationList.filter(loc => !data.filter(id => id !== null).includes(loc.locId)))
         })
         .catch(err => console.error('팀 일정 리스트 로딩 실패', err))
@@ -158,7 +157,6 @@ function Instruction(props) {
             }
         });
 
-        // console.log('등록할 업무:', payload);
         hasCommon && alert('업무가 중복 등록됩니다.')
         alert('업무가 등록되었습니다');
         // 페이지 이동
