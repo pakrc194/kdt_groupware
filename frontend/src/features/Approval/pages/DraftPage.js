@@ -35,7 +35,7 @@ const DraftPage = () => {
     
 
     const fn_formClick = () => {
-        fetcher("/gw/aprv/AprvDocFormList").then(res => {
+        fetcher(`/gw/aprv/AprvDocFormList/${myInfo.deptId}`).then(res => {
             setIsFormOpen(true)
             setFormList(res)
             // console.log("formClick ",res, formList);

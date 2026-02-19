@@ -115,7 +115,8 @@ function TeamSchdule({sched}) {
                 <h2>팀 일정(최근 1년 및 향후 3개월)</h2>
                 <span style={{ fontWeight: 'bold' }}>총 {cnt}건</span>
             </div>
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
+            <div style={{ width: '100%', height: '400px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            <BarChart style={{ width: '100%', height: '100%', aspectRatio: 1.618 }} responsive data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis width="auto" />
@@ -124,6 +125,7 @@ function TeamSchdule({sched}) {
                 <Bar dataKey="일정" fill="#82ca9d" isAnimationActive={true} />
                 {/* <RechartsDevtools /> */}
             </BarChart>
+            </div>
 
 
 <div>
@@ -148,7 +150,6 @@ function TeamSchdule({sched}) {
                         cursor: "pointer"
                     }}
                 >
-                    <option value="">연도 선택</option>
                     {years.map(year => (
                         <option key={year} value={year}>
                             {year}년
@@ -169,7 +170,6 @@ function TeamSchdule({sched}) {
                     }}
                     disabled={!selectedYear}
                 >
-                    <option value="">월 선택</option>
                     {months.map(month => (
                         <option key={month} value={month}>
                             {month}월

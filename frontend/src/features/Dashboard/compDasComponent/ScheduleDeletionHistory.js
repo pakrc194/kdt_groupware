@@ -78,7 +78,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
                     onChange={e => setSelectedYear(e.target.value)}
                     style={styles.select}
                 >
-                    <option value="">연도 선택</option>
                     {years.map(year => (
                         <option key={year} value={year}>{year}년</option>
                     ))}
@@ -90,7 +89,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
                     style={styles.select}
                     disabled={!selectedYear}
                 >
-                    <option value="">월 선택</option>
                     {months.map(month => (
                         <option key={month} value={month}>{Number(month)}월</option>
                     ))}

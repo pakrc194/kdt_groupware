@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
 import EventBoothCnt from '../component/EventBoothCnt';
+import { useParams } from 'react-router-dom';
 
 
 function FoDashboard(props) {
@@ -18,7 +19,18 @@ function FoDashboard(props) {
 
     const formatted = `${yyyy}-${mm}-${dd}`;
 
-    
+    const { refId } = useParams();
+    const sectionRefs = useRef({});
+
+    const moveTo = (key) => {
+        sectionRefs.current[key]?.scrollIntoView({
+        behavior: "smooth"
+        });
+    };
+
+    useEffect(() => {
+            moveTo(refId)
+        }, [refId])
 
     useEffect(() => {
         // 팀 근태
@@ -37,10 +49,14 @@ function FoDashboard(props) {
     
     return (
         <div>
+            <div ref={(el) => (sectionRefs.current["att"] = el)}></div>
             <h1>식품</h1>
             <AttendanceRate emp={emp} />
+            <div ref={(el) => (sectionRefs.current["teamsched"] = el)}></div>
             <TeamSchdule sched={sched}/>
+            <div ref={(el) => (sectionRefs.current["eventbooth"] = el)}></div>
             <EventBoothCnt docPrc={docPrc} sched={sched}/>
+            <div ref={(el) => (sectionRefs.current["aprvlog"] = el)}></div>
             <DocPrcsTime docPrc={docPrc}/>
         </div>
     );

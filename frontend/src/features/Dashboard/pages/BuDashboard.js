@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import AttendanceRate from '../component/AttendanceRate';
 import TeamSchdule from '../component/TeamSchdule';
 import DocPrcsTime from '../component/DocPrcsTime';
 import EventBoothCnt from '../component/EventBoothCnt';
+import { useParams } from 'react-router-dom';
 
 function BuDashboard(props) {
     const [emp, setEmp] = useState([]);
@@ -17,6 +18,19 @@ function BuDashboard(props) {
 
     
     const formatted = `${yyyy}-${mm}-${dd}`;
+
+    const { refId } = useParams();
+    const sectionRefs = useRef({});
+
+    const moveTo = (key) => {
+        sectionRefs.current[key]?.scrollIntoView({
+        behavior: "smooth"
+        });
+    };
+
+    useEffect(() => {
+            moveTo(refId)
+        }, [refId])
 
     useEffect(() => {
         // 팀 근태
@@ -34,10 +48,14 @@ function BuDashboard(props) {
     
     return (
         <div>
+            <div ref={(el) => (sectionRefs.current["att"] = el)}></div>
             <h1>뷰티·패션잡화</h1>
             <AttendanceRate emp={emp} />
+            <div ref={(el) => (sectionRefs.current["teamsched"] = el)}></div>
             <TeamSchdule sched={sched}/>
+            <div ref={(el) => (sectionRefs.current["eventbooth"] = el)}></div>
             <EventBoothCnt docPrc={docPrc} sched={sched}/>
+            <div ref={(el) => (sectionRefs.current["aprvlog"] = el)}></div>
             <DocPrcsTime docPrc={docPrc}/>
         </div>
     );

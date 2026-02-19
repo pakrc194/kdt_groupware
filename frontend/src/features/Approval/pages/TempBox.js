@@ -4,6 +4,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 import AprvBoxBoard from '../components/AprvBoxBoard';
 import Button from '../../../shared/components/Button';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
+import { formatForList } from '../../../shared/func/formatToDate';
 
 const TempBox = () => {
     const navigate = useNavigate();
@@ -49,7 +50,7 @@ const TempBox = () => {
                         <td>{aprvDoc.aprvDocNo}</td>
                         <td><Link to={`/approval/${sideId}/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
-                        <td>{aprvDoc.aprvDocDrftDt.substring(0,8)}</td>
+                        <td>{formatForList(aprvDoc.aprvDocDrftDt)}</td>
                         <td>
                             <span className={`badge-status ${aprvDoc.aprvDocStts}`}>
                                 {getStatusLabel(aprvDoc.aprvDocStts)}
