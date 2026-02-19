@@ -8,8 +8,6 @@ const ApprovalLine = ({docLine}) => {
         MID_REF : "중간 참조자",
         LAST_ATRZ : "최종 결재자"
     }
-
-
     return (
         <>
             <div className='approvalLine'>
