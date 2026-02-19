@@ -14,8 +14,20 @@ public class AtdcDataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("서버가 시작되었습니다. 미등록 데이터를 체크합니다.");
-        int cnt = mapper.insertAtdcHistData();
-        System.out.println("근태 "+cnt+"개 데이터 등록 완료");
+    	System.out.println("=== 서버 시작: 데이터 체크 실행 ===");
+
+      // 근태 기본 데이터 체크 (오늘자 출근부 생성)
+      int atdcCnt = mapper.insertAtdcHistData();
+      System.out.println("> 금일 근태 기록 생성: " + atdcCnt + "건");
+
+      // 연차 부여 체크 (올해 연차 기록이 없는 사원 대상)
+      int leaveCnt = mapper.insertYearlyLeaveData();
+      System.out.println("> 신규 연차 부여 완료: " + leaveCnt + "명 (기준 연도: " + java.time.LocalDate.now().getYear() + ")");
+      
+      // 신입 월차 부여 체크 (근속 1년 미만 사원 대상)
+      int monthLeaveCnt = mapper.updateNewEmpLeave();
+      System.out.println("> 신입 월차 부여 완료: " + monthLeaveCnt + "명 (기준 연도: " + java.time.LocalDate.now().getYear() + ")");
+      
+      System.out.println("=== 데이터 체크 완료 ===");
     }
 }

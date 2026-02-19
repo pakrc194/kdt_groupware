@@ -68,6 +68,7 @@ function LoginMain(props) {
                 className="login-input"
                 placeholder="사번을 입력하세요"
                 onChange={(e) => setEmpSn(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && fn_login()}
               />
             </div>
             

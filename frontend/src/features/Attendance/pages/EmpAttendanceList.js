@@ -70,7 +70,7 @@ function EmpAttendanceList() {
             name="deptId"
             value={filter.deptId}
             onChange={handleFilterChange}
-            disabled={myInfo.deptId !== 0}
+            disabled={myInfo.deptId !== 1}
           >
             <option value="0">전체 부서</option>
             <option value="2">식품</option>
@@ -88,6 +88,7 @@ function EmpAttendanceList() {
             placeholder="사원명 검색"
             value={filter.empNm}
             onChange={handleFilterChange}
+            onKeyDown={(e) => e.key === 'Enter' && loadAtdcList()}
           />
 
           <button className="search-btn" onClick={loadAtdcList}>

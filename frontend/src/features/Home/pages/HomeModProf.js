@@ -153,6 +153,7 @@ const HomeModProf = () => {
         setIsAuthSuccess(true);
         setAuthCode("");
         setCurrentPassword("");
+        alert("인증 되었습니다.");
       } else {
         alert("인증 정보가 올바르지 않습니다.");
       }
@@ -245,10 +246,10 @@ const HomeModProf = () => {
               <button className="sub-btn" onClick={handleSendAuthMail} type="button">인증번호 발송</button>
             </div>
             <div className="form-group" style={{ marginTop: '15px' }}>
-              <input type="text" className="mod-input" placeholder="인증번호" value={authCode} onChange={(e) => setAuthCode(e.target.value)} />
+              <input type="text" className="mod-input" placeholder="인증번호" value={authCode} onChange={(e) => setAuthCode(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleVerifyIdentity()} />
             </div>
             <div className="form-group">
-              <input type="password" className="mod-input" placeholder="현재 비밀번호" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+              <input type="password" className="mod-input" placeholder="현재 비밀번호" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleVerifyIdentity()} />
             </div>
             <button className="primary-btn wide-btn" onClick={handleVerifyIdentity} type="button">인증 및 수정하기</button>
           </div>
