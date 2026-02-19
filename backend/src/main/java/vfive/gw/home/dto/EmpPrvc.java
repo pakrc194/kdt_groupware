@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class EmpPrvc {
-	private int empId, deptId, jbttlId, accessId;
+	private int empId, deptId, jbttlId, accessId, empSnCnt;
 	private String empSn, empNm, empPswd, empEmlAddr, empPhoto, empAddr, empTelno, empActno, empJncmpYmd, empRsgntnYmd, empAcntStts, newPassword, deptName, jbttlNm;
 	private Date empBirth;
 	private MultipartFile file;

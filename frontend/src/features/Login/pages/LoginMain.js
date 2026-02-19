@@ -94,7 +94,7 @@ function LoginMain(props) {
           토큰확인
         </Button> */}
         <Button onClick={() => navigate("/FindPassword")}>비밀번호 찾기</Button>
-        <br /> test계정 20240101/ 1234
+        <br /> 식품팀장 - FO0001/ 1234
         <br />("지점장") test계정 CP0001/ 1234<br/>
         인사 팀장 - HR0003/ Qw#9Zx12<br/>
         인사 팀원 - HR0005/ 1234<br/>

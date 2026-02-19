@@ -109,11 +109,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
         } else {
             alert(`반려처리 : ${rjctRsn} `)
         }
-
-        
-
-        
-        navigate(0);
+        //navigate(0);
     }
 
     const fn_dutyCheck = async () => {
@@ -128,7 +124,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
                 method: "POST",
                 body: { dutyId: dutyId }
             });
-            alert(res.message);
+            alert(res?.message || "확정 처리가 완료되었습니다.");
         } catch (error) {
             console.error("근무표 확정 에러 상세:", error);
             alert(`[결재 실패] ${error.message}`);

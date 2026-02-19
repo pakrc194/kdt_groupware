@@ -84,7 +84,7 @@ public interface DutyMapper {
   
   // 마스터 정보 저장 (DUTY_SCHE_MST)
   @Insert("INSERT INTO DUTY_SCHE_MST (EMP_ID, DEPT_ID, SCHE_TTL, TRGT_YMD, LST_PTN_IDX) " +
-          "VALUES (#{empId}, #{deptId}, #{scheTtl}, #{trgtYmd}, #{lstPtnIdx})")
+          "VALUES (#{empId}, #{deptId}, #{scheTtl}, #{trgtYmd}, #{lstPtnIdx, jdbcType=INTEGER})")
   @Options(useGeneratedKeys = true, keyProperty = "dutyId")
   int insertDutyMaster(DutyRequestDTO req);
   

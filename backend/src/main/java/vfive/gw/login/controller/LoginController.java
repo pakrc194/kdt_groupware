@@ -51,18 +51,22 @@ public class LoginController {
 		
 		if(res!=null) {
 			res.setToken(token);
+			// 신규사원
 			if(res.getEmpAcntStts().equals("초기")) {
 				res.setLogChk("NewEmp");
 				return res;
 			}
+			// 퇴사사원
 			if(res.getEmpAcntStts().equals("RETIRED") || res.getEmpAcntStts() == "RETIRED") {
 				res.setLogChk("Fail");
 				return res;
 			}
+			// 일반사원
 			clkInService.loginClkIn(res); // 출근 서비스 호출
 			res.setLogChk("Success");
 			return res;
 		} else {
+			// 계정정보가 없을 시
 			res = new LoginResponse();
 			res.setLogChk("Fail");
 		}

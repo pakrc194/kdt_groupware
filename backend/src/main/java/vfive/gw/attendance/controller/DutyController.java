@@ -158,12 +158,15 @@ public class DutyController {
 	ResponseEntity<?> confirmDuty(@RequestBody DutyRequestDTO req) {
 		try {
 			dutySkedUpdateService.confirmDutySchedule(req);
+			System.out.println("근무표 결제 서비스 통과했나?");
       return ResponseEntity.ok(Map.of("message", "근무표가 최종 확정되었습니다."));
 	  } catch (IllegalStateException e) {
+	  		e.printStackTrace();
 	      // 중복 데이터 에러 (409 Conflict)
 	      return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("message", e.getMessage()));
 	  } catch (Exception e) {
 	      // 기타 서버 에러
+	  		e.printStackTrace();
 	      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "처리 중 오류가 발생했습니다."));
 	  }
 		

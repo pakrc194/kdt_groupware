@@ -18,15 +18,15 @@ function DutyGroupModal({ isOpen, onClose, initialEmployees, onApply }) {
   // 조 변경 핸들러
   const handleMoveGroup = (id, newGroup) => {
     setTempEmps((prev) =>
-      prev.map((emp) => (emp.id === id ? { ...emp, group: newGroup } : emp)),
+      prev.map((emp) => (emp.empId === id ? { ...emp, grpNm: newGroup } : emp)),
     );
   };
 
   const handleApply = async () => {
     try {
       const updateData = tempEmps.map((emp) => ({
-        empId: emp.id,
-        grpNm: emp.group === "미배정" || !emp.group ? null : emp.group,
+        empId: emp.empId,
+        grpNm: emp.grpNm === "미배정" || !emp.grpNm ? null : emp.grpNm,
         rotPtnCd: emp.rotPtnCd,
       }));
 
@@ -67,17 +67,17 @@ function DutyGroupModal({ isOpen, onClose, initialEmployees, onApply }) {
               {tempEmps
                 .filter(
                   (e) =>
-                    e.name.includes(searchTerm) &&
-                    (!e.group || e.group === "미배정" || e.group === ""),
+                    e.empNm.includes(searchTerm) &&
+                    (!e.grpNm || e.grpNm === "미배정" || e.grpNm === ""),
                 )
                 .map((e) => (
-                  <div key={e.id} className="pool-item">
-                    <span>{e.name}</span>
+                  <div key={e.empId} className="pool-item">
+                    <span>{e.empNm}</span>
                     <div className="add-buttons">
                       {["A", "B", "C", "D"].map((g) => (
                         <button
                           key={g}
-                          onClick={() => handleMoveGroup(e.id, g)}
+                          onClick={() => handleMoveGroup(e.empId, g)}
                         >
                           {g}
                         </button>
@@ -95,11 +95,11 @@ function DutyGroupModal({ isOpen, onClose, initialEmployees, onApply }) {
                 <div className="group-box-header">{gn}조</div>
                 <div className="group-box-body">
                   {tempEmps
-                    .filter((e) => e.group === gn)
+                    .filter((e) => e.grpNm === gn)
                     .map((e) => (
-                      <div key={e.id} className="member-tag">
-                        <span>{e.name}</span>
-                        <button onClick={() => handleMoveGroup(e.id, "")}>
+                      <div key={e.empId} className="member-tag">
+                        <span>{e.empNm}</span>
+                        <button onClick={() => handleMoveGroup(e.empId, "")}>
                           ×
                         </button>
                       </div>
