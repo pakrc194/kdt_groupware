@@ -1,22 +1,18 @@
-import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
-
+import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar, ResponsiveContainer } from 'recharts';
 import React from 'react';
 
-function CompanyDashboardGraph({inOut, emp, approval}) {
+function CompanyDashboardGraph({ inOut, emp, approval }) {
+
     const active = inOut.filter((d) => d.empAcntStts != "RETIRED");
     const retired = inOut.filter((d) => d.empAcntStts == "RETIRED");
 
     const currentYear = new Date().getFullYear();
-        
-    // 최근 5년 배열 생성
     const recentYears = Array.from({ length: 10 }, (_, i) => currentYear - 9 + i);
-    
+
     const data = recentYears.map((year) => ({
         name: `${year}년`,
-        // "입사": Math.floor(Math.random() * 5000),
         "입사": active.filter(dd => new Date(dd.empJncmpYmd).getFullYear() == year).length,
         "퇴사": retired.filter(dd => new Date(dd.empRsgntnYmd).getFullYear() == year).length,
-        amt: Math.floor(Math.random() * 5000),
     }));
 
     const present = emp.filter((dd) => dd.atdcSttsCd === "PRESENT").length;
@@ -24,30 +20,20 @@ function CompanyDashboardGraph({inOut, emp, approval}) {
     const businessTrip = emp.filter((dd) => dd.atdcSttsCd === "BUSINESS_TRIP").length;
     const off = emp.filter((dd) => dd.atdcSttsCd === "OFF").length;
     const leave = emp.filter((dd) => dd.atdcSttsCd === "LEAVE").length;
-    
-    const now = new Date();
 
-    // 최근 7일 배열 생성 (오늘 포함)
-    const recentDays = Array.from({ length: 1 }, (_, i) => {
-        const date = new Date();
-        // date.setDate(now.getDate() - 6 + i); // 6일 전부터 오늘까지
-        return new Date(date);
-    }); 
-
-
-    const attendData = recentDays.map((date) => ({
-        name: `${date.getMonth() + 1}/${date.getDate()}`,
+    const attendData = [{
+        name: "오늘",
         "출근": present,
         "결근": absent,
         "출장": businessTrip,
         "휴무": off,
         "연차": leave,
-    }));
+    }];
 
-    const deptOrder = ["지점장", "식품", "뷰티·패션잡화", "여성패션", "남성패션", "인사관리", "시설자재", "안전관리"];
-    const activeList = inOut.filter( data => data.empAcntStts === "ACTIVE" );
-    const newList = inOut.filter( data => data.empAcntStts === "초기" );
-    
+    const deptOrder = ["지점장", "식품", "뷰티·패션", "여성패션", "남성패션", "인사관리", "시설자재", "안전관리"];
+    const activeList = inOut.filter(data => data.empAcntStts === "ACTIVE");
+    const newList = inOut.filter(data => data.empAcntStts === "초기");
+
     const orgData = deptOrder.map((data) => ({
         name: data,
         "재직": activeList.filter(dd => deptOrder[dd.deptId - 1] == data).length,
@@ -55,80 +41,107 @@ function CompanyDashboardGraph({inOut, emp, approval}) {
     }));
 
     const parseDateTime = (str) => {
-        const year = str.substring(0, 4);
-        const month = str.substring(4, 6) - 1; // JS는 month가 0부터 시작
-        const day = str.substring(6, 8);
-        const hour = str.substring(8, 10);
-        const minute = str.substring(10, 12);
-        const second = str.substring(12, 14);
-
-        return new Date(year, month, day, hour, minute, second);
-        // return new Date(str)
-    }
+        return new Date(
+            str.substring(0, 4),
+            str.substring(4, 6) - 1,
+            str.substring(6, 8),
+            str.substring(8, 10),
+            str.substring(10, 12),
+            str.substring(12, 14)
+        );
+    };
 
     const docPrcs = deptOrder.map((data) => ({
         name: data,
-        "기안": approval.filter(dd => 
+        "기안": approval.filter(dd =>
             deptOrder[dd.deptId - 1] == data &&
-            parseDateTime(dd.aprvDocDrftDt).getFullYear() == new Date().getFullYear()).length,
-        "완료": approval.filter(dd => 
+            parseDateTime(dd.aprvDocDrftDt).getFullYear() == currentYear
+        ).length,
+        "완료": approval.filter(dd =>
             deptOrder[dd.deptId - 1] == data &&
-            parseDateTime(dd.aprvDocDrftDt).getFullYear() == new Date().getFullYear() &&
-            dd.aprvDocStts !== "PENDING").length
+            parseDateTime(dd.aprvDocDrftDt).getFullYear() == currentYear &&
+            dd.aprvDocStts !== "PENDING"
+        ).length
     }));
-
 
     return (
         <div>
-            <h1>인사변동 통계</h1>
-             <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="입사" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="퇴사" fill="#ca8282" isAnimationActive={true} />
-                {/* <RechartsDevtools /> */}
-            </BarChart>
-            <h1>근태 통계</h1>
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={attendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="출근" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="결근" fill="#ca8282" isAnimationActive={true} />
-                <Bar dataKey="출장" fill="#ca79c3" isAnimationActive={true} />
-                <Bar dataKey="휴무" fill="#595959" isAnimationActive={true} />
-                <Bar dataKey="연차" fill="#5a5de2" isAnimationActive={true} />
-                {/* <RechartsDevtools /> */}
-            </BarChart>
-            <h1>회사 조직 통계</h1>
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={orgData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="재직" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="신규" fill="#5a5de2" isAnimationActive={true} />
-                {/* <RechartsDevtools /> */}
-            </BarChart>
-            <h1>{new Date().getFullYear()}년도 결재 현황</h1>
-            <BarChart style={{ width: '100%', maxWidth: '1000px', maxHeight: '70vh', aspectRatio: 1.618 }} responsive data={docPrcs}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis width="auto" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="기안" fill="#82ca9d" isAnimationActive={true} />
-                <Bar dataKey="완료" fill="#5a5de2" isAnimationActive={true} />
-                {/* <RechartsDevtools /> */}
-            </BarChart>
+            <div style={styles.grid}>
+
+                <div style={styles.card}>
+                    <h3>인사변동 통계</h3>
+                    <BarChart style={{ width: '90%', height: '70%', aspectRatio: 1.618 }} responsive data={data}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="입사" fill="#82ca9d" />
+                        <Bar dataKey="퇴사" fill="#ca8282" />
+                    </BarChart>
+                </div>
+
+                <div style={styles.card}>
+                    <h3>근태 통계</h3>
+                    <BarChart style={{ width: '90%', height: '70%', aspectRatio: 1.618 }} responsive data={attendData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="출근" fill="#82ca9d" />
+                        <Bar dataKey="결근" fill="#ca8282" />
+                        <Bar dataKey="출장" fill="#ca79c3" />
+                        <Bar dataKey="휴무" fill="#595959" />
+                        <Bar dataKey="연차" fill="#5a5de2" />
+                    </BarChart>
+                </div>
+
+                <div style={styles.card}>
+                    <h3>회사 조직 통계</h3>
+                    <BarChart style={{ width: '90%', height: '70%', aspectRatio: 1.618 }} responsive data={orgData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="재직" fill="#82ca9d" />
+                        <Bar dataKey="신규" fill="#5a5de2" />
+                    </BarChart>
+                </div>
+
+                <div style={styles.card}>
+                    <h3>{currentYear}년도 결재 현황</h3>
+                    <BarChart style={{ width: '90%', height: '70%', aspectRatio: 1.618 }} responsive data={docPrcs}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="기안" fill="#82ca9d" />
+                        <Bar dataKey="완료" fill="#5a5de2" />
+                    </BarChart>
+                </div>
+
+            </div>
         </div>
     );
 }
+
+const styles = {
+    grid: {
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr", // 2개씩 배치
+        gap: 24,
+    },
+    card: {
+        background: "#fff",
+        padding: 20,
+        borderRadius: 8,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+        width: '90%',
+        height: '300px'
+    }
+};
 
 export default CompanyDashboardGraph;

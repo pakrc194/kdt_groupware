@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
 
 function DashDailyBoard(props) {
@@ -172,7 +172,7 @@ function DashDailyBoard(props) {
                     .map((s) => (
                       <div key={s.schedId} style={styles.schedItem}>
                         <div>
-                          <strong>제목:</strong> {s.schedTitle}
+                          <strong>제목:</strong> <Link to={`/schedule/check/calendar/detail/${s.schedId}`} style={styles.link}>{s.schedTitle}</Link>
                         </div>
                         {s.schedLoc && (
                           <div>
@@ -181,7 +181,7 @@ function DashDailyBoard(props) {
                         )}
                         {type === "DEPT" && (
                           <div>
-                            <strong>팀:</strong> {s.schedDept} ({s.schedDeptId})
+                            <strong>팀:</strong> {s.schedDept}
                           </div>
                         )}
                         {type === "PERSONAL" && (
@@ -209,24 +209,13 @@ function DashDailyBoard(props) {
               <div style={styles.scrollArea}>
                 <ul style={styles.todoList}>
                   {sortedTodos
-                  .filter(dd => dd.schedState != 1 && dd.schedStartDate.split(' ')[0] <= formatted)
+                  .filter(dd => dd.schedStartDate.split(' ')[0] == formatted)
                   .map((todo) => (
                     <li key={todo.schedId} style={styles.todoItem}>
-                      {/* <input
-                        type="checkbox"
-                        checked={todo.schedState == 1}
-                        onChange={(e) => {
-                          toggleTodoComplete(todo);
-                          setEditTodo({
-                            ...editTodo,
-                            schedState: e.target.value,
-                          });
-                        }}
-                      /> */}
 
                       {editTodoId === todo.schedId ? (
                         <>
-                          <div style={styles.todoForm}>
+                          {/* <div style={styles.todoForm}>
                             <input
                               type="date"
                               value={editTodo.schedStartDate.split(" ")[0]}
@@ -273,23 +262,13 @@ function DashDailyBoard(props) {
                             onClick={() => setEditTodoId(null)}
                           >
                             취소
-                          </button>
+                          </button> */}
                         </>
                       ) : (
                         <>
-                          <span
-                            style={{
-                              textDecoration:
-                                todo.schedState != 0 ? "line-through" : "none",
-                              flex: 1,
-                              marginLeft: "8px",
-                            }}
-                          >
-                            {todo.schedStartDate.split(" ")[0]}{" "}
-                            {todo.schedTitle}
-                          </span>
+                          
 
-                          <button
+                          {/* <button
                             style={styles.modifyBtn}
                             onClick={() => {
                               setEditTodoId(todo.schedId);
@@ -303,86 +282,10 @@ function DashDailyBoard(props) {
                             수정
                           </button>
 
-                          <button
-                            style={styles.todoBtn}
-                            onClick={() => deleteTodo(todo.schedId)}
-                          >
-                            삭제
-                          </button>
+                           */}
                         </>
                       )}
-                    </li>
-                  ))}
-                  {sortedTodos
-                  .filter(dd => dd.schedState == 1 && dd.schedStartDate.split(' ')[0] == formatted)
-                  .map((todo) => (
-                    <li key={todo.schedId} style={styles.todoItem}>
-                      {/* <input
-                        type="checkbox"
-                        checked={todo.schedState == 1}
-                        onChange={(e) => {
-                          toggleTodoComplete(todo);
-                          setEditTodo({
-                            ...editTodo,
-                            schedState: e.target.value,
-                          });
-                        }}
-                      /> */}
-
-                      {editTodoId === todo.schedId ? (
-                        <>
-                          <div style={styles.todoForm}>
-                            <input
-                              type="date"
-                              value={editTodo.schedStartDate.split(" ")[0]}
-                              onChange={(e) =>
-                                setEditTodo({
-                                  ...editTodo,
-                                  schedStartDate: e.target.value,
-                                })
-                              }
-                            />
-                            <input
-                              type="text"
-                              value={editTodo.schedTitle}
-                              onChange={(e) =>
-                                setEditTodo({
-                                  ...editTodo,
-                                  schedTitle: e.target.value,
-                                })
-                              }
-                            />
-                            <input
-                              type="text"
-                              value={editTodo.schedDetail}
-                              onChange={(e) =>
-                                setEditTodo({
-                                  ...editTodo,
-                                  schedDetail: e.target.value,
-                                })
-                              }
-                            />
-                          </div>
-                          <button
-                            style={styles.modifyBtn}
-                            onClick={() => {
-                              modifyTodo(todo);
-                              setEditTodoId(null);
-                            }}
-                          >
-                            저장
-                          </button>
-
-                          <button
-                            style={styles.cancelBtn}
-                            onClick={() => setEditTodoId(null)}
-                          >
-                            취소
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <span
+                      <span
                             style={{
                               textDecoration:
                                 todo.schedState != 0 ? "line-through" : "none",
@@ -390,82 +293,17 @@ function DashDailyBoard(props) {
                               marginLeft: "8px",
                             }}
                           >
-                            {todo.schedStartDate.split(" ")[0]}{" "}
                             {todo.schedTitle}
                           </span>
-
-                          <button
-                            style={styles.modifyBtn}
-                            onClick={() => {
-                              setEditTodoId(todo.schedId);
-                              setEditTodo({
-                                schedStartDate: todo.schedStartDate,
-                                schedTitle: todo.schedTitle,
-                                schedDetail: todo.schedDetail,
-                              });
-                            }}
-                          >
-                            수정
-                          </button>
-
                           <button
                             style={styles.todoBtn}
                             onClick={() => deleteTodo(todo.schedId)}
                           >
                             삭제
                           </button>
-                        </>
-                      )}
                     </li>
                   ))}
                 </ul>
-
-                {/* {showTodoForm ? (
-                  <div style={styles.todoForm}>
-                    <input
-                      type="date"
-                      value={newTodo.schedStartDate}
-                      onChange={(e) =>
-                        setNewTodo({
-                          ...newTodo,
-                          schedStartDate: e.target.value,
-                        })
-                      }
-                    />
-                    <input
-                      type="text"
-                      placeholder="제목"
-                      value={newTodo.schedTitle}
-                      onChange={(e) =>
-                        setNewTodo({ ...newTodo, schedTitle: e.target.value })
-                      }
-                    />
-                    <input
-                      type="text"
-                      placeholder="내용"
-                      value={newTodo.schedDetail}
-                      onChange={(e) =>
-                        setNewTodo({ ...newTodo, schedDetail: e.target.value })
-                      }
-                    />
-                    <button style={styles.modifyBtn} onClick={addTodo}>
-                      저장
-                    </button>
-                    <button
-                      style={styles.cancelBtn}
-                      onClick={() => setShowTodoForm(false)}
-                    >
-                      취소
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    style={styles.addBtn}
-                    onClick={() => setShowTodoForm(true)}
-                  >
-                    추가하기
-                  </button>
-                )} */}
               </div>
             </div>
           </div>
@@ -570,6 +408,10 @@ const styles = {
     justifyContent: "flex-end",
     gap: "8px",
     marginTop: "6px",
+  },
+  link: {
+        color: '#007bff',
+        textDecoration: 'none',
   },
 };
 

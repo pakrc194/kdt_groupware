@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetcher } from '../../../shared/api/fetcher';
 import PersonnelChangeStats from '../compDasComponent/PersonnelchangeStats';
@@ -18,15 +18,28 @@ function CompDashboard(props) {
     const [accessDeleteList, setAccessDeleteList] = useState([]);
     const [approval, setApproval] = useState([]);
     const [emp, setEmp] = useState([]);
-
-
+    
+    
     const date = new Date;
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, '0');
     const dd = String(date.getDate()).padStart(2, '0');
-
+    
     
     const formatted = `${yyyy}-${mm}-${dd}`;
+    
+    const { refId } = useParams();
+    const sectionRefs = useRef({});
+
+    const moveTo = (key) => {
+        sectionRefs.current[key]?.scrollIntoView({
+        behavior: "smooth"
+        });
+  };
+
+    useEffect(() => {
+        moveTo(refId)
+    }, [refId])
 
 
     useEffect(() => {
@@ -68,14 +81,28 @@ function CompDashboard(props) {
 
     return (
         <div>
+            <div ref={(el) => (sectionRefs.current["graph"] = el)}>
             <h1>회사 대시보드</h1>
             <CompanyDashboardGraph inOut={inOut} emp={emp} approval={approval} />
+            </div>
+            <div ref={(el) => (sectionRefs.current["att"] = el)}>
             <CompAttendanceRate emp={emp} />
+            </div>
+            <div ref={(el) => (sectionRefs.current["perscg"] = el)}>
             <PersonnelChangeStats inOut={inOut} changeEmpData={changeEmpData} />
+            </div>
+            <div ref={(el) => (sectionRefs.current["orgst"] = el)}>
             <OrganizationStatistics inOut={inOut} />
+            </div>
+            <div ref={(el) => (sectionRefs.current["empdellog"] = el)}>
             <AccessDeletionHistory accessDeleteList={accessDeleteList} />
+            </div>
+            <div ref={(el) => (sectionRefs.current["scheddelog"] = el)}>
             <ScheduleDeletionHistory deleteSchedLog={deleteSchedLog} />
+            </div>
+            <div ref={(el) => (sectionRefs.current["aprvlog"] = el)}>
             <ApprovalProcessHistory approval={approval} />
+            </div>
         </div>
     );
 }
