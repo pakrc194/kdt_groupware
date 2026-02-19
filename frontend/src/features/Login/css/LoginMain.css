@@ -1,0 +1,124 @@
+/* LoginMain.css */
+
+.login-wrapper {
+  background-color: #f4f7f9;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Pretendard", -apple-system, sans-serif;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.login-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 50px 40px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.login-logo {
+  font-size: 32px;
+  font-weight: 900;
+  color: #1976d2;
+  margin-bottom: 40px;
+  letter-spacing: -1.5px;
+  text-transform: uppercase;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-input-group {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.login-input-group label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  margin-left: 4px;
+}
+
+/* 개별 적용 클래스 */
+.login-input {
+  width: 100%;
+  padding: 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+}
+
+.login-btn-area {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-submit-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 12px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-submit-btn:hover {
+  background-color: #1565c0;
+}
+
+.find-pw-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* 테스트 계정 정보 영역 */
+.test-account-info {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.8;
+  text-align: left;
+}
+
+.test-account-info strong {
+  color: #334155;
+  display: block;
+  margin-bottom: 5px;
+}

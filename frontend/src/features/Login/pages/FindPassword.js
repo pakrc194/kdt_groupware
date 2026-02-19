@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Button from "../../../shared/components/Button";
+import { useNavigate, Link } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
+import "../css/FindPassword.css"; // CSS 추가
 
 function FindPassword() {
   const navigate = useNavigate();
 
-  // 1. 상태 관리
   const [info, setInfo] = useState({
     empSn: "", 
     empEmlAddr: "", 
@@ -19,87 +18,69 @@ function FindPassword() {
   const [isPasswordMatch, setIsPasswordMatch] = useState(false);
   const [pwError, setPwError] = useState("");
 
-  // 정규식: 8~15자 영문, 숫자, 특수문자 조합
   const pwReg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
 
-  // 2. 비밀번호 실시간 체크
   useEffect(() => {
     if (info.newPswd || info.confirmPswd) {
-    setIsPasswordMatch(info.newPswd === info.confirmPswd);
-    
-    // 유효성 검사 실패 시 내부 상태만 변경 (사용자에게는 '입력 정보 오류'로 노출)
-    if (info.newPswd && !pwReg.test(info.newPswd)) {
-      setPwError("규칙에 맞지 않습니다."); 
-    } else {
-      setPwError("");
+      setIsPasswordMatch(info.newPswd === info.confirmPswd);
+      if (info.newPswd && !pwReg.test(info.newPswd)) {
+        setPwError("8~15자 영문, 숫자, 특수문자 조합이 필요합니다."); 
+      } else {
+        setPwError("");
+      }
     }
-  }
   }, [info.newPswd, info.confirmPswd]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // 사번(empSn)을 포함한 모든 필드 유효성 검사 없이 그대로 반영
     setInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 3. 인증번호 발송
   const handleSendCode = async () => {
     if (!info.empSn || !info.empEmlAddr) return alert("정보를 모두 입력하세요.");
-
     try {
       const res = await fetcher("/gw/login/send-code", {
         method: "POST",
         body: { empSn: info.empSn, empEmlAddr: info.empEmlAddr },
       });
-
       if (res && res.exists) {
         alert("인증번호가 발송되었습니다.");
         setStep(2);
       } else {
-        alert("정보가 올바르지 않습니다.");
+        alert("일치하는 정보가 없습니다.");
       }
     } catch (error) {
-      alert("정보가 올바르지 않습니다.");
+      alert("정보 확인 중 오류가 발생했습니다.");
     }
   };
 
-  // 4. 인증번호 확인
   const handleVerifyCode = async () => {
     try {
       const res = await fetcher("/gw/auth/verify-code", {
         method: "POST",
         body: { email: info.empEmlAddr, code: emailAuthCode },
       });
-
       if (res && res.success) {
-        alert("인증 완료");
+        alert("인증이 완료되었습니다.");
         setStep(3);
       } else {
-        alert("인증 실패");
+        alert("인증번호가 올바르지 않습니다.");
       }
     } catch (error) {
       alert("인증 실패");
     }
   };
 
-  // 5. 비밀번호 최종 변경
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    
-    if (!pwReg.test(info.newPswd) || !isPasswordMatch) {
-      return alert("입력 정보 오류");
-    }
+    if (!pwReg.test(info.newPswd) || !isPasswordMatch) return alert("비밀번호 정보를 다시 확인해주세요.");
 
     try {
       await fetcher("/gw/login/reset", {
         method: "POST",
-        body: {
-          empSn: info.empSn,
-          empPswd: info.newPswd,
-        },
+        body: { empSn: info.empSn, empPswd: info.newPswd },
       });
-
-      alert("변경 완료");
+      alert("비밀번호가 성공적으로 변경되었습니다.");
       navigate("/login");
     } catch (error) {
       alert("처리 중 오류 발생");
@@ -107,113 +88,120 @@ function FindPassword() {
   };
 
   return (
-    <div className="find-password-container" style={{ padding: "20px", maxWidth: "400px", margin: "0 auto" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "30px" }}>비밀번호 찾기</h2>
-      
-      <form onSubmit={handleResetPassword}>
-        <div style={{ marginBottom: "15px" }}>
-          <label style={{ display: "block", marginBottom: "5px" }}>사번</label>
-          <input
-            name="empSn"
-            value={info.empSn}
-            onChange={handleInputChange}
-            disabled={step > 1}
-            placeholder="사번 입력"
-            style={{ width: "100%", padding: "10px", boxSizing: "border-box" }}
-          />
+    <div className="find-pw-wrapper">
+      <div className="find-pw-card">
+        <header className="find-pw-header">
+          <h2>비밀번호 찾기</h2>
+          <p>정보 보안을 위해 본인 인증 후 변경이 가능합니다.</p>
+        </header>
+
+        {/* 단계 표시 바 */}
+        <div className="step-indicator">
+          <div className={`step-dot ${step >= 1 ? "active" : ""}`}></div>
+          <div className={`step-dot ${step >= 2 ? "active" : ""}`}></div>
+          <div className={`step-dot ${step >= 3 ? "active" : ""}`}></div>
         </div>
 
-        <div style={{ marginBottom: "15px" }}>
-          <label style={{ display: "block", marginBottom: "5px" }}>이메일</label>
-          <div style={{ display: "flex", gap: "5px" }}>
+        <form className="find-pw-form" onSubmit={handleResetPassword}>
+          {/* STEP 1 & 2 공통: 사번 및 이메일 */}
+          <div className="find-pw-group">
+            <label>사원번호</label>
             <input
-              name="empEmlAddr"
-              value={info.empEmlAddr}
+              name="empSn"
+              className="find-pw-input"
+              value={info.empSn}
               onChange={handleInputChange}
               disabled={step > 1}
-              placeholder="등록된 이메일"
-              style={{ flex: 1, padding: "10px" }}
+              placeholder="사번 입력"
             />
-            {step === 1 && (
-              <Button type="button" onClick={handleSendCode} style={{ whiteSpace: "nowrap" }}>
-                인증번호 발송
-              </Button>
-            )}
           </div>
-        </div>
 
-        {step >= 2 && (
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>인증코드</label>
-            <div style={{ display: "flex", gap: "5px" }}>
+          <div className="find-pw-group">
+            <label>등록된 이메일</label>
+            <div className="find-pw-flex">
               <input
-                value={emailAuthCode}
-                onChange={(e) => setEmailAuthCode(e.target.value)}
-                disabled={step > 2}
-                placeholder="코드 입력"
-                style={{ flex: 1, padding: "10px" }}
+                name="empEmlAddr"
+                className="find-pw-input"
+                value={info.empEmlAddr}
+                onChange={handleInputChange}
+                disabled={step > 1}
+                placeholder="example@company.com"
               />
-              {step === 2 && (
-                <Button type="button" onClick={handleVerifyCode}>
-                  확인
-                </Button>
+              {step === 1 && (
+                <button type="button" className="find-pw-btn-sub" onClick={handleSendCode}>
+                  번호 발송
+                </button>
               )}
             </div>
           </div>
-        )}
 
-        {step === 3 && (
-          <>
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>새 비밀번호</label>
-              <input
-                type="password"
-                name="newPswd"
-                value={info.newPswd}
-                onChange={handleInputChange}
-                placeholder="비밀번호 입력"
-                style={{ width: "100%", padding: "10px", boxSizing: "border-box" }}
-              />
-              {/* 최소한의 가이드라인 제공 💡 */}
-              <p style={{ color: "#666", fontSize: "11px", marginTop: "4px" }}>
-                * 8~15자 영문, 숫자, 특수문자를 조합하여 입력해주세요.
-              </p>
+          {/* STEP 2: 인증코드 입력 */}
+          {step >= 2 && (
+            <div className="find-pw-group">
+              <label>인증코드 확인</label>
+              <div className="find-pw-flex">
+                <input
+                  className="find-pw-input"
+                  value={emailAuthCode}
+                  onChange={(e) => setEmailAuthCode(e.target.value)}
+                  disabled={step > 2}
+                  placeholder="인증코드 6자리"
+                />
+                {step === 2 && (
+                  <button type="button" className="find-pw-btn-sub" onClick={handleVerifyCode}>
+                    확인
+                  </button>
+                )}
+              </div>
             </div>
-            
-            <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px" }}>비밀번호 확인</label>
-              <input
-                type="password"
-                name="confirmPswd"
-                value={info.confirmPswd}
-                onChange={handleInputChange}
-                style={{ width: "100%", padding: "10px", boxSizing: "border-box" }}
-              />
-              {info.confirmPswd && (
-                <p style={{ 
-                  fontSize: "12px", 
-                  marginTop: "5px", 
-                  color: isPasswordMatch ? "green" : "red" 
-                }}>
-                  {isPasswordMatch ? "일치" : "불일치"}
-                </p>
-              )}
-            </div>
+          )}
 
-            <Button
-              type="submit"
-              disabled={!isPasswordMatch || pwError !== ""}
-              style={{
-                width: "100%",
-                padding: "12px",
-                backgroundColor: (isPasswordMatch && !pwError) ? "#1976d2" : "#ccc",
-              }}
-            >
-              변경 완료
-            </Button>
-          </>
-        )}
-      </form>
+          {/* STEP 3: 새 비밀번호 설정 */}
+          {step === 3 && (
+            <>
+              <div className="find-pw-group">
+                <label>새 비밀번호</label>
+                <input
+                  type="password"
+                  name="newPswd"
+                  className="find-pw-input"
+                  value={info.newPswd}
+                  onChange={handleInputChange}
+                  placeholder="새 비밀번호 입력"
+                />
+                <p className="find-pw-hint">* 영문, 숫자, 특수문자 조합 (8~15자)</p>
+              </div>
+
+              <div className="find-pw-group">
+                <label>비밀번호 재확인</label>
+                <input
+                  type="password"
+                  name="confirmPswd"
+                  className="find-pw-input"
+                  value={info.confirmPswd}
+                  onChange={handleInputChange}
+                  placeholder="한 번 더 입력"
+                />
+                {info.confirmPswd && (
+                  <p className={`find-pw-hint ${isPasswordMatch ? "success" : "error"}`}>
+                    {isPasswordMatch ? "● 비밀번호가 일치합니다." : "○ 비밀번호가 일치하지 않습니다."}
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="find-pw-submit"
+                disabled={!isPasswordMatch || pwError !== ""}
+              >
+                비밀번호 변경 완료
+              </button>
+            </>
+          )}
+        </form>
+
+        <Link to="/login" className="back-to-login">로그인 화면으로 돌아가기</Link>
+      </div>
     </div>
   );
 }
