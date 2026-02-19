@@ -2,6 +2,7 @@ package vfive.gw.board.dto;
 
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,4 +32,8 @@ public class BoardPrvc {
     private String originName;
     private String savedPath;
     private long fileSize;
+    
+    // 삭제 대기 중인 파일 ID 리스트
+    private List<Integer> deletedFileIds;
+    
 }

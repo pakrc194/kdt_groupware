@@ -10,13 +10,47 @@ function BoardInsert(props) {
     const [creator, setCreator] = useState('testUser'); // 실제론 로그인 정보 사용
     const [selectedFiles ,setSelectedFiles] = useState([]);
     const [isTop , setIsTop ] = useState(false);
+  
 
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     const loginUserSn = myInfo?.empSn;
 
+    //파일 용량,개수 제한
+    const MAX_FILE_COUNT = 5; // 최대 5개
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
+
     const FileUpload = (e) => {
         setSelectedFiles(Array.from(e.target.files));
     };    
+
+    // 파일 선택 시 검증 로직
+    const handleFileChange = (e) => {
+        const filesFromInput = Array.from(e.target.files);
+
+        // 1. 개수 제한 검사
+        if (filesFromInput.length > MAX_FILE_COUNT) {
+            alert(`파일은 최대 ${MAX_FILE_COUNT}개까지만 업로드 가능합니다.`);
+            e.target.value = ""; // input 초기화
+            setSelectedFiles([]); 
+            return;
+        }
+
+        // 2. 개별 용량 제한 검사
+        for (let file of filesFromInput) {
+            if (file.size > MAX_FILE_SIZE) {
+                alert(`파일("${file.name}")의 용량이 너무 큽니다. 10MB 이하만 가능합니다.`);
+                e.target.value = "";
+                setSelectedFiles([]);
+                return;
+            }
+        }
+
+        // formData.append("board", new Blob([JSON.stringify(boardData)], { type: "application/json" }));
+
+        selectedFiles.forEach((file)=>{
+            // formData.append("files",file);
+        })
+    }    
 
     const handleSubmit = (e) => {
         e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
@@ -31,12 +65,7 @@ function BoardInsert(props) {
             isTop: isTop  // 체크박스에 체크하면 '1' , 아니면 '0'
         };
 
-        formData.append("board", new Blob([JSON.stringify(boardData)], { type: "application/json" }));
-
-        selectedFiles.forEach((file)=>{
-            formData.append("files",file);
-        })
-
+   
 
         // 파일 업로드를 하는데 fetcher를 사용하면 에러가 나서 기본fetch를 사용하고 있습니다
         fetch(`http://192.168.0.36:8080/board/insertWithFile`, {
@@ -61,7 +90,7 @@ function BoardInsert(props) {
     return (
         <div className="board-detail-container"> {/* 일관된 컨테이너 클래스 사용 */}
             <h2 style={{ fontSize: '24px', borderBottom: '2px solid #333', paddingBottom: '15px', marginBottom: '30px' }}>
-                ✍️ 게시글 작성
+                게시글 작성
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -97,7 +126,7 @@ function BoardInsert(props) {
                         <input
                             type="file"
                             multiple
-                            onChange={FileUpload}
+                            onChange={handleFileChange}
                             style={{ fontSize: '14px' }}
                         />
                         <span style={{ fontSize: '13px', color: '#666' }}>
