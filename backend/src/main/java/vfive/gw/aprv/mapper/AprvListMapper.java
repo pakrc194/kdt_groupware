@@ -132,18 +132,19 @@ public interface AprvListMapper {
 			join DEPT_INFO D on E.DEPT_ID = D.DEPT_ID
 			join JBTTL_INFO J on E.JBTTL_ID = J.JBTTL_ID 
 			<where>
+					E.EMP_ACNT_STTS = 'ACTIVE' 
 				  <choose>
 				    <when test="filterNm == 'EMP_ID'">
-				      E.EMP_ID = #{filterVl} 
+				      AND E.EMP_ID = #{filterVl} 
 				    </when>
 				    <when test="filterNm == 'EMP_NM'">
-				      E.EMP_NM = #{filterVl} 
+				      AND E.EMP_NM = #{filterVl} 
 				    </when>
 				    <when test="filterNm == 'DEPT_ID'">
-				      E.DEPT_ID = #{filterVl} 
+				      AND E.DEPT_ID = #{filterVl} 
 				    </when>
 				    <otherwise>
-				      1 = 1 
+				    
 				    </otherwise>
 				  </choose>
 			</where>

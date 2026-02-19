@@ -75,19 +75,15 @@ const TempPage = () => {
 
 
     const fn_formClick = () => {
-        console.log("formClick")
         fetcher("/gw/aprv/AprvDocFormList").then(res => {
             setIsFormOpen(true)
             setFormList(res)
-            console.log(res, formList);
         });
     }
     const fn_formClose = () => {
-        console.log("formClose")
         setIsFormOpen(false)
     }
     const fn_formOk = (form) => {
-        console.log("formOk", form)
         fetcher(`/gw/aprv/AprvDocFormLine/${form.docFormId}`)
         .then(res=>{
             setDocLine(prev=>{
@@ -113,9 +109,9 @@ const TempPage = () => {
             aprvDocNo:docForm.docFormCd,
             aprvDocTtl:docTitle
         }
-        console.log("basic : ",drftDoc);
-        console.log("line : ",docLine);
-        console.log("form inpt", inputList);
+        // console.log("basic : ",drftDoc);
+        // console.log("line : ",docLine);
+        // console.log("form inpt", inputList);
 
         fetcher("/gw/aprv/AprvDrftUpload", 
             {
@@ -127,7 +123,7 @@ const TempPage = () => {
                 }        
             }
         ).then(res=>{
-            console.log(res)
+            // console.log(res)
         })
 
 
@@ -138,15 +134,15 @@ const TempPage = () => {
         navigate("/approval/docStatus")
     }
     const fn_tempSave = () => {
-        console.log("fecth before test : ", inputList)
+        // console.log("fecth before test : ", inputList)
         const drftDoc = {
             drftEmpId:myInfo.empId,
             docFormId:docForm.docFormId,
             aprvDocNo:docForm.docFormCd,
             aprvDocTtl:docTitle
         }
-        console.log("basic : ",drftDoc);
-        console.log("form inpt", inputList);
+        // console.log("basic : ",drftDoc);
+        // console.log("form inpt", inputList);
 
         fetcher("/gw/aprv/AprvDrftTemp", 
             {
@@ -157,7 +153,7 @@ const TempPage = () => {
                 }        
             }
         ).then(res=>{
-            console.log(res)
+            // console.log(res)
             alert("작성 완료")
             navigate(`/approval/${sideId}`)
         })

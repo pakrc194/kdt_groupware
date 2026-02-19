@@ -40,7 +40,7 @@ const RedrftContent = ({docFormId, docLine, setDocLine, inputList, setInputList,
     }
     const fn_editLineOk = (addLine) => {
         setIsEditLineOpen(false)
-        console.log("editOk : ",addLine)
+        // console.log("editOk : ",addLine)
         setDocLine(prev => {
 
             // REF 개수 계산

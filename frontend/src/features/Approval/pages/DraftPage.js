@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Button from "../../../shared/components/Button";
-import FormListModal from "../components/modals/FormListModal";
 import DrftContent from "../components/DrftContent";
 import { useNavigate } from "react-router-dom";
 import { fetcher } from "../../../shared/api/fetcher";
@@ -36,19 +35,17 @@ const DraftPage = () => {
     
 
     const fn_formClick = () => {
-        console.log("formClick")
         fetcher("/gw/aprv/AprvDocFormList").then(res => {
             setIsFormOpen(true)
             setFormList(res)
-            console.log(res, formList);
+            // console.log("formClick ",res, formList);
         });
     }
     const fn_formClose = () => {
-        console.log("formClose")
         setIsFormOpen(false)
     }
     const fn_formOk = (form) => {
-        console.log("formOk", form)
+        // console.log("formOk", form)
         fetcher(`/gw/aprv/AprvDocFormLine/${form.docFormId}`)
         .then(res=>{
             setDocLine(prev=>{
@@ -59,7 +56,7 @@ const DraftPage = () => {
             setDocForm(form)
             setIsFormOpen(false)
         }).catch(e=>{
-            console.log("fetch formLine : "+e)
+            // console.log("fetch formLine : "+e)
             setIsFormOpen(false)
         })
 
@@ -116,9 +113,9 @@ const DraftPage = () => {
             aprvDocNo:docForm.docFormCd,
             aprvDocTtl:docTitle
         }
-        console.log("basic : ",drftDoc);
-        console.log("line : ",docLine);
-        console.log("form inpt", inputList);
+        // console.log("basic : ",drftDoc);
+        // console.log("line : ",docLine);
+        // console.log("form inpt", inputList);
 
         fetcher("/gw/aprv/AprvDrftUpload", 
             {
@@ -130,7 +127,6 @@ const DraftPage = () => {
                 }        
             }
         ).then(res=>{
-            console.log(res)
             let docId = res.result.drftDocReq.aprvDocId
             fn_uploadTest(docId)
             alert("기안 작성 완료")
@@ -145,15 +141,15 @@ const DraftPage = () => {
         navigate("/approval/docStatus")
     }
     const fn_tempSave = () => {
-        console.log("fecth before test : ", inputList)
+        // console.log("fecth before test : ", inputList)
         const drftDoc = {
             drftEmpId:myInfo.empId,
             docFormId:docForm.docFormId,
             aprvDocNo:docForm.docFormCd,
             aprvDocTtl:docTitle
         }
-        console.log("basic : ",drftDoc);
-        console.log("form inpt", inputList);
+        // console.log("basic : ",drftDoc);
+        // console.log("form inpt", inputList);
 
         fetcher("/gw/aprv/AprvDrftTemp", 
             {
@@ -164,7 +160,6 @@ const DraftPage = () => {
                 }        
             }
         ).then(res=>{
-            console.log(res)
             alert("임시저장 완료")
         })
     }
@@ -179,64 +174,132 @@ const DraftPage = () => {
         const form = document.getElementById("draftForm");
         const formData = new FormData(form);
 
-        console.log(Object.fromEntries(formData));
         formData.append("aprvDocId", docId)
         fetcher(`/gw/aprv/AprvFileUpload`, {
             method: "POST",
             body: formData
         }).then(res=>{
-            console.log("fetcher", res)
+            // console.log("fetcher", res)
         });
     }
 
 
+    return (
+        <div className="drft-container">
+            <header className="drft-header">
+                <h2 className="drft-page-title">전자결재 <span className="sep">›</span> 기안작성</h2>
+            </header>
 
-    return <>
-        <h4>전자결재 > 기안작성</h4>
-        <div className="draftForm basicForm" >
-            <div>문서 제목 <input type="text" name="docTitle" onChange={(e)=>setDocTitle(e.target.value)}/></div>
-            <div>
-                <form id="draftForm">
-                    <label>파일첨부</label>
-                    
-                    <input
-                        type="file"
-                        name="docFile"
-                        onChange={FileUpload}
-                    />
-                    <div>
-                        <ul>
-                        {selectedFiles.map((file, idx) => (
-                            <li key={idx}>{file.name}</li>
-                        ))}
-                        </ul>
+            <main className="drft-main">
+                <section className="drft-card">
+                    <div className="drft-card-header">
+                        <h3 className="drft-card-title">기본정보</h3>
                     </div>
-                </form>
+                    <div className="drft-card-body">
+                        <div className="drft-unit">
+                            <div className="drft-unit-top">
+                                <label className="drft-label">문서 제목</label>
+                            </div>
+                            <div className="drft-control">
+                                <input
+                                    className="drft-input"
+                                    type="text"
+                                    name="docTitle"
+                                    value={docTitle || ""}
+                                    onChange={(e) => setDocTitle(e.target.value)}
+                                    placeholder="문서 제목을 입력하세요"
+                                />
+                            </div>
+                        </div>
+                        <div className="drft-unit">
+                            <div className="drft-unit-top">
+                                <label className="drft-label">파일첨부</label>
+                            </div>
+                            <div className="drft-control">
+                                <div className="drft-file-box">
+                                    <input className="drft-file-input" type="file" name="docFile" onChange={FileUpload} multiple />
+                                    {selectedFiles?.length > 0 && (
+                                        <ul className="fileList">
+                                            {selectedFiles.map((file, idx) => (
+                                                <li key={idx} className="fileItem">{file.name}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="drft-card">
+                    <div className="drft-card-header">
+                        <h3 className="drft-card-title">양식</h3>
+                    </div>
+                    <div className="drft-card-body">
+                        <div className="drft-unit">
+                            <div className="drft-unit-top">
+                                <label className="drft-label">양식 선택</label>
+                                <div className="drft-unit-action">
+                                    <Button variant="primary" onClick={fn_formClick}>양식 선택</Button>
+                                </div>
+                            </div>
+                            <div className="drft-control">
+                                <input
+                                    className="drft-input"
+                                    type="text"
+                                    name="docFormNm"
+                                    value={docForm?.docFormNm || ""}
+                                    readOnly
+                                    placeholder="양식을 선택하세요"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className="drft-card">
+                    <div className="drft-card-header">
+                        <h3 className="drft-card-title">작성내용</h3>
+                    </div>
+                    <div className="drft-card-body">
+                        {!docForm?.docFormType ? (
+                            <div className="emptyState">양식을 먼저 선택해주세요.</div>
+                        ) : (
+                            <DrftContent
+                                docFormType={docForm.docFormType}
+                                docLine={docLine}
+                                docFormId={docForm.docFormId}
+                                setDocLine={setDocLine}
+                                inputList={inputList}
+                                setInputList={setInputList}
+                                docLoc={docLoc}
+                                setDocLoc={setDocLoc}
+                                docEmp={docEmp}
+                                setDocEmp={setDocEmp}
+                            />
+                        )}
+                    </div>
+                </section>
+            </main>
+
+            <div className="actionBar">
+                <Button variant="secondary" onClick={fn_drftCancel}>취소</Button>
+                <Button variant="secondary" onClick={fn_tempSave}>임시 저장</Button>
+                <Button variant="primary" onClick={fn_drftConfirm}>기안</Button>
             </div>
+
+            {isFormOpen && (
+                <CompListModal
+                    onClose={fn_formClose}
+                    onOk={fn_formOk}
+                    itemList={formList}
+                    itemNm={"docFormNm"}
+                    title={"양식선택"}
+                    okMsg={"불러오기"}
+                />
+            )}
         </div>
-        <br/>
-        <div className="draftForm">
-            <div>양식 선택 
-                <input type="text" name="docTitle" value={docForm.docFormNm} readOnly/>
-                <Button variant="primary" onClick={fn_formClick}>양식 선택</Button>
-                {isFormOpen && 
-                    <CompListModal onClose={fn_formClose} onOk={fn_formOk} itemList={formList} 
-                        itemNm={"docFormNm"} title={"양식선택"} okMsg={"불러오기"}/>}
-            </div>
-        </div>
-        <br/>
-        {docForm.docFormType && <div className="draftForm">
-            <DrftContent docFormType={docForm.docFormType} docLine={docLine} docFormId={docForm.docFormId} setDocLine={setDocLine} 
-                inputList={inputList} setInputList={setInputList}
-                docLoc={docLoc} setDocLoc={setDocLoc}
-                docEmp={docEmp} setDocEmp={setDocEmp}/>
-        </div>}
-        <div>
-            <Button variant='secondary' onClick={fn_drftCancel}>취소</Button>
-            <Button variant='secondary' onClick={fn_tempSave}>임시 저장</Button>
-            <Button variant='primary' onClick={fn_drftConfirm}>기안</Button>
-            {/* <Button variant='primary' onClick={fn_uploadTest}>기안</Button> */}
-        </div>
-    </>
+    );
+
 };
 export default DraftPage;

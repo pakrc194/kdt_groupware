@@ -18,7 +18,11 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
     };
     
     const [isAttendCheckOpen, setIsAttendCheckOpen] = useState(false);
-    const [drftDate, setDrftDate] = useState({})
+    const [drftDate, setDrftDate] = useState({
+        docStart: "",
+        docEnd: "",
+    });
+
     const [docRole, setDocRole] = useState();
 
     const initDocLineRef = useRef(null);
@@ -57,14 +61,12 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                 roleCd: addLine.roleCd,
                 aprvPrcsEmpId: addLine.empId,
                 aprvPrcsEmpNm: addLine.empNm,
-                roleSeq: 0, // 아래에서 다시 계산
+                roleSeq: 0, 
             }
             ];
 
-        // 1) 고정 순서로 정렬
         next.sort((a, b) => (ORDER[a.roleCd] ?? 999) - (ORDER[b.roleCd] ?? 999));
 
-        // 2) REF 들만 roleSeq 다시 매기기 (DRFT_REF, MID_REF 각각 1..n)
         const refCounters = { DRFT_REF: 0, MID_REF: 0 };
 
         const resequenced = next.map(item => {
@@ -72,7 +74,6 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                 refCounters[item.roleCd] += 1;
                 return { ...item, roleSeq: refCounters[item.roleCd] };
             }
-            // 결재자들은 roleSeq 0(또는 null)로
             return { ...item, roleSeq: 0 };
             });
 
@@ -80,12 +81,11 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
         });
     };
     useEffect(() => {
-        // 최초 1번만 초기값 저장
         
     }, [docLine]);
 
     useEffect(()=>{
-        console.log("child inputList", inputList);
+        // console.log("child inputList", inputList);
     },[inputList]);
 
     useEffect(()=> {
@@ -109,35 +109,62 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
     }
 
     return (
-        <>
-            <div> 
-                결재선 <Button onClick={fn_editLine}>결재선 추가</Button>
-                <Button onClick={fn_resetLine}>결재선 초기화</Button>
-                <ApprovalLine docLine={docLine}/>
-                {isEditLineOpen && <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk}/>}
-            </div>
-            <div>
-                {docFormType === "근태" && <Button type="primary" onClick={fn_attendCheck}>근태 확인</Button>}
-            </div>
-            <div>
-                {inputList.map((v,k)=>(
-                    <div key={k}>
-                        <InputForm drftDate={drftDate} setDrftDate={setDrftDate} 
-                            inputList={inputList} setInputList={setInputList} inputForm={v} 
-                            docLoc={docLoc} setDocLoc={setDocLoc}
-                            docEmp={docEmp} setDocEmp={setDocEmp}
-                            docRole={docRole} setDocRole={setDocRole}/>
+        <div className="draftContent">
+            <div className="drft-unit">
+                <div className="drft-unit-top">
+                    <div className="drft-label">결재선</div>
+                    <div className="drft-unit-action">
+                        <Button onClick={fn_editLine} docLine={docLine}>결재선 변경</Button>
+                        <Button onClick={fn_resetLine} style={{marginLeft: '8px'}}>초기화</Button>
                     </div>
-                ))}
+                </div>
+                <div className="drft-control">
+                    <ApprovalLine docLine={docLine} />
+                </div>
             </div>
 
+            {docFormType === "근태" && (
+                <div className="drft-unit">
+                    <div className="drft-unit-top">
+                        <div className="drft-label">근태 확인</div>
+                        <div className="drft-unit-action">
+                            <Button type="primary" onClick={fn_attendCheck}>연차 조회</Button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-            <div>
-                {isAttendCheckOpen && <AttendCheckModal drftDate={drftDate}  
-                        onClose={fn_attendCheckClose} onOk={fn_attendCheckOk} />}
-            </div>
-        </>
+            {inputList.map((v, k) => (
+                <InputForm
+                    key={k}
+                    drftDate={drftDate}
+                    setDrftDate={setDrftDate}
+                    inputForm={v}
+                    inputList={inputList}
+                    setInputList={setInputList}
+                    docLoc={docLoc}
+                    setDocLoc={setDocLoc}
+                    docEmp={docEmp}
+                    setDocEmp={setDocEmp}
+                    docRole={docRole}
+                    setDocRole={setDocRole}
+                />
+            ))}
+
+            {isEditLineOpen && (
+                <EditAprvLine docLine={docLine} onClose={fn_editLineClose} onOk={fn_editLineOk} />
+            )}
+
+            {isAttendCheckOpen && (
+                <AttendCheckModal
+                    drftDate={drftDate}
+                    onClose={fn_attendCheckClose}
+                    onOk={fn_attendCheckOk}
+                />
+            )}
+        </div>
     );
+
 };
 
 export default DrftContent;
