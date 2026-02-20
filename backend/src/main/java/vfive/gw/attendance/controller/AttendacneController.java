@@ -49,8 +49,12 @@ public class AttendacneController {
 
 	// 근태 관리 캘린더 (메인)
 	@GetMapping("atdcCal")
-	List<AtdcDTO> atdcCal(HttpServletRequest request, HttpServletResponse response) {
-		List<AtdcDTO> res = atdcCal.execute(request, response);
+	Map<String, Object> atdcCal(HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> res = atdcCal.execute(request, response);
+		System.out.println(request.getParameter("yearMonth"));
+		System.out.println(res.get("atdcList"));
+		System.out.println(res.get("dutyList"));
+		
 		return res;
 	}
 	
@@ -58,7 +62,6 @@ public class AttendacneController {
 	@GetMapping("myAtSt")
 	MyAtdcStatDTO myAtdcStat(HttpServletRequest request, HttpServletResponse response) {
 		MyAtdcStatDTO res = myAtdcStat.execute(request, response);
-		
 		return res;
 	}
 	

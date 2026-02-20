@@ -27,6 +27,26 @@ public interface AtdcMapper {
       "AND WRK_YMD LIKE CONCAT(#{yearMonth}, '%')")
 	List<AtdcDTO> selectAtdcHistory(@Param("empId") int empId,@Param("yearMonth") String yearMonth);
 	
+	@Select({
+    "SELECT ",
+    "    D.DUTY_YMD, ",    // 근무 일자 (YYYYMMDD)
+    "    D.WRK_CD, ",      // 근무 코드 (D, N, O 등)
+    "    W.WRK_NM, ",      // 근무 형태명 (주간, 야간 등)
+    "    W.STRT_TM, ",     // 시작 시간
+    "    W.END_TM ",       // 종료 시간
+    "FROM DUTY_SCHE_DTL D ",
+    "JOIN DUTY_SCHE_MST M ON D.DUTY_ID = M.DUTY_ID ",
+    "JOIN WORK_TYPE_CD W ON D.WRK_CD = W.WRK_CD ",
+    "WHERE D.EMP_ID = #{empId} ",
+    "  AND M.PRGR_STTS = 'CONFIRMED' ", // 반드시 확정된 스케줄만
+    "  AND D.DUTY_YMD LIKE CONCAT(#{yearMonth}, '%') ", // '202602%'
+    "ORDER BY D.DUTY_YMD ASC"
+		})
+		List<Map<String, Object>> selectMyDuty(
+		    @Param("empId") int empId, 
+		    @Param("yearMonth") String yearMonth
+		);
+	
 	// 연차 요약 정보 조회
   @Select("SELECT OCCRR_LV as totalDays, USED_LV as usedDays, REM_LV as leftDays " +
           "FROM ANNL_LV_STTS " +

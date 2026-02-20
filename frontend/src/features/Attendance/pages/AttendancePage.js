@@ -6,13 +6,24 @@ import "../css/AttendancePage.css"; // CSS 파일 생성 필수
 function AttendancePage() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [myAtdcData, setMyAtdcData] = useState([]);
+  const [myDutyData, setMyDutyData] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(dayjs().format("YYYY-MM"));
   const [deptEmpAtdc, setDeptEmpAtdc] = useState([]);
 
   useEffect(() => {
-    fetcher(
-      `/gw/atdc/atdcCal?yearMonth=${currentMonth}&empId=${myInfo.empId}`,
-    ).then(setMyAtdcData);
+    const loadCalendarData = async () => {
+      try {
+        const data = await fetcher(
+          `/gw/atdc/atdcCal?yearMonth=${currentMonth}&empId=${myInfo.empId}`,
+        );
+
+        setMyAtdcData(data.atdcList || []);
+        setMyDutyData(data.dutyList || []);
+      } catch (error) {
+        console.error("달력 데이터 로드 실패:", error);
+      }
+    };
+    loadCalendarData();
   }, [currentMonth]);
 
   useEffect(() => {
@@ -55,7 +66,7 @@ function AttendancePage() {
     calendarCells.push(null);
   }
 
-  // 2. 특정 날짜에 데이터가 있는지 매칭하는 함수
+  // 근태 결과 찾기 (출퇴근 시간 등)
   const findAtdcData = (day) => {
     if (!day) return null;
     const formattedDay = firstDayOfMonth.date(day).format("YYYY-MM-DD");
@@ -64,17 +75,40 @@ function AttendancePage() {
     );
   };
 
+  // 근무 일정 찾기 (근무명, 기준 시간 등)
+  const findDutyData = (day) => {
+    if (!day) return null;
+    const formattedDay = firstDayOfMonth.date(day).format("YYYYMMDD");
+    return myDutyData.find((v) => v.DUTY_YMD === formattedDay);
+  };
+
+  const handlePrevMonth = () => {
+    setCurrentMonth(dayjs(currentMonth).subtract(1, "month").format("YYYY-MM"));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentMonth(dayjs(currentMonth).add(1, "month").format("YYYY-MM"));
+  };
+
   return (
     <div className="attendance-page-container">
       <div className="calendar-container">
         <h1>출퇴근 기록 (2026)</h1>
 
         <div className="calendar-controls">
+          <button className="month-nav-btn" onClick={handlePrevMonth}>
+            &lt;
+          </button>
+
           <input
             type="month"
             value={currentMonth}
             onChange={(e) => setCurrentMonth(e.target.value)}
           />
+
+          <button className="month-nav-btn" onClick={handleNextMonth}>
+            &gt;
+          </button>
         </div>
 
         <div className="calendar-grid">
@@ -87,7 +121,9 @@ function AttendancePage() {
 
           {/* 달력 본문 */}
           {calendarCells.map((day, idx) => {
-            const atdc = findAtdcData(day);
+            const atdc = findAtdcData(day); // 실제 근태 기록 (ATDC_HIST)
+            const duty = findDutyData(day); // 확정 근무 계획 (DUTY_SCHE_DTL)
+
             const dateObj = day ? dayjs(currentMonth).date(day) : null;
             const isWeekend = dateObj
               ? dateObj.day() === 0 || dateObj.day() === 6
@@ -100,31 +136,48 @@ function AttendancePage() {
               >
                 {day && (
                   <>
-                    <span className="day-number">{day}</span>
-
-                    {/* 1. DB에 근태 기록이 있는 경우 (출근, 연차, 출장, 결근 등) */}
-                    {atdc ? (
-                      <div className="atdc-entry">
-                        <div className={`atdc-status ${atdc.atdcSttsCd}`}>
-                          {atdc.atdcSttsCd === "PRESENT" && "● 출근"}
-                          {atdc.atdcSttsCd === "LEAVE" && "⛱ 연차"}
-                          {atdc.atdcSttsCd === "BUSINESS_TRIP" && "✈ 출장"}
-                          {atdc.atdcSttsCd === "ABSENT" && "❗ 결근"}
-                          {atdc.atdcSttsCd === "OFF" && "🏠 휴무"}
+                    {/* 상단 헤더 영역 (날짜 + 근무정보 한 줄로) */}
+                    <div
+                      className={`day-cell-header ${duty ? `duty-${duty.WRK_CD}` : ""}`}
+                    >
+                      <span className="day-number">{day}</span>
+                      {duty && (
+                        <div className="duty-info-inline">
+                          <span>{duty.WRK_NM}</span>
+                          <span className="duty-time">
+                            ({duty.STRT_TM?.substring(0, 5)} ~{" "}
+                            {duty.END_TM?.substring(0, 5)})
+                          </span>
                         </div>
-                        {atdc.clkInDtm && (
-                          <div className="atdc-time">
-                            {dayjs(atdc.clkInDtm).format("HH:mm")} ~{" "}
-                            {atdc.clkOutDtm
-                              ? dayjs(atdc.clkOutDtm).format("HH:mm")
-                              : ""}
+                      )}
+                    </div>
+
+                    <div className="cell-content">
+                      {/* 실제 근태 데이터 (아래 배치) */}
+                      {atdc && (
+                        <div className={`atdc-entry-mini ${atdc.atdcSttsCd}`}>
+                          <div className="atdc-inline-row">
+                            <span className="stts-dot">●</span>
+                            <span className="stts-text">
+                              {atdc.atdcSttsCd === "PRESENT" && "출근"}
+                              {atdc.atdcSttsCd === "LEAVE" && "연차"}
+                              {atdc.atdcSttsCd === "BUSINESS_TRIP" && "출장"}
+                              {atdc.atdcSttsCd === "ABSENT" && "결근"}
+                              {atdc.atdcSttsCd === "OFF" && "휴무"}
+                            </span>
+                            {atdc.clkInDtm && (
+                              <span className="actual-time-text">
+                                ({dayjs(atdc.clkInDtm).format("HH:mm")}
+                                {atdc.clkOutDtm
+                                  ? ` ~ ${dayjs(atdc.clkOutDtm).format("HH:mm")}`
+                                  : " ~"}
+                                )
+                              </span>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    ) : (
-                      /* 2. DB에 기록은 없지만 주말인 경우 */
-                      day && isWeekend
-                    )}
+                        </div>
+                      )}
+                    </div>
                   </>
                 )}
               </div>
@@ -136,51 +189,56 @@ function AttendancePage() {
         <h2>내 부서원 근무 현황 ({myInfo?.deptNm || "소속 부서"})</h2>
 
         <div className="status-tables-wrapper">
+          {/* 업무 중 카드 */}
           <div className="status-card working">
             <h3>🔥 업무 중 ({workingEmps.length})</h3>
-            <table className="atdc-table">
-              <thead>
-                <tr>
-                  <th>이름</th>
-                  <th>출근 시간</th>
-                </tr>
-              </thead>
-              <tbody>
-                {workingEmps.map((emp) => (
-                  <tr key={`work-${emp.EMP_ID}`}>
-                    <td>{emp.EMP_NM}</td> {/* 대문자 수정 */}
-                    <td>{dayjs(emp.CLK_IN_DTM).format("HH:mm")}</td>{" "}
-                    {/* 대문자 수정 */}
+            <div className="table-scroll-container">
+              <table className="atdc-table">
+                <thead>
+                  <tr>
+                    <th>이름</th>
+                    <th>출근 시간</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {workingEmps.map((emp) => (
+                    <tr key={`work-${emp.EMP_ID}`}>
+                      <td>{emp.EMP_NM}</td>
+                      <td>{dayjs(emp.CLK_IN_DTM).format("HH:mm")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
+          {/* 부재/퇴근 카드 */}
           <div className="status-card off">
             <h3>⌛ 부재/퇴근 ({offEmps.length})</h3>
-            <table className="atdc-table">
-              <thead>
-                <tr>
-                  <th>이름</th>
-                  <th>출퇴근 정보</th>
-                </tr>
-              </thead>
-              <tbody>
-                {offEmps.map((emp) => (
-                  <tr key={`off-${emp.EMP_ID}`}>
-                    <td>{emp.EMP_NM}</td> {/* 대문자 수정 */}
-                    <td>
-                      {!emp.CLK_IN_DTM ? (
-                        <span className="txt-absent">결근</span>
-                      ) : (
-                        `${dayjs(emp.CLK_IN_DTM).format("HH:mm")} ~ ${emp.CLK_OUT_DTM ? dayjs(emp.CLK_OUT_DTM).format("HH:mm") : ""}`
-                      )}
-                    </td>
+            <div className="table-scroll-container">
+              <table className="atdc-table">
+                <thead>
+                  <tr>
+                    <th>이름</th>
+                    <th>출퇴근 정보</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {offEmps.map((emp) => (
+                    <tr key={`off-${emp.EMP_ID}`}>
+                      <td>{emp.EMP_NM}</td>
+                      <td>
+                        {!emp.CLK_IN_DTM ? (
+                          <span className="txt-absent">결근</span>
+                        ) : (
+                          `${dayjs(emp.CLK_IN_DTM).format("HH:mm")} ~ ${emp.CLK_OUT_DTM ? dayjs(emp.CLK_OUT_DTM).format("HH:mm") : ""}`
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>

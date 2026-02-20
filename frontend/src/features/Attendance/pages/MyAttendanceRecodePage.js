@@ -9,6 +9,7 @@ function MyAttendanceRecodePage() {
   const thisYear = new Date().getFullYear();
   const [currentYear, setCurrentYear] = useState(String(thisYear));
 
+  
   const yearOptions = useMemo(() => {
     const startYear = 1950;
     const years = [];
@@ -17,11 +18,13 @@ function MyAttendanceRecodePage() {
     }
     return years;
   }, [thisYear]);
-
+  
   const options = yearOptions.map((year) => ({
     value: year,
     label: `${year}년`,
   }));
+  
+  const currentOption = options.find(opt => opt.value === currentYear) || options[0];
 
   useEffect(() => {
     // 백엔드에서 가공된 전체 데이터를 한 번에 호출
@@ -51,7 +54,7 @@ function MyAttendanceRecodePage() {
         <h1>개인 근태 통계</h1>
         <Select
           options={options}
-          defaultValue={options[0]}
+          value={currentOption}
           onChange={(opt) => setCurrentYear(opt.value)}
           // 내부적으로 max-height와 스크롤이 이미 구현되어 있음
         />

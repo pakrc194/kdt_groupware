@@ -38,6 +38,14 @@ function HomeDashBoard(props) {
       {/* 2. 우측 콘텐츠 영역 */}
       <div className="dashboard-content-right">
         <section className="dash-section">
+          <h3>연차현황</h3>
+          <DashLeave leave={myDash.leave} />
+        </section>
+        <section className="dash-section">
+          <h3>근태현황</h3>
+          <DashAttendence atdc={myDash.atdc} />
+        </section>
+        <section className="dash-section">
           <h3>결재현황</h3>
           <DashApproval drft={myDash.drft} aprv={myDash.aprv} />
         </section>
@@ -47,14 +55,6 @@ function HomeDashBoard(props) {
           <DashNotice notice={myDash.notice} />
         </section>
 
-        <section className="dash-section">
-          <h3>연차현황</h3>
-          <DashLeave leave={myDash.leave} />
-        </section>
-        <section className="dash-section">
-          <h3>근태현황</h3>
-          <DashAttendence atdc={myDash.atdc} />
-        </section>
       </div>
     </div>
   );
