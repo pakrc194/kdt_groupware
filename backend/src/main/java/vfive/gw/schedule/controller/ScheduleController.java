@@ -69,16 +69,6 @@ public class ScheduleController {
 		return schedMapper.schedDetail(sc);
 	}
 	
-//	@GetMapping("sched_search/{date}/{empId}")
-//	List<Sched> schedMonthList(
-//			@PathVariable("date") String date,
-//			@PathVariable("empId") String empId) {
-//		Sched sc = new Sched();
-//		sc.setSchedStartDate(date);
-//		sc.setSchedEmpId(empId);		// 수정 필요
-//		return schedMapper.schedDailyList(sc);
-//	}
-	
 	@PostMapping("/todo/add")
 	int schedAddTodo(@RequestBody Sched sc, HttpServletRequest request) {
 		sc.setSchedType("TODO");
@@ -214,7 +204,6 @@ public class ScheduleController {
 		sc.setSchedStartDate(sdate);
 		sc.setSchedEndDate(edate);
 		List<Integer> res = schedMapper.sechedLocList(sc);
-		System.out.println("장소 "+res);
 		return res;
 	}
 	

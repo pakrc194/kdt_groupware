@@ -68,8 +68,8 @@ function ScheduleList(props) {
         <div style={styles.header}>
             <button style={styles.navBtn} onClick={goPrev}>◀</button>
             <span style={styles.title}>{currentDate.getFullYear()}년 {currentDate.getMonth()+1}월</span>
-            <button style={styles.navBtn} onClick={goToday}>오늘</button>
             <button style={styles.navBtn} onClick={goNext}>▶</button>
+            <button style={styles.navBtn} onClick={goToday}>오늘</button>
         </div>
 
         {/* 날짜별 일정 */}

@@ -167,37 +167,23 @@ function DashDailyBoard(props) {
               <div key={type} style={styles.card}>
                 <h4 style={styles.cardTitle}>{typeName}</h4>
                 <div style={styles.scrollArea}>
-                  {sched
-                    .filter((s) => s.schedType === type)
-                    .map((s) => (
-                      <div key={s.schedId} style={styles.schedItem}>
-                        <div>
-                          <strong>제목:</strong> <Link to={`/schedule/check/calendar/detail/${s.schedId}`} style={styles.link}>{s.schedTitle}</Link>
-                        </div>
-                        {s.schedLoc && (
-                          <div>
-                            <strong>위치:</strong> {s.schedLocNm}
-                          </div>
-                        )}
-                        {type === "DEPT" && (
-                          <div>
-                            <strong>팀:</strong> {s.schedDept}
-                          </div>
-                        )}
-                        {type === "PERSONAL" && (
-                          <div>
-                            <strong>담당자:</strong> {s.schedEmpNm}
-                          </div>
-                        )}
-                        <div>
-                          <strong>상세:</strong> {s.schedDetail}
-                        </div>
-                        <div>
-                          <strong>기간:</strong> {s.schedStartDate.split(" ")[0]} ~{" "}
-                          {s.schedEndDate.split(" ")[0]}
-                        </div>
-                      </div>
-                    ))}
+                    {sched.filter(s => s.schedType === type).length > 0 ? (
+                        sched.filter(s => s.schedType === type).map(s => (
+                            <div key={s.schedId} style={styles.schedItem}>
+                                <div>
+                                    <strong>제목:</strong> 
+                                    <Link to={`/schedule/check/calendar/detail/${s.schedId}`} style={styles.link}>{s.schedTitle}</Link>
+                                </div>
+                                {s.schedLoc && <div><strong>위치:</strong> {s.schedLocNm}</div>}
+                                {type === 'DEPT' && <div><strong>팀:</strong> {s.schedDept}</div>}
+                                {type === 'PERSONAL' && <div><strong>담당자:</strong> {s.schedEmpNm}</div>}
+                                {s.schedDetail && <div><strong>상세 내용 확인 필요</strong></div>}
+                                <div><strong>기간:</strong> {s.schedStartDate?.split(" ")[0]} ~ {s.schedEndDate?.split(" ")[0]}</div>
+                            </div>
+                        ))
+                        ) : (
+                            <div style={{color:'#aaa'}}>일정 없음</div>
+                    )}
                 </div>
               </div>
             );
@@ -212,79 +198,6 @@ function DashDailyBoard(props) {
                   .filter(dd => dd.schedStartDate.split(' ')[0] == formatted)
                   .map((todo) => (
                     <li key={todo.schedId} style={styles.todoItem}>
-
-                      {editTodoId === todo.schedId ? (
-                        <>
-                          {/* <div style={styles.todoForm}>
-                            <input
-                              type="date"
-                              value={editTodo.schedStartDate.split(" ")[0]}
-                              onChange={(e) =>
-                                setEditTodo({
-                                  ...editTodo,
-                                  schedStartDate: e.target.value,
-                                })
-                              }
-                            />
-                            <input
-                              type="text"
-                              value={editTodo.schedTitle}
-                              onChange={(e) =>
-                                setEditTodo({
-                                  ...editTodo,
-                                  schedTitle: e.target.value,
-                                })
-                              }
-                            />
-                            <input
-                              type="text"
-                              value={editTodo.schedDetail}
-                              onChange={(e) =>
-                                setEditTodo({
-                                  ...editTodo,
-                                  schedDetail: e.target.value,
-                                })
-                              }
-                            />
-                          </div>
-                          <button
-                            style={styles.modifyBtn}
-                            onClick={() => {
-                              modifyTodo(todo);
-                              setEditTodoId(null);
-                            }}
-                          >
-                            저장
-                          </button>
-
-                          <button
-                            style={styles.cancelBtn}
-                            onClick={() => setEditTodoId(null)}
-                          >
-                            취소
-                          </button> */}
-                        </>
-                      ) : (
-                        <>
-                          
-
-                          {/* <button
-                            style={styles.modifyBtn}
-                            onClick={() => {
-                              setEditTodoId(todo.schedId);
-                              setEditTodo({
-                                schedStartDate: todo.schedStartDate,
-                                schedTitle: todo.schedTitle,
-                                schedDetail: todo.schedDetail,
-                              });
-                            }}
-                          >
-                            수정
-                          </button>
-
-                           */}
-                        </>
-                      )}
                       <span
                             style={{
                               textDecoration:

@@ -174,7 +174,9 @@ function Instruction(props) {
 
 
     return (
-        <div style={{ maxWidth: 600, margin: '20px auto', fontFamily: 'Noto Sans, sans-serif' }}>
+        <div style={{ maxWidth: 600, margin: '20px auto', fontFamily: 'Noto Sans, sans-serif',
+            backgroundColor: "#fff", padding: "20px", border: "1px solid #ddd", borderRadius: "8px"
+         }}>
             {/* 업무 구분 선택 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 15 }}>
                 <label>업무 구분 선택</label>
