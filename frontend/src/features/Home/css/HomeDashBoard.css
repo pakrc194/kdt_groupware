@@ -97,3 +97,82 @@
   color: #007bff;
   font-weight: 500;
 }
+/* 근태현황 컨테이너 */
+.atdc-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.atdc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5px;
+}
+
+/* 근무명 배지 */
+.wrk-nm-badge {
+  background: #e9ecef;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* 상태 배지 색상별 정의 */
+.stts-badge {
+  font-weight: 700;
+  font-size: 15px;
+}
+.stts-badge.green { color: #28a745; }
+.stts-badge.red { color: #dc3545; }
+.stts-badge.blue { color: #007bff; }
+.stts-badge.gray { color: #6c757d; }
+.stts-badge.purple { color: #6f42c1; }
+
+/* 출퇴근 시간 레이아웃 */
+.atdc-body {
+  display: flex;
+  background: #fcfcfc;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  align-items: center;
+}
+
+.time-box {
+  flex: 1;
+  text-align: center;
+}
+
+.time-box label {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 5px;
+}
+
+.time-box span {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ccc; /* 시간 안 찍혔을 때 흐리게 */
+}
+
+.time-box span.active {
+  color: #333; /* 시간 찍혔을 때 진하게 */
+}
+
+.time-divider {
+  width: 1px;
+  height: 30px;
+  background: #eee;
+}
+
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-size: 14px;
+}

@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Update;
 import vfive.gw.aprv.dto.response.AprvDocListResponse;
 import vfive.gw.attendance.dto.domain.EmpDTO;
 import vfive.gw.attendance.dto.domain.LeaveDTO;
+import vfive.gw.attendance.dto.response.EmpAtdcDetailDTO;
 import vfive.gw.board.dto.BoardPrvc;
 import vfive.gw.home.dto.EmpPrvc;
 import vfive.gw.home.dto.request.MyDashResDTO;
@@ -77,6 +78,23 @@ public interface HomeMapper {
 			+ "order by D.APRV_DOC_ID desc "
 			+ "limit 5")
 	List<AprvDocListResponse> selectAprvLimitFive(MyDashResDTO req); 
+	
+	// 금일 출퇴근 시각
+	@Select({
+    "SELECT ",
+    "    A.WRK_YMD AS wrkYmd, ",
+    "    A.ATDC_STTS_CD AS atdcSttsCd, ", // 근태 상태 (PRESENT, ABSENT 등)
+    "    A.CLK_IN_DTM AS clkInDtm, ",   	// 출근 시각
+    "    A.CLK_OUT_DTM AS clkOutDtm, ",  	// 퇴근 시각
+    "    W.WRK_NM AS wrkNm, ",       			// 근무 형태명 (예: 주간근무, 야간근무)
+    "    W.STRT_TM AS strtTm, ",     			// 예정 시작 시간
+    "    W.END_TM AS endTm",        			// 예정 종료 시간
+    "FROM ATDC_HIST A ",
+    "JOIN WORK_TYPE_CD W ON A.WRK_CD = W.WRK_CD ",
+    "WHERE A.EMP_ID = #{empId} ",
+    "  AND A.WRK_YMD = CURDATE()"
+	})
+	EmpAtdcDetailDTO selectTodayAtdcDashboard(MyDashResDTO req);
 	
 	@Update("<script>" +
       "UPDATE EMP_PRVC " +

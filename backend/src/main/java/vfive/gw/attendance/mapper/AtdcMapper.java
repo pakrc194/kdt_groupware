@@ -102,14 +102,30 @@ public interface AtdcMapper {
       "</script>")
 		List<EmpAtdcDetailDTO> selectEmpAtdcDetail(EmpAtdcRequestDTO req);
 	
-  // 퇴근
-  @Update({
-    "UPDATE ATDC_HIST",
+  // 퇴근 처리
+	@Update({
+    "UPDATE ATDC_HIST A ",
+    "JOIN WORK_TYPE_CD W ON A.WRK_CD = W.WRK_CD ",
     "SET ",
-    "  CLK_OUT_DTM = NOW()",        // 현재 서버 시간으로 퇴근 기록
-    "WHERE EMP_ID = #{empId}",
-    "  AND WRK_YMD = CURDATE()",    // 오늘 날짜 데이터 대상
-    "  AND CLK_OUT_DTM IS NULL"     // 이미 퇴근 처리된 경우 중복 업데이트 방지
+    "    A.CLK_OUT_DTM = NOW(), ",
+    "    A.ATDC_STTS_CD = CASE ",	
+    "        WHEN A.ATDC_STTS_CD IN ('OFF', 'LEAVE', 'BUSINESS_TRIP') THEN A.ATDC_STTS_CD ",	// 특수 근무는 상태 유지
+    "        WHEN W.END_TM < W.STRT_TM THEN ",	// 야근 근무인 경우
+    "             CASE WHEN NOW() < TIMESTAMP(DATE_ADD(A.WRK_YMD, INTERVAL 1 DAY), W.END_TM) ",
+    "                  THEN 'ABSENT' ELSE A.ATDC_STTS_CD END ",
+    "        ELSE ",	// 그 외 근무인경우
+    "             CASE WHEN TIME(NOW()) < W.END_TM THEN 'ABSENT' ELSE A.ATDC_STTS_CD END ",
+    "    END ",
+    "WHERE A.WRK_YMD = ( ",	// 출근했지만 퇴근은 하지않은 가장 최근 데이터(야간근무 고려)
+    "    SELECT max_date FROM ( ",
+    "        SELECT MAX(WRK_YMD) as max_date ",
+    "        FROM ATDC_HIST ",
+    "        WHERE EMP_ID = #{empId} ",
+    "          AND CLK_IN_DTM IS NOT NULL ",
+    "          AND CLK_OUT_DTM IS NULL ",
+    "    ) AS tmp ",
+    ") ",
+    "AND A.EMP_ID = #{empId}"
 	})
 	int updateClkOut(EmpAtdcRequestDTO req);
   
@@ -124,19 +140,32 @@ public interface AtdcMapper {
 	})
 	List<Map<String, Object>> selectMyDeptEmpStatus(EmpAtdcRequestDTO req);
   
+  // 근태 베이스 데이터 insert
   @Insert({
-  	"INSERT INTO ATDC_HIST "
-  	+ "(EMP_ID, WRK_YMD, ATDC_STTS_CD) "
-  	+ "SELECT E.EMP_ID, CURDATE(), 'ABSENT' "
-  	+ "FROM EMP_PRVC E "
-  	+ "WHERE E.EMP_ACNT_STTS = 'ACTIVE' "
-  	+ "AND NOT EXISTS "
-  	+ "(SELECT 1 FROM ATDC_HIST A "
-  	+ "WHERE A.EMP_ID = E.EMP_ID "
-  	+ "AND A.WRK_YMD = CURDATE())"
-  })
-  int insertAtdcHistData();
+    "INSERT INTO ATDC_HIST (EMP_ID, WRK_YMD, WRK_CD, ATDC_STTS_CD) ",
+    "SELECT ",
+    "    E.EMP_ID, ",
+    "    CURDATE(), ",
+    "    D.WRK_CD, ",
+    "    CASE ",
+    "        WHEN D.WRK_CD = 'O' THEN 'OFF' ",
+    "        ELSE 'ABSENT' ",
+    "    END AS ATDC_STTS_CD ",
+    "FROM EMP_PRVC E ",
+    // 스케줄 상세(DTL)와 마스터(MST)를 조인하여 확정된 스케줄만 필터링
+    "JOIN DUTY_SCHE_DTL D ON E.EMP_ID = D.EMP_ID AND D.DUTY_YMD = DATE_FORMAT(CURDATE(), '%Y%m%d') ",
+    "JOIN DUTY_SCHE_MST M ON D.DUTY_ID = M.DUTY_ID ",
+    "WHERE E.EMP_ACNT_STTS = 'ACTIVE' ",
+    "  AND M.PRGR_STTS = 'CONFIRMED' ", // 마스터 테이블의 상태 컬럼명 확인 필요
+    "  AND NOT EXISTS ( ",
+    "      SELECT 1 FROM ATDC_HIST A ",
+    "      WHERE A.EMP_ID = E.EMP_ID ",
+    "        AND A.WRK_YMD = CURDATE() ",
+    "  )"
+	})
+	int insertAtdcHistData();
   
+  // 연차 부여
   @Insert({
     "INSERT INTO ANNL_LV_STTS (EMP_ID, BASE_YY, OCCRR_LV, USED_LV) ",
     "SELECT ",
@@ -160,6 +189,7 @@ public interface AtdcMapper {
 	})
 	int insertYearlyLeaveData();
   
+  // 신입 사원 월차 부여
   @Update({
     "UPDATE ANNL_LV_STTS A ",
     "JOIN EMP_PRVC E ON A.EMP_ID = E.EMP_ID ",
@@ -172,7 +202,36 @@ public interface AtdcMapper {
     ") ",
     "WHERE A.BASE_YY = YEAR(CURDATE()) ",
     "AND E.EMP_ACNT_STTS = 'ACTIVE' ",
-    "AND TIMESTAMPDIFF(MONTH, E.EMP_JNCMP_YMD, CURDATE()) < 12"
+    "AND TIMESTAMPDIFF(MONTH, E.EMP_JNCMP_YMD, CURDATE()) < 12",
+    // 실제로 값이 변경된경우만 카운트 하기 위함
+    "AND A.OCCRR_LV <> FLOOR( ",
+    "    (CASE WHEN YEAR(E.EMP_JNCMP_YMD) < YEAR(CURDATE()) ",
+    "          THEN (15 * (DATEDIFF(TIMESTAMP(MAKEDATE(YEAR(CURDATE())-1, 365)), E.EMP_JNCMP_YMD) + 1) / 365) ",
+    "          ELSE 0 END) ",
+    "    + ",
+    "    LEAST(TIMESTAMPDIFF(MONTH, E.EMP_JNCMP_YMD, CURDATE()), 11) ",
+    ")"
 	})
 	int updateNewEmpLeave();
+  
+  // 퇴근 시간을 안찍은 경우 처리
+  @Update({
+    "UPDATE ATDC_HIST A ",
+    "JOIN WORK_TYPE_CD W ON A.WRK_CD = W.WRK_CD ",
+    "SET A.ATDC_STTS_CD = 'ABSENT' ",
+    "WHERE A.WRK_YMD < CURDATE() ",      // 1. 오늘 이전 데이터 중
+    "  AND A.CLK_IN_DTM IS NOT NULL ",  // 2. 출근은 했고
+    "  AND A.CLK_OUT_DTM IS NULL ",     // 3. 퇴근은 없는데
+    "  AND A.ATDC_STTS_CD NOT IN ('OFF', 'LEAVE', 'BUSINESS_TRIP', 'ABSENT') ",
+    "  AND NOW() > CASE ",
+    				// 야간 근무일 경우
+    "      WHEN W.END_TM < W.STRT_TM ",
+    				// 야간 근무(종료 < 시작)라면: 출근일 다음날(오늘) 종료시간 + 1시간 이후부터 결근 처리
+    "      THEN TIMESTAMP(DATE_ADD(A.WRK_YMD, INTERVAL 1 DAY), ADDTIME(W.END_TM, '01:00:00')) ",
+    				// 일반 근무일 경우 출근일(어제) 종료시간 + 3시간 이후부터 결근 처리
+    "      ELSE TIMESTAMP(A.WRK_YMD, ADDTIME(W.END_TM, '03:00:00')) ",
+    "  END"
+	})
+	int missingCheckOut();
+  
 }

@@ -5,6 +5,7 @@ import DashLeave from "../component/DashLeave";
 import DashNotice from "../component/DashNotice";
 import DashApproval from "../component/DashApproval";
 import "../css/HomeDashBoard.css";
+import DashAttendence from "../component/DashAttendence";
 
 function HomeDashBoard(props) {
   const [myDash, setMyDash] = useState(null);
@@ -49,6 +50,10 @@ function HomeDashBoard(props) {
         <section className="dash-section">
           <h3>연차현황</h3>
           <DashLeave leave={myDash.leave} />
+        </section>
+        <section className="dash-section">
+          <h3>근태현황</h3>
+          <DashAttendence atdc={myDash.atdc} />
         </section>
       </div>
     </div>
