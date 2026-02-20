@@ -15,6 +15,9 @@ public class AtdcDataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
     	System.out.println("=== 서버 시작: 데이터 체크 실행 ===");
+    	
+    	int missingCnt = mapper.missingCheckOut();
+    	System.out.println("> 미퇴근 처리 : " + missingCnt + "건");
 
       // 근태 기본 데이터 체크 (오늘자 출근부 생성)
       int atdcCnt = mapper.insertAtdcHistData();

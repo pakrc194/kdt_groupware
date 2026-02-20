@@ -27,6 +27,7 @@ public class GetMyDashService {
 		res.put("notice", mapper.selectHeadNoticeLimitFive());
 		res.put("drft", mapper.selectDrftLimitFive(req));
 		res.put("aprv", mapper.selectAprvLimitFive(req));
+		res.put("atdc", mapper.selectTodayAtdcDashboard(req));
 		
 		return res;
 	}

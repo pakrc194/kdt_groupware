@@ -269,7 +269,7 @@ const Layout = () => {
               }
             }}
           >
-            🏃 퇴근하기
+            퇴근
           </button>
           <button className={"nav-icon"} onClick={fn_logout}>
             로그아웃

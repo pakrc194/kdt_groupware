@@ -42,13 +42,20 @@ public interface LoginMapper {
   
   // 출근
   @Update({
-    "UPDATE ATDC_HIST",
+    "UPDATE ATDC_HIST A ",
+    "JOIN WORK_TYPE_CD W ON A.WRK_CD = W.WRK_CD ",
     "SET ",
-    "  ATDC_STTS_CD = 'PRESENT',",
-    "  CLK_IN_DTM = NOW()", // 현재 서버 시간 입력
-    "WHERE EMP_ID = #{empId}",
-    "  AND WRK_YMD = CURDATE()", // 오늘 날짜 데이터만 대상
-    "  AND CLK_IN_DTM IS NULL"   // 이미 출근 찍힌 경우는 중복 방지
+    "    A.CLK_IN_DTM = NOW(), ",
+    "    A.ATDC_STTS_CD = CASE ", // 미리 설정된 특수 상태 유지
+    "        WHEN A.ATDC_STTS_CD IN ('OFF', 'LEAVE', 'BUSINESS_TRIP') THEN A.ATDC_STTS_CD ",
+    "        ",		// 정각 미만(예: 08:59:59까지)일 때만 정상 출근 인정
+    "        WHEN TIME(NOW()) < W.STRT_TM THEN 'PRESENT' ",
+    "        ",		// 정각 포함 그 이후는 모두 결근
+    "        ELSE A.ATDC_STTS_CD ",
+    "    END ",
+    "WHERE A.EMP_ID = #{empId} ",
+    "  AND A.WRK_YMD = CURDATE() ",
+    "  AND A.CLK_IN_DTM IS NULL"
 	})
 	int updateClkIn(LoginResponse req);
   
