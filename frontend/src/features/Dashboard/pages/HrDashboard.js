@@ -6,7 +6,7 @@ import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { formatToYYMMDD } from '../../../shared/func/formatToDate';
 
 function HrDashboard(props) {
@@ -255,7 +255,7 @@ function HrDashboard(props) {
                         {filteredDocs.length > 0 ? (
                             filteredDocs.map((dd, index) => (
                                 <tr key={index}>
-                                    <td style={styles.td}>{dd.aprvDocTtl}</td>
+                                    <td style={styles.td}>{dd.aprvDocId} <Link to={`/approval/draftBox/detail/${dd.aprvDocId}`} style={styles.link}>{dd.aprvDocTtl}</Link></td>
                                     <td style={styles.td}>
                                         {getStatusLabel(dd.aprvDocStts)}
                                     </td>
@@ -323,7 +323,11 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: "14px",
     cursor: "pointer"
-}
+},
+link: {
+        color: '#007bff',
+        textDecoration: 'none',
+    },
 
 };
 
