@@ -57,7 +57,7 @@ const DraftBox = () => {
                         
                     </select>
                 </div>
-                <table className="history-table">
+                <table className="dash-table">
                 <thead>
                     <tr>
                         <th>문서번호</th>

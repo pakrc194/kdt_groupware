@@ -22,7 +22,7 @@ const ReferBox = () => {
         <>
             <h4>전자결재 > 참조함 </h4>
             <div className="section history-section">
-                <table className="history-table">
+                <table className="dash-table">
                 <thead>
                     <tr>
                         <th>문서번호</th>

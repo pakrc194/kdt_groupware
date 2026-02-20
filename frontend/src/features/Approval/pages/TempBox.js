@@ -33,7 +33,7 @@ const TempBox = () => {
         <>
             <h4>전자결재 > 임시저장함 </h4>
             <div className="section history-section">
-                <table className="history-table">
+                <table className="dash-table">
                 <thead>
                     <tr>
                         <th>문서번호</th>

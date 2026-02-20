@@ -32,7 +32,7 @@ const DraftPage = () => {
 
     const [inputList, setInputList] = useState([]);
     const [formList, setFormList] = useState([]);
-    
+    const [isAttendConfirm, setIsAttendConfirm] = useState(false);
 
     const fn_formClick = () => {
         fetcher(`/gw/aprv/AprvDocFormList/${myInfo.deptId}`).then(res => {
@@ -98,14 +98,14 @@ const DraftPage = () => {
             alert("종료날짜를 선택해주세요")
             return;
         }
+        if(docForm.docFormType=="근태" && !isAttendConfirm) {
+            alert("근태를 조회하세요")
+            return;
+        }
         if(docLoc && docLoc.docInptVl == null) {
             alert("장소를 선택해주세요")
             return;
         }
-
-    
-
-
 
         const drftDoc = {
             drftEmpId:myInfo.empId,
@@ -128,9 +128,14 @@ const DraftPage = () => {
             }
         ).then(res=>{
             let docId = res.result.drftDocReq.aprvDocId
-            fn_uploadTest(docId)
-            alert("기안 작성 완료")
-            navigate("/approval/draftBox")
+            if (selectedFiles && selectedFiles.length > 0) {
+                fn_uploadTest(docId)
+            } else {
+                alert("기안 작성 완료")
+                navigate("/approval/draftBox")  
+            }
+
+            
         })
 
 
@@ -171,15 +176,21 @@ const DraftPage = () => {
     };    
 
     const fn_uploadTest = (docId) => {
-        const form = document.getElementById("draftForm");
-        const formData = new FormData(form);
+        const formData = new FormData();
 
-        formData.append("aprvDocId", docId)
+        formData.append("aprvDocId", docId);
+        if (selectedFiles && selectedFiles.length > 0) {
+            selectedFiles.forEach((file) => {
+                formData.append("docFile", file); 
+            });
+        }
         fetcher(`/gw/aprv/AprvFileUpload`, {
             method: "POST",
             body: formData
         }).then(res=>{
             // console.log("fetcher", res)
+            alert("기안 작성 완료")
+            navigate("/approval/draftBox")  
         });
     }
 
@@ -276,6 +287,8 @@ const DraftPage = () => {
                                 setDocLoc={setDocLoc}
                                 docEmp={docEmp}
                                 setDocEmp={setDocEmp}
+                                isAttendConfirm = {isAttendConfirm}
+                                setIsAttendConfirm = {setIsAttendConfirm}
                             />
                         )}
                     </div>

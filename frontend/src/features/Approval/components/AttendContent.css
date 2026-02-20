@@ -1,5 +1,5 @@
 .user-attend-group {
-    padding: 15px 0;
+    
 }
 
 .user-name-title {
@@ -24,9 +24,9 @@
     color: #1e293b;
 }
 
-.attend-section {
+/* .attend-section {
     margin-bottom: 25px;
-}
+} */
 
 .section-title {
     font-size: 15px;
@@ -117,7 +117,6 @@
     border: 0;
     height: 1px;
     background: #eee;
-    margin-bottom: 20px;
 }
 
 /* 페이드 인 효과 */

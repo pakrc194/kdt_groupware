@@ -4,11 +4,11 @@ import { fetcher } from '../../../../shared/api/fetcher';
 import AttendContent from '../AttendContent';
 
 
-const AttendCheckModal = ({ onClose, onOk, drftDate, ids }) => {
+const AttendCheckModal = ({ onClose, onOk, docRole, drftDate, ids }) => {
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
-    
+    const [deptSchedList, setDeptSchedList] = useState([]);
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
     // 1. 초기값 설정 시 props로 받은 ids를 우선 사용
@@ -55,6 +55,13 @@ const AttendCheckModal = ({ onClose, onOk, drftDate, ids }) => {
                     body: { ids: idList, docStart: start, docEnd: end }
                 });
                 setSchedList(schedRes || []);
+
+                // 부서 일정
+                const deptSchedRes = await fetcher("/gw/aprv/AprvSchedList", {
+                    method: "POST",
+                    body: { role:"DEPT", ids: [myInfo.deptId], docStart: start, docEnd: end }
+                });
+                setDeptSchedList(deptSchedRes || []);
             } catch (error) {
                 console.error("데이터 로드 실패:", error);
             }
@@ -68,13 +75,22 @@ const AttendCheckModal = ({ onClose, onOk, drftDate, ids }) => {
         <Modal
             title={`기간 확인`}
             message={
+                <>
                 <AttendContent 
+                    docRole={docRole}
                     idList={idList} 
                     attendList={attendList} 
                     dutyList={dutyList} 
                     schedList={schedList} 
                     drftDate={drftDate}
                 />
+                <AttendContent 
+                    docRole={"DEPT"}
+                    idList={[myInfo.deptId]} 
+                    schedList={deptSchedList} 
+                    drftDate={drftDate}
+                />
+                </>
             }
             onClose={onClose}
             onOk={onOk}

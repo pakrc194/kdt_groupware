@@ -6,7 +6,19 @@ import SelectDeptModal from './modals/SelectDeptModal';
 import { getSchedTypeLabel } from '../../../shared/func/formatLabel';
 import AttendContent from './AttendContent';
 
-const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, docLoc, setDocLoc, docRole, setDocRole }) => {
+const FieldWrapper = ({ title, action, children, extra }) => (
+    <div className="drft-unit">
+        <div className="drft-unit-top">
+            <div className="drft-label">{title}</div>
+            {action && <div className="drft-unit-action">{action}</div>}
+        </div>
+        <div className="drft-control">{children}</div>
+        {extra && <div className="drft-unit-extra">{extra}</div>}
+    </div>
+);
+
+
+const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, docLoc, setDocLoc, docRole, setDocRole, setIsAttendConfirm }) => {
     const [isLocOpen, setIsLocOpen] = useState(false);
     const [locList, setLocList] = useState([]);
     
@@ -19,6 +31,7 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
+    const [deptSchedList, setDeptSchedList] = useState([]);
     const [myInfo] = useState(() => JSON.parse(localStorage.getItem("MyInfo")));
 
     const getDeptNamesByIds = (list, ids) => {
@@ -53,6 +66,7 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
         setAttendList([]);
         setDutyList([]);
         setSchedList([]);
+        setDeptSchedList([]);
         setInputList(prev =>
             prev.map(v => v.docInptNm === "docSchedType" ? { ...v, docInptVl: "" } : v)
         );
@@ -83,6 +97,7 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
                 body: { role: docRole, ids: idList, deptId, docStart: start, docEnd: end }
             }).then(res => setSchedList(res || []));
         }
+        
     }, [idList, docRole, drftDate?.docStart, drftDate?.docEnd]);
 
 
@@ -116,6 +131,7 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
         );
 
         if (type === "date") {
+            setIsAttendConfirm(false);
             setDrftDate(prev => ({ ...prev, [name]: value }));
         }
     };
@@ -149,17 +165,6 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
 
         setIdList(finalIds); // 상태를 업데이트하면 위의 useEffect가 감지해서 API를 자동으로 호출합니다.
     };
-
-    const FieldWrapper = ({ title, action, children, extra }) => (
-        <div className="drft-unit">
-            <div className="drft-unit-top">
-                <div className="drft-label">{title}</div>
-                {action && <div className="drft-unit-action">{action}</div>}
-            </div>
-            <div className="drft-control">{children}</div>
-            {extra && <div className="drft-unit-extra">{extra}</div>}
-        </div>
-    );
 
     const label = inputForm?.docInptLbl || "";
     const type = inputForm?.docInptType;
@@ -199,6 +204,7 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
             );
 
         case "DATE":
+            
             return (
                 <FieldWrapper title={label}>
                     <input

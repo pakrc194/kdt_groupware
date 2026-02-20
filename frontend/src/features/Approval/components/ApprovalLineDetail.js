@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../../../shared/components/Button';
 import { formatToYYMMDD, formatToYYMMDDHHMMSS } from '../../../shared/func/formatToDate';
 
-const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
+const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRole, idList, attendList, dutyList, schedList, drftDate}) => {
     const {docId} = useParams();
     const navigate = useNavigate();
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
@@ -259,7 +259,9 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail}) => {
 
             {/* 모달 로직 (기존과 동일) */}
             {openModal.includes("REF") && <ReferModal onClose={fn_close} onOk={() => fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, "")} />}
-            {openModal.includes("ATRZ") && <AtrzModal onClose={fn_close} onOk={(prcsRes) => fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, prcsRes)} />}
+            {openModal.includes("ATRZ") && <AtrzModal onClose={fn_close} 
+                docRole={docRole} idList={idList} attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}
+                onOk={(prcsRes) => fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, prcsRes)} />}
         </div>
     );
 };

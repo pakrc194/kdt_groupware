@@ -16,6 +16,7 @@ const ApprovalDetail = () => {
     const [inputList, setInputList] = useState([]);
     const [aprvLine, setAprvLine] = useState([]);
 
+    const [docRole, setDocRole] = useState();
     const [attendList, setAttendList] = useState([]);
     const [dutyList, setDutyList] = useState([]);
     const [schedList, setSchedList] = useState([]);
@@ -125,7 +126,7 @@ const ApprovalDetail = () => {
     },[docId])
 
     useEffect(()=>{
-       
+        if (!aprvDocDetail.docFormType || inputList.length === 0) return; // 데이터가 둘 다 있을 때만 실행
 
         if(aprvDocDetail.docFormType=="일정") {
             fn_warnSched();
@@ -149,27 +150,23 @@ const ApprovalDetail = () => {
         if(docRole!=null) {
             if(docRole.docInptVl=="PERSONAL") {
                 fetcher(`/gw/aprv/AprvDeptEmpList`).then(res=>{
-                        res.map(v=>{
-                            schedFilter[v.empId] = v.empNm
-                        })
-                        // console.log("personal", schedFilter)
-                        setVlFilter(schedFilter)
-                    });
+                    let resFilter = {};
+                    res.forEach(v => { resFilter[v.empId] = v.empNm; });
+                    setVlFilter(resFilter);
+                });
             } else if(docRole.docInptVl=="DEPT") {
                 fetcher(`/gw/aprv/AprvDeptList`).then(res=>{
-                    res.map(v=>{
-                        schedFilter[v.deptId] = v.deptName
-                    })
-                    // console.log("dept", schedFilter)
-                    setVlFilter(schedFilter)
+                    let resFilter = {};
+                    res.forEach(v => { resFilter[v.deptId] = v.deptName; });
+                    setVlFilter(resFilter);
                 });        
             }
         }
-    },[aprvDocDetail])
+    },[aprvDocDetail, inputList])
 
 
     const fn_warnAttend = () => {
-        const docRole = "duty"
+        setDocRole("duty")
         const ids = [aprvDocDetail.drftEmpId]
         const deptId = null
         const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl?.replaceAll('-',"");
@@ -221,7 +218,9 @@ const ApprovalDetail = () => {
     }
 
     const fn_warnSched = () => {
-        const docRole = inputList.find(v=>v.docInptNm==="docRole")?.docInptVl;
+        setDocRole(inputList.find(v=>v.docInptNm==="docRole")?.docInptVl);
+        //if(!docRole) return;
+
         const schedType = inputList.find(v=>v.docInptNm==="docSchedType")?.docInptVl;
         const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl.replaceAll("-","");
         const docEnd = inputList.find(v=>v.docInptNm==="docEnd")?.docInptVl.replaceAll("-","");
@@ -234,7 +233,7 @@ const ApprovalDetail = () => {
 
        
 
-
+        
         if(docRole==="DEPT") {
             ids = schedType?.includes(',')? schedType.split(',') : [schedType];
             drftEmpId = aprvDocDetail.drftEmpId;
@@ -261,9 +260,10 @@ const ApprovalDetail = () => {
                     year:2026
                 }
             }).then(res => {
-                // console.log("fetch AprvEmpAnnlLv",res)
+                console.log("fetch AprvEmpAnnlLv",res)
                 setAttendList(res)
             })
+        
             
             fetcher("/gw/aprv/AprvDutyScheDtl",{
                     method:"POST",
@@ -278,7 +278,7 @@ const ApprovalDetail = () => {
                 console.log("fetch AprvDutyScheDtl",ids,res)
                 setDutyList(res)
             })
-            
+        }
 
             fetcher("/gw/aprv/AprvSchedList",{
                 method:"POST",
@@ -290,10 +290,10 @@ const ApprovalDetail = () => {
                     docEnd:docEnd
                 }
             }).then(res=>{
-                // console.log("fetch AprvSchedList",res)
+                console.log("fetch AprvSchedList",res)
                 setSchedList(res)
             })
-        }
+        //}
     }
 
     const fn_list = () => {
@@ -357,6 +357,7 @@ const ApprovalDetail = () => {
                             setRejectData={setRejectData} 
                             inptList={inputList} 
                             docDetail={aprvDocDetail}
+                            docRole={docRole} idList={idList} attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}
                         />
                     </div>
                 </div>
@@ -408,11 +409,11 @@ const ApprovalDetail = () => {
                 )}
 
                 {/* 근태 정보 (필요시) */}
-                {aprvDocDetail?.aprvDocStts !== "COMPLETE" && (
+                {/* {aprvDocDetail?.aprvDocStts !== "COMPLETE" && (
                     <div className="aprv-detail-extra">
                         <AttendContent idList={idList} attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate} />
                     </div>
-                )}
+                )} */}
 
                 {/* 반려함일 경우 버전 히스토리 */}
                 {sideId === "rejectBox" && (

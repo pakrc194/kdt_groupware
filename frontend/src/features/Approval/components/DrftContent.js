@@ -7,7 +7,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 import InputForm from './InputForm';
 import { useParams } from 'react-router-dom';
 
-const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc, docEmp, setDocEmp}) => {
+const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, setInputList, docLoc, setDocLoc, docEmp, setDocEmp, isAttendConfirm, setIsAttendConfirm}) => {
     const {sideId} = useParams();
     const ORDER = {
         DRFT: 0,
@@ -27,6 +27,9 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
 
     const initDocLineRef = useRef(null);
 
+    
+    
+
     const fn_attendCheck = () => {
         if(drftDate.docStart!="" && drftDate.docEnd!="") {
             setIsAttendCheckOpen(true)
@@ -39,6 +42,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
         setIsAttendCheckOpen(false)
     }
     const fn_attendCheckOk = () => {
+        setIsAttendConfirm(true)
         setIsAttendCheckOpen(false)
     }
 
@@ -114,7 +118,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                 <div className="drft-unit-top">
                     <div className="drft-label">결재선</div>
                     <div className="drft-unit-action">
-                        <Button onClick={fn_editLine} docLine={docLine}>결재선 변경</Button>
+                        <Button onClick={fn_editLine} docLine={docLine}>결재선 추가</Button>
                         <Button onClick={fn_resetLine} style={{marginLeft: '8px'}}>초기화</Button>
                     </div>
                 </div>
@@ -128,7 +132,10 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                     <div className="drft-unit-top">
                         <div className="drft-label">근태 확인</div>
                         <div className="drft-unit-action">
-                            <Button type="primary" onClick={fn_attendCheck}>연차 조회</Button>
+                            <Button type="primary" onClick={fn_attendCheck} disabled={isAttendConfirm}>
+                                {isAttendConfirm ? "확인 완료" : "조회"}
+                            </Button>
+                            
                         </div>
                     </div>
                 </div>
@@ -136,7 +143,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
 
             {inputList.map((v, k) => (
                 <InputForm
-                    key={k}
+                    key={v.docInptNm}
                     drftDate={drftDate}
                     setDrftDate={setDrftDate}
                     inputForm={v}
@@ -148,6 +155,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
                     setDocEmp={setDocEmp}
                     docRole={docRole}
                     setDocRole={setDocRole}
+                    setIsAttendConfirm={setIsAttendConfirm}
                 />
             ))}
 
@@ -157,6 +165,7 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
 
             {isAttendCheckOpen && (
                 <AttendCheckModal
+                    docRole={docRole}
                     drftDate={drftDate}
                     onClose={fn_attendCheckClose}
                     onOk={fn_attendCheckOk}

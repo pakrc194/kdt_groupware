@@ -21,7 +21,7 @@ const DocStatus = () => {
         <div>
             <h1>기안 현황</h1>
             <div className="section history-section">
-                <table className="history-table">
+                <table className="dash-table">
                 <thead>
                     <tr>
                         <th>문서번호</th>
@@ -35,7 +35,7 @@ const DocStatus = () => {
                     {drftList.length > 0 ? (
                     drftList.map((aprvDoc, k)=> (<tr key={k}>
                         <td>{aprvDoc.aprvDocNo}</td>
-                        <td><Link to={`/approval/drftBox/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
+                        <td><Link to={`/approval/draftBox/detail/`+aprvDoc.aprvDocId}>{aprvDoc.aprvDocTtl}</Link></td>
                         <td>{aprvDoc.empNm}</td>
                         <td>{formatForList(aprvDoc.aprvDocDrftDt)}</td>
                         <td>
@@ -58,7 +58,7 @@ const DocStatus = () => {
 
             <h1>결재 현황</h1>
             <div className="section history-section">
-                <table className="history-table">
+                <table className="dash-table">
                 <thead>
                     <tr>
                         <th>문서번호</th>
