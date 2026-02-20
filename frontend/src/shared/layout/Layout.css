@@ -43,9 +43,8 @@
   display:flex;
   align-items:center;
   gap:10px;
+  
 }
-
-
 
 
 /* 종 감싸는 영역 */
@@ -153,4 +152,52 @@
 
 .noti-del-btn:hover{
   color:#ff4d4f;
+}
+
+
+/* 헤더 내부의 로고 컨테이너 */
+.header .logo-header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 메인 화면은 왼쪽 정렬이 깔끔합니다 */
+  justify-content: center;
+  text-decoration: none;   /* 링크 밑줄 제거 */
+  padding: 5px 0;
+}
+
+/* 상단 THE와 양옆 라인 */
+.header .logo-top-line {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+}
+
+/* 메인 화면은 선이 너무 길면 메뉴를 가리므로 적당한 길이 유지 */
+.header .logo-top-line::before,
+.header .logo-top-line::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1); /* 밝은 배경이면 어두운 선, 어두운 배경이면 밝은 선으로 조절 */
+  max-width: 20px; /* 선 길이를 제한하여 로고가 콤팩트하게 보임 */
+}
+
+.header .logo-the {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 400;
+  color:#edeeee;
+}
+
+.header .logo-main-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; /* 헤더 크기에 맞춰 축소 */
+  font-weight: 500;
+  color: #edeeee;
+  letter-spacing: 4px; /* 자간 적절히 조절 */
+  margin-top: 2px;
+  line-height: 1;
+  text-transform: uppercase;
 }

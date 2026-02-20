@@ -25,56 +25,50 @@ function BoardMain(props) {
     const [boardId, setBoardId] = useState(null);
 
     useEffect(() => {
-        // 1. 쿼리스트링에 id가 있는지 먼저 확인 (상세보기 우선순위)
-        const idFromQuery = searchParams.get("id");
+      if (service === 'Insert' || service === 'Modify') {
+        return; 
+    }
+    const idFromQuery = searchParams.get("id");
+    const currentMenu = SIDE_CONFIG.board.sideMenus.find(menu => menu.id === sideId);
 
-        // 2. SIDE_CONFIG에서 현재 메뉴 찾기
-        const currentMenu = SIDE_CONFIG.board.sideMenus.find(menu => menu.id === sideId);
+    // 2. 예외 처리: 메뉴 설정에 없더라도 서비스가 명시된 경우
+    if (!currentMenu) {
+        if (['detail', 'Insert', 'Modify'].includes(sideId)) {
+            if (idFromQuery) setBoardId(idFromQuery);
+            setService(sideId);
+            return;
+        }
+        alert("존재하지 않는 게시판 경로입니다.");
+        navigate("/board/public", { replace: true });
+        return;
+    }
 
-        // [예외처리] 게시판 메뉴가 없는데 sideId가 특정 서비스(detail 등)인 경우
-        if (!currentMenu) {
-            if (sideId === 'detail' || sideId === 'Insert' || sideId === 'Modify') {
-                if (idFromQuery) setBoardId(idFromQuery);
-                setService(sideId); // sideId 자체가 서비스 이름이 됨
-                return; // 여기서 로직 종료 (보안체크 건너뜀)
-            }
-            alert("존재하지 않는 게시판 경로입니다.");
+    // 3. 부서 권한 체크 (restrictedBoards)
+    const restrictedBoards = ["HR", "FA", "SA", "FO", "BU", "WF", "MF"];
+    if (restrictedBoards.includes(sideId)) {
+        if (userDeptCode !== sideId) {
+            alert(`'${currentMenu.name}'은 접근할 수 없습니다.`);
             navigate("/board/public", { replace: true });
             return;
         }
+    }
 
-        // --- 보안 로직 강화 ---
-        
-        // 1. 부서 코드 직접 비교 (sideId와 userDeptCode가 일치하는지 확인)
-        // 인사관리 게시판(sideId: "HR")은 부서가 "HR"인 사람만 통과
-        const restrictedBoards = ["HR", "FA", "SA", "FO", "BU", "WF", "MF"];
-        
-        if (restrictedBoards.includes(sideId)) {
-            // 주소(sideId)와 사용자 부서(userDeptCode)가 다르면 차단
-            if (userDeptCode !== sideId) {
-                alert(`'${currentMenu.name}'은  접근할 수 없습니다.`);
-                navigate("/board/public", { replace: true });
-                return;
-            }
+    // 4. 세부 권한(access) 체크
+    if (currentMenu.access && userPermissions.length > 0) {
+        if (!userPermissions.includes(currentMenu.access)) {
+            alert(`접근 권한이 없습니다.`);
+            navigate("/board/public", { replace: true });
+            return;
         }
+    }
 
-        // 2. 권한 명칭(access) 기반 검사 (authList가 있을 경우만 실행)
-        if (currentMenu.access && userPermissions.length > 0) {
-            const hasAccess = userPermissions.includes(currentMenu.access);
-            if (!hasAccess) {
-                alert(`접근 권한이 없습니다.`);
-                navigate("/board/public", { replace: true });
-                return;
-            }
-        }
-
-        // 모든 검증 통과 후 화면 설정
-        if (searchParams.get("id")) {
-            setBoardId(searchParams.get("id"));
-            setService('detail');
-        } else {
-            setService('list');
-        }
+    // 5. 모든 검증 통과 시 화면 설정
+    if (idFromQuery) {
+        setBoardId(idFromQuery);
+        setService('detail');
+    } else {
+        setService('list');
+    }
 
     }, [sideId, navigate, userPermissions, userDeptCode, searchParams]);
 

@@ -65,6 +65,11 @@ function BoardInsert(props) {
             isTop: isTop  // 체크박스에 체크하면 '1' , 아니면 '0'
         };
 
+        formData.append(
+        "board", 
+        new Blob([JSON.stringify(boardData)], { type: "application/json" })
+    );
+
    
 
         // 파일 업로드를 하는데 fetcher를 사용하면 에러가 나서 기본fetch를 사용하고 있습니다
