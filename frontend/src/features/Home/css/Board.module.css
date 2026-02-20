@@ -13,31 +13,45 @@
     height: 35px; /* input과 높이 통일 */
     border: 1px solid #d1d5db;
     border-radius: 4px;
-    padding: 0 5px;
+    padding: 5px;
     margin-top: 100px;
 }
 
 /* 테이블 관련 스타일*/
 .boardTable {
-    width: 100%;
+    width: 95%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin: 20px  auto 0 auto;
+    table-layout: fixed;
+   
+    
 }
 
-.boardTable th {
+.boardTable th, .boardTable td {
+    padding: 12px 10px;
+    text-align: center; /* 기본은 중앙 정렬 */
+    vertical-align: middle;
+    border-bottom: 1px solid #ebeaea;
+}
+
+/* 컬럼별 너비 배분 (전체 100%) */
+.boardTable th:nth-child(1) { width: 4%; }  /* 번호 */
+.boardTable th:nth-child(2) { width: 60%; } /* 제목 (가장 넓게) */
+.boardTable th:nth-child(3) { width: 15%; } /* 작성일 */
+.boardTable th:nth-child(4) { width: 10%; } /* 조회수 */
+.boardTable th:nth-child(5) { width: 17%; } /* 작성자 */
+
+
+.boardTable td:nth-child(2) {
     text-align: left;
-    padding: 12px 10px;
-    background-color: #f5f5f5;
-    border-bottom: 2px solid #ddd;
-    font-weight: bold;
-    color: #555;
+    white-space: nowrap;
+    overflow: hidden;       /* 넘치는 부분 숨김 */
+    text-overflow: ellipsis; /* 너무 길면 ... 표시 */
+    padding-left: 100px;      /* 왼쪽 여백 확보 */
+    padding-right: 200px;
 }
 
-.boardTable td {
-    padding: 12px 10px;
-    color: #333;
-    border-bottom: 1px solid #eee;
-}
+
 
 /* 일반 게시글 - 기본 흰색 배경 */
 .boardTable tr {
@@ -165,7 +179,8 @@
 }
 
 .board-list-container{
-    display: flex;
+    display: block;
+    width: 100%
 }
 
 
@@ -196,7 +211,21 @@
 .schinput {
     width: 250px;
     padding: 0 10px;
+    outline: none; /* 기본 검은 테두리(아웃라인) 제거 */
+    border: 1px solid #d1d5db; /* 기본 테두리 색상 */
+    transition: all 0.2s ease;
+    
 }
+
+
+
+.schinput:focus {
+    outline: none; /* 클릭 시 나타나는 검은 테두리 완벽 제거 */
+    border-color: #3b82f6; /* 테두리를 파란색으로 */
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* 파란색 글로우 효과 */
+}
+
+
 
 .schBtn {
     padding: 0 15px;
@@ -204,6 +233,11 @@
     color: white;
     cursor: pointer;
 }
+.schBtn:hover{
+    background-color: #004792;
+}
+
+
 
 /* 글쓰기 버튼 스타일 수정 */
 .writBtn {

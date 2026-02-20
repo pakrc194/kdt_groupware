@@ -15,6 +15,7 @@ function BoardDetail(props) {
     // 현재 사용자 정보 
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     const loginUserSn = myInfo?.empSn;
+    console.log("board 정보 확인 :",board)
 
     useEffect(() => {
         console.log('props.boardId', props.boardId)
@@ -35,6 +36,7 @@ function BoardDetail(props) {
                 console.error("데이터 호출 에러:", err);
                 setIsLoading(false);
             });
+            
     };
 
 
@@ -87,14 +89,14 @@ function BoardDetail(props) {
             {/* 헤더 영역: 제목 및 메타정보 */}
             <div className="detail-header">
                 <div className="title-section">
-                    {board.isTop && <span className="badge-top" style={{backgroundColor:'#e74c3c', color:'#fff', padding:'2px 8px', borderRadius:'4px', fontSize:'12px', marginRight:'10px', verticalAlign:'middle'}}>중요</span>}
+                    {(board.isTop === true || board.isTop === "true") && <span className="badge-top" style={{backgroundColor:'#e74c3c', color:'#fff', padding:'2px 8px', borderRadius:'4px', fontSize:'12px', marginRight:'10px', verticalAlign:'middle'}}>중요</span>}
                     <h1 className="ditailTitle" style={{display:'inline-block'}}>{board.title}</h1>
                 </div>
                 
                 <div className="meta-info">
                     <div className="meta-left">
-                        <span className="author">👤 <b>{board.empNm}</b></span>
-                        <span className="date">📅 {new Date(board.createdAt).toLocaleString()}</span>
+                        <span className="author">👤 작성자 <b>{myInfo.empNm}</b></span>
+                        <span className="date">📅 작성일{new Date(board.createdAt).toLocaleString()}</span>
                         <span className="views">👁‍🗨 조회수 {board.views}</span>
                     </div>
                 </div>

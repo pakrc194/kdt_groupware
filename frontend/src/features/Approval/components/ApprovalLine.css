@@ -1,6 +1,7 @@
 .approvalLine {
     width: 1200px;
     display: flex;
+    
 }
 
 .approvalLine > .empInfo > div {
@@ -12,6 +13,7 @@
     padding-right: 5px;
     height: 2rem;
     line-height: 2rem;
+    
 }
 
 .approvalLine > .empInfo > div:first-child {

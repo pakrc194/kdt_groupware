@@ -46,7 +46,10 @@ function BoardMain(props) {
     // 3. 부서 권한 체크 (restrictedBoards)
     const restrictedBoards = ["HR", "FA", "SA", "FO", "BU", "WF", "MF"];
     if (restrictedBoards.includes(sideId)) {
-        if (userDeptCode !== sideId) {
+
+         const isManager = userDeptCode === "CP";
+
+        if (!isManager &&userDeptCode !== sideId) {
             alert(`'${currentMenu.name}'은 접근할 수 없습니다.`);
             navigate("/board/public", { replace: true });
             return;
