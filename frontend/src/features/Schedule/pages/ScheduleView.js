@@ -180,7 +180,8 @@ function ScheduleView(props) {
                     <div key={type} style={styles.card}>
                         <h4 style={styles.cardTitle}>{typeName}</h4>
                         <div style={styles.scrollArea}>
-                            {sched.filter(s => s.schedType === type).map(s => (
+                            {sched.filter(s => s.schedType === type).length > 0 ? (
+                            sched.filter(s => s.schedType === type).map(s => (
                                 <div key={s.schedId} style={styles.schedItem}>
                                     <div>
                                         <strong>제목:</strong> 
@@ -192,7 +193,10 @@ function ScheduleView(props) {
                                     {s.schedDetail && <div><strong>상세 내용 확인 필요</strong></div>}
                                     <div><strong>기간:</strong> {s.schedStartDate?.split(" ")[0]} ~ {s.schedEndDate?.split(" ")[0]}</div>
                                 </div>
-                            ))}
+                            ))
+                                ) : (
+                                    <div style={{color:'#aaa'}}>일정 없음</div>
+                            )}
                         </div>
                     </div>
                 )
