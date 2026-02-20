@@ -6,20 +6,30 @@
   overflow: hidden; /* float 해제용 */
 }
 
-/* 우측 콘텐츠 영역 (데일리보드 300px 제외한 나머지) */
+/* 우측 콘텐츠 영역 수정 */
 .dashboard-content-right {
-  margin-left: 320px; /* 데일리보드 너비 300px + 여백 20px */
-  display: flex;
-  flex-direction: column;
+  margin-left: 320px;
+  display: grid;
+  /* 1:1 비율로 두 개의 열 생성 */
+  grid-template-columns: repeat(2, 1fr); 
   gap: 20px;
+  align-items: start; /* 높이가 달라도 위쪽 기준으로 정렬 */
 }
 
-/* 개별 섹션 카드 스타일 */
+/* 개별 섹션 카드 스타일 (기존 유지하되 그리드 안에서 꽉 차게) */
 .dash-section {
   background: #fff;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* 카드의 높이를 통일하고 싶다면 height: 100% 추가 가능 */
+  min-height: 180px; 
+}
+
+/* 만약 특정 섹션(예: 공지사항)을 가로로 길게 한 줄 다 쓰고 싶다면? */
+/* 해당 섹션에 아래 클래스를 추가하면 됩니다. */
+.dash-section.wide {
+  grid-column: span 2;
 }
 
 .dash-section h3 {

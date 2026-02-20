@@ -36,17 +36,23 @@ function DutySkedListPage() {
     );
   };
 
-  // 전체 선택 체크박스
+  // 전체 선택/해제 토글
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      // 삭제 가능한 항목(PENDING, CONFIRMED가 아닌 것)만 필터링해서 ID 추출
-      const deletableIds = schedules
-        .filter((item) => item.prgrStts !== "DRAFT")
-        .map((item) => item.dutyId);
+    const deletableIds = schedules
+      .filter((item) => item.prgrStts === "DRAFT")
+      .map((item) => item.dutyId);
 
-      setSelectedIds(deletableIds);
+    if (deletableIds.length === 0) return; // 선택 가능한 게 없으면 무시
+
+    const isAllSelected = deletableIds.every(id => selectedIds.includes(id));
+
+    if (isAllSelected) {
+      setSelectedIds(prev => prev.filter(id => !deletableIds.includes(id)));
     } else {
-      setSelectedIds([]);
+      setSelectedIds(prev => {
+        const newSet = new Set([...prev, ...deletableIds]);
+        return Array.from(newSet);
+      });
     }
   };
 
@@ -108,9 +114,10 @@ function DutySkedListPage() {
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
+                  // 삭제 가능한(DRAFT) 모든 항목이 현재 선택된 상태인지 확인하여 체크 표시 유지
                   checked={
-                    selectedIds.length === schedules.length &&
-                    schedules.length > 0
+                    schedules.filter(s => s.prgrStts === "DRAFT").length > 0 &&
+                    schedules.filter(s => s.prgrStts === "DRAFT").every(s => selectedIds.includes(s.dutyId))
                   }
                 />
               </th>

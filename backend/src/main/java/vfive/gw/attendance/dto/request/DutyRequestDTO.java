@@ -13,6 +13,7 @@ public class DutyRequestDTO {
 	private String scheTtl;
 	private String trgtYmd;
 	
+	
 	private List<DutySkedDetailDTO> details;
 	
 }

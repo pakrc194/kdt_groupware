@@ -13,5 +13,7 @@ public class EmpAtdcDetailDTO {
     private String wrkCd;       // 근무형태코드 (ex: D, E, N, O, WO, OD)
     private Date clkInDtm;      // 출근시간
     private Date clkOutDtm;     // 퇴근시간
+    private Date strtTm;     // 업무시작 시간
+    private Date endTm;     // 업무종료 시간
     private String atdcSttsCd;  // 근태상태 (PRESENT, ABSENT 등)
 }
