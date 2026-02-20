@@ -11,7 +11,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
     const [selectedYear, setSelectedYear] = useState("");
     const [selectedMonth, setSelectedMonth] = useState("");
 
-    // 연도 목록 (시작일 기준)
     const years = useMemo(() => {
         const yearSet = new Set(
             deleteSchedLog
@@ -21,7 +20,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
         return Array.from(yearSet).sort((a, b) => b.localeCompare(a));
     }, [deleteSchedLog]);
 
-    // 월 목록 (선택된 연도 기준)
     const months = useMemo(() => {
         if (!selectedYear) return [];
         const monthSet = new Set(
@@ -32,7 +30,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
         return Array.from(monthSet).sort();
     }, [deleteSchedLog, selectedYear]);
 
-    // 초기 선택
     useEffect(() => {
         if (years.length > 0 && !selectedYear) setSelectedYear(currentYear);
         if (!selectedMonth) {
@@ -44,7 +41,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
         }
     }, [years]);
 
-    // 연도 변경 시 월 초기화
     useEffect(() => {
         if (selectedYear === currentYear && months.includes(currentMonth)) {
             setSelectedMonth(currentMonth);
@@ -53,7 +49,6 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
         }
     }, [selectedYear, months]);
 
-    // 필터링 (시작일 기준)
     const filteredLogs = useMemo(() => {
         if (!selectedYear || !selectedMonth) return [];
         return deleteSchedLog
@@ -67,12 +62,9 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
 
     return (
         <div>
-                <h2>일정 삭제 기록</h2>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                
+            <h2 style={{ marginBottom: "20px" }}>일정 삭제 기록</h2>
 
-            {/* 연도/월 드롭다운 */}
-            <div style={{ marginBottom: "15px", display: "flex", gap: "10px" }}>
+            <div style={{ marginBottom: "15px", display: "flex", gap: "10px", alignItems: "center" }}>
                 <select
                     value={selectedYear}
                     onChange={e => setSelectedYear(e.target.value)}
@@ -93,12 +85,12 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
                         <option key={month} value={month}>{Number(month)}월</option>
                     ))}
                 </select>
-            </div>
-            <span style={{ fontWeight: 'bold' }}>총 {filteredLogs.length}건</span>
-            </div>
-            
 
-            {/* 스크롤 + 헤더 고정 */}
+                <span style={{ marginLeft: "auto", fontWeight: 600 }}>
+                    총 {filteredLogs.length}건
+                </span>
+            </div>
+
             <div style={{
                 maxHeight: "400px",
                 overflowY: "auto",
@@ -111,7 +103,13 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
                             {["타입","이름","상세","시작일","종료일","삭제일","담당자","담당팀","장소"].map((th, idx) => (
                                 <th
                                     key={idx}
-                                    style={{ ...styles.th, position: "sticky", top: 0, backgroundColor: "#f1f3f5", zIndex: 10 }}
+                                    style={{
+                                        ...styles.th,
+                                        position: "sticky",
+                                        top: 0,
+                                        backgroundColor: "#f1f3f5",
+                                        zIndex: 10
+                                    }}
                                 >
                                     {th}
                                 </th>
@@ -122,20 +120,25 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
                         {filteredLogs.length > 0 ? (
                             filteredLogs.map((data, index) => (
                                 <tr key={index}>
-                                    <td>{data.schedType === "COMPANY" ? "회사" : data.schedType === "DEPT" ? "팀" : "개인"}</td>
-                                    <td>{data.schedTitle}</td>
-                                    <td>{data.schedDetail}</td>
-                                    <td>{data.schedStartDate?.split(" ")[0]}</td>
-                                    <td>{data.schedEndDate?.split(" ")[0]}</td>
-                                    <td>{data.schedDeleteDate?.split(" ")[0]}</td>
-                                    <td>{data.schedEmpNm}</td>
-                                    <td>{data.schedDeptNm}</td>
-                                    <td>{data.schedLocNm}</td>
+                                    <td style={styles.td}>
+                                        {data.schedType === "COMPANY" ? "회사" :
+                                         data.schedType === "DEPT" ? "팀" : "개인"}
+                                    </td>
+                                    <td style={styles.td}>{data.schedTitle}</td>
+                                    <td style={styles.td}>{data.schedDetail}</td>
+                                    <td style={styles.td}>{data.schedStartDate?.split(" ")[0]}</td>
+                                    <td style={styles.td}>{data.schedEndDate?.split(" ")[0]}</td>
+                                    <td style={styles.td}>{data.schedDeleteDate?.split(" ")[0]}</td>
+                                    <td style={styles.td}>{data.schedEmpNm}</td>
+                                    <td style={styles.td}>{data.schedDeptNm}</td>
+                                    <td style={styles.td}>{data.schedLocNm}</td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="9" style={styles.noData}>데이터가 없습니다.</td>
+                                <td colSpan="9" style={styles.noData}>
+                                    데이터가 없습니다.
+                                </td>
                             </tr>
                         )}
                     </tbody>
@@ -152,14 +155,20 @@ const styles = {
         backgroundColor: "#fff",
     },
     th: {
-        padding: "12px",
-        borderBottom: "1px solid #ddd",
-        fontWeight: "600",
+        background: "#fafafa",
+        padding: 10,
+        borderBottom: "2px solid #f0f0f0",
         textAlign: "left",
+        fontWeight: 600,
     },
     td: {
-        padding: "12px",
-        borderBottom: "1px solid #eee",
+        padding: 10,
+        borderBottom: "1px solid #f0f0f0",
+    },
+    noData: {
+        textAlign: "center",
+        padding: 40,
+        color: "#bfbfbf",
     },
     select: {
         padding: "6px 10px",
@@ -167,11 +176,6 @@ const styles = {
         border: "1px solid #ccc",
         fontSize: "14px",
         cursor: "pointer"
-    },
-    noData: {
-        textAlign: "center",
-        padding: "14px",
-        color: "#888",
     }
 };
 

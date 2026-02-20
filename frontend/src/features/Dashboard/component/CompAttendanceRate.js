@@ -121,7 +121,7 @@ function Attendance({ emp }) {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="3" style={styles.noData}>데이터가 없습니다.</td>
+                                                <td colSpan="4" style={styles.noData}>데이터가 없습니다.</td>
                                             </tr>
                                         )}
                                     </tbody>

@@ -9,7 +9,7 @@ import { fetcher } from '../../../shared/api/fetcher';
 
 function ScheduleCalendar(props) {
     const [apiData, setApiData] = useState([]);
-    const [date, setDate] = useState();
+    const [selectedDate, setDate] = useState();
     // const [year, setYear] = useState();
     // const [month, setMonth] = useState();
     // const [day, setDay] = useState();
@@ -38,7 +38,7 @@ function ScheduleCalendar(props) {
     
 
     // 버튼 핸들러
-    const goToday = () => {setCurrentDate(new Date()); props.sDate(new Date());};
+    const goToday = () => {setCurrentDate(new Date()); props.sDate(new Date()); setDate(new Date())};
     const goPrev = () => {
         const prevMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
         setCurrentDate(prevMonth);
@@ -52,7 +52,7 @@ function ScheduleCalendar(props) {
         fetcher(`/gw/schedule/view/${formattedStart}/${formattedEnd}/${dept_id}/${emp_id}`)
         .then(dd => setApiData(Array.isArray(dd) ? dd : [dd]))
         .catch(e => console.log(e))
-    }, [date, props.todo, currentDate]);
+    }, [selectedDate, props.todo, currentDate]);
 
 
     const locales = {
@@ -123,6 +123,30 @@ function ScheduleCalendar(props) {
                     onSelectSlot={(slotInfo) => {
                         props.sDate(slotInfo.start);
                         setDate(slotInfo.start);
+                        // console.log(slotInfo.start)
+                    }}
+                    onShowMore={(events, date) => {
+                        // console.log("more 해당 날짜:", date);
+                        // console.log("숨겨진 이벤트 목록:", events);
+
+                        // 원하는 동작 실행
+                        // alert(`${date.toLocaleDateString()} 일정 ${events.length}건`);
+                        props.sDate(date);
+                        setDate(date);
+                    }}
+                    dayPropGetter={(date) => {
+                        if (
+                        selectedDate &&
+                        date.toDateString() === selectedDate.toDateString()
+                        ) {
+                        return {
+                            style: {
+                            backgroundColor: "#f1c5738c",
+                            border: "2px solid #f6b83b"
+                            }
+                        };
+                        }
+                        return {};
                     }}
                 />
             </div>

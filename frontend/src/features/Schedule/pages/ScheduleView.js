@@ -59,7 +59,7 @@ function ScheduleView(props) {
         // .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
         // })
         // .catch(e => console.log(e));
-        console.log('[defaultDate, showTodoForm, editTodo]')
+        // console.log('[defaultDate, showTodoForm, editTodo]')
     }, [defaultDate, showTodoForm, editTodo]);
 
     useEffect(() => {
@@ -67,7 +67,7 @@ function ScheduleView(props) {
         fetcher(`/gw/schedule/todo/view/${formatted}/${myInfo.empId}`) // 날짜별 TODO API
         .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
         })
-        console.log('todo 토글 문제')
+        // console.log('todo 토글 문제')
     }, [sched])
 
     // TODO 추가

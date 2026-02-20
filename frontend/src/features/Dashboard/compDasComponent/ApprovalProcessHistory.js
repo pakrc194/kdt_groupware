@@ -85,12 +85,11 @@ function ApprovalProcessHistory({approval}) {
             .filter(dd =>
                 dd.aprvDocDrftDt &&
                 getYear(dd.aprvDocDrftDt) === selectedYear &&
-                getMonth(dd.aprvDocDrftDt) === selectedMonth
+                getMonth(dd.aprvDocDrftDt) === selectedMonth &&
+                dd.aprvDocStts != 'TEMP'
             )
             .sort((a, b) => parseInt(b.aprvDocDrftDt) - parseInt(a.aprvDocDrftDt));
     }, [groupedData, selectedYear, selectedMonth]);
-
-    console.log(filteredDocs)
 
     return (
         <div>
@@ -151,7 +150,7 @@ function ApprovalProcessHistory({approval}) {
             {filteredDocs.length > 0 ? (
                 filteredDocs.map((data, index) => (
                     <tr key={index}>
-                        <td style={styles.td}><Link to={`/approval/drftBox/detail/${data.aprvDocId}`} style={styles.link}>{data.aprvDocTtl}</Link></td>
+                        <td style={styles.td}><Link to={`/approval/draftBox/detail/${data.aprvDocId}`} style={styles.link}>{data.aprvDocTtl}</Link></td>
                         <td style={styles.td}>{data.draftEmpNm}</td>
                         <td style={styles.td}>{data.docFormNm}</td>
                         <td style={styles.td}>{formatToYYMMDD(data.aprvDocDrftDt)}</td>
