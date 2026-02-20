@@ -35,6 +35,4 @@ public class AtdcCalService {
 		return result;
 	}
 	
-	
-	
 }

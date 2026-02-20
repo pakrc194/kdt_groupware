@@ -51,10 +51,6 @@ public class AttendacneController {
 	@GetMapping("atdcCal")
 	Map<String, Object> atdcCal(HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> res = atdcCal.execute(request, response);
-		System.out.println(request.getParameter("yearMonth"));
-		System.out.println(res.get("atdcList"));
-		System.out.println(res.get("dutyList"));
-		
 		return res;
 	}
 	

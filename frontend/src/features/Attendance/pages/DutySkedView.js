@@ -209,11 +209,22 @@ function DutySkedView() {
             {/* 날짜 헤더 */}
             <div className="timeline-header">
               <div className="employee-info-cell header-cell">사원명 / 조</div>
-              {days.map((d) => (
-                <div key={d} className="day-cell">
-                  {d}
-                </div>
-              ))}
+              {days.map((d) => {
+                // 현재 선택된 월(selectedMonth)과 날짜(d)로 요일 계산
+                const [year, month] = selectedMonth.split("-").map(Number);
+                const dayOfWeek = new Date(year, month - 1, d).getDay(); // 0: 일, 6: 토
+                const isSun = dayOfWeek === 0;
+                const isSat = dayOfWeek === 6;
+
+                return (
+                  <div 
+                    key={d} 
+                    className={`day-cell ${isSun ? "sun" : ""} ${isSat ? "sat" : ""}`}
+                  >
+                    {d}
+                  </div>
+                );
+              })}
             </div>
 
             {/* 사원별 근무 데이터 */}
