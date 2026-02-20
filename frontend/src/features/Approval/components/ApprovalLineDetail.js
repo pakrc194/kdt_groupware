@@ -225,15 +225,19 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRo
         <div className='aprv-stamp-line'>
             {lineData && lineData.map((v, k) => {
                 const isDone = v.aprvPrcsDt != null && v.aprvPrcsDt !== "";
-                
-                // 타입 판별 (DRFT: 기안, ATRZ: 결재, REF: 참조)
+                const isRejected = v.aprvPrcsStts === "REJECTED"; // 반려 상태 확인
+
+                // 타입 판별
                 let typeClass = "";
                 if (v.roleCd.includes("DRFT")) typeClass = "type-drft";
                 else if (v.roleCd.includes("REF")) typeClass = "type-ref";
                 else typeClass = "type-atrz";
 
                 return (
-                    <div className={`aprv-stamp-item ${typeClass} ${isDone ? 'is-done' : ''}`} key={k}>
+                    <div 
+                        className={`aprv-stamp-item ${typeClass} ${isDone ? 'is-done' : ''} ${isRejected ? 'is-rejected' : ''}`} 
+                        key={k}
+                    >
                         {/* 1. 직책 */}
                         <div className="aprv-stamp-role">
                             {roleMap[v.roleCd]}

@@ -6,7 +6,7 @@ const AttendContent = ({docRole="PERSONAL", title = "", idList = [], attendList 
 
     // 1. 개인(PERSONAL) 모드일 때만 데이터를 ID별로 묶음
     const matchedData = useMemo(() => {
-        if (docRole !== "PERSONAL") return []; // 개인 모드가 아니면 빈 배열
+        //if (docRole !== "PERSONAL") return []; // 개인 모드가 아니면 빈 배열
         if (!idList || !Array.isArray(idList)) return [];
 
         const safeDuty = Array.isArray(dutyList) ? dutyList.flat() : [];

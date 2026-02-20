@@ -219,7 +219,7 @@ const ApprovalDetail = () => {
 
     const fn_warnSched = () => {
         setDocRole(inputList.find(v=>v.docInptNm==="docRole")?.docInptVl);
-        //if(!docRole) return;
+        if(!docRole) return;
 
         const schedType = inputList.find(v=>v.docInptNm==="docSchedType")?.docInptVl;
         const docStart = inputList.find(v=>v.docInptNm==="docStart")?.docInptVl.replaceAll("-","");
@@ -280,19 +280,19 @@ const ApprovalDetail = () => {
             })
         }
 
-            fetcher("/gw/aprv/AprvSchedList",{
-                method:"POST",
-                body:{
-                    role : docRole,
-                    ids : ids,
-                    deptId: deptId,
-                    docStart:docStart,
-                    docEnd:docEnd
-                }
-            }).then(res=>{
-                console.log("fetch AprvSchedList",res)
-                setSchedList(res)
-            })
+        fetcher("/gw/aprv/AprvSchedList",{
+            method:"POST",
+            body:{
+                role : docRole,
+                ids : ids,
+                deptId: deptId,
+                docStart:docStart,
+                docEnd:docEnd
+            }
+        }).then(res=>{
+            console.log("fetch AprvSchedList",res)
+            setSchedList(res)
+        })
         //}
     }
 
@@ -461,7 +461,7 @@ const ApprovalDetail = () => {
             {/* 하단 고정 버튼 바 */}
             <div className="aprv-detail-actions">
                 <Button variant='secondary' onClick={fn_list}>목록으로</Button>
-                {sideId === "rejectBox" || sideId === "tempBox" && <Button variant='primary' onClick={fn_redraft}>재기안 작성</Button>}
+                {(sideId === "rejectBox" || sideId === "tempBox") && <Button variant='primary' onClick={fn_redraft}>재기안 작성</Button>}
                 {(!isApproved && aprvDocDetail.drftEmpId == myInfo.empId) && <Button variant='danger' onClick={fn_drftCancel}>기안 취소</Button>}
             </div>
         </div>
