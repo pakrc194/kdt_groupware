@@ -199,8 +199,11 @@ const Layout = () => {
     <div className="container">
       <header className="header">
         <div className="logo">
-          <Link to={"/home/dashboard"} className="nav-icon">
-            Groupware
+          <Link to={"/home/dashboard"} className="logo-header-container">
+            <div className="logo-top-line">
+               <span className="logo-the">THE</span>
+            </div>
+        <div className="logo-main-name">HYUNJIN</div>
           </Link>
         </div>
         <nav className="nav">
@@ -269,7 +272,7 @@ const Layout = () => {
               }
             }}
           >
-            🏃 퇴근하기
+            퇴근
           </button>
           <button className={"nav-icon"} onClick={fn_logout}>
             로그아웃

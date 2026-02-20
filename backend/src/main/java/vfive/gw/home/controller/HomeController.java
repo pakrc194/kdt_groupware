@@ -32,7 +32,6 @@ public class HomeController {
 	
 	@Resource
 	UpdateEmpProfService updateEmpProfService;
-
 	
 	@PostMapping("test")
 	public Map<String, Object> test(@RequestBody Map<String, Object> body) {

@@ -117,7 +117,7 @@ public class BoardController {
             // A. NTF 테이블 (알림 마스터) 생성
             NtfRequest ntfReq = new NtfRequest();
             ntfReq.setNtfType("IMPORTANT");
-            ntfReq.setTitle("📢 새로운 공지사항");
+            ntfReq.setTitle("📢새로운 공지사항");
             ntfReq.setBody(board.getTitle());      // 글 제목을 알림 본문으로
             ntfReq.setLinkUrl("/board/important?id="+board.getBoardId());     // 클릭 시 이동할 리액트 경로
             ntfReq.setSrcType("BOARD");
@@ -147,7 +147,18 @@ public class BoardController {
     public ResponseEntity<?> updateBoardWithFile(
             @RequestPart("board") BoardPrvc board,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        
+    	
+    	// 1. 삭제할 파일이 있다면 처리 (메모리에 보관했던 ID들)
+        if (board.getDeletedFileIds() != null && !board.getDeletedFileIds().isEmpty()) {
+            for (Integer fileId : board.getDeletedFileIds()) {
+                BoardPrvc fileItem = boardMapper.getFileById(fileId);
+                if (fileItem != null) {
+                    delFile(fileItem.getSavedPath()); // 로컬 파일 삭제
+                    boardMapper.deleteFile(fileId);   // DB 삭제
+                }
+            }
+        }
+    	
         // 1. 기본 정보 수정
         int result = boardMapper.update(board);
         
