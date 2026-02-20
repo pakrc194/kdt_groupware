@@ -28,14 +28,12 @@ public class CompDashController {
 	@GetMapping("hrEmpList")
 	List<CompHRDTO> hrEmpList() {
 		List<CompHRDTO> res = mapper.hrEmpList();
-//		System.out.println("인사변동");
 		return res;
 	}
 	
 	@GetMapping("hrHistList")
 	List<HRChangeHistDTO> hrHistList() {
 		List<HRChangeHistDTO> res = mapper.hrHistList();
-//		System.out.println("승진, 팀이동 "+res);
 		return res;
 	}
 	
@@ -43,7 +41,6 @@ public class CompDashController {
 	@GetMapping("accessDelete")
 	List<AccessDeleteDTO> accessDeleteList() {
 		List<AccessDeleteDTO> res = mapper.accessDeleteList();
-		System.out.println("권한 삭제 이력 "+res);
 		return res;
 	}
 	
@@ -51,7 +48,6 @@ public class CompDashController {
 	@GetMapping("deleteSchedLog")
 	List<CompSchedDTO> schedList() {
 		List<CompSchedDTO> res = mapper.schedList();
-//		System.out.println("일정 삭제 기록 "+res);
 		return res;
 	}
 	
@@ -59,7 +55,6 @@ public class CompDashController {
 	@GetMapping("aprvPrcs")
 	List<AprvPrcsDTO> aprvPrcsList() {
 		List<AprvPrcsDTO> res = mapper.aprvPrcsList();
-		System.out.println("결재처리 : "+res);
 		return res;
 	}
 	
@@ -70,7 +65,6 @@ public class CompDashController {
 			@RequestParam("date") String date
 			) {
 		List<DashDTO> res = mapper.dashTeamEmpList(dept, date);
-		System.out.println(res);
 		return res;
 	}
 	

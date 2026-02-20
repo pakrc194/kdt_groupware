@@ -42,7 +42,6 @@ public class AccessController {
 			@RequestParam(value = "jbttl") int jbttl,
 			@RequestParam(value = "dept") int dept
 			) {
-		System.out.println("유저 권한 리스트");
 		return provider.getContext().getBean(AccessFilterList.class).execute(jbttl, dept);
 	}
 	
@@ -51,7 +50,6 @@ public class AccessController {
 	
 	@PostMapping("/addAccess")
 	Object addAccess(@RequestBody AddAccessEmpower aae) {
-		System.out.println("권한 추가 "+aae);
 		return empowerMapper.addAccessEmpower(aae);
 	}
 	
@@ -60,9 +58,7 @@ public class AccessController {
 	
 	@PostMapping("/delAccess")
 	int accessEmpowerDelete(@RequestBody AccessDeleteDTO dto) {
-		System.out.println(dto);
 		empowerListMapper.accessDeleteLog(dto);
 		return empowerListMapper.accessEmpowerDelete(dto);
-//		return 0;
 	}
 }

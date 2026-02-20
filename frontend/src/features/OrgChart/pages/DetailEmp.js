@@ -16,7 +16,6 @@ function DetailEmp() {
         fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=11`)
         .then(dd => {
             setModify(dd)
-            console.log(dd)
         })
         .catch(e => console.log(e))
 
@@ -24,7 +23,6 @@ function DetailEmp() {
         fetcher(`/gw/orgChart/access?id=${myInfo.deptId}&type=DEPT&section=ORGCHART&accessId=13`)
         .then(dd => {
             setDeact(dd)
-            console.log(dd)
         })
         .catch(e => console.log(e))
 
@@ -65,7 +63,13 @@ function DetailEmp() {
                     }
                     <tr>
                         <td style={styles.th}>사진</td>
-                        <td style={styles.td}>{data.EMP_PHOTO || '-'}</td>
+                        <td style={styles.td}>
+                        <img style={{height: '100px'}}
+                        src={`http://192.168.0.49:8080/uploads/${data.EMP_PHOTO}`}
+                        alt="프로필"
+                        />
+                        </td>
+                        {/* <td style={styles.td}>{data.EMP_PHOTO || '-'}</td> */}
                     </tr>
                     <tr>
                         <td style={styles.th}>이름</td>

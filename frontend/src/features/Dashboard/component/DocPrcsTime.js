@@ -3,6 +3,7 @@ import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'rec
 import { TimeDiff } from './TimeDiff';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
 import { formatToYYMMDD } from '../../../shared/func/formatToDate';
+import { Link } from 'react-router-dom';
 
 function DocPrcsTime({docPrc}) {
   const comp = docPrc.filter(dd => dd.aprvDocStts !== "PENDING" && dd.roleCd === "DRFT").length;
@@ -206,7 +207,7 @@ function DocPrcsTime({docPrc}) {
                         {filteredDocs.length > 0 ? (
                             filteredDocs.map((dd, index) => (
                                 <tr key={index}>
-                                    <td style={styles.td}>{dd.aprvDocTtl}</td>
+                                    <td style={styles.td}><Link to={`/approval/drftBox/detail/${dd.aprvDocId}`} style={styles.link}>{dd.aprvDocTtl}</Link></td>
                                     <td style={styles.td}>
                                         {getStatusLabel(dd.aprvDocStts)}
                                     </td>
@@ -275,7 +276,11 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: "14px",
     cursor: "pointer"
-}
+},
+link: {
+        color: '#007bff',
+        textDecoration: 'none',
+    },
 
 };
 

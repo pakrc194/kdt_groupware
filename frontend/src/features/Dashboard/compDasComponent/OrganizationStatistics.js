@@ -39,8 +39,7 @@ function OrganizationStatistics({ inOut }) {
                             style={{ ...styles.subTitle, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}
                             onClick={() => toggleDept(dept)}
                         >
-                            <span>{dept} ({list.length}명)</span>
-                            <span>{isExpanded ? "▲" : "▼"}</span>
+                            <span>{dept} ({list.length}명) {isExpanded ? "▲" : "▼"}</span>
                         </div>
 
                         {/* 직원 테이블 */}
@@ -56,12 +55,12 @@ function OrganizationStatistics({ inOut }) {
                                 </thead>
                                 <tbody>
                                     {list
-                                        .sort((a, b) => new Date(a.empJncmpYmd) - new Date(b.empJncmpYmd))
+                                        .sort((a, b) => new Date(b.empJncmpYmd) - new Date(a.empJncmpYmd))
                                         .map(data => (
                                             <tr key={data.empId}>
                                                 <td style={styles.td}>{data.empSn}</td>
                                                 <td style={styles.td}>
-                                                    <Link to={`detail/${data.empId}`} style={styles.link}>{data.empNm}</Link>
+                                                    <Link to={`/dashboard/detail/${data.empId}`} style={styles.link}>{data.empNm}</Link>
                                                 </td>
                                                 <td style={styles.td}>{data.jbttlNm}</td>
                                                 <td style={styles.td}>{data.empJncmpYmd?.split(" ")[0]}</td>

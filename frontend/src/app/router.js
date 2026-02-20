@@ -61,7 +61,7 @@ export default function AppRouter() {
           <Route path="orgChart/:sideId/detail/:id" element={<DetailEmp />} />
           <Route path="dashboard/:sideId" element={<DashboardMain />} />
           <Route path="dashboard/:sideId/:refId" element={<DashboardMain />} />
-          <Route path="dashboard/:sideId/detail/:id" element={<DetailEmp />} />
+          <Route path="dashboard/detail/:id" element={<DetailEmp />} />
         </Route>
       </Route>
     </Routes>

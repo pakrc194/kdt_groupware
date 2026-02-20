@@ -7,11 +7,11 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
 
   // 각 섹션 접힘 상태
   const [expandedSections, setExpandedSections] = useState({
-    join: true,
-    retire: true,
-    jobChange: true,
-    deptChange: true,
-    nameChange: true,
+    join: false,
+    retire: false,
+    jobChange: false,
+    deptChange: false,
+    nameChange: false,
   });
 
   const toggleSection = (key) => {
@@ -31,7 +31,7 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
           style={styles.subTitle}
           onClick={() => toggleSection("join")}
         >
-          입사 및 입사 예정일 ({active.length}) {expandedSections.join ? "▲" : "▼"}
+          입사 및 입사 예정 ({active.length}) {expandedSections.join ? "▲" : "▼"}
         </h3>
         {expandedSections.join && (
           <div style={styles.tableWrapper}>
@@ -47,12 +47,12 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
               <tbody>
                 {active.length > 0 ? (
                   active
-                    .sort((a, b) => new Date(a.empJncmpYmd) - new Date(b.empJncmpYmd))
+                    .sort((a, b) => new Date(b.empJncmpYmd) - new Date(a.empJncmpYmd))
                     .map((data) => (
                       <tr key={data.empId}>
                         {/* <td style={styles.td}>{data.empNm}</td> */}
                         <td style={styles.td}>
-                          <Link to={`detail/${data.empId}`} style={styles.link}>{data.empNm}</Link>
+                          <Link to={`/dashboard/detail/${data.empId}`} style={styles.link}>{data.empNm}</Link>
                         </td>
                         <td style={styles.td}>{data.deptName}</td>
                         <td style={styles.td}>{data.jbttlNm}</td>
@@ -92,12 +92,12 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
               <tbody>
                 {retired.length > 0 ? (
                   retired
-                    .sort((a, b) => new Date(a.empRsgntnYmd) - new Date(b.empRsgntnYmd))
+                    .sort((a, b) => new Date(b.empRsgntnYmd) - new Date(a.empRsgntnYmd))
                     .map((data) => (
                       <tr key={data.empId}>
                         {/* <td style={styles.td}>{data.empNm}</td> */}
                         <td style={styles.td}>
-                          <Link to={`detail/${data.empId}`} style={styles.link}>{data.empNm}</Link>
+                          <Link to={`/dashboard/detail/${data.empId}`} style={styles.link}>{data.empNm}</Link>
                         </td>
                         <td style={styles.td}>{data.deptName}</td>
                         <td style={styles.td}>{data.jbttlNm}</td>
@@ -139,11 +139,11 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                 {changeEmpData.filter((d) => d.beforeJbttlId !== d.afterJbttlId).length > 0 ? (
                   changeEmpData
                     .filter((d) => d.beforeJbttlId !== d.afterJbttlId)
-                    .sort((a, b) => new Date(a.changeDate) - new Date(b.changeDate))
+                    .sort((a, b) => new Date(b.changeDate) - new Date(a.changeDate))
                     .map((data) => (
                       <tr key={data.historyId}>
                         <td style={styles.td}>
-                          <Link to={`detail/${data.histEmpId}`} style={styles.link}>{data.histEmpNm}</Link>
+                          <Link to={`/dashboard/detail/${data.histEmpId}`} style={styles.link}>{data.histEmpNm}</Link>
                         </td>
                         <td style={styles.td}>{data.bDeptName}</td>
                         <td style={styles.td}>{data.bJbttlNm}</td>
@@ -186,11 +186,11 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                 {changeEmpData.filter((d) => d.beforeDeptId !== d.afterDeptId).length > 0 ? (
                   changeEmpData
                     .filter((d) => d.beforeDeptId !== d.afterDeptId)
-                    .sort((a, b) => new Date(a.changeDate) - new Date(b.changeDate))
+                    .sort((a, b) => new Date(b.changeDate) - new Date(a.changeDate))
                     .map((data) => (
                       <tr key={data.historyId}>
                         <td style={styles.td}>
-                          <Link to={`detail/${data.histEmpId}`} style={styles.link}>{data.histEmpNm}</Link>
+                          <Link to={`/dashboard/detail/${data.histEmpId}`} style={styles.link}>{data.histEmpNm}</Link>
                         </td>
                         <td style={styles.td}>{data.bDeptName}</td>
                         <td style={styles.td}>{data.aDeptName}</td>
@@ -233,11 +233,11 @@ function PersonnelChangeStats({ inOut, changeEmpData }) {
                 {changeEmpData.filter((d) => d.beforeNm !== d.afterNm).length > 0 ? (
                   changeEmpData
                     .filter((d) => d.beforeNm !== d.afterNm)
-                    .sort((a, b) => new Date(a.changeDate) - new Date(b.changeDate))
+                    .sort((a, b) => new Date(b.changeDate) - new Date(a.changeDate))
                     .map((data) => (
                       <tr key={data.historyId}>
                         <td style={styles.td}>
-                          <Link to={`detail/${data.histEmpId}`} style={styles.link}>{data.afterNm}</Link>
+                          <Link to={`/dashboard/detail/${data.histEmpId}`} style={styles.link}>{data.afterNm}</Link>
                         </td>
                         <td style={styles.td}>{data.beforeNm}</td>
                         <td style={styles.td}>{data.bDeptName}</td>

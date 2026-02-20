@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { getStatusLabel } from '../../../shared/func/formatLabel';
 import { formatToYYMMDD } from "../../../shared/func/formatToDate";
+import { Link } from "react-router-dom";
 
 function ApprovalProcessHistory({approval}) {
     
@@ -86,10 +87,10 @@ function ApprovalProcessHistory({approval}) {
                 getYear(dd.aprvDocDrftDt) === selectedYear &&
                 getMonth(dd.aprvDocDrftDt) === selectedMonth
             )
-            .sort((a, b) => parseInt(a.aprvDocDrftDt) - parseInt(b.aprvDocDrftDt));
+            .sort((a, b) => parseInt(b.aprvDocDrftDt) - parseInt(a.aprvDocDrftDt));
     }, [groupedData, selectedYear, selectedMonth]);
 
-    
+    console.log(filteredDocs)
 
     return (
         <div>
@@ -150,7 +151,7 @@ function ApprovalProcessHistory({approval}) {
             {filteredDocs.length > 0 ? (
                 filteredDocs.map((data, index) => (
                     <tr key={index}>
-                        <td style={styles.td}>{data.aprvDocTtl}</td>
+                        <td style={styles.td}><Link to={`/approval/drftBox/detail/${data.aprvDocId}`} style={styles.link}>{data.aprvDocTtl}</Link></td>
                         <td style={styles.td}>{data.draftEmpNm}</td>
                         <td style={styles.td}>{data.docFormNm}</td>
                         <td style={styles.td}>{formatToYYMMDD(data.aprvDocDrftDt)}</td>
@@ -249,7 +250,11 @@ const styles = {
     border: "1px solid #ccc",
     fontSize: "14px",
     cursor: "pointer"
-}
+},
+link: {
+        color: '#007bff',
+        textDecoration: 'none',
+    },
 
 };
 

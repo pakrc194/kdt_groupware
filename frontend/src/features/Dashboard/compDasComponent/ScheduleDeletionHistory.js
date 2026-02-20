@@ -62,7 +62,7 @@ function ScheduleDeletionHistory({ deleteSchedLog }) {
                 getYear(dd.schedStartDate) === selectedYear &&
                 getMonth(dd.schedStartDate) === selectedMonth
             )
-            .sort((a, b) => parseInt(b.schedStartDate) - parseInt(a.schedStartDate));
+            .sort((a, b) => new Date(b.schedDeleteDate) - new Date(a.schedDeleteDate));
     }, [deleteSchedLog, selectedYear, selectedMonth]);
 
     return (

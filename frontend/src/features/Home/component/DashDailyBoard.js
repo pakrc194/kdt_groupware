@@ -176,7 +176,7 @@ function DashDailyBoard(props) {
                         </div>
                         {s.schedLoc && (
                           <div>
-                            <strong>위치:</strong> {s.schedLoc}
+                            <strong>위치:</strong> {s.schedLocNm}
                           </div>
                         )}
                         {type === "DEPT" && (
@@ -186,7 +186,7 @@ function DashDailyBoard(props) {
                         )}
                         {type === "PERSONAL" && (
                           <div>
-                            <strong>담당자:</strong> {s.schedEmpId}
+                            <strong>담당자:</strong> {s.schedEmpNm}
                           </div>
                         )}
                         <div>

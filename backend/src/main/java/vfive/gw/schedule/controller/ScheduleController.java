@@ -1,12 +1,8 @@
 package vfive.gw.schedule.controller;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.SelectKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
@@ -148,7 +143,6 @@ public class ScheduleController {
 			@RequestParam("dept") String deptId,
 			@RequestParam("pers") String persId) {
 		
-		System.out.println("일정 삭제 알림전송 "+ id+", "+empId+", "+title+", "+type);
 		String now = java.time.LocalDateTime.now()
 					.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 		Sched sc = new Sched();
@@ -171,43 +165,33 @@ public class ScheduleController {
         
         // B. NTF_RCP 테이블 (수신자 목록) 생성
         if (type.equals("COMPANY")) {
-        	System.out.println("회사 일정");
         	List<Integer> allEmpIds = schedMapper.selectAllEmpIds(); 
         	
         	if (allEmpIds != null && !allEmpIds.isEmpty()) {
-        		System.out.println("전체 사원 알림");
         		// NtfMapper의 insertReceivers 호출
         		ntfMapper.insertReceivers(ntfReq.getNtfId(), allEmpIds, now);
         	}
         }
         else if (type.equals("DEPT")) {
-        	System.out.println("팀 일정");
         	List<Integer> teamEmpIds = schedMapper.selectTeamEmpIds(sc);
         	
         	if (teamEmpIds != null && !teamEmpIds.isEmpty()) {
-        		System.out.println("팀에게 알림");
         		// NtfMapper의 insertReceivers 호출
         		ntfMapper.insertReceivers(ntfReq.getNtfId(), teamEmpIds, now);
         	}
         }
         else if (type.equals("PERSONAL")) {
-        	System.out.println("개인 일정");
         	List<Integer> persEmpIds = schedMapper.selectPersEmpIds(sc);
         	
         	if (persEmpIds != null && !persEmpIds.isEmpty()) {
-        		System.out.println("개인에게 알림");
         		// NtfMapper의 insertReceivers 호출
         		ntfMapper.insertReceivers(ntfReq.getNtfId(), persEmpIds, now);
         	}
         }
         ResponseEntity.ok(Map.of("success", true,"schedId", id));
-
-        
-        
 		
 		sc.setSchedId(id);
 		return schedMapper.sched_delete(sc);
-//		return 1;
 	}
 	
 	// 업무 지시 중 일정이 있는 팀 조회
@@ -226,18 +210,18 @@ public class ScheduleController {
 	List<Integer> sechedLocList(
 			@PathVariable("sdate") String sdate,
 			@PathVariable("edate") String edate) {
-		System.out.println("장소 일정");
 		Sched sc = new Sched();
 		sc.setSchedStartDate(sdate);
 		sc.setSchedEndDate(edate);
-		return schedMapper.sechedLocList(sc);
+		List<Integer> res = schedMapper.sechedLocList(sc);
+		System.out.println("장소 "+res);
+		return res;
 	}
 	
 	// 알림 전송용
 	@PostMapping("/instruction/alert")
     public ResponseEntity<?> createBoard(
     		@RequestBody Sched sc) {
-        System.out.println("알림전송 "+ sc.getSchedType());
         String now = java.time.LocalDateTime.now()
         		.format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         
@@ -258,21 +242,17 @@ public class ScheduleController {
         
         // B. NTF_RCP 테이블 (수신자 목록) 생성
         if (sc.getSchedType().equals("COMPANY")) {
-        	System.out.println("회사 일정");
         	List<Integer> allEmpIds = schedMapper.selectAllEmpIds(); 
         	
         	if (allEmpIds != null && !allEmpIds.isEmpty()) {
-        		System.out.println("전체 사원 알림");
         		// NtfMapper의 insertReceivers 호출
         		ntfMapper.insertReceivers(ntfReq.getNtfId(), allEmpIds, now);
         	}
         }
         else if (sc.getSchedType().equals("DEPT")) {
-        	System.out.println("팀 일정");
         	List<Integer> teamEmpIds = schedMapper.selectTeamEmpIds(sc);
         	
         	if (teamEmpIds != null && !teamEmpIds.isEmpty()) {
-        		System.out.println("팀에게 알림");
         		// NtfMapper의 insertReceivers 호출
         		ntfMapper.insertReceivers(ntfReq.getNtfId(), teamEmpIds, now);
         	}
