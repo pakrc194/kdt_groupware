@@ -27,18 +27,20 @@
 
 .meta-info {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    font-size: 14px;
-    color: #666;
-    background: #f9f9f9;
-    padding: 12px;
-    border-radius: 4px;
+    justify-content: space-between; /* 왼쪽(작성자, 날짜)과 오른쪽(조회수) 분리 */
+    align-items: center;
+    background: #f8f9fa; /* 좀 더 부드러운 배경색 */
+    padding: 15px 20px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    margin-top: 15px;
+    color: #495057;
 }
 
 .meta-info span {
     display: flex;
     align-items: center;
+    gap: 5px;
 }
 
 .meta-info a {
@@ -49,9 +51,9 @@
 }
 
 .meta-left{
-    display: flex;
+   display: flex;
     align-items: center;
-
+    gap: 50px;
 }
 
 
@@ -67,7 +69,7 @@
 }
 
 .views{
-    margin-left: 550px;
+    margin-left: 0px;
 }
 
 

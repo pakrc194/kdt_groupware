@@ -38,7 +38,7 @@ export const SIDE_CONFIG = {
       { id: "public", name: "공용 게시판" },
       { id: "HR", name: "인사관리 게시판" , access:"인사관리 게시판 열람"  },
       { id: "FA", name: "시설자재 게시판" , access:"시설자재 게시판 열람"},
-      { id: "SA", name: "안전관리 게시판" , access:"안전관리 게시판 열람"},
+      { id: "SO", name: "안전관리 게시판" , access:"안전관리 게시판 열람"},
       { id: "FO", name: "식품 게시판" , access:"식품 게시판 열람"},
       { id: "BU", name: "뷰티 게시판" , access:"뷰티 게시판 열람"},
       { id: "WF", name: "여성패션 게시판" , access:"여성패션 게시판 열람"},

@@ -133,7 +133,7 @@ function BoardList(props) {
 
     {/* 오른쪽: 글쓰기 버튼 */}
     <div className={boardst.actionGroup}>
-        {(sideId !== 'important' || myDept === '지점장') && (
+        {(sideId !== 'important' || myDept === '지점장')&& sideId !== 'MyPosts' && (
             <button className={boardst.writBtn} onClick={() => props.goService('Insert')}>
                 글쓰기
             </button>
@@ -167,7 +167,6 @@ function BoardList(props) {
                                     <td 
                                         // onClick={() => goDetail(st.boardId)} 
                                         onClick={() => navigate(`?id=${st.boardId}`)} 
-                                        style={{ cursor: 'pointer', textAlign: 'left', paddingLeft: '20px' }}
                                     >
                                         {st.title}
                                     </td>
@@ -191,7 +190,7 @@ function BoardList(props) {
                     
 
             <div className={boardst.footerArea} style={{ marginTop: '15px', display: 'flex', justifyContent: 'flex-end' }}>
-                {(sideId !== 'important' || myDept === '지점장') && (
+                {(sideId !== 'important' || myDept === '지점장')&& sideId !== 'MyPosts' && (
                     <button className={boardst.writBtn } onClick={() => props.goService('Insert')}>
                         글쓰기
                     </button>
