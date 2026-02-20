@@ -133,6 +133,11 @@
   background-color: #f5f5f5;
   color: #757575;
 }
+.duty-OD,
+.duty-당직 {
+  background-color: #f9ffc6;
+  color: #757575;
+}
 
 /* --- 하단 실제 근태 기록 (한 줄 정렬 & 배경색 제거) --- */
 .atdc-entry-mini {

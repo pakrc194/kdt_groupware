@@ -32,8 +32,6 @@ const DutyForm = ({dutyId}) => {
   const loadDutyView = async () => {
     try {
       setIsLoading(true);
-      // 백엔드 trgtYmd 형식에 맞춰 '-' 제거 (2026-02 -> 202602)
-      const ymd = selectedMonth.replace("-", "");
 
       // 백엔드 Controller의 @GetMapping("view") 호출
       const data = await fetcher(`/gw/duty/detail?dutyId=${dutyId}`);
@@ -135,17 +133,6 @@ const DutyForm = ({dutyId}) => {
     ));
   };
 
-  // 한 달 이동 로직
-  const changeMonth = (offset) => {
-    const [year, month] = selectedMonth.split("-").map(Number);
-    // Date 객체를 이용해 계산 (말일 계산 오류 방지)
-    const newDate = new Date(year, month - 1 + offset, 1);
-    const newYear = newDate.getFullYear();
-    const newMonth = String(newDate.getMonth() + 1).padStart(2, "0");
-
-    setSelectedMonth(`${newYear}-${newMonth}`);
-  };
-
   return (
     <div className="duty-detail-page">
       {/* 상단 헤더 영역 */}
@@ -162,26 +149,7 @@ const DutyForm = ({dutyId}) => {
 
       {/* 컨트롤 영역 */}
       <div className="page-controls">
-        <div className="controls-left">
-          <div className="month-picker-wrapper">
-            {/* 이전달 버튼 */}
-            <button className="btn-month-nav" onClick={() => changeMonth(-1)}>
-              &lt;
-            </button>
 
-            <input
-              type="month"
-              className="control-select"
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(e.target.value)}
-            />
-
-            {/* 다음달 버튼 */}
-            <button className="btn-month-nav" onClick={() => changeMonth(1)}>
-              &gt;
-            </button>
-          </div>
-        </div>
         <div className="controls-right">
           <div className="info-text">
             {dutyData.master
