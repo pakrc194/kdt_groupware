@@ -165,7 +165,8 @@ function BoardList(props) {
                                     {/* 번호 계산: 전체 개수 기반 또는 페이지 정보 기반 */}
                                     <td>{pInfo ? pInfo.start + k + 1 : k + 1}</td>
                                     <td 
-                                        onClick={() => goDetail(st.boardId)} 
+                                        // onClick={() => goDetail(st.boardId)} 
+                                        onClick={() => navigate(`?id=${st.boardId}`)} 
                                         style={{ cursor: 'pointer', textAlign: 'left', paddingLeft: '20px' }}
                                     >
                                         {st.title}

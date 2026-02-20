@@ -151,9 +151,9 @@
 
 /* 활성화된 페이지 스타일 (파란색 배경) */
 .pageBtn.active {
-    background-color: #004792; /* 이미지와 유사한 진한 파란색 */
+    background-color: #4a90e2; /* 이미지와 유사한 진한 파란색 */
     color: #ffffff;
-    border-color: #004792;
+    border-color: #4a90e2;
     font-weight: bold;
 }
 
@@ -200,14 +200,14 @@
 
 .schBtn {
     padding: 0 15px;
-    background-color: #6c757d;
+    background-color: #4a90e2;
     color: white;
     cursor: pointer;
 }
 
 /* 글쓰기 버튼 스타일 수정 */
 .writBtn {
-    background-color: #007bff;
+    background-color: #4a90e2;
     color: white;
     width: 100px;
     height: 38px;            /* 검색창과 높이 통일 */

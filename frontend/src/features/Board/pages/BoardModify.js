@@ -10,10 +10,17 @@ function BoardModify(props){
     const [newFiles, setNewFiles] = useState([]);
     const [oldFiles, setOldFiles] = useState([]);
     const [isTop , setIsTop ] = useState(false);
+    const [deletedFileIds, setDeletedFileIds] = useState([]);//삭제할 ID 저장
 
     // 1. 사원 정보 가져오기 (에러 방지를 위해 필수)
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     const empSn = myInfo?.empSn;
+
+    //파일 용량,개수 제한
+    const MAX_FILE_COUNT = 5; // 최대 5개
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
+
+
 
     useEffect(() => {
         console.log("수정할 게시글 ID :", props.boardId);
@@ -29,6 +36,29 @@ function BoardModify(props){
                 setOldFiles(data || []);
             })
         }, []);
+
+    const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);    
+
+    // 1. 개수 제한 검사 (기존 파일 + 새 파일)
+    const totalCount = oldFiles.length + selectedFiles.length;
+    if (totalCount > MAX_FILE_COUNT) {
+        alert(`파일은 최대 ${MAX_FILE_COUNT}개까지만 업로드 가능합니다.`);
+        e.target.value = ""; // 선택 초기화
+        return;
+    }
+
+    // 2. 개별 용량 제한 검사
+    for (let file of selectedFiles) {
+        if (file.size > MAX_FILE_SIZE) {
+            alert(`파일("${file.name}")의 용량이 너무 큽니다. 10MB 이하만 가능합니다.`);
+            e.target.value = "";
+            return;
+        }
+    }
+
+    setNewFiles(selectedFiles);
+};
 
 
     const deletedFile =(fileId)=>{
@@ -47,7 +77,16 @@ function BoardModify(props){
         }
     }    
 
-
+    // 파일 삭제 버튼 클릭 시 (DB 통신 없이 UI와 메모리만 업데이트)
+    const handleFileDeleteClick = (fileId) => {
+        if (window.confirm("파일을 삭제하시겠습니까?")) {
+            // 1. 화면 목록에서 제거 (사용자에게 삭제된 것처럼 보여줌)
+            setOldFiles(oldFiles.filter(f => f.fileId !== fileId));
+            
+            // 2. 삭제할 ID를 바구니에 담기
+            setDeletedFileIds(prev => [...prev, fileId]);
+        }
+    };
 
 
     const ModifyBut = () => {
@@ -56,7 +95,8 @@ function BoardModify(props){
             title: title,
             content: content,
             isTop: isTop,
-            boardId: props.boardId
+            boardId: props.boardId,
+            deletedFileIds: deletedFileIds
         }
         console.log("수정 데이터 확인",'ModifyBut')
 
@@ -130,7 +170,7 @@ function BoardModify(props){
                                 <li key={file.fileId} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: '#fff', border: '1px solid #eee', marginBottom: '5px', borderRadius: '4px' }}>
                                     <span style={{ fontSize: '14px' }}>{file.originName}</span>
                                     <button 
-                                        onClick={() => deletedFile(file.fileId)}
+                                        onClick={() => handleFileDeleteClick(file.fileId)}
                                         style={{ padding: '2px 8px', backgroundColor: '#ffeded', color: '#e74c3c', border: '1px solid #ffcfcf', borderRadius: '3px', cursor: 'pointer', fontSize: '12px' }}
                                     >
                                         삭제
@@ -145,7 +185,7 @@ function BoardModify(props){
                         <input 
                             type="file" 
                             multiple 
-                            onChange={(e) => setNewFiles(Array.from(e.target.files))}
+                            onChange={handleFileChange}
                             style={{ fontSize: '14px' }}
                         />
                     </div>

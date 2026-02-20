@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../../shared/components/Button";
 import { fetcher } from "../../../shared/api/fetcher";
 import "../css/LoginMain.css";
+import loginImg from '../../../images/loginMain.jpg';
 
 function LoginMain(props) {
   const [empSn, setEmpSn] = useState("");
@@ -55,10 +56,20 @@ function LoginMain(props) {
   };
 
   return (
+      
     <div className="login-wrapper">
+      <div className="login-image-side">
+                <img src={loginImg} alt="Login Background" />
+            </div>
+
+
       <div className="login-container">
         <div className="login-card">
-          <div className="login-logo">Groupware</div>
+          <div className="ogin-logo-area"></div>
+          <div className="logo-top-line">
+            <span className="logo-the">THE</span>
+          </div>
+          <div className="logo-main-name">HYUNJIN</div><br/><br/><br/><br/><br/>
           
           <div className="login-form">
             <div className="login-input-group">

@@ -122,7 +122,7 @@ function BoardDetail(props) {
 
             {/* 하단 버튼 영역 */}
             <div className="button-group" style={{display:'flex', justifyContent:'center', gap:'10px', marginTop:'40px'}}>
-                <button className="detail_button list" onClick={() => props.goService('list')} style={{backgroundColor:'#6c757d', color:'#fff', border:'none', padding:'10px 25px', borderRadius:'4px', cursor:'pointer'}}>
+                <button className="detail_button list" onClick={handleList} style={{backgroundColor:'#6c757d', color:'#fff', border:'none', padding:'10px 25px', borderRadius:'4px', cursor:'pointer'}}>
                     목록으로
                 </button>
                 
