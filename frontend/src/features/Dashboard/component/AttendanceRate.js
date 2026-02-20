@@ -31,7 +31,7 @@ function Attendance({ emp }) {
     }));
 
     const [expandedStatus, setExpandedStatus] = useState(
-        statusList.reduce((acc, cur) => ({ ...acc, [cur.code]: true }), {})
+        statusList.reduce((acc, cur) => ({ ...acc, [cur.code]: false }), {})
     );
 
     const toggleStatus = (code) => {
@@ -112,7 +112,7 @@ function Attendance({ emp }) {
                                                 <tr key={dd.empId}>
                                                     <td style={styles.td}>{dd.empSn}</td>
                                                     <td style={styles.td}>
-                                                        <Link to={`detail/${dd.empId}`} style={styles.link}>{dd.empNm}</Link>
+                                                        <Link to={`/dashboard/detail/${dd.empId}`} style={styles.link}>{dd.empNm}</Link>
                                                     </td>
                                                     <td style={styles.td}>{dd.jbttlNm}</td>
                                                 </tr>

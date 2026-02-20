@@ -6,7 +6,6 @@ import DocPrcsTime from '../component/DocPrcsTime';
 import { TimeDiff } from '../component/TimeDiff';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar } from 'recharts';
 import { getStatusLabel } from '../../../shared/func/formatLabel';
-
 import { useParams } from 'react-router-dom';
 import { formatToYYMMDD } from '../../../shared/func/formatToDate';
 

@@ -31,13 +31,11 @@ public class OrgChartController {
 	// 조직도
 	@GetMapping("list")
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> emplist() {	
-		System.out.println("전체사원");
 		return orgchartMapper.empList();
 	}
 	
 	@GetMapping("detail/{id}")
 	Map<Map<EmpPrvc, DeptInfo>, JbttlInfo> emp(@PathVariable("id") Integer id) {
-		System.out.println("사원 상세 정보");
 		EmpPrvc emp = new EmpPrvc();
 		emp.setEmpId(id);
 		
@@ -64,11 +62,7 @@ public class OrgChartController {
 	
 	// 검색
 	@GetMapping("empSch")
-//	List<Map<EmpPrvc, DeptInfo>> searchEmp(EmpSearchReq req) {
 	List<Map<Map<EmpPrvc, DeptInfo>, JbttlInfo>> searchEmp(EmpSearchReq req) {
-		System.out.println("검색 진입");
-		System.out.println(req.getSchFilter());
-	    System.out.println(req.getSchValue());
 		return orgchartMapper.searchEmp(req);
 	}
 	
@@ -81,54 +75,24 @@ public class OrgChartController {
 	// 사원 추가
 	@PostMapping("/register")
 	int registerEmp(@RequestBody EmpPrvc emp) {
-		System.out.println("계정 생성 시도 "+emp);
-//		emp.setEmpSnCnt(orgchartMapper.empSnCnt(emp));
 		return orgchartMapper.registerEmp(emp);
-//		return 1;
 	}
-	
-//	@Transactional
-//	public void insertEmployee(EmpDTO dto) {
-//
-//	    int retry = 0;
-//	    while (retry < 5) {
-//	        try {
-//	            // 다음 번호 조회 (MAX 기반 추천)
-//	            Integer nextNo = empMapper.selectNextEmpNo(dto.getDeptId());
-//	            dto.setEmpId(nextNo);
-//
-//	            empMapper.insertEmployee(dto);
-//	            return; // 성공하면 종료
-//
-//	        } catch (DuplicateKeyException e) {
-//	            retry++; // 중복이면 다시 시도
-//	        }
-//	    }
-//
-//	    throw new RuntimeException("사번 생성 실패 (중복 과다)");
-//	}
-
-	
+		
 	// 계정 정보 수정
 	@PostMapping("/modifyInfo")
 	int modifyEmp(@RequestBody EmpPrvc emp) {
-		System.out.println("계정 수정 시도 "+ emp);
 		return orgchartMapper.modifyEmp(emp);
-//		return 0;
 	}
 	
 	// 수정 정보 저장
 	@PostMapping("/modifyHist")
 	int modifyHist(@RequestBody HRChangeHistDTO dto) {
-		System.out.println("사원정보수정 히스토리 "+dto);
 		return orgchartMapper.modifyHist(dto);
-//		return 0;
 	}
 	
 	// 계정 비활성화
 	@PostMapping("/deactivate")
 	int deactivateEmp(@RequestBody EmpPrvc emp) {
-		System.out.println("계정 비활성화 시도 "+ emp);
 		return orgchartMapper.deactivateEmp(emp);
 	}
 	
@@ -144,7 +108,6 @@ public class OrgChartController {
 		dto.setAccessSection(section);	// 권한 확인 위치 (상단메뉴 중 하나)
 		dto.setAccessDetail(accessId);	// 상세 권한 ID
 		int ck = orgchartMapper.acccessDeptCk(dto);
-		System.out.println("권한 확인 "+ck+", "+dto);
 		
 		return ck;
 	}
