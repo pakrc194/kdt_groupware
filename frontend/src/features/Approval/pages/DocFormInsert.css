@@ -1,0 +1,121 @@
+.form-reg-container {
+    padding: 30px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.form-reg-container .form-reg-header {
+    max-width: 900px; /* 세로 정렬이므로 너비를 약간 줄여서 깔끔하게 조정 */
+    margin: 0 auto 25px auto;
+}
+
+.form-reg-container .breadcrumb {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.form-reg-container .form-section {
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #eaeaea;
+}
+
+.form-reg-container .section-subtitle {
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f1f3f5;
+    color: #333;
+}
+
+/* 세로 정렬을 위한 컨테이너 */
+.form-reg-container .form-vertical-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* 행 사이 간격 */
+}
+
+/* 행 단위 스타일: 라벨(왼쪽) + 입력창(오른쪽) */
+.form-reg-container .form-group-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.form-reg-container .form-group-row label {
+    width: 120px; /* 라벨 너비 고정 */
+    min-width: 120px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.form-reg-container .form-group-row input,
+.form-reg-container .form-group-row select {
+    flex: 1; /* 나머지 공간 다 차지 */
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    background-color: #fff;
+}
+
+.form-reg-container .section-title-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.form-reg-container .approval-line-viewer {
+    background: #fafafa;
+    border: 1px dashed #ced4da;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.form-reg-container .checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.form-reg-container .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #f1f3f5;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.form-reg-container .form-reg-footer {
+    max-width: 900px;
+    margin: 30px auto;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.form-reg-container .animated-fade {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
