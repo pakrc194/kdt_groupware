@@ -93,8 +93,6 @@ function AttendancePage() {
   return (
     <div className="attendance-page-container">
       <div className="calendar-container">
-        <h1>출퇴근 기록 (2026)</h1>
-
         <div className="calendar-controls">
           <button className="month-nav-btn" onClick={handlePrevMonth}>
             &lt;
@@ -125,6 +123,7 @@ function AttendancePage() {
             const duty = findDutyData(day); // 확정 근무 계획 (DUTY_SCHE_DTL)
 
             const dateObj = day ? dayjs(currentMonth).date(day) : null;
+            const isToday = dateObj ? dateObj.isSame(dayjs(), "day") : false;
             const isWeekend = dateObj
               ? dateObj.day() === 0 || dateObj.day() === 6
               : false;
@@ -132,7 +131,7 @@ function AttendancePage() {
             return (
               <div
                 key={idx}
-                className={`calendar-day-cell ${!day ? "empty" : ""} ${isWeekend ? "weekend-bg" : ""}`}
+                className={`calendar-day-cell ${!day ? "empty" : ""} ${isWeekend ? "weekend-bg" : ""} ${isToday ? "today" : ""}`}
               >
                 {day && (
                   <>

@@ -1,5 +1,7 @@
 package vfive.gw.login.mapper;
 
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -58,5 +60,15 @@ public interface LoginMapper {
     "  AND A.CLK_IN_DTM IS NULL"
 	})
 	int updateClkIn(LoginResponse req);
+  
+  // 금일 근무 정보
+  @Select({
+    "SELECT w.STRT_TM, w.END_TM, w.WRK_NM, w.WRK_CD ",
+    "FROM ATDC_HIST h ",
+    "JOIN WORK_TYPE_CD w ON h.WRK_CD = w.WRK_CD ",
+    "WHERE h.EMP_ID = #{empId} ",
+    "  AND h.WRK_YMD = CURDATE()"
+	})
+	Map<String, Object> selectTodayDuty(int empId);
   
 }

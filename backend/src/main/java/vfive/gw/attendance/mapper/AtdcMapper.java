@@ -143,6 +143,7 @@ public interface AtdcMapper {
     "        WHERE EMP_ID = #{empId} ",
     "          AND CLK_IN_DTM IS NOT NULL ",
     "          AND CLK_OUT_DTM IS NULL ",
+    "          AND ATDC_STTS_CD != 'ABSENT' ",
     "    ) AS tmp ",
     ") ",
     "AND A.EMP_ID = #{empId}"

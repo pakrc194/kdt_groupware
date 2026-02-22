@@ -63,6 +63,13 @@ public class LoginController {
 				return res;
 			}
 			// 일반사원
+			Map<String, Object> duty = mapper.selectTodayDuty(res.getEmpId());
+      if(duty != null) {
+          res.setStrtTm(String.valueOf(duty.get("STRT_TM")));
+          res.setEndTm(String.valueOf(duty.get("END_TM")));
+          res.setWrkNm(String.valueOf(duty.get("WRK_NM")));
+          res.setWrkCd(String.valueOf(duty.get("WRK_CD")));
+      }
 			clkInService.loginClkIn(res); // 출근 서비스 호출
 			res.setLogChk("Success");
 			return res;

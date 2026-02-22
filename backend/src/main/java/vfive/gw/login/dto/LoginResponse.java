@@ -9,6 +9,7 @@ public class LoginResponse {
 	String empSn, empNm, empAcntStts;
 	String empEmlAddr, empPhoto, empAddr, empTelno, empActno, empJncmpYmd, empRsgtnYmd;
 	String grpNm, rotPtnCd, empBirth, accessId;
+	String strtTm, endTm, wrkNm, wrkCd;
 
 	
 	String token;

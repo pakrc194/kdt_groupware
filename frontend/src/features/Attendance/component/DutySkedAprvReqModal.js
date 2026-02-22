@@ -26,9 +26,8 @@ function DutySkedAprvReqModal({ isOpen, onClose, onSubmit, scheTtl, dutyId }) {
 
   // 고정된 결재선 데이터 (예시)
   const approvalLine = [
-    { rank: "기안", name: "나사원", dept: "개발팀" },
-    { rank: "검토", name: "김팀장", dept: "개발팀" },
-    { rank: "승인", name: "박부장", dept: "운영부" },
+    { rank: "기안", name: myInfo?.empNm },
+    { rank: "최종결제", name: "강백호" },
   ];
 
   const fn_drftConfirm = async () => {

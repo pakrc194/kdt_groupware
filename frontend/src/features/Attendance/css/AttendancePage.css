@@ -103,6 +103,12 @@
   color: #1e88e5;
 }
 
+.calendar-day-cell.today {
+  border: 2px solid #007bff; /* 파란색 테두리로 강조 */
+  position: relative;
+  z-index: 1; /* 테두리가 잘 보이도록 살짝 올림 */
+}
+
 .duty-info-inline {
   display: flex;
   align-items: center;

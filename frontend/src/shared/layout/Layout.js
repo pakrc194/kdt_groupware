@@ -4,6 +4,7 @@ import { SIDE_CONFIG } from "./sideConfig";
 import "./Layout.css";
 import { fetcher } from "../api/fetcher";
 import UserProfile from "../components/UserProfile";
+import dayjs from "dayjs";
 
 const Layout = () => {
   const location = useLocation();
@@ -98,9 +99,6 @@ const Layout = () => {
 
   }, []);
 
-
-
-
   const fn_clkOut = () => {
     // fetcher를 사용하여 백엔드 퇴근 로직 호출
     fetcher("/gw/atdc/clkOut", {
@@ -110,11 +108,31 @@ const Layout = () => {
       .then((res) => {
         alert(res.message);
         // 필요하다면 페이지 이동이나 상태 업데이트
+        navigate(0)
       })
       .catch((err) => {
         console.error("퇴근 처리 중 에러 발생:", err);
         alert("퇴근 처리 중 오류가 발생했습니다.");
       });
+  };
+
+  const handleClkOut = () => {
+    // 1. 근무 정보가 있고, 현재 시간이 종료 시간보다 빠르다면?
+    if (myInfo?.endTm) {
+      const now = dayjs().format("HH:mm:ss");
+      
+      if (now < myInfo.endTm) {
+        if (window.confirm(`⚠️ 퇴근 시간(${myInfo.endTm.substring(0,5)}) 전입니다. 결근 처리될 수 있는데 퇴근하시겠습니까?`)) {
+          fn_clkOut();
+        }
+        return; // 확인 안 누르면 중단
+      }
+    }
+
+    // 2. 정상 퇴근 시간 이후라면 바로 확인창
+    if (window.confirm("퇴근하시겠습니까?")) {
+      fn_clkOut();
+    }
   };
 
   const fn_logout = () => {
@@ -266,11 +284,7 @@ const Layout = () => {
           {/* 2. 퇴근 버튼 (추가된 부분) */}
           <button
             className="nav-icon"
-            onClick={() => {
-              if (window.confirm("퇴근 하시겠습니까?")) {
-                fn_clkOut();
-              }
-            }}
+            onClick={() => {handleClkOut();}}
           >
             퇴근
           </button>
