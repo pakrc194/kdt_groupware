@@ -38,7 +38,7 @@ const UserProfile = () => {
     <div className="profile-section">
       <div className="profile-img-box">
         <img
-          src={`http://192.168.0.49:8080/uploads/${user.empPhoto}`}
+          src={`http://192.168.0.36:8080/uploads/${user.empPhoto}`}
           alt="프로필"
         />
       </div>

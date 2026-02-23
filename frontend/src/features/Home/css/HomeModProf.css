@@ -178,6 +178,21 @@
   transition: all 0.2s;
 }
 
+/* 마우스 호버 효과 (활성화 상태일 때만) */
+.primary-btn:not(:disabled):hover {
+  background: #1565c0;
+  transform: translateY(-1px);
+}
+
+/* 비활성화(disabled) 상태 스타일 */
+.primary-btn:disabled {
+  background-color: #cbd5e1 !important; /* 회색으로 고정 */
+  color: #94a3b8;
+  cursor: not-allowed; /* 금지 모양 커서 */
+  box-shadow: none !important; /* 그림자 제거 */
+  transform: none !important;
+}
+
 .sub-btn {
   background: #475569;
   color: #fff;

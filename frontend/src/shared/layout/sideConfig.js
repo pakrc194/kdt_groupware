@@ -24,7 +24,7 @@ export const SIDE_CONFIG = {
   attendance: {
     title: "근태관리",
     sideMenus: [
-      { id: "atdc", name: "출퇴근 기록" },
+      { id: "atdc", name: "근태 일정" },
       { id: "dtskdview", name: "근무표 조회" },
       { id: "dtskdlst", name: "근무표 리스트", access:"근무표 리스트"  },
       { id: "myatdc", name: "개인 근태 기록" },

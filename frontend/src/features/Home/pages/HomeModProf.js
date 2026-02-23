@@ -384,7 +384,7 @@ const HomeModProf = () => {
               )}
             </section>
 
-            <button type="submit" className="primary-btn submit-btn" disabled={!isFormValid} style={{ backgroundColor: isFormValid ? "" : "#ccc" }}>최종 수정 완료</button>
+            <button type="submit" className="primary-btn submit-btn" disabled={!isFormValid}>최종 수정 완료</button>
           </form>
         )}
       </div>
