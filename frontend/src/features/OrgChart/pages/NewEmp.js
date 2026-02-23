@@ -67,7 +67,7 @@ const MemberRegistrationForm = () => {
       return;
     }
     if (!chkToday(formData.EMP_JNCMP_YMD)) {
-      alert('입사일을 확인하세요.')
+      alert('입사날짜를 확인하세요.')
       return;
     }
     if (!isOver18(formData.EMP_BIRTH)) {
@@ -102,6 +102,22 @@ const MemberRegistrationForm = () => {
 
   };
 
+  const chkData = () => {
+      if (!formData.EMP_NM || !formData.EMP_BIRTH || !formData.DEPT_ID || !formData.JBTTL_ID || !formData.EMP_JNCMP_YMD) {
+        alert('정보를 모두 입력해 주세요.')
+        return;
+      }
+      if (!chkToday(formData.EMP_JNCMP_YMD)) {
+        alert('입사일을 확인하세요.')
+        return;
+      }
+      if (!isOver18(formData.EMP_BIRTH)) {
+        alert('생년월일을 확인하세요.')
+        return;
+      }
+      setIsOpen(true)
+    }
+
   const handleCancle = () => {
     setFormData ({
       EMP_NM: '',
@@ -115,7 +131,7 @@ const MemberRegistrationForm = () => {
   // 부서번호 6(인사팀)만 접근 가능
   // accessCk
   // myInfo.deptId != 6
-  if (accessCk === 0) return <NoAccess />
+  // if (accessCk === 0) return <NoAccess />
 
   return (
     <div style={styles.container}>
@@ -175,7 +191,7 @@ const MemberRegistrationForm = () => {
 
       <div style={styles.buttonGroup}>
         <button style={styles.cancelBtn} onClick={handleCancle}>취소</button>
-        <button style={styles.submitBtn} onClick={() => setIsOpen(true)}>완료</button>
+        <button style={styles.submitBtn} onClick={chkData}>완료</button>
         {isOpen && (
           <Modal 
             title="사원 등록 확인" 

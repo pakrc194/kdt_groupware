@@ -255,7 +255,7 @@ function HrDashboard(props) {
                         {filteredDocs.length > 0 ? (
                             filteredDocs.map((dd, index) => (
                                 <tr key={index}>
-                                    <td style={styles.td}>{dd.aprvDocId} <Link to={`/approval/draftBox/detail/${dd.aprvDocId}`} style={styles.link}>{dd.aprvDocTtl}</Link></td>
+                                    <td style={styles.td}><Link to={`/approval/draftBox/detail/${dd.aprvDocId}`} style={styles.link}>{dd.aprvDocTtl}</Link></td>
                                     <td style={styles.td}>
                                         {getStatusLabel(dd.aprvDocStts)}
                                     </td>
