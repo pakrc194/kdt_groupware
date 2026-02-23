@@ -54,12 +54,6 @@ function ScheduleView(props) {
         })
         .catch(e => console.log(e))
 
-        // TODO 가져오기
-        // fetcher(`/gw/schedule/todo/view/${formatted}/${myInfo.empId}`) // 날짜별 TODO API
-        // .then(dd => {setTodos(Array.isArray(dd) ? dd : [dd])
-        // })
-        // .catch(e => console.log(e));
-        // console.log('[defaultDate, showTodoForm, editTodo]')
     }, [defaultDate, showTodoForm, editTodo]);
 
     useEffect(() => {
@@ -74,6 +68,14 @@ function ScheduleView(props) {
     const addTodo = async () => {
         if (!chkToday(newTodo.schedStartDate)) {
             alert('이전 날짜에 등록할 수 없습니다.')
+            return;
+        }
+        if (!newTodo.schedStartDate) {
+            alert('날짜를 선택해주세요.')
+            return;
+        }
+        if (!newTodo.schedTitle) {
+            alert('제목을 입력해주세요.')
             return;
         }
         try {
@@ -98,6 +100,11 @@ function ScheduleView(props) {
 
     // TODO 수정
     const modifyTodo = async (todo) => {
+        if (!newTodo.schedTitle) {
+            alert('제목을 입력해주세요.')
+            return;
+        }
+        
         try {
             const created = await fetcher(`/gw/schedule/todo/modify`, {
             method: 'POST',

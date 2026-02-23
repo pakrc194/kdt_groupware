@@ -104,7 +104,7 @@ function Instruction(props) {
     // 업무 등록
     const handleSubmit = async () => {
         if (!startDate || !endDate || !title) {
-            alert('시작일, 종료일, 제목을 모두 입력하세요');
+            alert('시작 날짜, 종료 날짜, 제목을 모두 입력하세요');
             return;
         }
         if (workType === "BTEAM" && selectedTeams.length === 0) {
@@ -112,11 +112,11 @@ function Instruction(props) {
             return;
         }
         if (startDate > endDate) {
-            alert('종료일은 시작일보다 같거나 이후여야 합니다');
+            alert('종료 날짜는 시작 날짜보다 같거나 이후여야 합니다');
             return;
         }
         if (!chkToday(startDate)) {
-            alert('시작일은 오늘 이후여야 합니다.')
+            alert('시작날짜는 오늘 이후여야 합니다.')
             return;
         }
 
