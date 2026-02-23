@@ -85,6 +85,25 @@ const HomeModProf = () => {
   }, [myInfo.empId]);
 
   useEffect(() => {
+    // 1. 전화번호 검사 (11자리 체크)
+    if (editForm.empTelno && editForm.empTelno.length !== 11) {
+      setTelError("전화번호 11자리를 정확히 입력해주세요.");
+    } else {
+      setTelError("");
+    }
+
+    // 2. 계좌번호 검사 (선택된 은행의 정규식 활용)
+    if (selectedBank && editForm.empActno) {
+      const spec = BANK_SPEC[selectedBank];
+      if (spec && !spec.reg.test(editForm.empActno)) {
+        setAccountError(`${selectedBank} 은행 형식에 맞지 않습니다. (${spec.msg})`);
+      } else {
+        setAccountError("");
+      }
+    } else {
+      setAccountError("");
+    }
+
     if (keepPassword) {
       setPwMessage("");
       setPwError("");
@@ -92,14 +111,15 @@ const HomeModProf = () => {
     }
     if (passwords.new || passwords.confirm) {
       const isMatch = passwords.new === passwords.confirm;
-      setPwMessage(isMatch ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다.");
-      if (passwords.new && !pwReg.test(passwords.new)) {
+      const isPatternOk = pwReg.test(passwords.new);
+      if (passwords.new && !isPatternOk) {
         setPwError("8자 이상, 영문, 숫자, 특수문자를 조합해주세요.");
       } else {
         setPwError("");
       }
+      setPwMessage(isMatch ? "비밀번호가 일치합니다." : "비밀번호가 일치하지 않습니다.");
     }
-  }, [passwords, keepPassword]);
+  }, [editForm.empTelno, editForm.empActno, selectedBank, passwords, keepPassword]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -199,9 +219,11 @@ const HomeModProf = () => {
 
   const isFormValid = 
     editForm.empTelno.length === 11 &&
+    telError === "" && // 추가
     selectedBank !== "" &&
+    accountError === "" && // 추가
     (newEmail === "" || isEmailVerified) &&
-    (keepPassword || (passwords.new === passwords.confirm && pwReg.test(passwords.new)));
+    (keepPassword || (passwords.new === passwords.confirm && pwReg.test(passwords.new) && pwError === ""));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -355,6 +377,7 @@ const HomeModProf = () => {
               {!keepPassword && (
                 <div className="pw-sub-area">
                   <input type="password" className="mod-input" placeholder="새 비밀번호" value={passwords.new} onChange={(e) => setPasswords({ ...passwords, new: e.target.value })} />
+                  {pwError && <p className="pw-hint error">{pwError}</p>}
                   <input type="password" className="mod-input" placeholder="새 비밀번호 확인" value={passwords.confirm} onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })} />
                   {pwMessage && <p className={`pw-hint ${passwords.new === passwords.confirm && !pwError ? 'success' : 'error'}`}>{pwMessage}</p>}
                 </div>
