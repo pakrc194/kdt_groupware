@@ -2,8 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Modal from '../../../../shared/components/Modal';
 import EmpListModal from './EmpListModal';
 import { fetcher } from '../../../../shared/api/fetcher';
+import { useParams } from 'react-router-dom';
 
 const EditAprvLine = ({docLine, onClose, onOk}) => {
+    const {sideId} = useParams();
     const [empList, setEmpList] = useState([]);
     const [addLine, setAddLine] = useState({
         roleCd:"",
@@ -14,7 +16,7 @@ const EditAprvLine = ({docLine, onClose, onOk}) => {
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
 
     useEffect(()=>{
-        fetcher("/gw/aprv/AprvEmpListFilter").then(res=>{
+        fetcher(`/gw/aprv/AprvEmpListFilter`).then(res=>{
             return setEmpList(res)
         });
 
@@ -34,14 +36,18 @@ const EditAprvLine = ({docLine, onClose, onOk}) => {
         () => docLine.filter(v => v.roleCd === "MID_REF").length,
         [docLine]
     );
+    const hasLastAtrz = useMemo(
+        () => docLine.some(v => v.roleCd === "LAST_ATRZ"),
+        [docLine]
+    );
 
     const isRoleDisabled = (roleCd) => {
-        if (roleCd === "LAST_ATRZ") return true;                 // 최종결재자는 원래 추가 불가
+        if (roleCd === "LAST_ATRZ" && hasLastAtrz) return true;                 // 최종결재자는 원래 추가 불가
         if (roleCd === "MID_ATRZ" && hasMidAtrz) return true;    // 중간결재자 이미 있으면 불가
         if (roleCd === "DRFT_REF" && drftRefCount >= 3) return true; // 참조자 3명 초과 불가
         if (roleCd === "MID_REF" && !hasMidAtrz) return true;
         if (roleCd === "MID_REF" && midRefCount >= 3) return true;
-
+        
         return false;
     };
 
@@ -125,7 +131,7 @@ const EditAprvLine = ({docLine, onClose, onOk}) => {
                     <option value="MID_ATRZ">중간결재자</option>
                 )}
                 <option value="MID_REF" disabled={isRoleDisabled("MID_REF")}>중간참조자</option>
-                {/* <option value="LAST_ATRZ" disabled>최종결재자</option> */}
+                {sideId=="docFormBox" && <option value="LAST_ATRZ" disabled={isRoleDisabled("LAST_ATRZ")}>최종결재자</option>}
             </select>
 
             <div>

@@ -155,6 +155,9 @@ public interface AprvListMapper {
 				    <when test="filterNm == 'DEPT_ID'">
 				      AND E.DEPT_ID = #{filterVl} 
 				    </when>
+				    <when test="filterNm == 'JBTTL_ID'">
+				      AND E.JBTTL_ID = #{filterVl} 
+				    </when>
 				    <otherwise>
 				    
 				    </otherwise>

@@ -84,7 +84,7 @@ const DocFormInsert = () => {
                         <div className="form-group-row">
                             <label>양식 코드</label>
                             <input 
-                                placeholder="FORM_CODE_01"
+                                placeholder="2글자 영어 입력"
                                 value={docFormCd} 
                                 onChange={(e) => setDocFormCd(e.target.value)} 
                             />
