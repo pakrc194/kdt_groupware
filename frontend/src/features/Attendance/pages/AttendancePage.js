@@ -29,7 +29,7 @@ function AttendancePage() {
   useEffect(() => {
     fetcher(`/gw/atdc/deptStatus?deptId=${myInfo.deptId}`)
       .then(setDeptEmpAtdc)
-      .then(console.log(deptEmpAtdc));
+      .then(console.log("deptEmpAtdc: ",deptEmpAtdc)); 
   }, []);
 
   // 분류 로직 (부서원 기준)
@@ -223,12 +223,19 @@ function AttendancePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {offEmps.map((emp) => (
+                  {offEmps.map((emp,i) => (
                     <tr key={`off-${emp.EMP_ID}`}>
                       <td>{emp.EMP_NM}</td>
                       <td>
                         {!emp.CLK_IN_DTM ? (
-                          <span className="txt-absent">결근</span>
+                          <span className={`${emp.ATDC_STTS_CD} stts-text`}>
+                              {emp.ATDC_STTS_CD === "PRESENT" && "출근"}
+                              {emp.ATDC_STTS_CD === "LEAVE" && "연차"}
+                              {emp.ATDC_STTS_CD === "BUSINESS_TRIP" && "출장"}
+                              {emp.ATDC_STTS_CD === "ABSENT" && "결근"}
+                              {emp.ATDC_STTS_CD === "OFF" && "휴무"}
+                              {!emp.ATDC_STTS_CD && "근무데이터없음"}
+                            </span>
                         ) : (
                           `${dayjs(emp.CLK_IN_DTM).format("HH:mm")} ~ ${emp.CLK_OUT_DTM ? dayjs(emp.CLK_OUT_DTM).format("HH:mm") : ""}`
                         )}
