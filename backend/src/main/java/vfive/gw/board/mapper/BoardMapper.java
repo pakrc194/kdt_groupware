@@ -107,10 +107,22 @@ public interface BoardMapper {
             "WHERE BoardId = #{boardId}")
     int update(BoardPrvc dto);
     
-    /*게시물 삭제*/
+//    /*게시물 삭제*/
+//    @Delete("DELETE FROM Board WHERE BoardId = #{boardId}")
+//    int delete(@Param("boardId") int boardId);
+    /* 1. 게시물 삭제 전: 조회수 기록 삭제 */
+    @Delete("DELETE FROM Board_Views WHERE BoardId = #{boardId}")
+    void deleteBoardViews(@Param("boardId") int boardId);
+
+    /* 2. 게시물 삭제 전: 해당 게시글의 모든 파일 정보 삭제 */
+    @Delete("DELETE FROM BoardFile WHERE BoardId = #{boardId}") // 테이블 명 BoardFile 확인 완료
+    void deleteFilesByBoardId(@Param("boardId") int boardId);
+
+    /* 3. 최종 게시물 삭제 */
     @Delete("DELETE FROM Board WHERE BoardId = #{boardId}")
     int delete(@Param("boardId") int boardId);
     
+ 
     
 
     /* 조건별 게시물 수 조회*/
