@@ -59,8 +59,8 @@ public interface SchedMapper {
 				before = false,
 				statement = "select max(sched_Id) from SCHED"
 				)
-		@Insert("insert into SCHED (sched_title, sched_detail, sched_type, sched_start_date, sched_end_date, sched_author_id, sched_dept_id) "
-				+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDeptId})")
+		@Insert("insert into SCHED (sched_title, sched_detail, sched_type, sched_start_date, sched_end_date, sched_author_id, sched_dept_id, sched_loc) "
+				+ "values (#{schedTitle}, #{schedDetail}, #{schedType}, #{schedStartDate}, #{schedEndDate}, #{schedAuthorId}, #{schedDeptId}, #{schedLoc})")
 		int instructionUpload(Sched sc);
 		
 		@Select("select SCHED.*, GROUP_CONCAT(DEPT_INFO.dept_name) as sched_dept, "
