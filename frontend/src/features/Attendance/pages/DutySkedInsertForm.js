@@ -113,9 +113,10 @@ function DutySkedInsertForm() {
           ).catch(() => []),
         ]);
         console.log("memberList: ", memberList)
+        console.log("lastMonthData: ", lastMonthData)
         if (workType === "사무") {
           // 사무직 멤버들만 추출 (순서 고정)
-          const officeWorkers = sortEmployees(memberList.filter(m => !m.grpNm || m.grpNm === "미배정"), "사무");
+          const officeWorkers = sortEmployees(memberList, "사무");
           const officeWorkerIds = officeWorkers.map(m => m.empId);
           console.log("officeWorkers: ", officeWorkers)
 
