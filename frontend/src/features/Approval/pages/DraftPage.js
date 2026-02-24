@@ -146,6 +146,16 @@ const DraftPage = () => {
         navigate("/approval/docStatus")
     }
     const fn_tempSave = () => {
+        if(docTitle==null || docTitle.trim()=="") {
+            alert("문서 제목을 입력하세요")
+            return;
+        }
+        if(docForm?.docFormId==null) {
+            alert("양식을 선택해주세요")
+            return;
+        }
+
+
         // console.log("fecth before test : ", inputList)
         const drftDoc = {
             drftEmpId:myInfo.empId,
@@ -166,6 +176,7 @@ const DraftPage = () => {
             }
         ).then(res=>{
             alert("임시저장 완료")
+            navigate("/approval/tempBox") 
         })
     }
 

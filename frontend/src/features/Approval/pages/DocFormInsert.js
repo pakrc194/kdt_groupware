@@ -15,13 +15,28 @@ const DocFormInsert = () => {
     const [docFormType, setDocFormType] = useState("");
     const [docAtrzType, setDocAtrzType] = useState("");
     const [docAtrzStts, setDocAtrzStts] = useState("");
-    const [locList, setLocList] = useState([]);
+    const [isLocUsed, setIsLocUsed] = useState("Y");
     const [docLine, setDocLine] = useState([]);
     const [isEditLineOpen, setIsEditLineOpen] = useState(false);
+    const [docTextArea, setDocTextArea] = useState("");
+    const [deptList, setDeptList] = useState([])
 
+    const [selectedDepts, setSelectedDepts] = useState([]);
     useEffect(() => {
-        fetcher(`/gw/aprv/AprvLocList`).then(setLocList);
+        //fetcher(`/gw/aprv/AprvLocList`).then(setLocList);
+        fetcher(`/gw/aprv/AprvDeptList`).then(setDeptList);
     }, []);
+
+
+    const handleDeptCheck = (deptId) => {
+        setSelectedDepts(prev => {
+            if (prev.includes(deptId)) {
+                return prev.filter(id => id !== deptId); // 이미 있으면 제거 (체크 해제)
+            } else {
+                return [...prev, deptId]; // 없으면 추가 (체크)
+            }
+        });
+    };
 
     const fn_editLine = () => setIsEditLineOpen(true);
     const fn_editLineClose = () => setIsEditLineOpen(false);
@@ -46,11 +61,25 @@ const DocFormInsert = () => {
         });
     };
 
+    const fn_resetLine = () => {
+        setDocLine([])
+    }
+
     const fn_formOk = () => {
+        if(!docLine.find(v=>v.roleCd=="LAST_ATRZ")) return alert("최종 결재자가 없습니다.");
+        const upperCaseReg = /^[A-Z]{2}$/;
+        if (!upperCaseReg.test(docFormCd)) {
+            return alert("양식 코드는 영어 대문자 2자리여야 합니다. (예: VA, BT)");
+        }
+        
         if(!docFormNm || !docFormCd || !docFormType) return alert("필수 정보를 입력해주세요.");
+        
+        const docDepts = selectedDepts.join(",");
+
+
         fetcher(`/gw/aprv/AprvFormCreate`, {
             method: "POST",
-            body: { docFormNm, docFormCd, docFormType, docLine }
+            body: { docFormNm, docFormCd, docFormType, docLine, isLocUsed, docTextArea, docDepts }
         }).then(res => {
             if (res.res === "success") {
                 alert("양식 등록 완료");
@@ -84,7 +113,7 @@ const DocFormInsert = () => {
                         <div className="form-group-row">
                             <label>양식 코드</label>
                             <input 
-                                placeholder="2글자 영어 입력"
+                                placeholder="2글자 영어 입력(예: VA)"
                                 value={docFormCd} 
                                 onChange={(e) => setDocFormCd(e.target.value)} 
                             />
@@ -93,7 +122,7 @@ const DocFormInsert = () => {
                             <label>문서 유형</label>
                             <select value={docFormType} onChange={(e) => setDocFormType(e.target.value)}>
                                 <option value="" disabled>선택하세요</option>
-                                <option value="근태">근태</option>
+                                {/* <option value="근태">근태</option> */}
                                 <option value="일정">일정</option>
                                 <option value="일반">일반</option>
                             </select>
@@ -101,11 +130,30 @@ const DocFormInsert = () => {
                     </div>
                 </section>
 
+                {/* ✅ 사용 부서 선택 추가 */}
+                <section className="form-section animated-fade">
+                    <h3 className="section-subtitle">양식 사용 가능 부서 선택 (미선택 시 전체)</h3>
+                    <div className="checkbox-group" style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                        {deptList.map((dept, index) => (
+                            <label key={index} className="checkbox-item" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedDepts.includes(dept.deptId)}
+                                    onChange={() => handleDeptCheck(dept.deptId)}
+                                />
+                                <span>{dept.deptName}</span> {/* 서버에서 주는 부서 이름 필드명에 맞게 수정 */}
+                            </label>
+                        ))}
+                    </div>
+                </section>
+
+
                 {/* 결재선 설정 */}
                 <section className="form-section">
                     <div className="section-title-wrap">
                         <h3 className="section-subtitle">결재선 설정</h3>
-                        <Button variant="outline" onClick={fn_editLine}>결재선 추가/수정</Button>
+                        <Button variant="outline" onClick={fn_editLine}>결재선 추가</Button>
+                        <Button variant="outline" onClick={fn_resetLine}>결재선 초기화</Button>
                     </div>
                     <div className="approval-line-viewer">
                         <ApprovalLine docLine={docLine} />
@@ -119,15 +167,25 @@ const DocFormInsert = () => {
                 {docFormType === "일정" && (
                     <section className="form-section animated-fade">
                         <h3 className="section-subtitle">일정 관리 옵션 (장소)</h3>
-                        <div className="checkbox-grid">
-                            {locList.map((v, k) => (
-                                <label key={k} className="checkbox-item">
-                                    <input type="checkbox" name="docLoc" value={v.locId} />
-                                    <span>{v.locNm}</span>
-                                </label>
-                            ))}
-                            <label className="checkbox-item none-option">
-                                <input type="checkbox" name="docLoc" value="empty" />
+                        <div className="radio-group">
+                            <label className="radio-item">
+                                <input 
+                                    type="radio" 
+                                    name="locUsage" 
+                                    value="Y" 
+                                    checked={isLocUsed === "Y"} 
+                                    onChange={(e) => setIsLocUsed(e.target.value)} 
+                                />
+                                <span>사용함</span>
+                            </label>
+                            <label className="radio-item">
+                                <input 
+                                    type="radio" 
+                                    name="locUsage" 
+                                    value="N" 
+                                    checked={isLocUsed === "N"} 
+                                    onChange={(e) => setIsLocUsed(e.target.value)} 
+                                />
                                 <span>사용 안함</span>
                             </label>
                         </div>
@@ -153,6 +211,24 @@ const DocFormInsert = () => {
                                     <option>휴가</option><option>출장</option><option>출근</option><option>결근</option>
                                 </select>
                             </div>
+                        </div>
+                    </section>
+                )}
+
+                {docFormType === "일반" && (
+                    <section className="form-section animated-fade">
+                        <div className="section-header-flex">
+                            <h3 className="section-subtitle">일반 양식 본문 설정</h3>
+                            <span className="helper-text">기안자가 작성할 기본 레이아웃이나 안내 문구를 입력하세요.</span>
+                        </div>
+                        
+                        <div className="textarea-wrapper">
+                            <textarea 
+                                className="doc-large-textarea"
+                                placeholder="여기에 양식의 기본 내용을 입력하세요... (예: 1. 목적, 2. 상세내용 등)"
+                                value={docTextArea} 
+                                onChange={(e) => setDocTextArea(e.target.value)} 
+                            />
                         </div>
                     </section>
                 )}

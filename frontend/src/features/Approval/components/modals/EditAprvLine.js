@@ -55,28 +55,32 @@ const EditAprvLine = ({docLine, onClose, onOk}) => {
     const filteredEmpList = useMemo(() => {
         if (!addLine.roleCd) return [];
 
+        if (sideId === "docFormBox") {
+            return empList.filter(emp => {
+                const empJbttlId = Number(emp.jbttlId);
+                return empJbttlId === 1 || empJbttlId === 2;
+            });
+        }
+
         const myJbttlId = Number(myInfo?.jbttlId); // 본인 직책 id
-        const myDeptId = String(myInfo?.deptId);  // 본인 부서 id
+        const myDeptId = String(myInfo?.deptId);   // 본인 부서 id
 
         const isUpper12 = (emp) => {
-        const empJbttlId = Number(emp.jbttlId); // empList에 jbttlId가 있어야 함
-        // "본인보다 높은 jbttl_id 이면서 1 또는 2만 가능"
-        return (empJbttlId === 1 || empJbttlId === 2) && empJbttlId <= myJbttlId;
-        // ⚠️ 만약 "숫자가 작을수록 높다" 규칙이 맞다는 가정
-        // 반대면 (empJbttlId > myJbttlId) 로 바꿔야 함
+            const empJbttlId = Number(emp.jbttlId);
+            return (empJbttlId === 1 || empJbttlId === 2) && empJbttlId <= myJbttlId;
         };
 
         const isSameDept = (emp) => String(emp.deptId) === myDeptId;
 
-        // 기본: 상위(1/2)만
+        // 참조자가 아닐 때는 상위(1/2)만
         if (addLine.roleCd !== "DRFT_REF") {
-        return empList.filter(isUpper12);
+            return empList.filter(isUpper12);
         }
 
-        // DRFT_REF: 상위(1/2) + 같은 부서도 추가
+        // 참조자(DRFT_REF)일 때는 상위(1/2) + 같은 부서 포함
         return empList.filter((emp) => isUpper12(emp) || isSameDept(emp));
 
-    }, [addLine.roleCd, empList, myInfo?.jbttlId, myInfo?.deptId]);
+    }, [addLine.roleCd, empList, myInfo?.jbttlId, myInfo?.deptId, sideId]);
 
     const fn_ok = () => {
         if(addLine?.roleCd && addLine?.empId) {
@@ -126,11 +130,12 @@ const EditAprvLine = ({docLine, onClose, onOk}) => {
             결재선 
             <select name="roleCd" value={addLine.roleCd} onChange={fn_selectChange}>
                 <option value="" disabled>선택</option>
-                <option value="DRFT_REF" disabled={isRoleDisabled("DRFT_REF")}>참조자</option>
+                {sideId!="docFormBox" && <option value="DRFT_REF" disabled={isRoleDisabled("DRFT_REF")}>참조자</option>}
+
                 {!hasMidAtrz && (
                     <option value="MID_ATRZ">중간결재자</option>
                 )}
-                <option value="MID_REF" disabled={isRoleDisabled("MID_REF")}>중간참조자</option>
+                {sideId!="docFormBox" && <option value="MID_REF" disabled={isRoleDisabled("MID_REF")}>중간참조자</option>}
                 {sideId=="docFormBox" && <option value="LAST_ATRZ" disabled={isRoleDisabled("LAST_ATRZ")}>최종결재자</option>}
             </select>
 

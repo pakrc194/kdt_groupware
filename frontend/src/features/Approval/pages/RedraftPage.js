@@ -43,7 +43,7 @@ const RedraftPage = () => {
     }, [docId]);
 
     useEffect(() => {
-        if (aprvDocDetail.aprvDocNo) {
+        if (aprvDocDetail.aprvDocNo && aprvDocDetail.aprvDocNo.length>2) {
             fetcher(`/gw/aprv/AprvDocVerList`, {
                 method: "POST",
                 body: { docNo: aprvDocDetail.aprvDocNo }
@@ -147,7 +147,10 @@ const RedraftPage = () => {
                 drftDocReq: drftDoc,
                 drftInptReq: inputList
             }
-        }).then(() => alert("임시저장 완료"));
+        }).then(() => {
+            alert("임시저장 완료")
+            navigate(`/approval/tempBox`);
+        });
     };
 
     const fn_drftCancel = () => {
@@ -157,7 +160,7 @@ const RedraftPage = () => {
     return (
         <div className="drft-container">
             <header className="drft-header">
-                <h2 className="drft-page-title">반려함 <span className="sep">›</span> 재기안</h2>
+                <h2 className="drft-page-title">{sideId=="tempBox"?"임시저장함" : "반려함"} <span className="sep">›</span> 재기안</h2>
             </header>
 
             <main className="drft-main">
@@ -238,22 +241,20 @@ const RedraftPage = () => {
                         />
                     </div>
                 </section>
-
-                {/* 4. 문서 히스토리 (기존 CSS 유지) */}
-                <div className="section history-section">
-                    <table className="history-table">
-                        <thead>
-                            <tr>
-                                <th>버전</th>
-                                <th>문서제목</th>
-                                <th>기안일자</th>
-                                <th>반려일자</th>
-                                <th>반려사유</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {docVerList.length > 0 ? (
-                                docVerList.map((aprvDoc, k) => {
+                {docVerList.length > 0 && 
+                    <div className="section history-section">
+                        <table className="history-table">
+                            <thead>
+                                <tr>
+                                    <th>버전</th>
+                                    <th>문서제목</th>
+                                    <th>기안일자</th>
+                                    <th>반려일자</th>
+                                    <th>반려사유</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {docVerList.map((aprvDoc, k) => {
                                     const isCurrent = String(aprvDoc.aprvDocId) === String(docId);
                                     return (
                                         <tr key={k} className={isCurrent ? "current-doc-row" : ""}>
@@ -272,15 +273,10 @@ const RedraftPage = () => {
                                             <td>{aprvDoc.rjctRsn}</td>
                                         </tr>
                                     );
-                                })
-                            ) : (
-                                <tr>
-                                    <td colSpan="5" className="no-data">데이터가 없습니다.</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                })}
+                            </tbody>
+                        </table>
+                    </div>}
             </main>
 
             <div className="actionBar">
