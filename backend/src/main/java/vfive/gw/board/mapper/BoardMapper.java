@@ -49,7 +49,10 @@ public interface BoardMapper {
     
     
     /* 게시물 상세 조회 */
-    @Select("SELECT * FROM Board WHERE BoardId = #{boardId}")
+    @Select("SELECT b.*, e.EMP_NM AS empNm " + 
+            "FROM Board b " +
+            "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " + 
+            "WHERE b.BoardId = #{boardId}")
     BoardPrvc detail(@Param("boardId") int boardId);
     
 //    /* 조회수 증가 */
