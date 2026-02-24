@@ -63,20 +63,20 @@ public class MyAtdcStatService {
 		LocalDate checkDate = LocalDate.now();
 		
 		// 오늘이 주말이면 마지막 금요일부터 역추적 시작
-		while (checkDate.getDayOfWeek() == DayOfWeek.SATURDAY || checkDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
-			checkDate = checkDate.minusDays(1);
-		}
+//		while (checkDate.getDayOfWeek() == DayOfWeek.SATURDAY || checkDate.getDayOfWeek() == DayOfWeek.SUNDAY) {
+//			checkDate = checkDate.minusDays(1);
+//		}
 
 		while (true) {
 			// 평일인 경우에만 체크
-			if (checkDate.getDayOfWeek() != DayOfWeek.SATURDAY && checkDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
+//			if (checkDate.getDayOfWeek() != DayOfWeek.SATURDAY && checkDate.getDayOfWeek() != DayOfWeek.SUNDAY) {
 				if (attendedDates.contains(checkDate)) {
 					streakDays++;
 				} else {
 					// 기록이 없는 평일을 만나면 중단
 					break;
 				}
-			}
+//			}
 			checkDate = checkDate.minusDays(1);
 			// 최대 1년치까지만 역추적 제한
 			if (checkDate.getYear() < Integer.parseInt(year) || streakDays > 365) break;
