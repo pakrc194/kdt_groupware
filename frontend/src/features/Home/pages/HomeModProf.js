@@ -295,7 +295,7 @@ const HomeModProf = () => {
                 <div className="photo-preview-container">
                   {previewUrl || userInfo.empPhoto ? (
                     <img
-                      src={previewUrl || `http://192.168.0.49:8080/uploads/${userInfo.empPhoto}`}
+                      src={previewUrl || `http://192.168.0.36:8080/uploads/${userInfo.empPhoto}`}
                       alt="프로필"
                       className="photo-img"
                       onError={(e) => { e.target.src = "/images/default-profile.png"; }}
