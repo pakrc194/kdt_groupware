@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -267,14 +268,48 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
     
-    /**게시물 삭제 */
+//    /**게시물 삭제 */
+//    @DeleteMapping("/detail/{boardId}")
+//    @Transactional
+//    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("boardId") int boardId) {
+//        int result = boardMapper.delete(boardId);
+//        
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("success", result > 0);
+//        return ResponseEntity.ok(response);
+//    }
+    
+    /** 게시물 삭제 (연관 데이터 포함) */
     @DeleteMapping("/detail/{boardId}")
+    @Transactional // 여러 테이블의 데이터를 삭제하므로 트랜잭션 처리가 필수입니다.
     public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable("boardId") int boardId) {
-        int result = boardMapper.delete(boardId);
-        
         Map<String, Object> response = new HashMap<>();
-        response.put("success", result > 0);
-        return ResponseEntity.ok(response);
+        try {
+            // [1순위] 조회수 기록 삭제 (FK 에러의 직접적인 원인)
+            // 이 작업이 가장 먼저 혹은 게시글 삭제 직전에 반드시 수행되어야 합니다.
+            boardMapper.deleteBoardViews(boardId); 
+
+            // [2순위] 첨부파일 삭제 (로컬 파일 및 DB 기록)
+            List<BoardPrvc> files = boardMapper.selectFilesByBoardId(boardId);
+            if (files != null && !files.isEmpty()) {
+                for (BoardPrvc file : files) {
+                    delFile(file.getSavedPath()); 
+                }
+                boardMapper.deleteFilesByBoardId(boardId); 
+            }
+
+            // [3순위] 실제 게시글 본문 삭제
+            int result = boardMapper.delete(boardId);
+            
+            response.put("success", result > 0);
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "삭제 중 오류 발생: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
     
 //    /**
