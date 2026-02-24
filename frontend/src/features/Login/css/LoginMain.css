@@ -175,3 +175,68 @@
   .login-image-side { display: none; }
   .login-card { padding: 20px; }
 }
+
+
+/* 테스트 계정 가이드 전체 컨테이너 */
+.test-account-info {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #f8fafc; /* 연한 회색 배경 */
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    
+    /* 애니메이션 효과 */
+    animation: slideDown 0.3s ease-out;
+}
+
+/* 텍스트 가이드 내의 실제 리스트 영역 */
+.test-account-list-scroll {
+    margin-top: 10px;
+    max-height: 200px; /* ✅ 고정 높이 설정 (원하는 만큼 조절 가능) */
+    overflow-y: auto;  /* ✅ 내용이 많아지면 세로 스크롤 생성 */
+    padding-right: 5px;
+}
+
+/* 스크롤바 디자인 (선택 사항 - 더 깔끔하게) */
+.test-account-list-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+.test-account-list-scroll::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
+/* 리스트 개별 아이템 스타일 */
+.test-account-item {
+    cursor: pointer;
+    padding: 8px 10px;
+    margin-bottom: 4px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.test-account-item:hover {
+    border-color: #4a90e2;
+    background-color: #f0f7ff;
+}
+
+.test-account-item .role-name {
+    font-weight: 600;
+    color: #475569;
+}
+
+.test-account-item .account-data {
+    color: #94a3b8;
+}
+
+/* 나타나기 애니메이션 */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
