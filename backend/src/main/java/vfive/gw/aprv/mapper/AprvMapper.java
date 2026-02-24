@@ -199,9 +199,9 @@ public interface AprvMapper {
     @Select("SELECT * FROM BoardFile WHERE AprvDocId = #{docId}")
     AprvFileUploadRequest selectFile(int docId);
     
-    @Insert("INSERT INTO DOC_FORM (DOC_FORM_CD, DOC_FORM_NM, DOC_FORM_TYPE) "
+    @Insert("INSERT INTO DOC_FORM (DOC_FORM_CD, DOC_FORM_NM, DOC_FORM_TYPE, DEPT_ID) "
     		+ "values "
-    		+ "(#{docFormCd}, #{docFormNm}, #{docFormType})")
+    		+ "(#{docFormCd}, #{docFormNm}, #{docFormType}, #{docDepts})")
     @Options(useGeneratedKeys = true, keyProperty = "docFormId")
     int aprvFormCreate(AprvFormCreateRequest req);
     
@@ -210,21 +210,42 @@ public interface AprvMapper {
     		+ "values "
     		+ "(#{formId}, '시작일자', 'docStart', 'DATE', 1), "
     		+ "(#{formId}, '종료일자', 'docEnd', 'DATE', 2), "
-    		+ "(#{formId}, '사유', 'docTxtArea', 'TEXTAREA', 3) "
+    		+ "(#{formId}, '비고', 'docTxtArea', 'TEXTAREA', 3) "
 	)
     int aprvInptCreateAttend(@Param("formId") int formId);
     
     @Insert("INSERT INTO DOC_INPT "
-    		+ "(DOC_FORM_ID, DOC_INPT_LBL, DOC_INPT_NM, DOC_INPT_TYPE, DOC_INPT_NO)"
+    		+ "(DOC_FORM_ID, DOC_INPT_LBL, DOC_INPT_NM, DOC_INPT_TYPE, DOC_INPT_NO, DOC_INPT_RMRK) "
     		+ "values "
-    		+ "(#{formId}, '일정시작', 'docStart', 'DATE', 1), "
-    		+ "(#{formId}, '일정종료', 'docEnd', 'DATE', 2), "
-    		+ "(#{formId}, '일정장소', 'docLoc', 'LOCATION', 3), "
-    		+ "(#{formId}, '범위', 'docRole', 'DATE', 4), "
-    		+ "(#{formId}, '담당', 'docSchedType', 'DATE', 5), "
-    		+ "(#{formId}, '사유', 'docTxtArea', 'TEXTAREA', 6) "
+    		+ "(#{formId}, '시작일자', 'docStart', 'DATE', 1, ''), "
+    		+ "(#{formId}, '종료일자', 'docEnd', 'DATE', 2, ''), "
+    		+ "(#{formId}, '일정장소', 'docLoc', 'LOCATION', 3, ''), "
+    		+ "(#{formId}, '담당', 'docRole', 'SELECT', 4, 'PERSONAL,DEPT,COMPANY'), "
+    		+ "(#{formId}, '배정', 'docSchedType', 'CHECKBOX', 5, ''), "
+    		+ "(#{formId}, '비고', 'docTxtArea', 'TEXTAREA', 6, '') "
 	)
     int aprvInptCreateSched(@Param("formId") int formId);
+    
+    @Insert("INSERT INTO DOC_INPT "
+    		+ "(DOC_FORM_ID, DOC_INPT_LBL, DOC_INPT_NM, DOC_INPT_TYPE, DOC_INPT_NO, DOC_INPT_RMRK) "
+    		+ "values "
+    		+ "(#{formId}, '시작일자', 'docStart', 'DATE', 1, ''), "
+    		+ "(#{formId}, '종료일자', 'docEnd', 'DATE', 2, ''), "
+    		+ "(#{formId}, '담당', 'docRole', 'SELECT', 3, 'PERSONAL,DEPT,COMPANY'), "
+    		+ "(#{formId}, '배정', 'docSchedType', 'CHECKBOX', 4, ''), "
+    		+ "(#{formId}, '비고', 'docTxtArea', 'TEXTAREA', 5, '') "
+	)
+    int aprvInptCreateSchedNotLoc(@Param("formId") int formId);
+    
+    
+    @Insert("INSERT INTO DOC_INPT "
+    		+ "(DOC_FORM_ID, DOC_INPT_LBL, DOC_INPT_NM, DOC_INPT_TYPE, DOC_INPT_NO, DOC_INPT_RMRK) "
+    		+ "values "
+    		+ "(#{formId}, '시작일자', 'docStart', 'DATE', 1, ''), "
+    		+ "(#{formId}, '종료일자', 'docEnd', 'DATE', 2, ''), "
+    		+ "(#{formId}, '내용', 'docReport', 'TEXTAREA', 3, #{rmrk}) "
+	)
+    int aprvInptCreateNormal(@Param("formId") int formId, @Param("rmrk")String rmrk);
     
     @Insert("INSERT INTO DOC_FORM_LINE (DOC_FORM_ID, MID_ATRZ_EMP_ID, LAST_ATRZ_EMP_ID) "
     		+ "values "

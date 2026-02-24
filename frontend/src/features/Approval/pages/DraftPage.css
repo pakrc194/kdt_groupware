@@ -124,3 +124,44 @@
     font-weight: 800;
     color: #0f172a;
 }
+
+
+/* 보고서 모드일 때 래퍼 설정 */
+.report-mode-wrapper {
+    background-color: #f1f5f9; /* 배경을 약간 어둡게 해서 종이를 띄움 */
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 보고서 제목 (상단 중앙) */
+.report-doc-header {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: #1e293b;
+    text-decoration: underline;
+    text-underline-offset: 8px;
+}
+
+/* 종이 느낌의 텍스트 에리어 */
+.drft-textarea.report-style {
+    width: 100%;
+    max-width: 800px; /* A4 비율 느낌을 위해 너비 제한 */
+    min-height: 600px;
+    padding: 40px 50px; /* 종이 여백 느낌 */
+    border: 1px solid #e2e8f0;
+    border-radius: 2px; /* 종이는 각진 게 제맛 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); /* 종이가 떠 있는 느낌 */
+    line-height: 1.8;
+    font-size: 16px;
+    background-color: white;
+    resize: none; /* 보고서 모양 유지를 위해 크기 조절 막기 */
+}
+
+.drft-textarea.report-style:focus {
+    outline: none;
+    border-color: #cbd5e1;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15); /* 포커스 시 더 강조 */
+}

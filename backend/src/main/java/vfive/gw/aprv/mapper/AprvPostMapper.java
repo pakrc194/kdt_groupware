@@ -23,21 +23,21 @@ import vfive.gw.aprv.dto.response.AprvDocVerListResponse;
 public interface AprvPostMapper {
 		
 	@Update("""
-			<script>
-			UPDATE APRV_DOC
-			SET APRV_DOC_STTS =
-			<choose>
-			  <when test="nextEmpNm != null and nextEmpNm != ''">
-			    'PENDING'
-			  </when>
-			  <otherwise>
-			    #{aprvPrcsStts}
-			  </otherwise>
-			</choose>
-			WHERE APRV_DOC_ID = #{aprvDocId}
-			</script>
-			""")
-	int docSttsUpdate(AprvPrcsRequest req);
+		    <script>
+		    UPDATE APRV_DOC
+		    SET APRV_DOC_STTS =
+		    <choose>
+		      <when test="roleCd == 'MID_ATRZ'">
+		        'PENDING'
+		      </when>
+		      <otherwise>
+		        #{aprvPrcsStts}
+		      </otherwise>
+		    </choose>
+		    WHERE APRV_DOC_ID = #{aprvDocId}
+		    </script>
+		    """)
+		int docSttsUpdate(AprvPrcsRequest req);
 	
 	
 	@Update("""

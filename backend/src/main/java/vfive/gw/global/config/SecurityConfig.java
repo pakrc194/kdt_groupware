@@ -40,6 +40,7 @@ public class SecurityConfig {
 		config.setAllowedOriginPatterns(Arrays.asList(
 				"http://192.168.0.117:3000", 
 				"http://192.168.219.106:3000",
+				"http://192.168.219.102:3000",
 				"http://192.168.0.36:3000",
 				"http://192.168.0.49:3000", 
 				"http://192.168.0.67:3000",

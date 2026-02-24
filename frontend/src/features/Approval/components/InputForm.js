@@ -171,14 +171,21 @@ const InputForm = ({ drftDate, setDrftDate, inputForm, inputList, setInputList, 
 
     switch (type) {
         case "TEXTAREA":
+            const isReport = inputForm.docInptNm === "docReport";
+
             return (
-                <FieldWrapper title={label}>
+                <FieldWrapper 
+                    title={isReport ? "" : label} // 보고서 모드일 땐 상단 라벨 비움 (안에 크게 넣기 위해)
+                    className={isReport ? "report-mode-wrapper" : ""}
+                >
+                    {isReport && <div className="report-doc-header">{label}</div>}
                     <textarea
-                        className="drft-textarea"
+                        className={isReport ? "drft-textarea report-style" : "drft-textarea"}
                         name={inputForm.docInptNm}
-                        value={inputForm.docInptVl || ""}
+                        value={inputForm.docInptVl || inputForm.docInptRmrk || ""}
                         onChange={fn_change}
-                        rows={4}
+                        placeholder={isReport ? "상세 내용을 입력하세요..." : ""}
+                        rows={isReport ? 20 : 4} // 보고서면 훨씬 길게
                     />
                 </FieldWrapper>
             );

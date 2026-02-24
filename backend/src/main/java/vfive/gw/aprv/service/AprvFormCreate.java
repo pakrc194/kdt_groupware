@@ -18,14 +18,25 @@ public class AprvFormCreate {
 	
 	@Transactional
 	public Object load(AprvFormCreateRequest req) {
+		if(req.getDocDepts()==null || req.getDocDepts().trim().isEmpty()) {
+			req.setDocDepts("0");
+		}
+		
+		
 		mapper.aprvFormCreate(req);
 		
 		if(req.getDocFormType().equals("근태")) {
 			mapper.aprvInptCreateAttend(req.getDocFormId());
 		} else if(req.getDocFormType().equals("일정")) {
-			mapper.aprvInptCreateSched(req.getDocFormId());
+			if(req.getIsLocUsed().equals("Y")) {
+				mapper.aprvInptCreateSched(req.getDocFormId());
+			} else {
+				mapper.aprvInptCreateSchedNotLoc(req.getDocFormId());
+			}
+		} else if(req.getDocFormType().equals("일반")) {
+			mapper.aprvInptCreateNormal(req.getDocFormId(), req.getDocTextArea());
 		} else {
-			return Map.of("res","faile");
+			return Map.of("res","fail");
 		}
 		
 		List<AprvFormLine> list = req.getDocLine();
