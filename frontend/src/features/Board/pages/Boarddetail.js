@@ -9,6 +9,7 @@ function BoardDetail(props) {
     const navigate = useNavigate();
     
     const [board, setBoard] = useState(null);
+    const [boards, setBoards] = useState([]); // 게시글 목록
     const [isLoading, setIsLoading] = useState(true);
     const [files , setFiles] = useState([]);
     
@@ -18,7 +19,7 @@ function BoardDetail(props) {
     console.log("board 정보 확인 :",board)
 
     useEffect(() => {
-        console.log('props.boardId', props.boardId)
+        console.log('board',board)
         fetchBoardDetail();
         fetcher(`/board/selectFile/${props.boardId}`)
         .then(data => setFiles(data));
@@ -30,7 +31,7 @@ function BoardDetail(props) {
             .then(data => {
                 setBoard(data);
                 setIsLoading(false);
-                console.log("패치 data 받아옴")
+                console.log("data 받아옴",data)
             })
             .catch(err => {
                 console.error("데이터 호출 에러:", err);
@@ -95,9 +96,28 @@ function BoardDetail(props) {
                 
                 <div className="meta-info">
                     <div className="meta-left">
-                        <span className="author">👤 작성자 <b>{myInfo.empNm}</b></span>
-                        <span className="date">📅 작성일{new Date(board.createdAt).toLocaleString()}</span>
-                        <span className="views">👁‍🗨 조회수 {board.views}</span>
+                        {board ? (
+            <div className="author-row" style={{ 
+                display: 'flex',          
+                alignItems: 'center',    
+                gap: '20px',             
+                flexWrap: 'wrap'         
+            }}>
+                <span className="author">
+                    👤 작성자 <b>{board.empNm || '이름 없음'}</b>
+                </span>
+                
+                <span className="date">
+                    📅 작성일 {new Date(board.createdAt).toLocaleString()}
+                </span>
+                
+                <span className="views">
+                    👁‍🗨 조회수 {board.views}
+                </span>
+            </div>
+        ) : (
+            <span>데이터를 불러오는 중입니다...</span>
+        )}     
                     </div>
                 </div>
 
