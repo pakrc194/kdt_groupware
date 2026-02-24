@@ -117,7 +117,8 @@ public interface AprvPostMapper {
 			     AND A.APRV_PRCS_DT = B.MAX_DT
 			) P
 			  ON D.APRV_DOC_ID = P.APRV_DOC_ID
-			WHERE D.APRV_DOC_NO = #{docNo}
+			WHERE D.APRV_DOC_NO = #{docNo} 
+			AND D.DRFT_EMP_ID = #{empId} 
 			ORDER BY D.APRV_DOC_VER DESC
 			""")
 	List<AprvDocVerListResponse> aprvDocVerList(AprvDocVerListRequest req);

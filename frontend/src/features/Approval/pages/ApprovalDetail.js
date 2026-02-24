@@ -138,6 +138,7 @@ const ApprovalDetail = () => {
         fetcher(`/gw/aprv/AprvDocVerList`, {
             method:"POST",
             body: {
+                empId:myInfo.empId,
                 docNo:aprvDocDetail.aprvDocNo
             }
         }).then(res=>{
@@ -443,8 +444,8 @@ const ApprovalDetail = () => {
                                                         <Link to={`/approval/${sideId}/detail/${aprvDoc.aprvDocId}`}>{aprvDoc.aprvDocTtl}</Link>
                                                     )}
                                                 </td>
-                                                <td>{aprvDoc.aprvDocDrftDt.substring(0, 10)}</td>
-                                                <td>{aprvDoc.aprvDocAtrzDt?.substring(0, 10)}</td>
+                                                <td>{aprvDoc.aprvDocDrftDt.substring(0, 8)}</td>
+                                                <td>{aprvDoc.aprvDocAtrzDt?.substring(0, 8)}</td>
                                                 <td>{aprvDoc.rjctRsn}</td>
                                             </tr>
                                         );

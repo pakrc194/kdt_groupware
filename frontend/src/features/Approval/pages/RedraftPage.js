@@ -46,7 +46,10 @@ const RedraftPage = () => {
         if (aprvDocDetail.aprvDocNo && aprvDocDetail.aprvDocNo.length>2) {
             fetcher(`/gw/aprv/AprvDocVerList`, {
                 method: "POST",
-                body: { docNo: aprvDocDetail.aprvDocNo }
+                body: { 
+                    empId: myInfo.empId,
+                    docNo: aprvDocDetail.aprvDocNo 
+                }
             }).then(res => setDocVerList(res));
         }
     }, [aprvDocDetail]);
