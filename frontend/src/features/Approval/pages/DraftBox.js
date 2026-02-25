@@ -26,7 +26,7 @@ const DraftBox = () => {
     }, [stts, formCode, myInfo?.empId]);
 
     useEffect(()=>{
-        fetcher("/gw/aprv/AprvDocFormList").then(setFormCodeList)
+        fetcher(`/gw/aprv/AprvDocFormList/${myInfo.deptId}`).then(setFormCodeList)
     },[])
 
     const fn_stts = (e) => {
@@ -49,12 +49,11 @@ const DraftBox = () => {
                         <option value="COMPLETED">결재 완료</option>
                         {/* <option value="REJECTED">반려</option> */}
                     </select>
-                    <select onChange={fn_code}>
-                        <option value="">ALL</option>
+                     <select onChange={fn_code}>
+                        <option value="">전체</option>
                         {formCodeList.map((v,k)=>(
-                            <option value={v.docFormCd} key={k}>{v.docFormCd}</option>
+                            <option value={v.docFormCd} key={k}>{v.docFormNm}</option>
                         ))}
-                        
                     </select>
                 </div>
                 <table className="dash-table">
