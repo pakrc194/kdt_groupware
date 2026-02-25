@@ -6,4 +6,5 @@ import lombok.Data;
 public class AprvEmpListResponse {
 	int empId, deptId, jbttlId;
 	String empNm, deptName, jbttlNm;
+	String grpNm, RotPtnCd;
 }

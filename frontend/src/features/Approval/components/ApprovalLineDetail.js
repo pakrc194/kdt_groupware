@@ -23,6 +23,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRo
 
     useEffect(()=>{
         setLineData(aprvLine);
+        setSelectedEmp(aprvLine.find(v=>v.aprvPrcsEmpId == myInfo.empId))
     },[aprvLine]) 
 
     const fn_close = () => setOpenModal("");
@@ -198,12 +199,16 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRo
         //     docEnd:${docEnd}    
             
         // `)
+        console.log(`attendCheck`, docDetail.atrzVl)
+
+
         fetcher(`/gw/aprv/AprvAttendUpload`,{
             method:"POST",
             body: {
                 empId : docDetail.drftEmpId,
                 docStart: docStart,
                 docEnd: docEnd,
+                attendStts : docDetail.atrzVl
             }
         }).then(res => {
             alert("근태 등록 완료")
@@ -220,9 +225,19 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRo
         MID_REF : "중간 참조자",
         LAST_ATRZ : "최종 결재자"
     }
+
+    
     
     return (
+        <>
+        <div>
+            {selectedEmp && <Button onClick={()=>{
+                console.log(selectedEmp)
+                setOpenModal(selectedEmp.roleCd);
+            }}>결재</Button>}
+        </div>
         <div className='aprv-stamp-line'>
+            
             {lineData && lineData.map((v, k) => {
                 const isDone = v.aprvPrcsDt != null && v.aprvPrcsDt !== "";
                 const isRejected = v.aprvPrcsStts === "REJECTED"; // 반려 상태 확인
@@ -268,6 +283,7 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRo
                 docRole={docRole} idList={idList} attendList={attendList} dutyList={dutyList} schedList={schedList} drftDate={drftDate}
                 onOk={(prcsRes) => fn_ok(selectedEmp.aprvPrcsEmpId, selectedEmp.roleCd, prcsRes)} />}
         </div>
+        </>
     );
 };
 

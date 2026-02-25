@@ -163,7 +163,7 @@ public interface AprvListMapper {
 				    </otherwise>
 				  </choose>
 			</where>
-			order by E.JBTTL_ID
+			order by E.JBTTL_ID, E.GRP_NM 
 			</script>
 			""")
 	List<AprvEmpListResponse> empListFilter(AprvParams param);

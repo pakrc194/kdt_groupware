@@ -17,10 +17,17 @@ const SelectDeptModal = ({ onClose, onOk, schedType, selectDeptList }) => {
 
     useEffect(() => {
         if (schedType === 'DEPT') {
-            fetcher("/gw/aprv/AprvDeptList").then(res => setDeptList(res));
+            fetcher("/gw/aprv/AprvDeptList").then(res => {
+                setDeptList(res)
+                console.log('dd',deptList)
+            });
         } else if (schedType === 'PERSONAL') {
-            fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=${myInfo.deptId}`).then(res => setDeptList(res));
+            fetcher(`/gw/aprv/AprvEmpListFilter?filterNm=DEPT_ID&filterVl=${myInfo.deptId}`).then(res => {
+                setDeptList(res)
+                console.log('dd',deptList)
+            });
         }
+        
     }, [schedType]);
 
 
@@ -90,7 +97,8 @@ const SelectDeptModal = ({ onClose, onOk, schedType, selectDeptList }) => {
                     <div className="mdl-list-scroll">
                         {filteredList.map((v, k) => {
                             const id = schedType === 'DEPT' ? v.deptId : v.empId;
-                            const name = schedType === 'DEPT' ? v.deptName : v.empNm;
+                            const etc = schedType === 'DEPT' ? '' : v.grpNm ? `(${v.grpNm})` : '';
+                            const name = schedType === 'DEPT' ? v.deptName : v.empNm+etc;
                             const info = schedType === 'DEPT' ? `${v.deptLoc}층` : "";
                             const isChecked = checkedDepts.some(item => item.deptId == id);
 
