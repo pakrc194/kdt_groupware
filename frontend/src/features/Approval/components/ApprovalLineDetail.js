@@ -229,9 +229,10 @@ const ApprovalLineDetail = ({aprvLine, setRejectData, inptList, docDetail, docRo
 
                 // 타입 판별
                 let typeClass = "";
-                if (v.roleCd.includes("DRFT")) typeClass = "type-drft";
-                else if (v.roleCd.includes("REF")) typeClass = "type-ref";
-                else typeClass = "type-atrz";
+                
+                if (v.roleCd.includes("REF")) typeClass = "type-ref";
+                else if(v.roleCd.includes("ATRZ")) typeClass = "type-atrz";
+                else typeClass = "type-drft";
 
                 return (
                     <div 
