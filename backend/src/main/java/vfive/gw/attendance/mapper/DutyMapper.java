@@ -21,18 +21,23 @@ import vfive.gw.attendance.dto.response.DutySkedListDTO;
 public interface DutyMapper {
 
 	// 해당 부서의 근무표 리스트
-	@Select("SELECT " +
+	@Select("<script>" +
+      "SELECT " +
       "    M.DUTY_ID, " +
       "    M.SCHE_TTL, " +
-      "    E.EMP_NM, " + // 작성자 성함을 가져오기 위한 JOIN용 필드
+      "    E.EMP_NM, " +
       "    M.TRGT_YMD, " +
       "    M.PRGR_STTS, " +
-      "    M.REG_DTM, " + // 최초 등록 일시
-      "    M.MOD_DTM " +  // 최종 수정 일시
+      "    M.REG_DTM, " +
+      "    M.MOD_DTM " +
       "FROM DUTY_SCHE_MST M " +
       "INNER JOIN EMP_PRVC E ON M.EMP_ID = E.EMP_ID " +
       "WHERE E.DEPT_ID = #{deptId} " +
-      "ORDER BY M.REG_DTM DESC")
+      "<if test='year != null and year != \"\"'>" +
+      "  AND M.TRGT_YMD LIKE CONCAT(#{year}, '%') " +
+      "</if>" +
+      "ORDER BY M.REG_DTM DESC" +
+      "</script>")
 	List<DutySkedListDTO> selectDutyScheListByDept(EmpAtdcRequestDTO req);
 	
 	// 근무표 리스트 삭제
