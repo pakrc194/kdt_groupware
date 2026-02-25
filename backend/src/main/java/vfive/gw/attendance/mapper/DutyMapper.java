@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import vfive.gw.attendance.dto.domain.EmpDTO;
+import vfive.gw.attendance.dto.domain.workTypeCdDTO;
 import vfive.gw.attendance.dto.request.DutyRequestDTO;
 import vfive.gw.attendance.dto.request.EmpAtdcRequestDTO;
 import vfive.gw.attendance.dto.response.DutySkedDetailDTO;
@@ -50,7 +51,7 @@ public interface DutyMapper {
           "</script>")
   void deleteDutyMasters(@Param("dutyIds") List<Integer> dutyIds);
 	
-//근무표 상세 내역 조회 (사원명 포함)
+  // 근무표 상세 내역 조회 (사원명 포함)
   @Select("SELECT " +
           "    D.DUTY_ID, " +
           "    D.EMP_ID, " +
@@ -172,5 +173,26 @@ public interface DutyMapper {
       "        AND sd.DUTY_YMD LIKE CONCAT(#{trgtYmd}, '%')" +
       "  )")
 	List<Map<String, Object>> getLastMonthLastDayDuty(DutyRequestDTO req);
+  
+  @Select("select * from WORK_TYPE_CD")
+  List<workTypeCdDTO> getWorkTypeCd();
+  
+  /**
+   * 특정 부서, 특정 월의 연차(LEAVE) 및 출장(BUSINESS_TRIP) 정보 조회
+   * @param deptId 부서 ID
+   * @param trgtYm 조회 월 (형식: '202602')
+   */
+  @Select({
+      "SELECT ",
+      "    A.EMP_ID AS empId, ",
+      "    DATE_FORMAT(A.WRK_YMD, '%Y%m%d') AS dutyYmd, ",
+      "    A.ATDC_STTS_CD AS wrkCd ", // ATDC_STTS_CD를 직접 wrkCd로 가져오면 매핑이 편합니다.
+      "FROM ATDC_HIST A ",
+      "JOIN EMP_PRVC E ON A.EMP_ID = E.EMP_ID ",
+      "WHERE E.DEPT_ID = #{deptId} ",
+      "  AND A.WRK_YMD LIKE CONCAT(#{trgtYm}, '%') ",
+      "  AND A.ATDC_STTS_CD IN ('LEAVE', 'BUSINESS_TRIP')"
+  })
+  List<Map<String, Object>> selectMonthLeaveAndTrip(Map<String, Object> params);
   
 }

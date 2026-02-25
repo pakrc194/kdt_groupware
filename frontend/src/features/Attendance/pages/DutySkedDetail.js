@@ -20,6 +20,7 @@ function DutySkedDetail() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAprvModalOpen, setIsAprvModalOpen] = useState(false);
   const [status, setStatus] = useState("DRAFT");
+  const [dutyGuides, setDutyGuides] = useState([]);
 
   // 유효성 검사를 위한 전달 데이터 맵
   const [lastMonthDataMap, setLastMonthDataMap] = useState({});
@@ -27,9 +28,9 @@ function DutySkedDetail() {
   const isReadOnly = status !== "DRAFT" && status !== "REJECTED";
 
   const dutyOptions = {
-    사무: ["WO", "OD", "O"],
-    "4조2교대": ["D", "E", "O"],
-    "4조3교대": ["D", "E", "N", "O"],
+    사무: ["WO", "OD", "O", "LV", "BT"],
+    "4조2교대": ["D", "E", "O", "LV", "BT"],
+    "4조3교대": ["D", "E", "N", "O", "LV", "BT"],
   };
 
   const dutyStyles = {
@@ -39,6 +40,8 @@ function DutySkedDetail() {
     O: { color: "#eeeeee", textColor: "#9e9e9e" },
     WO: { color: "#e8f5e9", textColor: "#2e7d32" },
     OD: { color: "#fce4ec", textColor: "#c2185b" },
+    LV: { color: "#e0f2fe", textColor: "#0369a1", fontWeight: "bold" },
+    BT: { color: "#fef3c7", textColor: "#92400e", fontWeight: "bold" },
     ERROR: { boxShadow: "inset 0 0 0 3px #f00", fontWeight: "bold" },
   };
 
@@ -98,6 +101,9 @@ function DutySkedDetail() {
     const loadDetail = async () => {
       if (!dutyId) return;
       try {
+        const dutyCodes = await fetcher(`/gw/duty/workTypeCodes`)
+        setDutyGuides(dutyCodes); // 가이드 정보 저장
+
         setIsLoading(true);
         const data = await fetcher(`/gw/duty/detail?dutyId=${dutyId}`);
         setStatus(data.master.prgrStts || "DRAFT");
@@ -311,6 +317,43 @@ function DutySkedDetail() {
       </div>
 
       <div className="timeline-container">
+        {/* 근무 시간 안내 가이드 바 */}
+        <div className="duty-guide-bar" style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '15px',
+          padding: '12px 20px',
+          backgroundColor: '#f1f5f9',
+          borderRadius: '8px',
+          fontSize: '13px',
+          border: '1px solid #e2e8f0'
+        }}>
+          <span style={{ fontWeight: '700', color: '#475569', marginRight: '5px' }}>💡 근무 시간 안내:</span>
+          {dutyGuides
+            .filter(guide => dutyOptions[workType].includes(guide.wrkCd)) // 현재 근무유형(사무/교대)에 맞는 것만 표시
+            .map(guide => (
+              <div key={guide.wrkCd} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  backgroundColor: dutyStyles[guide.wrkCd]?.color || '#fff',
+                  color: dutyStyles[guide.wrkCd]?.textColor || '#000',
+                  fontWeight: 'bold',
+                  border: '1px solid #cbd5e1'
+                }}>
+                  {guide.wrkCd}
+                </span>
+                <span style={{ color: '#64748b' }}>
+                  {guide.strtTm 
+                    ? `${guide.strtTm.substring(0, 5)}~${guide.endTm.substring(0, 5)}` 
+                    : (guide.wrkCd === "LV" ? "연차" : guide.wrkCd === "BT" ? "출장" : "휴무")
+                  }
+                  {guide.brkTmMin > 0 && ` (휴게 ${guide.brkTmMin}분)`}
+                </span>
+              </div>
+            ))
+          }
+        </div>
         <div className="timeline-scroll-viewport">
           <div className="timeline-wrapper">
             <div className="timeline-header">
