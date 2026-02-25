@@ -1,8 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { BarChart, Legend, XAxis, YAxis, CartesianGrid, Tooltip, Bar, Cell, ResponsiveContainer } from 'recharts';
+import { fetcher } from '../../../shared/api/fetcher';
 
-function Attendance({ annlLv }) {
+function Attendance({ annlLvData }) {
+    // 초기값을 빈 배열로 설정하여 .find() 에러 방지
+    const [annlLv, setAnnlLv] = useState(annlLvData || []);
+    // 부모로부터 받은 데이터가 변경될 때 상태 동기화
+    useEffect(() => {
+        if (annlLvData) {
+            setAnnlLv(annlLvData);
+        }
+    }, [annlLvData]);
+
     const statusList = [
         { code: 1, label: "지점장", color: "#ca8282" },
         { code: 2, label: "식품", color: "#caa882" },
@@ -14,18 +24,28 @@ function Attendance({ annlLv }) {
         { code: 8, label: "안전관리", color: "#838383" },
     ];
 
-    const total = annlLv.length;
+    const fn_change = (e) => {
+        fetcher(`/gw/dashboard/dashAnnlLvList?year=${e.target.value}`)
+            .then(dd => {
+                console.log("Fetched Data:", dd);
+                setAnnlLv(Array.isArray(dd) ? dd : [dd]);
+            })
+            .catch(err => console.error("Fetch Error:", err));
+    }
 
-    // ================= [변경점 1] 차트 데이터 구조 재구성 =================
-    // 각 부서를 개별 객체로 만들어야 X축에 이름이 펼쳐집니다.
-    const attendData = statusList.map((status) => {
-        const target = annlLv.find((dd) => dd.deptId === status.code);
-        return {
-            name: status.label,
-            "연차 사용률": target ? Math.round(target.usedLvRate || 0) : 0,
-            fill: status.color // 개별 색상 적용을 위해 저장
-        };
-    });
+    // ================= 차트 데이터 구조 재구성 (useMemo 권장) =================
+    const attendData = useMemo(() => {
+        if (!Array.isArray(annlLv)) return [];
+        
+        return statusList.map((status) => {
+            const target = annlLv.find((dd) => dd.deptId === status.code);
+            return {
+                name: status.label,
+                "연차 사용률": target ? Math.round(target.usedLvRate || 0) : 0,
+                fill: status.color 
+            };
+        });
+    }, [annlLv]); // annlLv가 바뀔 때만 다시 계산
 
     const [expandedStatus, setExpandedStatus] = useState(
         statusList.reduce((acc, cur) => ({ ...acc, [cur.code]: false }), {})
@@ -35,31 +55,39 @@ function Attendance({ annlLv }) {
         setExpandedStatus(prev => ({ ...prev, [code]: !prev[code] }));
     }
 
+    // 데이터가 아직 로딩 전이라면 메시지 표시
+    if (!annlLv || annlLv.length === 0) {
+        return <div style={{ padding: '20px' }}>데이터를 불러오는 중입니다...</div>;
+    }
+
     return (
         <div style={{ padding: '20px' }}>
-            <h1>금년 연차 현황</h1>
+            <h1><select onChange={(e) => fn_change(e)} defaultValue={2026} style={{ padding: '10px 10px', borderRadius: '4px' }}>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                </select> 연차 현황</h1>
+            <div style={{ marginBottom: '20px' }}>
+                
+            </div>
 
             <div style={styles.chartCardContainer}>
                 <div style={styles.chartWrapper}>
-                    {/* ================= [변경점 2] ResponsiveContainer & Margin ================= */}
-                    {/* ResponsiveContainer를 써야 부모 박스 크기에 맞춰 반응형으로 작동합니다. */}
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart 
                             data={attendData} 
-                            margin={{ top: 20, right: 30, left: 0, bottom: 5 }} // left 여백 확보
+                            margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" vertical={false} />
                             <XAxis 
                                 dataKey="name" 
-                                interval={0} // 모든 라벨이 다 보이도록 설정
+                                interval={0} 
                                 tick={{ fontSize: 12 }}
                             />
-                            {/* width를 주지 않아도 margin-left가 0이면 숫자가 보입니다. 필요시 domain 설정 가능 */}
                             <YAxis domain={[0, 100]} unit="%" /> 
                             <Tooltip formatter={(value) => `${value}%`} />
                             <Legend iconType="rect" />
                             
-                            {/* 단일 Bar로 그리되, Cell을 사용해 부서별 색상을 다르게 표현 */}
                             <Bar dataKey="연차 사용률" radius={[4, 4, 0, 0]}>
                                 {attendData.map((entry, index) => (
                                     <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -72,17 +100,16 @@ function Attendance({ annlLv }) {
 
             {/* ================= 상태별 테이블 ================= */}
             {statusList.map((status) => {
-                let list = annlLv.filter((dd) => dd.atdcSttsCd === status.code);
-                if (status.code === "ABSENT") {
-                    list = annlLv.filter((dd) => dd.atdcSttsCd === "ABSENT" || dd.atdcSttsCd === null);
-                }
-
+                // annlLv가 배열인지 다시 한 번 체크하여 필터링
+                let list = Array.isArray(annlLv) ? annlLv.filter((dd) => dd.deptId === status.code) : [];
+                
                 const isExpanded = expandedStatus[status.code];
 
                 return (
                     <div key={status.code} style={styles.section}>
                         <h3 style={styles.subTitle} onClick={() => toggleStatus(status.code)}>
-                            {status.label} ({list.length}) {isExpanded ? "▲" : "▼"}
+                            <span>{status.label} ({list.length})</span>
+                            <span>{isExpanded ? "▲" : "▼"}</span>
                         </h3>
 
                         {isExpanded && (
@@ -110,7 +137,7 @@ function Attendance({ annlLv }) {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="4" style={styles.noData}>데이터가 없습니다.</td>
+                                                <td colSpan="4" style={styles.noData}>해당 부서의 연차 데이터가 없습니다.</td>
                                             </tr>
                                         )}
                                     </tbody>
@@ -136,25 +163,28 @@ const styles = {
         minWidth: 300,
         height: 400,
         background: '#fff',
-        padding: "30px 20px 20px 20px", // 안쪽 여백 조정
+        padding: "30px 20px 20px 20px",
         borderRadius: 8,
         boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
     },
     section: {
         background: "#fff",
-        padding: 24,
+        padding: "16px 24px",
         borderRadius: 8,
         boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-        marginBottom: 30,
+        marginBottom: 15,
     },
     subTitle: {
-        marginBottom: 16,
+        margin: 0,
+        fontSize: '16px',
         fontWeight: 600,
         cursor: "pointer",
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     tableWrapper: {
+        marginTop: '16px',
         maxHeight: 300,
         overflowY: "auto",
         border: "1px solid #f0f0f0",
@@ -170,7 +200,6 @@ const styles = {
         padding: 10,
         borderBottom: "2px solid #f0f0f0",
         textAlign: "left",
-        width: "120px",
     },
     td: {
         padding: 10,

@@ -97,7 +97,7 @@ function CompDashboard(props) {
             {/* <div ref={(el) => (sectionRefs.current["att"] = el)}>
             <CompAttendanceRate emp={emp} /> */}
             <div ref={(el) => (sectionRefs.current["att"] = el)}>
-            <CompAnnlLvRate annlLv={annlLv} />
+            <CompAnnlLvRate annlLvData={annlLv} />
             </div>
             <div ref={(el) => (sectionRefs.current["perscg"] = el)}>
             <PersonnelChangeStats inOut={inOut} changeEmpData={changeEmpData} />
