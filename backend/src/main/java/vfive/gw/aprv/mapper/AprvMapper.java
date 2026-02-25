@@ -118,15 +118,17 @@ public interface AprvMapper {
 	int updateAnnlLvStts(@Param("empId") int empId, @Param("baseYy") int baseYy, @Param("cnt") BigDecimal cnt);
 	
 	@Insert("""
-			<script>
-			Insert into ATDC_HIST 
-			(EMP_ID, WRK_YMD, ATDC_STTS_CD) 
-			VALUES 
-			<foreach collection='list' item='dd' separator=',' index='i'>
-				(#{empId}, #{dd}, 'LEAVE') 
-			</foreach>
-			</script>
-			""")
+		    <script>
+		    INSERT INTO ATDC_HIST 
+		        (EMP_ID, WRK_YMD, ATDC_STTS_CD) 
+		    VALUES 
+		    <foreach collection='list' item='dd' separator=','>
+		        (#{empId}, #{dd}, 'LEAVE') 
+		    </foreach>
+		    ON DUPLICATE KEY UPDATE
+		        ATDC_STTS_CD = VALUES(ATDC_STTS_CD)
+		    </script>
+		    """)
 	int insertAtdcHist(@Param("empId")int empId, @Param("list")List<LocalDate> list);
 	
 	

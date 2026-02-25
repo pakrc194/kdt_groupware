@@ -25,6 +25,7 @@ const AttendContent = ({docRole="PERSONAL", title = "", idList = [], attendList 
 
     // 2. 초기 탭 선택 (PERSONAL 모드 전용)
     useEffect(() => {
+        console.log(docRole, matchedData)
         if (docRole === "PERSONAL" && matchedData.length > 0 && !selectedId) {
             setSelectedId(matchedData[0].id);
         }
