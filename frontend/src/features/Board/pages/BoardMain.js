@@ -24,6 +24,11 @@ function BoardMain(props) {
     const [service, setService] = useState('list');
     const [boardId, setBoardId] = useState(null);
 
+    useEffect(()=>{
+        setService('list')
+    }, [sideId])
+
+
     useEffect(() => {
       if (service === 'Insert' || service === 'Modify') {
         return; 
@@ -44,7 +49,7 @@ function BoardMain(props) {
     }
 
     // 3. 부서 권한 체크 (restrictedBoards)
-    const restrictedBoards = ["HR", "FA", "SA", "FO", "BU", "WF", "MF"];
+    const restrictedBoards = ["HR", "FA", "SA", "FO", "BU", "WF", "MF", "FM"];
     if (restrictedBoards.includes(sideId)) {
 
          const isManager = userDeptCode === "CP";
@@ -73,7 +78,7 @@ function BoardMain(props) {
         setService('list');
     }
 
-    }, [sideId, navigate, userPermissions, userDeptCode, searchParams]);
+    }, [navigate, userPermissions, userDeptCode, searchParams]);
 
     return (
         <>

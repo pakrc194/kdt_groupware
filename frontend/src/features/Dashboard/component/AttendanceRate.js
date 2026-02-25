@@ -29,6 +29,7 @@ function Attendance({ emp }) {
         "휴무": off,
         "연차": leave,
     }));
+    console.log(emp)
 
     const [expandedStatus, setExpandedStatus] = useState(
         statusList.reduce((acc, cur) => ({ ...acc, [cur.code]: false }), {})
@@ -51,7 +52,18 @@ function Attendance({ emp }) {
     return (
         <div>
             <h1>근태현황</h1>
+            <div>
+                <select type='draftBox' value='year'>
+                    <option>전  체</option>
+                    <option>2022년</option>
+                    <option>2023년</option>
+                    <option>2024년</option>
+                    <option>2025년</option>
+                    <option>2026년</option>
+                </select>
 
+                
+            </div>
             {/* ================= 차트 + 카드 컨테이너 ================= */}
             <div style={styles.chartCardContainer}>
                 {/* 차트 */}
@@ -153,13 +165,13 @@ const styles = {
         display: "flex",
         flexWrap: 'wrap', // 여러 줄로 배치 가능
         flex: 1,
-        gap: 16,
-        maxHeight: 400, // 차트 높이에 맞춰서 카드 영역 제한
+        gap: 5,
+        maxHeight: 450, // 차트 높이에 맞춰서 카드 영역 제한
         overflowY: 'auto',
     },
     statCard: {
         background: "#fff",
-        padding: 16,
+        padding: 8,
         borderRadius: 8,
         boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
         minWidth: 120,

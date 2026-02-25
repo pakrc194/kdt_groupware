@@ -11,6 +11,20 @@ export const STATUS_MAP = {
   // 치환시킬 단어 추가해서 사용
 };
 
+export const boardMap = {
+  important: { label: "중요" },
+  public: { label: "공용" },
+  MyPosts: { label: "내가쓴" },
+  SO: { label: "안전" },
+  HR: { label: "인사" },
+  FA: { label: "시설" },
+  FO: { label: "식품" },
+  WF: { label: "여성패션" },
+  MF: { label: "남성패션" },
+  BU: { label: "뷰티" }
+  // 치환시킬 단어 추가해서 사용
+};
+
 export const DEPT_MAP = {
   1: { label: "지점장" },
   2: { label: "식품" },
@@ -44,3 +58,4 @@ export const getStatusLabel = (status) => STATUS_MAP[status]?.label || status;
 export const getDeptLabel = (deptId) => DEPT_MAP[deptId]?.label || deptId;
 export const getSchedTypeLabel = (type) => SCHED_TYPE_MAP[type]?.label || type;
 export const getAprvLineMap = (line) => APRV_LINE_MAP[line]?.label || line;
+export const getBoardMap = (board) => boardMap[board]?.label || board;

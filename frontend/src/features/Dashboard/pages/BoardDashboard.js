@@ -28,6 +28,12 @@ function BoardDash() {
                 const formattedStats = Object.keys(statsMap).map(key => ({
                     name: key === 'important' ? '중요공지'
                         : key === 'public' ? '공용게시판'
+                        : key === 'SA' ? '안전관리'
+                        : key === 'FA' ? '시설관리'
+                        : key === 'HR' ? '인사'
+                        : key === 'SO' ? '뷰티'
+                        : key === 'WF' ? '여성패션'
+                        : key === 'MyPosts' ? '내가쓴 게시글'
                         : key === 'FO' ? '식품 게시판' : key,
                     "게시글수": statsMap[key] // Recharts의 일반적인 명칭인 value로 세팅
                 }));

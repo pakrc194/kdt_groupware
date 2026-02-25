@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useParams } from "react-router-dom";
+import React, {useEffect,useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
 import { fetcher } from '../../../shared/api/fetcher';
 import boardst from '../../Home/css/Board.module.css';
+import { getBoardMap } from '../../../shared/func/formatLabel';
 
 function BoardInsert(props) {
     const { sideId } = useParams(); // URL에서 게시판 종류 가져오기
@@ -22,6 +23,18 @@ function BoardInsert(props) {
     const FileUpload = (e) => {
         setSelectedFiles(Array.from(e.target.files));
     };    
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setTitle('');
+        setContent('');
+        setSelectedFiles([]);
+        setIsTop(false);
+
+        
+        
+    }, [sideId]); 
 
     // 파일 선택 시 검증 로직
     const handleFileChange = (e) => {
@@ -71,6 +84,12 @@ function BoardInsert(props) {
     );
 
    
+    // 2. 파일 데이터 추가 (이 부분이 누락되었습니다!)
+    selectedFiles.forEach((file) => {
+        formData.append("files", file); // 서버의 @RequestPart("files") 이름과 일치해야 함
+    });
+
+
 
         // 파일 업로드를 하는데 fetcher를 사용하면 에러가 나서 기본fetch를 사용하고 있습니다
         fetch(`http://192.168.0.36:8080/board/insertWithFile`, {
@@ -92,10 +111,15 @@ function BoardInsert(props) {
         });
     };
 
+
+   
+
+    
+
     return (
         <div className="board-detail-container"> {/* 일관된 컨테이너 클래스 사용 */}
             <h2 style={{ fontSize: '24px', borderBottom: '2px solid #333', paddingBottom: '15px', marginBottom: '30px' }}>
-                게시글 작성
+                {getBoardMap(sideId)} 게시글 작성
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
