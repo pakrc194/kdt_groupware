@@ -10,6 +10,7 @@ import vfive.gw.dashboard.dto.request.AccessDeleteDTO;
 import vfive.gw.dashboard.dto.request.AprvPrcsDTO;
 import vfive.gw.dashboard.dto.request.CompHRDTO;
 import vfive.gw.dashboard.dto.request.CompSchedDTO;
+import vfive.gw.dashboard.dto.request.DashAnnlLvDTO;
 import vfive.gw.dashboard.dto.request.DashDTO;
 import vfive.gw.dashboard.dto.request.DashSchedDashDTO;
 import vfive.gw.dashboard.dto.request.DocPrcsTimeDTO;
@@ -195,4 +196,13 @@ WHERE
       + "     OR SCHED_DETAIL LIKE '%보수%' OR SCHED_DETAIL LIKE '%수리%') "
       + "AND SCHED_DELETE_DATE IS NULL")
 	List<DashSchedDashDTO> dashFacilityRepairList(String dept);
+	
+	//연차 통꼐
+	@Select("""
+			SELECT DEPT_ID, AVG(A.USED_LV/A.OCCRR_LV)*100 as USED_LV_RATE FROM EMP_PRVC E 
+			JOIN ANNL_LV_STTS A on E.EMP_ID = A.EMP_ID 
+			WHERE A.BASE_YY = #{year} AND A.OCCRR_LV != 0 
+			GROUP BY DEPT_ID;
+			""")
+	List<DashAnnlLvDTO> dashAnnlLvList(int year);
 }

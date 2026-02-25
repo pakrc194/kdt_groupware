@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.annotation.Resource;
 import vfive.gw.dashboard.dto.request.CompHRDTO;
 import vfive.gw.dashboard.dto.request.CompSchedDTO;
+import vfive.gw.dashboard.dto.request.DashAnnlLvDTO;
 import vfive.gw.dashboard.dto.request.DashDTO;
 import vfive.gw.dashboard.dto.request.DashSchedDashDTO;
 import vfive.gw.dashboard.dto.request.DocPrcsTimeDTO;
@@ -89,4 +90,10 @@ public class CompDashController {
 		return res;
 	}
 	
+	// 연차 통계
+	@GetMapping("dashAnnlLvList")
+	List<DashAnnlLvDTO> dashAnnlLvList(@RequestParam("year") int year) {
+		List<DashAnnlLvDTO> res = mapper.dashAnnlLvList(year);
+		return res;
+	}
 }
