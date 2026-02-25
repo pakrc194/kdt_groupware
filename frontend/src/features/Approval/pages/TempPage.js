@@ -101,10 +101,20 @@ const TempPage = () => {
 
     const fn_drftConfirm = () => {
         // 유효성 검사
-        if (!docTitle?.trim()) return alert("문서 제목을 입력하세요.");
-        if (docForm.docFormType === "근태" && !isAttendConfirm) {
-            return alert("근태를 먼저 조회(확인)해주세요.");
-        }
+        if (!myInfo?.empId) return alert("회원정보가 없습니다");
+        if (!docTitle?.trim()) return alert("문서 제목을 입력하세요");
+        
+        const docRole = inputList.find(v => v.docInptNm === "docRole");
+        const docStart = inputList.find(v => v.docInptNm === "docStart");
+        const docEnd = inputList.find(v => v.docInptNm === "docEnd");
+        const docLocInput = inputList.find(v => v.docInptNm === "docLoc");
+
+        if (docRole && docRole.docInptVl == null) return alert("담당을 선택해주세요");
+        if (docStart && docStart.docInptVl == null) return alert("시작날짜를 선택해주세요");
+        if (docEnd && docEnd.docInptVl == null) return alert("종료날짜를 선택해주세요");
+        if (aprvDocDetail.docFormType === "근태" && !isAttendConfirm) return alert("근태를 조회하세요");
+        if (docLocInput && docLocInput.docInptVl == null) return alert("장소를 선택해주세요");
+
 
         const drftDoc = {
             drftEmpId: myInfo.empId,
@@ -172,11 +182,31 @@ const TempPage = () => {
                                 />
                             </div>
                         </div>
+                        
+                    </div>
+                </section>
+
+                <section className="drft-card">
+                    <div className="drft-card-header">
+                        <h3 className="drft-card-title">양식</h3>
+                    </div>
+                    <div className="drft-card-body">
                         <div className="drft-unit">
-                            <div className="drft-unit-top"><label className="drft-label">양식 선택</label></div>
-                            <div className="drft-control" style={{ display: 'flex', gap: '8px' }}>
-                                <input className="drft-input" type="text" value={docForm?.docFormNm} readOnly />
-                                <Button variant="secondary" onClick={fn_formClick}>양식 변경</Button>
+                            <div className="drft-unit-top">
+                                <label className="drft-label">양식 선택</label>
+                                <div className="drft-unit-action">
+                                    <Button variant="primary" onClick={fn_formClick}>양식 선택</Button>
+                                </div>
+                            </div>
+                            <div className="drft-control">
+                                <input
+                                    className="drft-input"
+                                    type="text"
+                                    name="docFormNm"
+                                    value={docForm?.docFormNm || ""}
+                                    readOnly
+                                    placeholder="양식을 선택하세요"
+                                />
                             </div>
                         </div>
                     </div>

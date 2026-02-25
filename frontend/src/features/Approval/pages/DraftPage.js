@@ -98,6 +98,13 @@ const DraftPage = () => {
             alert("종료날짜를 선택해주세요")
             return;
         }
+        const startDate = new Date(docStart.docInptVl);
+        const endDate = new Date(docEnd.docInptVl);
+
+        if (startDate > endDate) {
+            alert("종료날짜를 확인하세요");
+            return;
+        }
         if(docForm.docFormType=="근태" && !isAttendConfirm) {
             alert("근태를 조회하세요")
             return;
