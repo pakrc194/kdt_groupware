@@ -6,4 +6,5 @@ import lombok.Data;
 public class AprvAttendUploadRequest {
 	int empId;
 	String docStart, docEnd;
+	String attendStts;
 }
