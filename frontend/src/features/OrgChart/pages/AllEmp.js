@@ -55,6 +55,8 @@ function AllEmp() {
         }
     };
 
+    console.log(data)
+
     return (
         <>
         <div style={styles.container}>
@@ -75,6 +77,8 @@ function AllEmp() {
                         <th style={styles.th}>이름</th>
                         <th style={styles.th}>부서</th>
                         <th style={styles.th}>직책</th>
+                        {selectedValue === '초기' && <th style={styles.th}>입사예정일</th>}
+                        {selectedValue === 'RETIRED' && <th style={styles.th}>퇴사일</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -87,6 +91,10 @@ function AllEmp() {
                             </td>
                             <td style={styles.td}>{vv.DEPT_NAME}</td>
                             <td style={styles.td}>{vv.JBTTL_NM}</td>
+                            {selectedValue === '초기' && <td style={styles.td}>{vv.EMP_JNCMP_YMD?.split('T')[0]}</td>}
+                            {selectedValue === "RETIRED" && (
+                                <td style={styles.td}>{vv.EMP_RSGNTN_YMD?.split('T')[0]}</td>
+                            )}
                         </tr>
                     ))
                     ) : (

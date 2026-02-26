@@ -85,13 +85,6 @@ public interface CompDashMapper {
 	List<AprvPrcsDTO> aprvPrcsList();
 	
 	// 대시보드 팀 인원
-//	@Select("select EMP_PRVC.dept_id, EMP_PRVC.JBTTL_ID, EMP_PRVC.EMP_NM, EMP_PRVC.EMP_SN, "
-//			+ "JBTTL_INFO.JBTTL_NM, "
-//			+ "ATDC_HIST.EMP_ID, ATDC_HIST.WRK_YMD, ATDC_HIST.ATDC_STTS_CD "
-//			+ "from EMP_PRVC "
-//			+ "join JBTTL_INFO on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id "
-//			+ "left join ATDC_HIST on EMP_PRVC.emp_id = ATDC_HIST.emp_id and ATDC_HIST.WRK_YMD = #{date} "
-//			+ "where EMP_PRVC.dept_id = #{dept} and EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE' ")
 	@Select("""
 			<script>
 			select EMP_PRVC.dept_id,
@@ -120,6 +113,31 @@ public interface CompDashMapper {
 			</script>
 			""")
 	List<DashDTO> dashTeamEmpList(@Param("dept") Integer dept, @Param("date") String date);
+	
+	// 전체 근태 통계
+	@Select("""
+			<script>
+			select EMP_PRVC.dept_id,
+			       EMP_PRVC.JBTTL_ID,
+			       EMP_PRVC.EMP_NM,
+			       EMP_PRVC.EMP_SN,
+			       JBTTL_INFO.JBTTL_NM,
+			       ATDC_HIST.EMP_ID,
+			       ATDC_HIST.WRK_YMD,
+			       ATDC_HIST.ATDC_STTS_CD,
+			       DEPT_INFO.DEPT_NAME
+			from EMP_PRVC
+			join JBTTL_INFO
+			  on EMP_PRVC.jbttl_id = JBTTL_INFO.jbttl_id
+			join DEPT_INFO
+			  on EMP_PRVC.dept_id = DEPT_INFO.dept_id
+			left join ATDC_HIST
+			  on EMP_PRVC.emp_id = ATDC_HIST.emp_id
+			  and ATDC_HIST.WRK_YMD between DATE_SUB(#{date}, INTERVAL 10 YEAR) and #{date}
+			where EMP_PRVC.EMP_ACNT_STTS = 'ACTIVE'
+			</script>
+			""")
+	List<DashDTO> dashTeamAttend(@Param("date") String date);
 	
 	// 대시보드 팀 스케쥴
 	@Select("SELECT SCHED.*, IFNULL(LOC_INFO.LOC_NM, '장소 미정') AS LOC_NM, EMP_PRVC.EMP_NM "

@@ -18,6 +18,7 @@ function CompDashboard(props) {
     const [accessDeleteList, setAccessDeleteList] = useState([]);
     const [approval, setApproval] = useState([]);
     const [emp, setEmp] = useState([]);
+    const [allEmp, setAllEmp] = useState([]);
     
     
     const date = new Date;
@@ -77,13 +78,17 @@ function CompDashboard(props) {
         // 전체 근태
         fetcher(`/gw/dashboard/dashTeamEmpList?dept=0&date=${formatted}`)
         .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]); })
-      }, [])
 
+        // 전체 근태
+        fetcher(`/gw/dashboard/dashTeamAttendList?date=${formatted}`)
+        .then(dd => { setAllEmp(Array.isArray(dd) ? dd : [dd]); })
+      }, [])
+      console.log(emp)
     return (
         <div>
             <div ref={(el) => (sectionRefs.current["graph"] = el)}>
             <h1>회사 대시보드</h1>
-            <CompanyDashboardGraph inOut={inOut} emp={emp} approval={approval} />
+            <CompanyDashboardGraph inOut={inOut} emp={allEmp} approval={approval} />
             </div>
             <div ref={(el) => (sectionRefs.current["att"] = el)}>
             <CompAttendanceRate emp={emp} />

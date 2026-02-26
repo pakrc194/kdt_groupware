@@ -50,7 +50,7 @@ function Attendance({ emp }) {
 
     return (
         <div>
-            <h1>근태현황</h1>
+            <h1>당일 근태현황</h1>
 
             {/* ================= 차트 + 카드 컨테이너 ================= */}
             <div style={styles.chartCardContainer}>
@@ -165,7 +165,7 @@ const styles = {
         borderRadius: 8,
         boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
         minWidth: 120,
-        flex: '1 1 45%', // 두 줄로 배치되도록 너비 조절
+        flex: "0 0 calc(20%)",   // 정확히 2개씩
     },
     statTitle: {
         fontSize: 14,

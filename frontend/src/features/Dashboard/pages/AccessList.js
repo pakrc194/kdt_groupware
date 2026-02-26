@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { fetcher } from '../../../shared/api/fetcher';
 import NoAccess from '../../../shared/components/NoAccess';
+import Button from '../../../shared/components/Button';
 
-function AccessList(props) {
-    const [myInfo, setMyInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
+function AccessList() {
+    const [myInfo] = useState(JSON.parse(localStorage.getItem("MyInfo")));
 
-    const [isActive, setisActive] = useState(false);
-    const [option, setOption] = useState('DEPT')
+    const [isActive, setIsActive] = useState(false);
+    const [option, setOption] = useState('DEPT');
     const [teamList, setTeamList] = useState([]);
     const [jbttlList, setJbttlList] = useState([]);
     const [accessEmpowerList, setAccessEmpowerList] = useState([]);
-    const [empower, setEmpower] = useState(1);
-    const [section, setSection] = useState('');
-    const [detail, setDetail] = useState('');
     const [accessList, setAccessList] = useState([]);
     const [isDelete, setIsDelete] = useState(false);
 
-    const typeList = [{id: 1, code: 'DEPT', name: '팀'}, {id: 2, code: 'JBTTL', name: '직책'}];
+    const [expandedSections, setExpandedSections] = useState({});
+    const [expandedDetails, setExpandedDetails] = useState({});
+
     const sectionList = [
         {id: 1, code: 'APPROVAL', name: '전자결재'},
         {id: 2, code: 'SCHEDULE', name: '일정관리'},
@@ -27,282 +27,146 @@ function AccessList(props) {
     ];
 
     useEffect(() => {
-        // 전체 팀 리스트
-        fetcher('/gw/schedule/instruction/teams')
-        .then(dd => {
-            setTeamList(dd)
-        })
-        
-        .catch(err => console.error('팀 리스트 로딩 실패', err));
-
-        fetcher('/gw/orgChart/register/jbttl')
-        .then(dd => {
-            setJbttlList(Array.isArray(dd) ? dd : [dd])
-        })
-        .catch(err => console.error('팀 리스트 로딩 실패', err));
-
-        fetcher('/gw/dashboard/accessEmpowerList')
-        .then(dd => {
-            setAccessEmpowerList(Array.isArray(dd) ? dd : [dd])
-        })
-        .catch(err => console.error('권한 부여 리스트 로딩 실패', err));
-    }, [])
+        fetcher('/gw/schedule/instruction/teams').then(setTeamList).catch(console.error);
+        fetcher('/gw/orgChart/register/jbttl').then(dd => setJbttlList(Array.isArray(dd) ? dd : [dd])).catch(console.error);
+        fetcher('/gw/dashboard/accessEmpowerList').then(dd => setAccessEmpowerList(Array.isArray(dd) ? dd : [dd])).catch(console.error);
+        fetcher('/gw/dashboard/allAccessList').then(setAccessList).catch(console.error);
+    }, []);
 
     useEffect(() => {
-        fetcher('/gw/dashboard/accessEmpowerList')
-        .then(dd => {
-            setAccessEmpowerList(Array.isArray(dd) ? dd : [dd])
-        })
-        .catch(err => console.error('권한 부여 리스트 로딩 실패', err));
-    }, [isActive, isDelete])
+        fetcher('/gw/dashboard/accessEmpowerList').then(dd => setAccessEmpowerList(Array.isArray(dd) ? dd : [dd])).catch(console.error);
+    }, [isActive, isDelete]);
 
-    const accessLoad = {
-        ACCESS_TYPE: option,
-        EMPOWER_ID: empower,
-        ACCESS_SECTION: section,
-        ACCESS_DETAIL: detail
-    }
+    const toggleSection = (sectionCode) => {
+        setExpandedSections(prev => ({ ...prev, [sectionCode]: !prev[sectionCode] }));
+    };
 
-    const chooseSection = (e) => {
-        setSection(e)
-        fetcher(`/gw/dashboard/accessList?type=${e}`)
-        .then(dd => {setAccessList(dd)})
-        .catch(err => console.error('권한 리스트 로딩 실패', err));
-    }
+    const toggleDetail = (sectionCode, detailKey) => {
+        const key = `${sectionCode}-${detailKey}`;
+        setExpandedDetails(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
-    const addAccess = async () => {
+    const addAccess = async (type, empId, e) => {
         await fetcher('/gw/dashboard/addAccess', {
             method: 'POST',
             body: { 
-                accessType: option,
-                accessSection: section,
-                empowerId: empower,
-                accessDetail: detail
+                accessType: type,
+                accessSection: e.accessSection,
+                empowerId: empId,
+                accessDetail: e.accessListId
             }
         });
-        setisActive(false)
-    }
+        setIsActive(!isActive);
+    };
 
-    const deleteAccess = async (e) => {
+    const deleteAccess = async (accessEmpowerId, type, empId, e) => {
         await fetcher('/gw/dashboard/delAccess', {
             method: 'POST',
             body: { 
-                accessDeleteId: e.accessEmpowerId,
-                accessDeleteType: e.accessType, 
-                deleteEmpowerId: e.empowerId, 
-                accessDeleteSection: e.accessSection, 
-                accessDeleteDetail: e.accessDetail, 
+                accessDeleteId: accessEmpowerId,
+                accessDeleteType: type,
+                deleteEmpowerId: empId,
+                accessDeleteSection: e.accessSection,
+                accessDeleteDetail: e.accessListId,
             }
         });
         setIsDelete(!isDelete);
-    }
+    };
 
-    // 지점장만 접근 가능
-    if (myInfo.deptId !== 1) return <NoAccess />
+    if (myInfo.deptId !== 1) return <NoAccess />;
 
     return (
         <div style={styles.container}>
             <div style={styles.header}>
-                <h1 style={styles.title}>권한 관리</h1>
-                { !isActive &&
-                    <button onClick={() => setisActive(true)} style={styles.primaryBtn}>권한 추가</button>
-                }
+                <h1 style={styles.title}>{option === 'DEPT' ? '팀 ' : '직책 '}권한 관리</h1>
+                <Button onClick={() => setOption('DEPT')}>팀</Button>
+                <Button onClick={() => setOption('JBTTL')}>직책</Button>
             </div>
-            { isActive &&
-                <div style={styles.filterBox}>
-                    <div style={styles.filterGroup}>
-                        <select
-                            style={styles.input}
-                            onChange={e => {setOption(e.target.value)}}
-                        >
-                            {typeList.map(list => (
-                                <option key={list.id} value={list.code}>{list.name}</option>
-                            ))}
-                        </select >
-                            {/* 팀 */}
-                            {option === "DEPT" && 
-                                <select style={styles.input} onChange={e => {setEmpower(e.target.value)}}>
-                                    <option value="0">팀 선택</option>
-                                    {teamList.map(list => (
-                                    <option key={list.deptId} value={list.deptId}>{list.deptName}</option>
-                                    ))}
-                                </select>
-                            }
-                            {/* 직책 */}
-                            {option === "JBTTL" && 
-                                <select style={styles.input} onChange={e => {setEmpower(e.target.value)}}>
-                                    <option value="0">직책 선택</option>
-                                    {jbttlList.map(list => (
-                                    <option key={list.jbttlId} value={list.jbttlId}>{list.jbttlNm}</option>
-                                    ))}
-                                </select>
-                            }
-                            <select style={styles.input} onChange={e => {chooseSection(e.target.value)}}>
-                                <option value="0">구분 선택</option>
-                                {
-                                    sectionList.map(list => (
-                                        <option key={list.id} value={list.code}>{list.name}</option>
-                                    ))
-                                }
-                            </select>
-                            <select style={styles.input} onChange={e => {setDetail(e.target.value)}}>
-                                <option value="0">권한 선택</option>
-                                {
-                                    accessList.map(list => (
-                                        <option key={list.accessListId} value={list.accessListId}>{list.accessDetail}</option>
-                                    ))
-                                }
-                            </select>
-                            <button style={styles.primaryBtn} onClick={addAccess}>추가</button>
-                            <button style={styles.cancelBtn} onClick={() => setisActive(false)}>취소</button>
-                    </div>
-                </div>
-            }
-            {['DEPT', 'JBTTL'].map(type => {
-                const typeName = type === 'DEPT' ? '팀' : '직책';
-                return (
-                    <div style={styles.addBox}>
-                        {/* <h2>{typeName} 권한 목록</h2> */}
-                        <table style={styles.table} >
-                            <thead>
-                                <tr>
-                                    <th style={styles.th}>{typeName}</th>
-                                    <th style={styles.th}>구분</th>
-                                    <th style={styles.th}>권한</th>
-                                    <th style={styles.th}>관리</th>
-                                </tr>
-                            </thead>
-                            <tbody>
 
-                            {accessEmpowerList.filter(v => v.accessType === type).length > 0 ? (
-                                accessEmpowerList
-                                .filter(v => v.accessType === type)
-                                .map((v, idx) => (
-                                    <tr key={idx}>
-                                        <td style={styles.td}>{v.empowerName}</td>
-                                        <td style={styles.td}>
-                                            {sectionList.find(s => s.code === v.accessSection)?.name}
-                                        </td>
-                                        <td style={styles.td}>{v.accessName}</td>
-                                        <td style={styles.td}>
-                                            {/* <button style={styles.smallBtn}>수정</button> */}
-                                            <button style={styles.deleteBtn} onClick={() => {deleteAccess(v)
-                                            }}>삭제</button>
-                                        </td>
-                                    </tr>
-                                ))
-                                    ) : (
-                                        <tr>
-                                        <td colSpan="4" style={styles.noData}>데이터가 없습니다.</td>
-                                        </tr>
+            {sectionList.map(section => {
+                const sectionData = accessList.filter(v => v.accessSection === section.code);
+                if (sectionData.length === 0) return null;
+
+                const groupedByDetail = {};
+                sectionData.forEach(item => {
+                    if (!groupedByDetail[item.accessDetail]) groupedByDetail[item.accessDetail] = { accessName: item.accessName, items: [] };
+                    groupedByDetail[item.accessDetail].items.push(item);
+                });
+
+                const empowerList = option === "DEPT" ? teamList : jbttlList;
+                const matched = accessEmpowerList.filter(emp => 
+                    emp.accessType === option &&
+                    accessList.some(acc => acc.accessListId === emp.accessDetail)
+                );
+
+                const sectionExpanded = expandedSections[section.code] ?? false;
+
+                return (
+                    <div key={section.code} style={styles.section}>
+                        <h3 style={styles.subTitle} onClick={() => toggleSection(section.code)}>
+                            {section.name} ({sectionData.length}) {sectionExpanded ? "▲" : "▼"}
+                        </h3>
+
+                        {sectionExpanded && Object.entries(groupedByDetail).map(([detailKey, value]) => {
+                            const detailExpanded = expandedDetails[`${section.code}-${detailKey}`] ?? false;
+                            return (
+                                <div key={detailKey} style={{ marginBottom: 12 }}>
+                                    <h4 style={styles.detailTitle} onClick={() => toggleDetail(section.code, detailKey)}>
+                                        {value.items[0].accessDetail} {detailExpanded ? "▲" : "▼"}
+                                    </h4>
+
+                                    {detailExpanded && (
+                                        <table style={styles.table}>
+                                            <thead>
+                                                <tr>
+                                                    <th style={styles.th}>{option === "DEPT" ? "팀" : "직책"}</th>
+                                                    <th style={styles.th}>관리</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {empowerList.map(empower => {
+                                                    const empowerId = option === "DEPT" ? empower.deptId : empower.jbttlId;
+                                                    const empowerName = option === "DEPT" ? empower.deptName : empower.jbttlNm;
+
+                                                    const exists = matched.find(v => v.empowerId === empowerId && v.accessDetail === value.items[0].accessListId);
+
+                                                    return (
+                                                        <tr key={empowerId}>
+                                                            <td style={styles.td}>{empowerName}</td>
+                                                            <td style={styles.td}>
+                                                                {exists ? 
+                                                                    <button style={styles.deleteBtn} onClick={() => deleteAccess(exists.accessEmpowerId, option, empowerId, value.items[0])}>삭제</button> : 
+                                                                    <button style={styles.addBtn} onClick={() => addAccess(option, empowerId, value.items[0])}>추가</button>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
                                     )}
-                            </tbody>
-                    </table>
+                                </div>
+                            );
+                        })}
                     </div>
-                )
+                );
             })}
         </div>
     );
 }
-const styles = {
-  container: {
-    maxWidth: "1200px",
-    margin: "20px auto",
-    padding: "20px",
-    backgroundColor: "#f8f9fa",
-    borderRadius: "12px",
-    fontFamily: "Pretendard, -apple-system, sans-serif",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    margin: 0,
-  },
-  filterBox: {
-    background: "#fff",
-    padding: 20,
-    borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    marginBottom: 20,
-  },
-  filterGroup: {
-    display: "flex",
-    gap: 12,
-    flexWrap: "wrap",
-    alignItems: "center",
-    justifyContent: "flex-end"
-  },
-  input: {
-    padding: "8px 12px",
-    border: "1px solid #d9d9d9",
-    borderRadius: 6,
-    fontSize: 14,
-  },
-  primaryBtn: {
-    padding: "8px 24px",
-    backgroundColor: "#1890ff",
-    color: "#fff",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-  },
-  cancelBtn: {
-    padding: "8px 24px",
-    backgroundColor: "#aaa",
-    color: "#fff",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-  },
-  section: {
-    background: "#fff",
-    padding: 24,
-    borderRadius: 8,
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-    fontSize: 18,
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-  th: {
-    background: "#fafafa",
-    padding: 16,
-    borderBottom: "2px solid #f0f0f0",
-    textAlign: "left",
-    width: "100px"
-  },
-  td: {
-    padding: 16,
-    borderBottom: "1px solid #f0f0f0",
-  },
-  smallBtn: {
-    padding: "4px 12px",
-    marginRight: 6,
-  },
-  deleteBtn: {
-    padding: "4px 12px",
-    backgroundColor: "#ff4d4f",
-    color: "#fff",
-    border: "none",
-    borderRadius: 4,
-    cursor: "pointer",
-  },
-  noData: {
-    textAlign: "center",
-    padding: 40,
-    color: "#bfbfbf",
-  },
-};
 
+const styles = {
+    container: { maxWidth: 1200, margin: '20px auto', padding: 20, fontFamily: "Pretendard, -apple-system, sans-serif" },
+    header: { display: "flex", alignItems: "center", marginBottom: 24, gap: 10 },
+    title: { fontSize: 24, margin: 0 },
+    section: { background: "#fff", padding: 16, borderRadius: 8, marginBottom: 24, boxShadow: "0 2px 8px rgba(0,0,0,0.05)" },
+    subTitle: { cursor: "pointer", marginBottom: 12 },
+    detailTitle: { cursor: "pointer", marginLeft: 16, marginBottom: 8, fontWeight: 500 },
+    table: { width: "100%", borderCollapse: "collapse", marginBottom: 8 },
+    th: { background: "#fafafa", padding: 10, borderBottom: "1px solid #f0f0f0", textAlign: "left" },
+    td: { padding: 10, borderBottom: "1px solid #f0f0f0" },
+    addBtn: { padding: "4px 12px", backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" },
+    deleteBtn: { padding: "4px 12px", backgroundColor: "#ff4d4f", color: "#fff", border: "none", borderRadius: 4, cursor: "pointer" },
+};
 
 export default AccessList;

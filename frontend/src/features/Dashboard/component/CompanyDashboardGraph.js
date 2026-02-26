@@ -21,14 +21,68 @@ function CompanyDashboardGraph({ inOut, emp, approval }) {
     const off = emp.filter((dd) => dd.atdcSttsCd === "OFF").length;
     const leave = emp.filter((dd) => dd.atdcSttsCd === "LEAVE").length;
 
-    const attendData = [{
-        name: "오늘",
-        "출근": present,
-        "결근": absent,
-        "출장": businessTrip,
-        "휴무": off,
-        "연차": leave,
-    }];
+    // const attendData = [{
+    //     name: "오늘",
+    //     "출근": present,
+    //     "결근": absent,
+    //     "출장": businessTrip,
+    //     "휴무": off,
+    //     "연차": leave,
+    // }];
+
+    const attendData = recentYears.map((year) => ({
+        name: `${year}년`,
+        "출근": emp.filter(dd => new Date(dd.wrkYmd).getFullYear() == year && dd.atdcSttsCd === "PRESENT").length,
+        "결근": emp.filter(dd => new Date(dd.wrkYmd).getFullYear() == year && dd.atdcSttsCd === "ABSENT").length,
+        "출장": emp.filter(dd => new Date(dd.wrkYmd).getFullYear() == year && dd.atdcSttsCd === "BUSINESS_TRIP").length,
+        "휴무": emp.filter(dd => new Date(dd.wrkYmd).getFullYear() == year && dd.atdcSttsCd === "OFF").length,
+        "연차": emp.filter(dd => new Date(dd.wrkYmd).getFullYear() == year && dd.atdcSttsCd === "LEAVE").length,
+    }));
+    
+
+//     const yearMap = {};
+
+// emp.forEach((item) => {
+//   const year = item.wrkYmd.substring(0, 4); // YYYY 추출
+
+//   if (!yearMap[year]) {
+//     yearMap[year] = {
+//       name: year,
+//       출근: 0,
+//       결근: 0,
+//       출장: 0,
+//       휴무: 0,
+//       연차: 0,
+//     };
+//   }
+
+//   switch (item.atdcSttsCd) {
+//     case "PRESENT":
+//       yearMap[year]["출근"]++;
+//       break;
+//     case "ABSENT":
+//       yearMap[year]["결근"]++;
+//       break;
+//     case "BUSINESS_TRIP":
+//       yearMap[year]["출장"]++;
+//       break;
+//     case "OFF":
+//       yearMap[year]["휴무"]++;
+//       break;
+//     case "LEAVE":
+//       yearMap[year]["연차"]++;
+//       break;
+//     default:
+//       break;
+//   }
+// });
+
+// // 2️⃣ 배열로 변환
+// const attendData = Object.values(yearMap).sort(
+//   (a, b) => a.name - b.name
+// );
+
+// console.log(attendData);
 
     const deptOrder = ["지점장", "식품", "뷰티·패션", "여성패션", "남성패션", "인사관리", "시설자재", "안전관리"];
     const activeList = inOut.filter(data => data.empAcntStts === "ACTIVE");
