@@ -108,6 +108,8 @@ public interface AtdcMapper {
       "    E.EMP_NM as empNm, " +
       "    A.WRK_YMD as wrkYmd, " +
       "    W.WRK_NM as wrkNm, " +
+      "    W.STRT_TM as strtTm, " +
+      "    W.END_TM as endTm, " +
       "    A.CLK_IN_DTM as clkInDtm, " +
       "    A.CLK_OUT_DTM as clkOutDtm, " +
       "    A.ATDC_STTS_CD as atdcSttsCd " +
