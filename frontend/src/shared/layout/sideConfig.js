@@ -43,7 +43,7 @@ export const SIDE_CONFIG = {
       { id: "BU", name: "뷰티 게시판" , access:"뷰티 게시판 열람"},
       { id: "WF", name: "여성패션 게시판" , access:"여성패션 게시판 열람"},
       { id: "MF", name: "남성패션 게시판" , access:"남성패션 게시판 열람"},
-      { id: "MyPosts", name: "내가 쓴 게시판" },
+      { id: "MyPosts", name: "내가 쓴 게시글" },
     ],
   },
   orgChart: {
