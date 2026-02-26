@@ -104,7 +104,8 @@ function EmpAtdcDetail() {
             <thead>
               <tr>
                 <th>근무일</th>
-                <th>근무유형</th>
+                <th>근무형태</th>
+                <th>근무시간</th>
                 <th>출근시간</th>
                 <th>퇴근시간</th>
                 <th>상태</th>
@@ -116,6 +117,7 @@ function EmpAtdcDetail() {
                   <tr key={idx}>
                     <td>{item.wrkYmd}</td>
                     <td>{item.wrkNm}</td>
+                    <td>{formatTime(item.strtTm)} ~ {formatTime(item.endTm)}</td>
                     <td>{formatTime(item.clkInDtm)}</td>
                     <td>{formatTime(item.clkOutDtm)}</td>
                     <td>
