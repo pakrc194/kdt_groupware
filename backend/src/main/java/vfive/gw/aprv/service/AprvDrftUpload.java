@@ -40,14 +40,16 @@ public class AprvDrftUpload {
 		AprvDrftDocRequest drftDoc = req.getDrftDocReq();
 		
 		AprvDocVerListRequest docVer = new AprvDocVerListRequest();
-		docVer.setDocNo(drftDoc.getAprvDocNo());
+		docVer.setDocNo(drftDoc.getAprvDocNo().trim());
+		docVer.setEmpId(drftDoc.getDrftEmpId());
+		System.out.println("문서번호 "+drftDoc.getAprvDocNo());
 		drftDoc.setAprvDocStts("PENDING");
 		int nextVersion = 1;
 		List<AprvDocVerListResponse> docVerList = mapper.aprvDocVerList(docVer);
 		
 		System.out.println("docVerList "+ docVerList);
 		if (docVerList != null && !docVerList.isEmpty()) {
-			nextVersion = docVerList.get(0).getAprvDocVer()+1; // ex) 1.2
+			nextVersion = docVerList.get(0).getAprvDocVer()+1; // ex) 
 		}
 		drftDoc.setAprvDocVer(nextVersion);
 		System.out.println("nextVersion "+ nextVersion);
