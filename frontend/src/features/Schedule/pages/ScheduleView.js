@@ -100,7 +100,7 @@ function ScheduleView(props) {
 
     // TODO 수정
     const modifyTodo = async (todo) => {
-        if (!newTodo.schedTitle) {
+        if (!editTodo.schedTitle) {
             alert('제목을 입력해주세요.')
             return;
         }
@@ -239,6 +239,7 @@ function ScheduleView(props) {
                                         />
                                         <input
                                             type="text"
+                                            placeholder='제목'
                                             value={editTodo.schedTitle}
                                             onChange={e =>
                                                 setEditTodo({ ...editTodo, schedTitle: e.target.value })
@@ -246,6 +247,7 @@ function ScheduleView(props) {
                                         />
                                         <input
                                             type="text"
+                                            placeholder='상세'
                                             value={editTodo.schedDetail}
                                             onChange={e =>
                                                 setEditTodo({ ...editTodo, schedDetail: e.target.value })

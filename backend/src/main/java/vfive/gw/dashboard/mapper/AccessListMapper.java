@@ -18,6 +18,9 @@ public interface AccessListMapper {
 	@Select("SELECT * FROM ACCESS_LIST WHERE ACCESS_SECTION = #{type}")
 	List<AccessListDTO> accessList(String type);
 	
+	@Select("SELECT * FROM ACCESS_LIST")
+	List<AccessListDTO> allAccessList(String type);
+	
 	@Select("SELECT L.* FROM ACCESS_EMPOWER A "
 			+ "JOIN ACCESS_LIST L on A.ACCESS_DETAIL = L.ACCESS_LIST_ID "
 			+ "WHERE (A.ACCESS_TYPE = 'JBTTL' and A.EMPOWER_ID = #{jbttl}) "

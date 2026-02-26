@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-function TeamSelectPopup({ teamList, onClose, onSelect, selectType }) {
-    const [selected, setSelected] = useState([]);
+function TeamSelectPopup({ teamList, onClose, onSelect, selectedTeams }) {
+    const [selected, setSelected] = useState(selectedTeams);
 
     const toggleTeam = (team) => {
         if (selected.find(t => t.deptId === team.deptId)) {
@@ -14,7 +14,7 @@ function TeamSelectPopup({ teamList, onClose, onSelect, selectType }) {
     return (
         <div style={{ position: 'fixed', top: 300, left: 1000, background: 'white', border: '1px solid black', padding: 20 }}>
             <h3>담당팀 선택</h3>
-            <ul>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                 {teamList.map(team => (
                     <li key={team.deptId}>
                         <label>

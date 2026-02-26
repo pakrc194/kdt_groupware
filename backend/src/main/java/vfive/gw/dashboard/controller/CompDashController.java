@@ -69,6 +69,12 @@ public class CompDashController {
 		return res;
 	}
 	
+	@GetMapping("dashTeamAttendList")
+	List<DashDTO> dashTeamAttendList(@RequestParam("date") String date) {
+		List<DashDTO> res = mapper.dashTeamAttend(date);
+		return res;
+	}
+	
 	// 팀 일정
 	@GetMapping("dashTeamSchedList")
 	List<DashSchedDashDTO> dastTeamSchedList(@RequestParam("dept") String dept) {

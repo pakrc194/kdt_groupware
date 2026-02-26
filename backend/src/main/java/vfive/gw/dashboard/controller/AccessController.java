@@ -11,6 +11,7 @@ import jakarta.annotation.Resource;
 import vfive.gw.dashboard.di.AccessEmpowerList;
 import vfive.gw.dashboard.di.AccessFilterList;
 import vfive.gw.dashboard.di.AccessList;
+import vfive.gw.dashboard.di.AllAccessList;
 import vfive.gw.dashboard.dto.request.AccessEmpowerDTO;
 import vfive.gw.dashboard.dto.response.AccessDeleteDTO;
 import vfive.gw.dashboard.dto.response.AddAccessEmpower;
@@ -37,6 +38,12 @@ public class AccessController {
 		return provider.getContext().getBean(AccessList.class).execute(type);
 	}
 	
+	@GetMapping("allAccessList")
+	Object allAccesslist() {
+		System.out.println("권한 리스트");
+		return provider.getContext().getBean(AllAccessList.class).execute("all");
+	}
+	
 	@GetMapping("accessFilterList")
 	Object accessFilterList(
 			@RequestParam(value = "jbttl") int jbttl,
@@ -50,6 +57,7 @@ public class AccessController {
 	
 	@PostMapping("/addAccess")
 	Object addAccess(@RequestBody AddAccessEmpower aae) {
+		System.out.println(aae);
 		return empowerMapper.addAccessEmpower(aae);
 	}
 	

@@ -315,6 +315,7 @@ function Instruction(props) {
                         setSelectedTeams(teams);
                         setTeamPopupOpen(false);
                     }}
+                    selectedTeams={selectedTeams}
                 />
             )}
         </div>
