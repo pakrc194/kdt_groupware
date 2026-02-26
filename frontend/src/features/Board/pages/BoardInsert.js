@@ -8,15 +8,14 @@ function BoardInsert(props) {
     const { sideId } = useParams(); // URL에서 게시판 종류 가져오기
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [creator, setCreator] = useState('testUser'); // 실제론 로그인 정보 사용
-    const [selectedFiles ,setSelectedFiles] = useState([]);
-    const [isTop , setIsTop ] = useState(false);
-  
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [isTop, setIsTop] = useState(false);
 
+    // 로그인 정보 가져오기
     const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
     const loginUserSn = myInfo?.empSn;
 
-    //파일 용량,개수 제한
+    // 파일 용량, 개수 제한 설정
     const MAX_FILE_COUNT = 5; // 최대 5개
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
 
@@ -58,24 +57,28 @@ function BoardInsert(props) {
             }
         }
 
-        // formData.append("board", new Blob([JSON.stringify(boardData)], { type: "application/json" }));
-
-        selectedFiles.forEach((file)=>{
-            // formData.append("files",file);
-        })
-    }    
+        // ⭐ 핵심: 검증을 통과한 파일들을 상태에 저장합니다.
+        setSelectedFiles(filesFromInput);
+    };
 
     const handleSubmit = (e) => {
-        e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+        e.preventDefault(); 
+        
+        if (!title.trim() || !content.trim()) {
+            alert("제목과 내용을 입력해주세요.");
+            return;
+        }
+
         const formData = new FormData();
 
+        // 게시글 정보 DTO 구성
         const boardData = {
             title: title,
             content: content,
-            empId : myInfo.empId,
+            empId: myInfo?.empId,
             creator: loginUserSn,
-            boardType: sideId, // 중요: 현재 게시판 유형 전달
-            isTop: isTop  // 체크박스에 체크하면 '1' , 아니면 '0'
+            boardType: sideId, 
+            isTop: isTop ? "true" : "false" // 서버 DB 타입에 맞춰 문자열 혹은 boolean 전달
         };
 
         formData.append(
@@ -100,14 +103,14 @@ function BoardInsert(props) {
         .then(data => {
             if (data.success) {
                 alert('글이 등록되었습니다.');
-                props.goService('list'); // 등록 후 목록으로 이동
+                props.goService('list'); 
             } else {
-                alert('등록 할 수 없습니다.');
+                alert('등록에 실패했습니다.');
             }
         })
         .catch(err => {
             console.error("등록 에러:", err);
-            alert('오류가 발생했습니다.');
+            alert('서버와 통신 중 오류가 발생했습니다.');
         });
     };
 
@@ -117,7 +120,7 @@ function BoardInsert(props) {
     
 
     return (
-        <div className="board-detail-container"> {/* 일관된 컨테이너 클래스 사용 */}
+        <div style={{ padding: '40px', maxWidth: '900px', margin: '0 auto', backgroundColor: '#fff' }}>
             <h2 style={{ fontSize: '24px', borderBottom: '2px solid #333', paddingBottom: '15px', marginBottom: '30px' }}>
                 {getBoardMap(sideId)} 게시글 작성
             </h2>
@@ -159,13 +162,15 @@ function BoardInsert(props) {
                             style={{ fontSize: '14px' }}
                         />
                         <span style={{ fontSize: '13px', color: '#666' }}>
-                            선택된 파일: <b>{selectedFiles.length}</b>개
+                            선택된 파일: <b>{selectedFiles.length}</b> / {MAX_FILE_COUNT}
                         </span>
                     </div>
+                    
+                    {/* 선택된 파일 목록 미리보기 */}
                     {selectedFiles.length > 0 && (
-                        <ul style={{ marginTop: '10px', padding: '0', listStyle: 'none', fontSize: '13px', color: '#007bff' }}>
+                        <ul style={{ marginTop: '10px', padding: '10px', listStyle: 'none', fontSize: '13px', color: '#007bff', background: '#fff', borderRadius: '4px', border: '1px solid #e9ecef' }}>
                             {selectedFiles.map((file, idx) => (
-                                <li key={idx}>📎 {file.name}</li>
+                                <li key={idx} style={{marginBottom: '3px'}}>📎 {file.name} ({(file.size / 1024).toFixed(1)} KB)</li>
                             ))}
                         </ul>
                     )}
@@ -189,7 +194,7 @@ function BoardInsert(props) {
                     <button 
                         type="submit"
                         className={boardst.writBtn}
-                        style={{ margin: 0, width: '120px', height: '45px' }}
+                        style={{ margin: 0, width: '120px', height: '45px', cursor: 'pointer' }}
                     >
                         등록하기
                     </button>

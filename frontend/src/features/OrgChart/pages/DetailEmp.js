@@ -85,7 +85,7 @@ function DetailEmp() {
                     </tr>
                     <tr>
                         <td style={styles.th}>내선번호</td>
-                        <td style={styles.td}>{data.EMP_ACTNO || '-'}</td>
+                        <td style={styles.td}>055-265-5092</td>
                     </tr>
                     <tr>
                         <td style={styles.th}>생년월일</td>
