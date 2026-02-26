@@ -129,8 +129,10 @@ public interface AprvListMapper {
 			    <where>
 			        DOC_FORM_YN = 'Y'
 			        <if test="deptId != null and deptId != ''">
-			        	AND DEPT_ID = 0 
-			            OR FIND_IN_SET(#{deptId}, DEPT_ID) 
+			            AND (
+			                DEPT_ID = 0 
+			                OR FIND_IN_SET(#{deptId}, DEPT_ID)
+			            )
 			        </if>
 			    </where>
 			</script>

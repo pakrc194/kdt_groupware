@@ -332,6 +332,49 @@ const ApprovalDetail = () => {
                         <p><strong>{rejectData.aprvPrcsEmpNm}</strong>: {rejectData.rjctRsn}</p>
                     </div>
                 )}
+
+                {sideId === "rejectBox" && (
+                    <div className="section history-section">
+                        <h3 className="sub-title">문서 수정 이력</h3>
+                        <table className="history-table">
+                            <thead>
+                                <tr>
+                                    <th>버전</th>
+                                    <th>문서제목</th>
+                                    <th>기안일자</th>
+                                    <th>반려일자</th>
+                                    <th>반려사유</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {docVerList.length > 0 ? (
+                                    docVerList.map((aprvDoc, k) => {
+                                        const isCurrent = String(aprvDoc.aprvDocId) === String(docId);
+                                        return (
+                                            <tr key={k} className={isCurrent ? "current-doc-row" : ""}>
+                                                <td>v{aprvDoc.aprvDocVer}</td>
+                                                <td className="txt-left">
+                                                    {isCurrent ? (
+                                                        <span className="current-doc-title">{aprvDoc.aprvDocTtl}</span>
+                                                    ) : (
+                                                        <Link to={`/approval/${sideId}/detail/${aprvDoc.aprvDocId}`}>{aprvDoc.aprvDocTtl}</Link>
+                                                    )}
+                                                </td>
+                                                <td>{aprvDoc.aprvDocDrftDt?.substring(0, 10)}</td>
+                                                <td>{aprvDoc.aprvDocAtrzDt?.substring(0, 10)}</td>
+                                                <td>{aprvDoc.rjctRsn}</td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr><td colSpan="5" className="no-data">데이터가 없습니다.</td></tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+
+
             </div>
 
             <div className="aprv-detail-actions">
