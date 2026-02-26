@@ -73,7 +73,7 @@ export const SIDE_CONFIG = {
       { id: "CP", name: "회사 대시보드", access:"회사 대시보드 열람",
         subMenus: [
           { id: "CP/graph", name: "대시보드" },
-          { id: "CP/att", name: "근태현황" },
+          { id: "CP/att", name: "연차현황" },
           { id: "CP/perscg", name: "인사변동통계" },
           { id: "CP/orgst", name: "회사조직통계" },
           { id: "CP/empdellog", name: "권한삭제이력" },
