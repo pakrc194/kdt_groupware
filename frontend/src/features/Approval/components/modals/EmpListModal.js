@@ -8,7 +8,11 @@ const EmpListModal = ({onClose, onOk}) => {
 
 
     useEffect(()=>{
-        fetcher("/gw/aprv/AprvEmpListFilter").then(setEmpList);
+        fetcher("/gw/aprv/AprvEmpListFilter").then(res=>{
+            console.log(`empList`,res)
+            setEmpList(res)
+        });
+
     },[])
 
     const fn_formItemSelect = (item) => {

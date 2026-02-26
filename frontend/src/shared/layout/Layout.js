@@ -281,13 +281,17 @@ const Layout = () => {
               </div>
             )}
           </div>
-          {/* 2. 퇴근 버튼 (추가된 부분) */}
-          <button
-            className="nav-icon"
-            onClick={() => {handleClkOut();}}
-          >
-            퇴근
-          </button>
+          {/* 2. 퇴근 버튼 */}
+          {myInfo.wrkCd !== "O" && myInfo.wrkCd !== null && (
+            <button
+              className="nav-icon"
+              onClick={() => {
+                handleClkOut();
+              }}
+            >
+              퇴근
+            </button>
+          )}
           <button className={"nav-icon"} onClick={fn_logout}>
             로그아웃
           </button>

@@ -47,11 +47,15 @@ public interface LoginMapper {
     "UPDATE ATDC_HIST A ",
     "JOIN WORK_TYPE_CD W ON A.WRK_CD = W.WRK_CD ",
     "SET ",
-    "    A.CLK_IN_DTM = NOW(), ",
+    "    /* 1. 출근 시간: 특수 상태가 아닐 때만 NOW() 기록 */",
+    "    A.CLK_IN_DTM = CASE ",
+    "        WHEN A.ATDC_STTS_CD IN ('OFF', 'LEAVE', 'BUSINESS_TRIP') THEN NULL ",
+    "        ELSE NOW() ",
+    "    END, ",
     "    A.ATDC_STTS_CD = CASE ", // 미리 설정된 특수 상태 유지
     "        WHEN A.ATDC_STTS_CD IN ('OFF', 'LEAVE', 'BUSINESS_TRIP') THEN A.ATDC_STTS_CD ",
     "        ",		// 정각 미만(예: 08:59:59까지)일 때만 정상 출근 인정
-    "        WHEN TIME(NOW()) < W.STRT_TM THEN 'PRESENT' ",
+    "        WHEN TIME(NOW()) < ADDTIME(W.STRT_TM, '04:00:00') THEN 'PRESENT' ",
     "        ",		// 정각 포함 그 이후는 모두 결근
     "        ELSE A.ATDC_STTS_CD ",
     "    END ",

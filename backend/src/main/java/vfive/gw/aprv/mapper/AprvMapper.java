@@ -35,7 +35,7 @@ import vfive.gw.board.dto.BoardPrvc;
 
 @Mapper
 public interface AprvMapper {
-	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM as DRFT_EMP_NM, EMP_PRVC.DEPT_ID, DOC_FORM.DOC_FORM_TYPE "
+	@Select("select APRV_DOC.*, EMP_PRVC.EMP_NM as DRFT_EMP_NM, EMP_PRVC.DEPT_ID, DOC_FORM.DOC_FORM_TYPE, DOC_FORM.ATRZ_VL "
 			+ "from APRV_DOC "
 			+ "join DOC_FORM on APRV_DOC.DOC_FORM_ID = DOC_FORM.DOC_FORM_ID "
 			+ "join EMP_PRVC on APRV_DOC.DRFT_EMP_ID = EMP_PRVC.EMP_ID "
@@ -123,13 +123,13 @@ public interface AprvMapper {
 		        (EMP_ID, WRK_YMD, ATDC_STTS_CD) 
 		    VALUES 
 		    <foreach collection='list' item='dd' separator=','>
-		        (#{empId}, #{dd}, 'LEAVE') 
+		        (#{empId}, #{dd}, #{stts}) 
 		    </foreach>
 		    ON DUPLICATE KEY UPDATE
 		        ATDC_STTS_CD = VALUES(ATDC_STTS_CD)
 		    </script>
 		    """)
-	int insertAtdcHist(@Param("empId")int empId, @Param("list")List<LocalDate> list);
+	int insertAtdcHist(@Param("empId")int empId, @Param("list")List<LocalDate> list, @Param("stts")String stts);
 	
 	
 	@Delete("delete from APRV_PRCS where APRV_DOC_ID = #{docId}")

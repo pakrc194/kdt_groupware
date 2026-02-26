@@ -40,15 +40,22 @@ public class AprvAttendUpload {
 		    dateList.add(d);
 		}
 		
-		int insertResult = mapper.insertAtdcHist(req.getEmpId(), dateList);
+		
+		
+		
+		int insertResult = mapper.insertAtdcHist(req.getEmpId(), dateList, req.getAttendStts());
 		if(insertResult==0) {
 			throw new RuntimeException("휴가 등록 실패");
 		}
-			
-		int updateResult = mapper.updateAnnlLvStts(req.getEmpId(), 2026, new BigDecimal(dateList.size()));
-		if(updateResult==0) {
-			throw new RuntimeException("연차 차감 실패");
+		
+		
+		if(req.getAttendStts().equals("LEAVE")) {
+			int updateResult = mapper.updateAnnlLvStts(req.getEmpId(), 2026, new BigDecimal(dateList.size()));
+			if(updateResult==0) {
+				throw new RuntimeException("연차 차감 실패");
+			}
 		}
+		
 		System.out.println("AprvAttendUpload "+req);
 		
 		return Map.of("result", req);

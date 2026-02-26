@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.annotation.Resource;
 import vfive.gw.attendance.dto.domain.EmpDTO;
+import vfive.gw.attendance.dto.domain.workTypeCdDTO;
 import vfive.gw.attendance.dto.request.DutyRequestDTO;
 import vfive.gw.attendance.dto.request.EmpAtdcRequestDTO;
 import vfive.gw.attendance.dto.response.DutySkedListDTO;
@@ -199,5 +201,30 @@ public class DutyController {
 	public int isConfirmed(DutySkedListDTO req) {
 		return mapper.countConfirmedDuty(req);
 	}
+	
+	@GetMapping("workTypeCodes")
+	public List<workTypeCdDTO> workTypeCodes(){
+		
+		return mapper.getWorkTypeCd();
+		
+	}
+	
+	/**
+   * 특정 부서 및 월의 연차 정보 조회
+   * GET /gw/duty/monthLeave?deptId=7&trgtYmd=202602
+   */
+  @GetMapping("monthLeaveAndTrip")
+  public List<Map<String, Object>> getMonthLeave(
+          @RequestParam("deptId") int deptId,
+          @RequestParam("trgtYmd") String trgtYmd) {
+
+      Map<String, Object> params = new HashMap<>();
+      params.put("deptId", deptId);
+      params.put("trgtYm", trgtYmd); // 매퍼의 LIKE 조건과 일치하도록 전달
+      
+      System.out.println(mapper.selectMonthLeaveAndTrip(params));
+
+      return mapper.selectMonthLeaveAndTrip(params);
+  }
 	
 }

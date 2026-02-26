@@ -27,14 +27,21 @@ const DrftContent = ({docFormType, docFormId, docLine, setDocLine, inputList, se
 
     const initDocLineRef = useRef(null);
 
-    
+    useEffect(() => {
+        const docStart = inputList.find(v => v.docInptNm === "docStart")?.docInptVl || "";
+        const docEnd = inputList.find(v => v.docInptNm === "docEnd")?.docInptVl || "";
+        
+        console.log(sideId, docStart, docEnd)
+
+        setDrftDate({ docStart, docEnd });
+    }, []);
     
 
     const fn_attendCheck = () => {
         if(drftDate.docStart!="" && drftDate.docEnd!="") {
             setIsAttendCheckOpen(true)
         } else {
-            alert("기간 선택하세요")
+            alert("기간 선택하세요~")
         }
         
     }

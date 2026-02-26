@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useParams } from "react-router-dom";
+import React, {useEffect,useState } from 'react';
+import { useNavigate, useParams } from "react-router-dom";
+import { fetcher } from '../../../shared/api/fetcher';
 import boardst from '../../Home/css/Board.module.css';
+import { getBoardMap } from '../../../shared/func/formatLabel';
 
 function BoardInsert(props) {
     const { sideId } = useParams(); // URL에서 게시판 종류 가져오기
@@ -17,7 +19,23 @@ function BoardInsert(props) {
     const MAX_FILE_COUNT = 5; // 최대 5개
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 개별 파일 10MB 제한
 
-    // 파일 선택 시 검증 및 상태 업데이트
+    const FileUpload = (e) => {
+        setSelectedFiles(Array.from(e.target.files));
+    };    
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setTitle('');
+        setContent('');
+        setSelectedFiles([]);
+        setIsTop(false);
+
+        
+        
+    }, [sideId]); 
+
+    // 파일 선택 시 검증 로직
     const handleFileChange = (e) => {
         const filesFromInput = Array.from(e.target.files);
 
@@ -63,15 +81,20 @@ function BoardInsert(props) {
             isTop: isTop ? "true" : "false" // 서버 DB 타입에 맞춰 문자열 혹은 boolean 전달
         };
 
-        // JSON 데이터를 Blob으로 변환하여 추가
-        formData.append("board", new Blob([JSON.stringify(boardData)], { type: "application/json" }));
-        
-        // 선택된 파일들을 formData에 추가
-        selectedFiles.forEach(file => {
-            formData.append("files", file);
-        });
+        formData.append(
+        "board", 
+        new Blob([JSON.stringify(boardData)], { type: "application/json" })
+    );
 
-        // 서버 전송
+   
+    // 2. 파일 데이터 추가 (이 부분이 누락되었습니다!)
+    selectedFiles.forEach((file) => {
+        formData.append("files", file); // 서버의 @RequestPart("files") 이름과 일치해야 함
+    });
+
+
+
+        // 파일 업로드를 하는데 fetcher를 사용하면 에러가 나서 기본fetch를 사용하고 있습니다
         fetch(`http://192.168.0.36:8080/board/insertWithFile`, {
             method: 'POST',
             body: formData
@@ -91,10 +114,15 @@ function BoardInsert(props) {
         });
     };
 
+
+   
+
+    
+
     return (
         <div style={{ padding: '40px', maxWidth: '900px', margin: '0 auto', backgroundColor: '#fff' }}>
             <h2 style={{ fontSize: '24px', borderBottom: '2px solid #333', paddingBottom: '15px', marginBottom: '30px' }}>
-                ✍️ 게시글 작성
+                {getBoardMap(sideId)} 게시글 작성
             </h2>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>

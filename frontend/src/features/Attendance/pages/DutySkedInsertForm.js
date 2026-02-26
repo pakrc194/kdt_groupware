@@ -26,15 +26,19 @@ function DutySkedInsertForm() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [offset, setOffset] = useState(0);
+  const [isAlreadyConfirmed, setIsAlreadyConfirmed] = useState(false);
+  const [dutyGuides, setDutyGuides] = useState([]);
+  const [leaveAndTripData, setLeaveAndTripData] = useState([]); // 연차 데이터 저장용
+  
 
   // 전달 마지막 패턴 인덱스 (통합 관리)
   const [lastPtnIdx, setLastPtnIdx] = useState(null);
   const [lastMonthDataMap, setLastMonthDataMap] = useState({});
 
   const dutyOptions = {
-    사무: ["WO", "OD", "O"],
-    "4조2교대": ["D", "E", "O"],
-    "4조3교대": ["D", "E", "N", "O"],
+    사무: ["WO", "OD", "O", "LV", "BT"],
+    "4조2교대": ["D", "E", "O", "LV", "BT"],
+    "4조3교대": ["D", "E", "N", "O", "LV", "BT"],
   };
 
   const dutyStyles = {
@@ -44,6 +48,8 @@ function DutySkedInsertForm() {
     O: { color: "#eeeeee", textColor: "#9e9e9e" },
     WO: { color: "#e8f5e9", textColor: "#2e7d32" },
     OD: { color: "#fce4ec", textColor: "#c2185b" },
+    LV: { color: "#e0f2fe", textColor: "#0369a1", fontWeight: "bold" },
+    BT: { color: "#fef3c7", textColor: "#92400e", fontWeight: "bold" },
     ERROR: { boxShadow: "inset 0 0 0 3px #f00", fontWeight: "bold" },
   };
 
@@ -106,12 +112,17 @@ function DutySkedInsertForm() {
         const lastMonthLastDateObj = new Date(year, month - 1, 0);
         const lastMonthStr = `${lastMonthLastDateObj.getFullYear()}${String(lastMonthLastDateObj.getMonth() + 1).padStart(2, "0")}`;
 
-        const [memberList, lastMonthData] = await Promise.all([
+        const [memberList, lastMonthData, dutyCodes, leaveAndTripData] = await Promise.all([
           fetcher(`/gw/duty/insertForm?deptId=${myInfo.deptId}`),
           fetcher(
             `/gw/duty/lastMonthDuty?deptId=${myInfo.deptId}&trgtYmd=${lastMonthStr}`,
           ).catch(() => []),
+          fetcher(`/gw/duty/workTypeCodes`),
+          fetcher(`/gw/duty/monthLeaveAndTrip?deptId=${myInfo.deptId}&trgtYmd=${selectedMonth}`).catch(() => []),
         ]);
+
+        setDutyGuides(dutyCodes); // 가이드 정보 저장
+        setLeaveAndTripData(leaveAndTripData); // 연차 정보 보관
         console.log("memberList: ", memberList)
         console.log("lastMonthData: ", lastMonthData)
         if (workType === "사무") {
@@ -164,13 +175,31 @@ function DutySkedInsertForm() {
           }
         }
 
-        const initialEmps = memberList.map((emp) => ({
-          empId: emp.empId,
-          empNm: emp.empNm,
-          grpNm: emp.grpNm || "미배정",
-          rotPtnCd: workType,
-          duties: {},
-        }));
+        // 초기 데이터 구성 시 연차 및 출장 세팅
+        const initialEmps = memberList.map((emp) => {
+          const initialDuties = {};
+          
+          leaveAndTripData.forEach(item => {
+            if (Number(item.empId) === Number(emp.empId)) {
+              const day = parseInt(item.dutyYmd.slice(-2));
+              // DB의 LEAVE는 LV로, BUSINESS_TRIP은 BT로 변환
+              const codeMap = {
+                'LEAVE': 'LV',
+                'BUSINESS_TRIP': 'BT'
+              };
+              initialDuties[day] = codeMap[item.wrkCd] || item.wrkCd;
+            }
+          });
+
+          return {
+            empId: emp.empId,
+            empNm: emp.empNm,
+            grpNm: emp.grpNm || "미배정",
+            rotPtnCd: workType,
+            duties: initialDuties,
+          };
+        });
+
         const sortedEmps = sortEmployees(initialEmps, workType);
         setEmployees(sortedEmps);
       } catch (error) {
@@ -182,12 +211,12 @@ function DutySkedInsertForm() {
     loadInitialData();
   }, [selectedMonth, myInfo.deptId, workType]);
 
-  const handleWorkTypeChange = (newType) => {
-    setWorkType(newType);
-    setEmployees((prev) =>
-      prev.map((emp) => ({ ...emp, rotPtnCd: newType, duties: {} })),
-    );
-  };
+  // const handleWorkTypeChange = (newType) => {
+  //   setWorkType(newType);
+  //   setEmployees((prev) =>
+  //     prev.map((emp) => ({ ...emp, rotPtnCd: newType, duties: {} })),
+  //   );
+  // };
 
   // 정렬 함수
   const sortEmployees = (data, type) => {
@@ -235,6 +264,7 @@ function DutySkedInsertForm() {
           // 사무 근무패턴 로직
           const workerIdx = officeWorkers.findIndex((w) => w.empId === emp.empId);
           days.forEach((d, idx) => {
+            if (newDuties[d] === "LV" || newDuties[d] === "BT") return;
             // (idx + offset)을 인원수로 나눈 나머지가 현재 직원의 인덱스와 같으면 당직
             newDuties[d] =
               (idx + offset) % officeWorkers.length === workerIdx ? "OD" : "WO";
@@ -243,6 +273,7 @@ function DutySkedInsertForm() {
           // 교대조 근무패턴 로직
           const ptn = patterns[workType]?.[emp.grpNm] || ["O"];
           days.forEach((d, idx) => {
+            if (newDuties[d] === "LV" || newDuties[d] === "BT") return;
             // (idx + offset)을 근무패턴의 길이로 나눈 나머지를 근무패턴의 인덱스로 지정
             newDuties[d] = ptn[(idx + offset) % ptn.length];
           });
@@ -253,6 +284,13 @@ function DutySkedInsertForm() {
   };
 
   const handleSave = async () => {
+    // 1. 결재 완료 중복 체크 (최신 상태로 다시 확인)
+    const isDup = await checkDuplicateApproval(selectedMonth);
+    if (isDup) {
+      alert("해당 월에 이미 결재 완료된 근무표가 존재하여 등록이 불가능합니다.");
+      return;
+    }
+
     if (!title.trim()) return alert("제목을 입력해주세요.");
     let allErrors = [];
     employees.forEach((emp) => {
@@ -308,6 +346,29 @@ function DutySkedInsertForm() {
     }
   };
 
+// 중복 체크 함수 수정 (boolean 반환)
+const checkDuplicateApproval = useCallback(async (month) => {
+  try {
+    const trgtYmd = month.replace("-", "");
+    const res = await fetcher(
+      `/gw/duty/checkConfirmed?deptId=${myInfo.deptId}&trgtYmd=${trgtYmd}`
+    );
+    const exists = res > 0;
+    setIsAlreadyConfirmed(exists); // 상태 업데이트
+    return exists;
+  } catch (error) {
+    console.error("중복 체크 실패:", error);
+    return false;
+  }
+}, [myInfo.deptId]);
+
+// selectedMonth가 바뀔 때마다 실행
+useEffect(() => {
+  if (selectedMonth) {
+    checkDuplicateApproval(selectedMonth);
+  }
+}, [selectedMonth, checkDuplicateApproval]);
+
   if (isLoading) return <div className="loading">작성 폼 준비 중...</div>;
 
   return (
@@ -326,7 +387,23 @@ function DutySkedInsertForm() {
             placeholder="제목을 입력하세요"
           />
         </div>
-        <div className="header-right" />
+        <div className="header-right" >
+          {isAlreadyConfirmed && (
+          <div className="duplicate-warning-banner" style={{
+            backgroundColor: '#fff1f2',
+            color: '#e11d48',
+            padding: '12px',
+            borderRadius: '8px',
+            marginBottom: '15px',
+            border: '1px solid #fda4af',
+            fontWeight: '700',
+            textAlign: 'center',
+            fontSize: '14px'
+          }}>
+            ⚠️ {selectedMonth.split('-')[1]}월은 이미 결재 완료된 근무표가 존재합니다.
+          </div>
+        )}
+        </div>
       </div>
 
       <div className="page-controls">
@@ -349,16 +426,18 @@ function DutySkedInsertForm() {
             </button>
           </div>
           <div className="work-type-group" style={{ marginLeft: "15px" }}>
-            <span className="label-text">근무 유형:</span>
-            <select
+            <span className="label-text">근무 유형: </span>
+            <span className="label-text">{workType}</span>
+            {/* <select
               className="control-select highlight"
               value={workType}
               onChange={(e) => handleWorkTypeChange(e.target.value)}
+              disabled
             >
               <option value="4조3교대">4조 3교대</option>
               <option value="4조2교대">4조 2교대</option>
               <option value="사무">사무</option>
-            </select>
+            </select> */}
           </div>
         </div>
 
@@ -442,10 +521,54 @@ function DutySkedInsertForm() {
           </button>
         </div>
       </div>
-
+      
       <div className="timeline-container">
+        {/* 근무 시간 안내 가이드 바 */}
+        <div className="duty-guide-bar" style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '15px',
+          padding: '12px 20px',
+          backgroundColor: '#f1f5f9',
+          borderRadius: '8px',
+          fontSize: '13px',
+          border: '1px solid #e2e8f0'
+        }}>
+          <span style={{ fontWeight: '700', color: '#475569', marginRight: '5px' }}>💡 근무 시간 안내:</span>
+          {dutyGuides
+            .filter(guide => dutyOptions[workType].includes(guide.wrkCd)) // 현재 근무유형(사무/교대)에 맞는 것만 표시
+            .map(guide => (
+              <div key={guide.wrkCd} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  backgroundColor: dutyStyles[guide.wrkCd]?.color || '#fff',
+                  color: dutyStyles[guide.wrkCd]?.textColor || '#000',
+                  fontWeight: 'bold',
+                  border: '1px solid #cbd5e1'
+                }}>
+                  {guide.wrkCd}
+                </span>
+                <span style={{ color: '#64748b' }}>
+                  {guide.strtTm ? (
+                    // 시간이 있는 일반 근무 (D, E, N, OD 등)
+                    `${guide.strtTm.substring(0, 5)}~${guide.endTm.substring(0, 5)}`
+                  ) : (
+                    // 시간이 없는 경우 (O, LV, BT 등)
+                    guide.wrkCd === "LV" ? "연차" : 
+                    guide.wrkCd === "BT" ? "출장" : 
+                    "휴무"
+                  )}
+                  {guide.brkTmMin > 0 && ` (휴게 ${guide.brkTmMin}분)`}
+                </span>
+              </div>
+            ))
+          }
+        </div>
         <div className="timeline-scroll-viewport">
+          
           <div className="timeline-wrapper">
+
             <div className="timeline-header">
               <div className="employee-info-cell header-cell">사원명 / 조</div>
               {days.map((d) => (

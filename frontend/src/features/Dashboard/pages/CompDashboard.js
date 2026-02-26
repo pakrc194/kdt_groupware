@@ -6,7 +6,8 @@ import OrganizationStatistics from '../compDasComponent/OrganizationStatistics';
 import AccessDeletionHistory from '../compDasComponent/AccessDeletionHistory';
 import ScheduleDeletionHistory from '../compDasComponent/ScheduleDeletionHistory';
 import ApprovalProcessHistory from '../compDasComponent/ApprovalProcessHistory';
-import CompAttendanceRate from '../component/CompAttendanceRate';
+//import CompAttendanceRate from '../component/CompAttendanceRate';
+import CompAnnlLvRate from '../component/CompAnnlLvRate';
 import CompanyDashboardGraph from '../component/CompanyDashboardGraph';
 
 function CompDashboard(props) {
@@ -18,6 +19,7 @@ function CompDashboard(props) {
     const [accessDeleteList, setAccessDeleteList] = useState([]);
     const [approval, setApproval] = useState([]);
     const [emp, setEmp] = useState([]);
+    const [annlLv, setAnnlLv] = useState([]);
     
     
     const date = new Date;
@@ -77,6 +79,13 @@ function CompDashboard(props) {
         // 전체 근태
         fetcher(`/gw/dashboard/dashTeamEmpList?dept=0&date=${formatted}`)
         .then(dd => { setEmp(Array.isArray(dd) ? dd : [dd]); })
+
+        // 전체 연차
+        fetcher(`/gw/dashboard/dashAnnlLvList?year=2026`)
+        .then(dd => { 
+            console.log(dd)
+            setAnnlLv(Array.isArray(dd) ? dd : [dd]); 
+        })
       }, [])
 
     return (
@@ -85,8 +94,10 @@ function CompDashboard(props) {
             <h1>회사 대시보드</h1>
             <CompanyDashboardGraph inOut={inOut} emp={emp} approval={approval} />
             </div>
+            {/* <div ref={(el) => (sectionRefs.current["att"] = el)}>
+            <CompAttendanceRate emp={emp} /> */}
             <div ref={(el) => (sectionRefs.current["att"] = el)}>
-            <CompAttendanceRate emp={emp} />
+            <CompAnnlLvRate annlLvData={annlLv} />
             </div>
             <div ref={(el) => (sectionRefs.current["perscg"] = el)}>
             <PersonnelChangeStats inOut={inOut} changeEmpData={changeEmpData} />

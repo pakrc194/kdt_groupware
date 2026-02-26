@@ -10,5 +10,6 @@ public class EmpAtdcRequestDTO {
   private Integer deptId;   // 부서 필터 (0 또는 null은 전체)
   private String empNm;     // 이름 검색어
   private int empId;
+  private String year;
 	
 }

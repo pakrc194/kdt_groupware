@@ -37,7 +37,7 @@ export const SIDE_CONFIG = {
       { id: "important", name: "중요 게시판" },
       { id: "public", name: "공용 게시판" },
       { id: "HR", name: "인사관리 게시판" , access:"인사관리 게시판 열람"  },
-      { id: "FA", name: "시설자재 게시판" , access:"시설자재 게시판 열람"},
+      { id: "FM", name: "시설자재 게시판" , access:"시설자재 게시판 열람"},
       { id: "SO", name: "안전관리 게시판" , access:"안전관리 게시판 열람"},
       { id: "FO", name: "식품 게시판" , access:"식품 게시판 열람"},
       { id: "BU", name: "뷰티 게시판" , access:"뷰티 게시판 열람"},
@@ -73,7 +73,7 @@ export const SIDE_CONFIG = {
       { id: "CP", name: "회사 대시보드", access:"회사 대시보드 열람",
         subMenus: [
           { id: "CP/graph", name: "대시보드" },
-          { id: "CP/att", name: "근태현황" },
+          { id: "CP/att", name: "연차현황" },
           { id: "CP/perscg", name: "인사변동통계" },
           { id: "CP/orgst", name: "회사조직통계" },
           { id: "CP/empdellog", name: "권한삭제이력" },

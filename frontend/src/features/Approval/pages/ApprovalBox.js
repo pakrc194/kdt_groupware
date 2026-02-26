@@ -51,9 +51,9 @@ const ApprovalBox = () => {
                         <option value="REJECTED">반려</option>
                     </select>
                     <select onChange={fn_code}>
-                        <option value="">ALL</option>
+                        <option value="">전체</option>
                         {formCodeList.map((v,k)=>(
-                            <option value={v.docFormCd} key={k}>{v.docFormCd}</option>
+                            <option value={v.docFormCd} key={k}>{v.docFormNm}</option>
                         ))}
                     </select>
                 </div>

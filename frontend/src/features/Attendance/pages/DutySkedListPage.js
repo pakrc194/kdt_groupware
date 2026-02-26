@@ -8,6 +8,7 @@ function DutySkedListPage() {
   const myInfo = JSON.parse(localStorage.getItem("MyInfo"));
   const [schedules, setSchedules] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]); // 체크박스 선택된 ID들
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); // 기본값 올해
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -16,7 +17,7 @@ function DutySkedListPage() {
   const loadSchedules = async () => {
     try {
       setIsLoading(true);
-      const data = await fetcher(`/gw/duty/list?deptId=${deptId}`);
+      const data = await fetcher(`/gw/duty/list?deptId=${deptId}&year=${selectedYear}`);
       setSchedules(data);
     } catch (error) {
       console.error("근무표 리스트 로드 실패:", error);
@@ -27,7 +28,7 @@ function DutySkedListPage() {
 
   useEffect(() => {
     loadSchedules();
-  }, []);
+  }, [selectedYear]);
 
   // 개별 체크박스 선택
   const handleSelect = (id) => {
@@ -92,7 +93,29 @@ function DutySkedListPage() {
       {" "}
       {/* 기존 페이지와 동일한 컨테이너 클래스 */}
       <header className="stats-header">
-        <h1>팀 근무표 관리</h1>
+        {/* 왼쪽 그룹: 제목 + 필터 */}
+        <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <h1>팀 근무표 관리</h1>
+          <select 
+            className="mod-select" 
+            value={selectedYear} 
+            onChange={(e) => setSelectedYear(e.target.value)}
+            style={{ width: '130px', padding: '8px', marginBottom: '0' }} // 헤더 높이에 맞게 조정
+          >
+            <option value="">전체 연도</option>
+            <option value="2026">2026년</option>
+            <option value="2025">2025년</option>
+            <option value="2024">2024년</option>
+            <option value="2023">2023년</option>
+            <option value="2022">2022년</option>
+            <option value="2021">2021년</option>
+            <option value="2020">2020년</option>
+            <option value="2019">2019년</option>
+            <option value="2018">2018년</option>
+          </select>
+        </div>
+
+        {/* 오른쪽 그룹: 버튼들 */}
         <div className="header-buttons">
           <button className="btn-delete" onClick={handleDelete}>
             삭제

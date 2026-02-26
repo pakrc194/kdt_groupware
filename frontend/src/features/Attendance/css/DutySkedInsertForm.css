@@ -172,3 +172,20 @@
   cursor: pointer;
   appearance: none; /* 화살표 제거 */
 }
+
+.duty-guide-bar {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.duty-guide-bar div {
+  position: relative;
+  padding-right: 15px;
+}
+
+/* 요소 사이에 구분선 넣기 */
+.duty-guide-bar div:not(:last-child)::after {
+  content: '|';
+  position: absolute;
+  right: 0;
+  color: #cbd5e1;
+}
