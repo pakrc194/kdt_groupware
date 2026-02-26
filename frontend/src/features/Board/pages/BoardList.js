@@ -18,6 +18,8 @@ function BoardList(props) {
     const [isLoading, setIsLoading] = useState(true); // 로딩 상태
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
     const [pageSize, setPageSize] = useState(10); // 페이지당 게시글 수
+    const [files , setFiles] = useState([]);
+    console.log("내용확인",boards)
     
     // 검색 상태 관리
     const [searchInput, setSearchInput] = useState(''); // 검색 입력값
@@ -148,6 +150,7 @@ function BoardList(props) {
                     <tr>
                         <th>번호</th>
                         <th>제목</th>
+                        <th>첨부파일</th>
                         <th>작성일</th>
                         <th>조회수</th>
                         <th>작성자</th>
@@ -162,14 +165,23 @@ function BoardList(props) {
                             
                             return (
                                 <tr key={st.boardId} className={rowClass}>
-                                    {/* 번호 계산: 전체 개수 기반 또는 페이지 정보 기반 */}
                                     <td>{pInfo ? pInfo.start + k + 1 : k + 1}</td>
                                     <td 
-                                        // onClick={() => goDetail(st.boardId)} 
+                                        style={{ cursor: 'pointer' }}
                                         onClick={() => navigate(`?id=${st.boardId}`)} 
                                     >
                                         {st.title}
+                                        {/* 첨부파일 아이콘 추가 구문 */}
+
                                     </td>
+                                    <td>
+                                        {st.fileCount > 0 && (
+                                            <span style={{ marginLeft: '8px', color: '#666' }} title="첨부파일 있음">
+                                                📎첨부파일
+                                            </span>
+                                        )}
+                                    </td>
+
                                     <td>{formatDate(st.createdAt)}</td>
                                     <td>{st.views}</td>
                                     <td>{st.empNm}</td>

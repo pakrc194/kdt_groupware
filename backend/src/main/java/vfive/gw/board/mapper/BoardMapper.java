@@ -126,76 +126,87 @@ public interface BoardMapper {
     
 
     /* 조건별 게시물 수 조회*/
-        @Select("<script>" +
-                "SELECT COUNT(*) FROM Board " +
-                "WHERE BoardType = #{sideId} AND IsTop = 'false'" +
-                "<if test='keyword != null and keyword != \"\"'>" +
-                "  <choose>" +
-                "    <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
-                "    <when test='searchType == \"boardId\"'> AND BoardId = #{keyword} </when>" +
-                "    <when test='searchType == \"creator\"'> AND Creator LIKE CONCAT('%', #{keyword}, '%') </when>" +
-                "  </choose>" +
-                "</if>" +
-                "</script>")
-        int totalByType(PageInfo pInfo);
-        
-        
-        @Select("SELECT b.*, e.EMP_NM as creatorNm " + // EMP_NM을 creatorNm으로 가져옴
-                "FROM Board b " +
-                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
-                "WHERE b.BoardId = #{boardId}")
-        BoardPrvc CreatorDetail(@Param("boardId") int boardId);
+    @Select("<script>" +
+            "SELECT COUNT(*) FROM Board " +
+            "WHERE BoardType = #{sideId} AND IsTop = 'false'" +
+            "<if test='keyword != null and keyword != \"\"'>" +
+            "  <choose>" +
+            "    <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
+            "    <when test='searchType == \"boardId\"'> AND BoardId = #{keyword} </when>" +
+            "    <when test='searchType == \"creator\"'> AND Creator LIKE CONCAT('%', #{keyword}, '%') </when>" +
+            "  </choose>" +
+            "</if>" +
+            "</script>")
+    int totalByType(PageInfo pInfo);
+    
+    
+    @Select("SELECT b.*, e.EMP_NM as creatorNm " + // EMP_NM을 creatorNm으로 가져옴
+            "FROM Board b " +
+            "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
+            "WHERE b.BoardId = #{boardId}")
+    BoardPrvc CreatorDetail(@Param("boardId") int boardId);
 
-        @Select("SELECT b.*, e.EMP_NM as creatorNm " +
-                "FROM Board b " +
-                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
-                "WHERE b.BoardType = #{sideId} ...") // 목록 조회 시에도 동일하게 적용
-        List<BoardPrvc> selectList();
+    @Select("SELECT b.*, e.EMP_NM as creatorNm " +
+            "FROM Board b " +
+            "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
+            "WHERE b.BoardType = #{sideId} ...") // 목록 조회 시에도 동일하게 적용
+    List<BoardPrvc> selectList();
         
         
 
-        /* 조건별 목록 조회* 작성자 이름 조회하기*/
-        @Select// 상단공지글 처리 
-        		("SELECT Board.*, EMP_NM FROM Board, EMP_PRVC " +
-                "  WHERE Board.Creator = EMP_PRVC.EMP_SN AND IsTop = 'true' " + // 모든 공지글 가져오기
-                "ORDER BY Board.BoardId DESC")
-        List<BoardPrvc> listTopNotices(@Param("sideId") String sideId);
-        		
-                
-		@Select("<script>" +
-        		// 일반글 페이징 처리
-        		"SELECT Board.*, EMP_NM FROM Board , EMP_PRVC  " +
-                "WHERE BoardType = #{sideId} and Board.Creator = EMP_PRVC.EMP_SN  and IsTop = 'false'" +
-                "<if test='keyword != null and keyword != \"\"'>" +
-                    "<choose>" +
-                    "  <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
-                    "  <when test='searchType == \"boardId\"'> AND BoardId = #{keyword} </when>" +
-                    "  <when test='searchType == \"creator\"'> AND EMP_PRVC.EMP_NM LIKE CONCAT('%', #{keyword}, '%') </when>" +
-                    "</choose>" +
-                "</if>" +
-                "ORDER BY IsTop DESC, BoardId DESC " +
-                "LIMIT #{start}, #{cnt}" +
-                "</script>")
-        List<BoardPrvc> listByType(PageInfo pInfo);
+    /* 조건별 목록 조회* 작성자 이름 조회하기*/
+    @Select("SELECT " +
+            "    Board.*, " +
+            "    EMP_PRVC.EMP_NM, " +
+            "    (SELECT COUNT(*) FROM BoardFile WHERE BoardFile.BoardId = Board.BoardId) AS fileCount " + 
+            "FROM Board " +
+            "JOIN EMP_PRVC ON Board.Creator = EMP_PRVC.EMP_SN " +
+            "WHERE Board.IsTop = 'true' " + 
+            "ORDER BY Board.BoardId DESC")
+    List<BoardPrvc> listTopNotices(@Param("sideId") String sideId);
+    		
+            
+    @Select("<script>" +
+            "SELECT " +
+            "    Board.*, " +
+            "    EMP_PRVC.EMP_NM, " +
+            "    (SELECT COUNT(*) FROM BoardFile WHERE BoardFile.BoardId = Board.BoardId) AS fileCount " + // 서브쿼리로 파일 개수 조회
+            "FROM Board " +
+            "JOIN EMP_PRVC ON Board.Creator = EMP_PRVC.EMP_SN " + // 쉼표 대신 명시적 JOIN 사용 권장
+            "WHERE BoardType = #{sideId} AND IsTop = 'false' " +
+            "<if test='keyword != null and keyword != \"\"'>" +
+                "<choose>" +
+                "  <when test='searchType == \"title\"'> AND Title LIKE CONCAT('%', #{keyword}, '%') </when>" +
+                "  <when test='searchType == \"boardId\"'> AND BoardId = #{keyword} </when>" +
+                "  <when test='searchType == \"creator\"'> AND EMP_PRVC.EMP_NM LIKE CONCAT('%', #{keyword}, '%') </when>" +
+                "</choose>" +
+            "</if>" +
+            "ORDER BY IsTop DESC, BoardId DESC " +
+            "LIMIT #{start}, #{cnt}" +
+            "</script>")
+    List<BoardPrvc> listByType(PageInfo pInfo);
     
     
     
-    /*작성자별 게시물 목록 조회(내가 쓴 게시물 조회)*/
-        @Select("<script>" +
-                "SELECT b.*, e.EMP_NM as empNm " +
-                "FROM Board b " +
-                "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
-                "WHERE b.Creator = #{creator} " +
-                "<if test='pInfo.keyword != null and pInfo.keyword != \"\"'>" +
-                "  <choose>" +
-                "    <when test='pInfo.searchType == \"title\"'> AND b.Title LIKE CONCAT('%', #{pInfo.keyword}, '%') </when>" +
-                "    <when test='pInfo.searchType == \"boardId\"'> AND b.BoardId = #{pInfo.keyword} </when>" +
-                "  </choose>" +
-                "</if>" +
-                "ORDER BY b.BoardId DESC " +
-                "LIMIT #{pInfo.start}, #{pInfo.cnt}" +
-                "</script>")
-        List<BoardPrvc> listByCreator(@Param("creator") String creator, @Param("pInfo") PageInfo pInfo);
+    /* 작성자별 게시물 목록 조회(내가 쓴 게시물 조회) */
+    @Select("<script>" +
+            "SELECT " +
+            "    b.*, " +
+            "    e.EMP_NM as empNm, " +
+            "    (SELECT COUNT(*) FROM BoardFile bf WHERE bf.BoardId = b.BoardId) AS fileCount " + // 파일 개수 조회 추가
+            "FROM Board b " +
+            "LEFT JOIN EMP_PRVC e ON b.Creator = e.EMP_SN " +
+            "WHERE b.Creator = #{creator} " +
+            "<if test='pInfo.keyword != null and pInfo.keyword != \"\"'>" +
+            "  <choose>" +
+            "    <when test='pInfo.searchType == \"title\"'> AND b.Title LIKE CONCAT('%', #{pInfo.keyword}, '%') </when>" +
+            "    <when test='pInfo.searchType == \"boardId\"'> AND b.BoardId = #{pInfo.keyword} </when>" +
+            "  </choose>" +
+            "</if>" +
+            "ORDER BY b.BoardId DESC " +
+            "LIMIT #{pInfo.start}, #{pInfo.cnt}" +
+            "</script>")
+    List<BoardPrvc> listByCreator(@Param("creator") String creator, @Param("pInfo") PageInfo pInfo);
 
 
     

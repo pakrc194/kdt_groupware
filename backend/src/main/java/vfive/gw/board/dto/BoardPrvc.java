@@ -31,6 +31,7 @@ public class BoardPrvc {
 	private int fileId;
     private String originName;
     private String savedPath;
+    private String fileCount;
     private long fileSize;
     
     // 삭제 대기 중인 파일 ID 리스트
