@@ -7,6 +7,7 @@ export const STATUS_MAP = {
   PRESENT: { label: "출근" },
   ABSENT: { label: "결근" },
   LEAVE: { label: "연차" },
+  OFF: { label: "휴무" },
   BUSINESS_TRIP: { label: "출장" },
   // 치환시킬 단어 추가해서 사용
 };
